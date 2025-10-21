@@ -28,7 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/api/deleteUser",
-    "MyChat/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
