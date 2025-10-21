@@ -44,6 +44,10 @@ function UserProfile({ dot, userId } : UserProps){
 
     const { handleDelete } = useUserDelete();
 
+    const handleRoute = async ()=>{
+        const user = await userIdClient();
+        router.push(`/chatloop?userId=${user}&chatWith=${userId}`);
+    }
 
     return (
         <>  
@@ -67,7 +71,8 @@ function UserProfile({ dot, userId } : UserProps){
                     <CardContent className="h-[30px] min-w-[50px] !max-w-[100px]">
                         dislike
                     </CardContent>
-                    <Button variant="outline" className="h-[30px] w-full cursor-pointer" >
+                    <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
+                        onClick={handleRoute} >
                         Message
                     </Button>
                 </Card>
