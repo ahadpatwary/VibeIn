@@ -1,0 +1,22 @@
+{
+  "name": "mychat-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.19.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
