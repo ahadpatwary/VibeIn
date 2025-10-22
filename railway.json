@@ -1,0 +1,4 @@
+{
+  "build": "cd ChatLoop && npm install && npm run build",
+  "start": "cd ChatLoop && npm run start"
+}
