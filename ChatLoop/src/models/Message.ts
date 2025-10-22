@@ -1,18 +1,20 @@
-// models/Message.ts
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IMessage extends Document {
-  sender: string;   // sender userId
-  receiver: string; // receiver userId
+  sender: string;
+  receiver: string;
   text: string;
   createdAt: Date;
 }
 
-const MessageSchema: Schema = new Schema({
-  sender: { type: String, required: true },
-  receiver: { type: String, required: true },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+const MessageSchema = new Schema<IMessage>(
+  {
+    sender: { type: String, required: true },
+    receiver: { type: String, required: true },
+    text: { type: String, required: true },
+  },
+  { timestamps: true } // ✅ automatically adds createdAt & updatedAt
+);
 
-export default mongoose.models.Message || mongoose.model<IMessage>('Message', MessageSchema);
+const Message = mongoose.model<IMessage>("Message", MessageSchema);
+export default Message;
