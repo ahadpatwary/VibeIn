@@ -1,4 +1,12 @@
 {
-  "build": "cd ChatLoop && npm install && npm run build",
-  "start": "cd ChatLoop && npm run start"
+  "build": {
+    "builder": "node",
+    "install": "npm install",
+    "build": "npm run build",
+    "root": "ChatLoop"
+  },
+  "start": {
+    "command": "node dist/server.js",
+    "root": "ChatLoop"
+  }
 }
