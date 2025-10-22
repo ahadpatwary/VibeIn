@@ -1,6 +1,6 @@
 {
   "build": {
-    "builder": "node",
+    "builder": "nodejs",
     "install": "npm install",
     "build": "npm run build",
     "root": "ChatLoop"
