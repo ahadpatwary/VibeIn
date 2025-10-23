@@ -19,8 +19,10 @@ export const sendMessageHandler = (io: Server, socket: Socket) => {
         if(!sender || !receiver || !text) return ;
 
         const message = Message.create(data);
+        console.log(message);
         
         const receiverSocketId = activeUsers[receiver];
+        console.log(receiverSocketId);
 
         if(receiverSocketId){
             io.to(receiverSocketId)
