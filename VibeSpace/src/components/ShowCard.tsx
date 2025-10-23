@@ -92,7 +92,7 @@ function ShowCard(
 
   return (
     <div
-      className="w-full max-w-[450px] min-w-[430px] mx-auto p-4 border border-black shadow-md flex-1 rounded-lg h-[80vh] md:h-[80vh] lg:h-[85vh] m-3 overflow-hidden p-2"
+      className="w-full max-w-[400px] min-w-[340px] mx-auto p-4 border border-black shadow-md flex-1 rounded-lg h-[80vh] md:h-[80vh] lg:h-[85vh] m-3"
     >
       
       <div 

@@ -81,14 +81,14 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   };
 
   return (
-    <div className="max-w-[70%] m-10  min-w-[450px] w-full border-2">
+    <div className="max-w-[70%] m-10  min-w-[340px] w-full border-2">
       <div className="bg-black-600 text-white p-4 shadow-md flex items-center">
         <AvatarDemo src={picture} /> 
         <div className="font-bold text-lg m-3">{name}</div>
       </div>
 
   
-        <ScrollArea className="h-[500px]  min-w-[450px] ">
+        <ScrollArea className="h-[500px]  min-w-[340px] ">
           
           {messages.map((m, i) => {
             const isSender = m.sender === userId;
