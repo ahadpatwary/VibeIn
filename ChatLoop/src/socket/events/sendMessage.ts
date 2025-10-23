@@ -26,9 +26,7 @@ export const sendMessageHandler = async (io: Server, socket: Socket) => {
 
         if(receiverSocketId){
             io.to(receiverSocketId)
-                .emit('getMessage', {
-                    message
-                })
+                .emit('getMessage', message)
             ;
         }
 
