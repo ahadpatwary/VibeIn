@@ -8,7 +8,7 @@ interface objectType {
     text: string
 }
 
-export const sendMessageHandler = (io: Server, socket: Socket) => {
+export const sendMessageHandler = async (io: Server, socket: Socket) => {
 
     try {
 
@@ -18,7 +18,7 @@ export const sendMessageHandler = (io: Server, socket: Socket) => {
 
         if(!sender || !receiver || !text) return ;
 
-        const message = Message.create(data);
+        const message = await Message.create(data);
         console.log(message);
         
         const receiverSocketId = activeUsers[receiver];
