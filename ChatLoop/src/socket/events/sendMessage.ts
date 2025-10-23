@@ -1,0 +1,37 @@
+import { Server, Socket } from "socket.io";
+import { activeUsers } from "../activeUsers";
+import Message from "../../models/Message";
+
+interface objectType {
+    sender: string,
+    receiver: string,
+    text: string
+}
+
+export const sendMessageHandler = (io: Server, socket: Socket) => {
+
+    try {
+
+        socket.on('sendMessage', async (data) => {
+
+        const { sender, receiver, text }: objectType = data;
+
+        if(!sender || !receiver || !text) return ;
+
+        const message = Message.create(data);
+        
+        const receiverSocketId = activeUsers[receiver];
+
+        if(receiverSocketId){
+            io.to(receiverSocketId)
+                .emit('getMessage', {
+                    message
+                })
+            ;
+        }
+
+    })
+    } catch (error) {
+        console.error("❌ Error saving message:", error);
+    }
+}
