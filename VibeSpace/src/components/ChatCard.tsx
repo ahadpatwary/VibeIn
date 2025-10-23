@@ -57,7 +57,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       setPicture(data?.picture?.url);
     })();
     const fetchMessages = async () => {
-      const res = await fetch('/api/getMessages', {
+      const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getMessages', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, chatWith })
