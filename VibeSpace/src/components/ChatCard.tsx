@@ -6,6 +6,7 @@ import { getData } from '@/lib/getData';
 import { AvatarDemo } from "@/components/AvaterDemo"
 import { useChatTyping } from '@/hooks/useChatTyping';
 import React from 'react';
+import TypingIndicator from '@/components/TypingIndicator';
 
 
 interface IMessage {
@@ -123,7 +124,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
            
           </header>
 
-          <ScrollArea className="h-screen p-4 overflow-y-auto pb-24">
+          <ScrollArea className="h-screen p-2 overflow-y-auto pb-22">
 
 
 
@@ -131,7 +132,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
               const isSender = m.sender === userId;
               return (
 
-              <div key={i} className={`mb-4 cursor-pointer flex ${isSender ? 'justify-end' : 'justify-start'}`}>
+              <div key={i} className={`mb-4 cursor-pointer flex gap-3 ${isSender ? 'flex-row-reverse justify-start' : 'justify-start'}`}>
 
                 <div className="w-9 h-9 rounded-full flex items-center justify-center mr-2">
                   {!isSender ? 
@@ -145,7 +146,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
                 
                 <div
                   className={`overflow-break text-wrap ${
-                    isSender ? 'flex max-w-96 bg-indigo-500 text-black rounded-lg p-3 gap-3' : 'flex max-w-96 text-black bg-white rounded-lg p-3 gap-3'
+                    isSender ? 'flex max-w-60 bg-indigo-500 text-black rounded-lg p-3 gap-3' : 'flex max-w-60 text-black bg-white rounded-lg p-3 gap-3'
                   }`}
                 >
                   {m.text}
@@ -162,10 +163,11 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
           { 
             someoneTyping ? 
             (
-              <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
-                User is typing...
-              </div>
-            ) : <div className='h-5 bg-transparent' />
+              // <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
+              //   User is typing...
+              // </div>
+              <TypingIndicator />
+            ) : <div className='h-7 bg-transparent' />
           }
 
             <div ref={messagesEndRef}></div>
