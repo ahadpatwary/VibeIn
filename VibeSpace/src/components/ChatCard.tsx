@@ -57,7 +57,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
     useEffect(() => {
     // getUsers event শুনবে backend থেকে
-    socketRef.current.on("getUsers", (users) => {
+    socketRef.current && socketRef.current?.on("getUsers", (users) => {
       setOnlineUsers(users);
     });
 
