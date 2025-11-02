@@ -95,10 +95,13 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
   return (   
         <div className="flex flex-col h-screen w-full border-2 relative">
-          <header className="bg-white p-4 text-gray-700 flex gap-4 items-center border-b border-gray-300">
-            <AvatarDemo src={picture} />
-            <h2 className="text-lg font-semibold mt-2">{name}</h2>
-            <p className="text-sm text-gray-500">Online</p>
+          <header className="bg-white p-1 text-gray-700 flex gap-4 items-center border-b border-gray-300">
+            <AvatarDemo src={picture} size="size-14" />
+            <div className='flex flex-col'>
+              <h2 className="text-lg font-semibold mt-2">{name}</h2>
+              <p className="text-sm text-gray-500">Online</p>
+            </div>
+           
           </header>
 
           <ScrollArea className="h-screen p-4 overflow-y-auto pb-24">
