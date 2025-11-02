@@ -88,65 +88,76 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
   };
 
-  return (
-    <div className="max-w-[70%] m-10  min-w-[340px] w-full border-2">
-      <div className="bg-black-600 text-white p-4 shadow-md flex items-center">
-        <AvatarDemo src={picture} /> 
-        <div className="font-bold text-lg m-3">{name}</div>
-      </div>
+  return (   
+        <div className="flex flex-col h-screen w-full border-2 relative">
+          <header className="bg-white p-4 text-gray-700">
+            <h1 className="text-2xl font-semibold">Alice</h1>
+          </header>
 
-  
-        <ScrollArea className="h-[500px]  min-w-[340px] ">
-          
-          {messages.map((m, i) => {
-            const isSender = m.sender === userId;
-            return (
+          <ScrollArea className="h-screen p-4 overflow-y-auto pb-24">
+
+
+
+            {messages.map((m, i) => {
+              const isSender = m.sender === userId;
+              return (
+
+              <div key={i} className={`mb-4 cursor-pointer flex ${isSender ? 'justify-end' : 'justify-start'}`}>
+
+                <div className="w-9 h-9 rounded-full flex items-center justify-center mr-2">
+                  {!isSender ? 
+                    <AvatarDemo src={picture} size="size-10" /> 
+                    :
+                    <AvatarDemo src={picture} size="size-10" />
+                  }
+                </div> 
+                
       
-            <div key={i} className={`m-5 ${isSender ? 'flex justify-end' : 'flex justify-start'}`}>
-              <div
-                className={`max-w-[65%] break-all overflow-wrap-anywhere p-3 rounded-lg ${
-                  isSender ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
-                }`}
-              >
-                {m.text}
-                <div className="text-xs mt-1 text-black">
-                  {new Date(m.createdAt).toLocaleTimeString()}
+                
+                <div
+                  className={`overflow-break text-wrap ${
+                    isSender ? 'flex max-w-96 bg-indigo-500 text-black rounded-lg p-3 gap-3' : 'flex max-w-96 text-black bg-white rounded-lg p-3 gap-3'
+                  }`}
+                >
+                  {m.text}
+                  <div className="text-xs mt-1 text-black">
+                    {new Date(m.createdAt).toLocaleTimeString()}
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            );
-          })}
+              </div>
+
+              );
+            })}
+
           { 
             someoneTyping ? 
             (
-              <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }}>
+              <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
                 User is typing...
               </div>
             ) : null 
           }
 
-          <div ref={messagesEndRef}></div>
-         
-        </ScrollArea>
+            <div ref={messagesEndRef}></div>
+               
+          </ScrollArea>
 
-     
-
-      {/* Input */}
-      <div className="flex items-center p-4 bg-transition shadow-inner">
-        <textarea
-          className="flex-1 border rounded-md px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-black-400 text-black min-h-[50px]"
-          placeholder="Type a message..."
-          value={newMessage}
-          onChange = {handleChange}
-        />
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition"
-          onClick={handleSend}
-        >
-          Send
-        </button>
-      </div>
-    </div>
+            <footer className="bg-gray-900 border-t border-gray-300 p-4 absolute bottom-0 w-screen">
+                <div className="flex items-center">
+                    <textarea
+                      
+                      placeholder="Type a message..." 
+                      className="w-full p-2 rounded-md border border-gray-400 focus:outline-none focus:border-blue-500 text-black resize-none h-13"
+                      value={newMessage}
+                      onChange={handleChange}
+                    />
+                    <button
+                      className="bg-indigo-500 text-white px-4 py-2 rounded-md ml-2" 
+                      onClick={handleSend}
+                    >Send</button>
+                </div>
+            </footer>
+        </div>
   );
 }
