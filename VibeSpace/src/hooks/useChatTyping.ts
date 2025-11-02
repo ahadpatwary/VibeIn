@@ -1,35 +1,44 @@
-// useChatTyping.js
-import { useRef, useState } from "react";
-import { debounce } from "lodash";
+import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 
 export const useChatTyping = (socket: Socket | null, receiver: string) => {
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const typingRef = useRef(false);
+  const stopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  if(!socket) return { handleTyping: () => {}, someoneTyping };
-
-  // Stop typing event debounce
-  const sendStopTyping = debounce(() => {
-    socket.emit("stopTyping", { receiver });
-    typingRef.current = false;
-  }, 1000); // ১ সেকেন্ড পর stopTyping পাঠাবে
-
-  // যখন user টাইপ করে
   const handleTyping = () => {
+    if (!socket || !receiver) return;
+
+    // প্রথমবার typing শুরু হলে ই event পাঠাও
     if (!typingRef.current) {
       socket.emit("typing", { receiver });
       typingRef.current = true;
     }
-    sendStopTyping();
+
+    // আগের stop timer clear করে দাও
+    if (stopTimer.current) clearTimeout(stopTimer.current);
+
+    // যদি 2s ধরে user কিছু না টাইপ করে → stopTyping পাঠাও
+    stopTimer.current = setTimeout(() => {
+      socket.emit("stopTyping", { receiver });
+      typingRef.current = false;
+    }, 2000);
   };
 
-  // অন্য user typing করছে কিনা
-  socket.off("someoneTyping");
-  socket.off("someoneStopTyping");
+  useEffect(() => {
+    if (!socket) return;
 
-  socket.on("someoneTyping", () => setSomeoneTyping(true));
-  socket.on("someoneStopTyping", () => setSomeoneTyping(false));
+    const onTyping = () => setSomeoneTyping(true);
+    const onStopTyping = () => setSomeoneTyping(false);
+
+    socket.on("someoneTyping", onTyping);
+    socket.on("someoneStopTyping", onStopTyping);
+
+    return () => {
+      socket.off("someoneTyping", onTyping);
+      socket.off("someoneStopTyping", onStopTyping);
+    };
+  }, [socket]);
 
   return { handleTyping, someoneTyping };
 };
