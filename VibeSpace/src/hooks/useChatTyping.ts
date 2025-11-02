@@ -22,7 +22,7 @@ export const useChatTyping = (socket: Socket | null, receiver: string) => {
     stopTimer.current = setTimeout(() => {
       socket.emit("stopTyping", { receiver });
       typingRef.current = false;
-    }, 2000);
+    }, 1400);
   };
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import { getData } from '@/lib/getData';
 import { AvatarDemo } from "@/components/AvaterDemo"
 import { useChatTyping } from '@/hooks/useChatTyping';
 import React from 'react';
+import TypingIndicator from '@/components/TypingIndicator';
 
 
 interface IMessage {
@@ -104,7 +105,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
            
           </header>
 
-          <ScrollArea className="h-screen p-4 overflow-y-auto pb-24">
+          <ScrollArea className="h-screen p-2 overflow-y-auto pb-22">
 
 
 
@@ -143,10 +144,11 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
           { 
             someoneTyping ? 
             (
-              <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
-                User is typing...
-              </div>
-            ) : <div className='h-5 bg-transparent' />
+              // <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
+              //   User is typing...
+              // </div>
+              <TypingIndicator />
+            ) : <div className='h-7 bg-transparent' />
           }
 
             <div ref={messagesEndRef}></div>
