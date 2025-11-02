@@ -4,6 +4,8 @@ import { io, Socket } from 'socket.io-client';
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { getData } from '@/lib/getData';
 import { AvatarDemo } from "@/components/AvaterDemo"
+import { useChatTyping } from '@/hooks/useChatTyping';
+import React from 'react';
 
 
 interface IMessage {
@@ -28,15 +30,14 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [name, setName] = useState("");
   const [picture, setPicture] = useState("");
+  const { handleTyping, someoneTyping } = useChatTyping(socketRef.current, chatWith);
 
   useEffect(() => {
-    console.log(" Connecting to socket server...");
     socketRef.current = io("https://vibein-production-d87a.up.railway.app", {
       transports: ["websocket"],
       secure: true,
       reconnection: true,
     }); 
-    console.log(" Socket connected:", socketRef.current.id);
     socketRef.current.emit('addUser', userId);
 
     socketRef.current.on('getMessage', (msg: IMessage) => {
@@ -80,6 +81,13 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
     setNewMessage('');
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+
+    setNewMessage(e.target.value)
+    handleTyping(); // প্রতিবার টাইপ করলে debounce trigger হবে
+
+  };
+
   return (
     <div className="max-w-[70%] m-10  min-w-[340px] w-full border-2">
       <div className="bg-black-600 text-white p-4 shadow-md flex items-center">
@@ -109,6 +117,15 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
             );
           })}
+          { 
+            someoneTyping ? 
+            (
+              <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }}>
+                User is typing...
+              </div>
+            ) : null 
+          }
+
           <div ref={messagesEndRef}></div>
          
         </ScrollArea>
@@ -121,7 +138,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
           className="flex-1 border rounded-md px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-black-400 text-black min-h-[50px]"
           placeholder="Type a message..."
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange = {handleChange}
         />
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition"

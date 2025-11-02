@@ -19,10 +19,8 @@ export const sendMessageHandler = async (io: Server, socket: Socket) => {
         if(!sender || !receiver || !text) return ;
 
         const message = await Message.create(data);
-        console.log(message);
         
         const receiverSocketId = activeUsers[receiver];
-        console.log(receiverSocketId);
 
         if(receiverSocketId){
             io.to(receiverSocketId)
