@@ -30,6 +30,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [name, setName] = useState("");
   const [picture, setPicture] = useState("");
+  const [myPicture, setMyPicture] = useState("");
   const { handleTyping, someoneTyping } = useChatTyping(socketRef.current, chatWith);
 
   useEffect(() => {
@@ -56,6 +57,10 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       const data: getDataType = await getData(chatWith, "User", ["name", "picture"]);
       setName(data?.name);
       setPicture(data?.picture?.url);
+
+      const myData: getDataType =  await getData(userId, "User", ["picture"]);
+      setMyPicture(myData?.picture?.url);
+
     })();
     const fetchMessages = async () => {
       const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getMessages', {
@@ -91,7 +96,9 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   return (   
         <div className="flex flex-col h-screen w-full border-2 relative">
           <header className="bg-white p-4 text-gray-700">
-            <h1 className="text-2xl font-semibold">Alice</h1>
+            <AvatarDemo src={picture} />
+            <h2 className="text-lg font-semibold mt-2">{name}</h2>
+            <p className="text-sm text-gray-500">Online</p>
           </header>
 
           <ScrollArea className="h-screen p-4 overflow-y-auto pb-24">
@@ -108,7 +115,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
                   {!isSender ? 
                     <AvatarDemo src={picture} size="size-10" /> 
                     :
-                    <AvatarDemo src={picture} size="size-10" />
+                    <AvatarDemo src={myPicture} size="size-10" />
                   }
                 </div> 
                 
@@ -136,7 +143,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
               <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
                 User is typing...
               </div>
-            ) : null 
+            ) : <div className='h-5 bg-transparent' />
           }
 
             <div ref={messagesEndRef}></div>
