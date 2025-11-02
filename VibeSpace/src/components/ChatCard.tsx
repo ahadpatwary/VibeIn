@@ -32,6 +32,8 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const [picture, setPicture] = useState("");
   const [myPicture, setMyPicture] = useState("");
   const { handleTyping, someoneTyping } = useChatTyping(socketRef.current, chatWith);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     socketRef.current = io("https://vibein-production-d87a.up.railway.app", {
@@ -51,6 +53,23 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       socketRef.current?.disconnect();
     };
   }, [userId, chatWith]);
+
+    useEffect(() => {
+    // getUsers event শুনবে backend থেকে
+    socketRef.current.on("getUsers", (users) => {
+      setOnlineUsers(users);
+    });
+
+
+    // cleanup
+    return () => {
+      socketRef.current?.off("getUsers");
+    };
+  }, [userId, chatWith]);
+
+  useEffect(() => {
+    setOffline(!onlineUsers.includes(chatWith));
+  }, [onlineUsers, chatWith]);
 
   useEffect(() => {
     (async()=>{
@@ -99,7 +118,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
             <AvatarDemo src={picture} size="size-14" />
             <div className='flex flex-col'>
               <h2 className="text-lg font-semibold mt-2">{name}</h2>
-              <p className="text-sm text-gray-500">Online</p>
+              <p className="text-sm text-gray-500">{ offline ? "Offline" : "Online" }</p>
             </div>
            
           </header>
