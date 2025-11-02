@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { debounce } from "lodash";
 import { Socket } from "socket.io-client";
 
-export const useChatTyping = (socket: Socket | null, receiver: string) => {
+export const useChatTyping = (socket: Socket, receiver: string) => {
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const typingRef = useRef(false);
 
