@@ -3,9 +3,11 @@ import { useRef, useState } from "react";
 import { debounce } from "lodash";
 import { Socket } from "socket.io-client";
 
-export const useChatTyping = (socket: Socket, receiver: string) => {
+export const useChatTyping = (socket: Socket | null, receiver: string) => {
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const typingRef = useRef(false);
+
+  if(!socket) return { handleTyping: () => {}, someoneTyping };
 
   // Stop typing event debounce
   const sendStopTyping = debounce(() => {
