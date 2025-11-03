@@ -27,11 +27,11 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const socket = useSocketConnection(userId, chatWith);
   const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
 
-  const offline = useActiveState(socket, chatWith);
+  const offline = useActiveState(socket!, chatWith);
 
-  useGetMessage(socket, userId, chatWith, setMessages);
+  useGetMessage(socket!, userId, chatWith, setMessages);
 
-  const { handleTyping, someoneTyping } = useChatTyping(socket, chatWith);
+  const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
 
   const handleSend = () => {
