@@ -31,15 +31,11 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const [messages, setMessages] = useState<IMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId, chatWith);
-  const { name, picture, myPicture } = useChatInformation(
-    (msgs: IMessage[]) => setMessages(msgs),
-    chatWith,
-    userId
-  );
+  const { name, picture, myPicture } = useChatInformation( chatWith, userId, setMessages);
 
   const { offline } = useActiveState(chatWith, socket);
 
-  useGetMessage(socket, userId, chatWith, (msgs: IMessage[]) => setMessages(msgs));
+  useGetMessage(socket, userId, chatWith, setMessages);
 
   const { handleTyping, someoneTyping } = useChatTyping(socket, chatWith);
 

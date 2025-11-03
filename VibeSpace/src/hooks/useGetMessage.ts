@@ -16,7 +16,7 @@ export const useGetMessage = (socket: Socket , userId: string, chatWith: string,
 
 
     useEffect(() => {
-        
+
         if(!socket || !userId || !chatWith) return;
 
         socket.on("getMessage", (msg: IMessage) => {
@@ -29,4 +29,6 @@ export const useGetMessage = (socket: Socket , userId: string, chatWith: string,
             socket.off("getMessage");
         };
     }, [socket, userId, chatWith]);
+
+    // return messages;
 }
