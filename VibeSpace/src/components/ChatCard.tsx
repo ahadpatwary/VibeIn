@@ -114,7 +114,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   };
 
   return (   
-        <div className="flex flex-col h-screen w-full border-2 relative">
+        <div className="flex flex-col h-screen w-full border-2">
           <header className="bg-white p-1 text-gray-700 flex gap-4 items-center border-b border-gray-300">
             <AvatarDemo src={picture} size="size-14" />
             <div className='flex flex-col'>
