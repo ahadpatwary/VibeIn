@@ -1,41 +1,28 @@
-import { Server, Socket } from 'socket.io'
-import { activeUsers } from "../activeUsers";
-
+import { Server, Socket } from "socket.io";
 
 export const typingStateHandler = (io: Server, socket: Socket) => {
-    
-    try {
-        
-        socket.on('typing', async({ receiver }) => {
+  // User কোনো room-এ join করবে
+  socket.on("joinRoom", (roomId: string) => {
+    if (!roomId) return;
+    socket.join(roomId);
+    console.log(`${socket.id} joined room ${roomId}`);
+  });
 
-            if(!receiver) return;
+  // Typing শুরু
+  socket.on("typing", ({ roomId }) => {
+    if (!roomId) return;
+    // শুধু ওই room এর অন্যদের কাছে পাঠাও
+    socket.to(roomId).emit("someoneTyping");
+  });
 
-            const receiverSocketId = activeUsers[receiver];
+  // Typing বন্ধ
+  socket.on("stopTyping", ({ roomId }) => {
+    if (!roomId) return;
+    socket.to(roomId).emit("someoneStopTyping");
+  });
 
-            if(receiverSocketId){
-                io.to(receiverSocketId)
-                    .emit('someoneTyping')
-                ;
-            }
-
-        })
-
-        socket.on('stopTyping', async ({ receiver }) => {
-
-            if(!receiver) return;
-
-            const receiverSocketId = activeUsers[receiver];
-
-            receiverSocketId && io.to(receiverSocketId)
-                .emit('someoneStopTyping')
-            ;
-            
-
-        })
-
-    } catch (error) {
-        if(error instanceof Error){
-            console.log(error.message);
-        }
-    }
-}
+  // Disconnect handle করা (optional)
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+};
