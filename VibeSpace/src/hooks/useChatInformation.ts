@@ -19,9 +19,9 @@ interface getDataType {
 
 export const useChatInformation = 
     (
-        setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>,
+        userId: string,
         chatWith: string,
-        userId: string
+        setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>,
     ) => {
 
     const [name, setName] = useState("");

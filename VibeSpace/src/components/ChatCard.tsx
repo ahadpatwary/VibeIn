@@ -17,13 +17,7 @@ interface IMessage {
   createdAt: string;
 }
 
-interface getDataType {
-  name:string;
-  picture:{
-    url:string;
-    public_id:string;
-  }
-}
+
 
 export default function ChatCard({ userId, chatWith }: { userId: string, chatWith: string }) {
 
@@ -31,7 +25,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const [messages, setMessages] = useState<IMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId, chatWith);
-  const { name, picture, myPicture } = useChatInformation( chatWith, userId, setMessages);
+  const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
 
   const { offline } = useActiveState(chatWith, socket);
 
@@ -39,9 +33,6 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
   const { handleTyping, someoneTyping } = useChatTyping(socket, chatWith);
 
-
-
-  
 
   const handleSend = () => {
     if (!newMessage) return;
