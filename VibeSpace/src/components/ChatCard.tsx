@@ -124,7 +124,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
            
           </header>
 
-          <div className="h-screen p-2 overflow-y-auto pb-22">
+          <div className="h-[calc(100vh-15rem)] p-2 overflow-y-auto pb-22">
 
 
 
