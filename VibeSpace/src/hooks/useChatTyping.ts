@@ -40,5 +40,5 @@ export const useChatTyping = (socket: Socket | null, receiver: string) => {
     };
   }, [socket]);
 
-  return { handleTyping, someoneTyping };
+  return { handleTyping, someoneTyping, receiverId: receiver };
 };

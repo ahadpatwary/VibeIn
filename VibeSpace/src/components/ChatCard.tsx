@@ -32,7 +32,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const [name, setName] = useState("");
   const [picture, setPicture] = useState("");
   const [myPicture, setMyPicture] = useState("");
-  const { handleTyping, someoneTyping } = useChatTyping(socketRef.current, chatWith);
+  const { handleTyping, someoneTyping, receiverId } = useChatTyping(socketRef.current, chatWith);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [offline, setOffline] = useState(false);
 
@@ -172,7 +172,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
           );
         })}
 
-        {someoneTyping ? (
+        {receiverId == chatWith && someoneTyping ? (
           <div className="mb-2 flex justify-start">
             <TypingIndicator />
           </div>
