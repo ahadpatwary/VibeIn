@@ -124,7 +124,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
            
           </header>
 
-          <ScrollArea className="h-[calc(100vh-13rem)]  p-2 overflow-y-auto pb-22">
+          <div className="h-screen p-2 overflow-y-auto pb-22">
 
 
 
@@ -172,7 +172,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
             <div ref={messagesEndRef}></div>
                
-          </ScrollArea>
+          </div>
 
             <footer className="bg-gray-900 border-t border-gray-300 p-4 absolute bottom-0 w-screen">
                 <div className="flex items-center">
