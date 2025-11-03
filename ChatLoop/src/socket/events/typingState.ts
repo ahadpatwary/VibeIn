@@ -13,7 +13,7 @@ export const typingStateHandler = (io: Server, socket: Socket) => {
             const receiverSocketId = activeUsers[receiver];
 
             if(receiverSocketId){
-                socket.to(receiverSocketId)
+                io.to(receiverSocketId)
                     .emit('someoneTyping')
                 ;
             }
@@ -26,7 +26,7 @@ export const typingStateHandler = (io: Server, socket: Socket) => {
 
             const receiverSocketId = activeUsers[receiver];
 
-            receiverSocketId && socket.to(receiverSocketId)
+            receiverSocketId && io.to(receiverSocketId)
                 .emit('someoneStopTyping')
             ;
             

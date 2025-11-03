@@ -55,7 +55,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
     };
   }, [userId, chatWith]);
 
-    useEffect(() => {
+  useEffect(() => {
     // getUsers event শুনবে backend থেকে
     socketRef.current && socketRef.current?.on("getUsers", (users) => {
       setOnlineUsers(users);
@@ -135,7 +135,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       <header className="bg-white h-16 p-2 flex items-center gap-3 border-b border-gray-300 flex-none sticky top-0 z-10">
         <AvatarDemo src={picture} size="size-12 sm:size-14" />
         <div className="flex flex-col">
-          <h2 className="text-base sm:text-lg font-semibold">{name}</h2>
+          <h2 className="text-base text-black sm:text-lg font-semibold">{name}</h2>
           <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p>
         </div>
       </header>
