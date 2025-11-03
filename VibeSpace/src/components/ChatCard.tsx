@@ -1,12 +1,13 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { getData } from '@/lib/getData';
 import { AvatarDemo } from "@/components/AvaterDemo"
 import { useChatTyping } from '@/hooks/useChatTyping';
 import React from 'react';
 import TypingIndicator from '@/components/TypingIndicator';
+import { useSocketConnection } from '@/hooks/useSocketConnection';
+import { useChatInformation } from '@/hooks/useChatInformation';
+import { useActiveState } from '@/hooks/useActiveState';
+import { useGetMessage } from '@/hooks/useGetMessage';
 
 
 interface IMessage {
@@ -25,80 +26,31 @@ interface getDataType {
 }
 
 export default function ChatCard({ userId, chatWith }: { userId: string, chatWith: string }) {
-  const socketRef = useRef<Socket | null>(null);
-  const [messages, setMessages] = useState<IMessage[]>([]);
+
   const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [name, setName] = useState("");
-  const [picture, setPicture] = useState("");
-  const [myPicture, setMyPicture] = useState("");
-  const { handleTyping, someoneTyping } = useChatTyping(socketRef.current, chatWith);
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-  const [offline, setOffline] = useState(false);
+  const socket = useSocketConnection(userId, chatWith);
+  const { name, picture, myPicture } = useChatInformation(
+    (msgs: IMessage[]) => setMessages(msgs),
+    chatWith,
+    userId
+  );
 
-  useEffect(() => {
-    socketRef.current = io("https://vibein-production-d87a.up.railway.app", {
-      transports: ["websocket"],
-      secure: true,
-      reconnection: true,
-    }); 
-    socketRef.current.emit('addUser', userId);
+  const { offline } = useActiveState(chatWith, socket);
 
-    socketRef.current.on('getMessage', (msg: IMessage) => {
-      if ((msg.sender === chatWith && msg.receiver === userId) || (msg.sender === userId && msg.receiver === chatWith)) {
-        setMessages(prev => [...prev, msg]);
-      }
-    });
+  useGetMessage(socket, userId, chatWith, (msgs: IMessage[]) => setMessages(msgs));
 
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, [userId, chatWith]);
-
-  useEffect(() => {
-    // getUsers event শুনবে backend থেকে
-    socketRef.current && socketRef.current?.on("getUsers", (users) => {
-      setOnlineUsers(users);
-    });
+  const { handleTyping, someoneTyping } = useChatTyping(socket, chatWith);
 
 
-    // cleanup
-    return () => {
-      socketRef.current?.off("getUsers");
-    };
-  }, [userId, chatWith]);
 
-  useEffect(() => {
-    setOffline(!onlineUsers.includes(chatWith));
-  }, [onlineUsers, chatWith]);
-
-  useEffect(() => {
-    (async()=>{
-      const data: getDataType = await getData(chatWith, "User", ["name", "picture"]);
-      setName(data?.name);
-      setPicture(data?.picture?.url);
-
-      const myData: getDataType =  await getData(userId, "User", ["picture"]);
-      setMyPicture(myData?.picture?.url);
-
-    })();
-    const fetchMessages = async () => {
-      const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getMessages', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, chatWith })
-      });
-      const data = await res.json();
-      setMessages(data.messages || []); // data.messages array না থাকলে empty array
-    };
-    fetchMessages();
-  }, [userId, chatWith]);
-
+  
 
   const handleSend = () => {
     if (!newMessage) return;
     const messageData = { sender: userId, receiver: chatWith, text: newMessage };
-    socketRef.current?.emit('sendMessage', messageData);
+    socket?.emit('sendMessage', messageData);
     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
   };
