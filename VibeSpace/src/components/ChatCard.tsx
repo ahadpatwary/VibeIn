@@ -172,11 +172,11 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
           );
         })}
 
-        {someoneTyping && (
+        {someoneTyping ? (
           <div className="mb-2 flex justify-start">
             <TypingIndicator />
           </div>
-        )}
+        ) : <div className='h-7' />}
 
         <div ref={messagesEndRef}></div>
       </main>
