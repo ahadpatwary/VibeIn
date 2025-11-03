@@ -124,7 +124,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
            
           </header>
 
-          <ScrollArea className="h-screen p-2 overflow-y-auto pb-22">
+          <ScrollArea className="h-[calc(100vh-13rem)]  p-2 overflow-y-auto pb-22">
 
 
 
