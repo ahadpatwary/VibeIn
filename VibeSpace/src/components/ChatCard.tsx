@@ -114,7 +114,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   };
 
   return (
-<div className="flex flex-col h-screen w-full bg-gray-50">
+<div className="flex flex-col h-[100vh] w-full">
 
   {/* Header */}
   <header className="bg-white p-3 flex items-center gap-3 border-b border-gray-300 flex-none">
@@ -126,7 +126,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   </header>
 
   {/* Messages */}
-  <div className="grow overflow-y-auto px-2 sm:px-4 py-3 scroll-smooth">
+  <div className="grow overflow-y-auto px-2 sm:px-4 py-3 scroll-smooth bg-gray-200">
     {messages.map((m, i) => {
       const isSender = m.sender === userId;
       return (
