@@ -45,7 +45,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     setNewMessage(e.target.value)
-    handleTyping(); // প্রতিবার টাইপ করলে debounce trigger হবে
+    handleTyping(); 
 
   };
 

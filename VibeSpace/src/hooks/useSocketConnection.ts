@@ -7,6 +7,9 @@ export const useSocketConnection = (userId: string, chatWith: string) => {
     const socketRef = useRef<Socket | null>(null);
 
     useEffect(() => {
+
+        if(userId === "" || chatWith === "") return;
+
         socketRef.current = io("https://vibein-production-d87a.up.railway.app", {
             transports: ["websocket"],
             secure: true,
