@@ -126,7 +126,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   </header>
 
   {/* Messages */}
-  <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 scroll-smooth">
+  <div className="grow overflow-y-auto px-2 sm:px-4 py-3 scroll-smooth">
     {messages.map((m, i) => {
       const isSender = m.sender === userId;
       return (
