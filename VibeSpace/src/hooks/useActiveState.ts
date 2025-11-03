@@ -6,9 +6,10 @@ export const useActiveState = (socket: Socket , chatWith: string) => {
     
     const [offline, setOffline] = useState(false);
 
-    if(!socket || !chatWith) return offline;
-
     useEffect(() => {
+
+        if(!socket || !chatWith) return;
+        
         socket.on("getUsers", (users) => {
             setOffline(!users.includes(chatWith));
         });

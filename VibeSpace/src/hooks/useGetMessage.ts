@@ -14,9 +14,10 @@ export const useGetMessage = (socket: Socket , userId: string, chatWith: string,
 
     // const [messages, setMessages] = useState<IMessage[]>([]);
 
-    if(!socket || !userId || !chatWith) return;
 
     useEffect(() => {
+        
+        if(!socket || !userId || !chatWith) return;
 
         socket.on("getMessage", (msg: IMessage) => {
             if ((msg.sender === chatWith && msg.receiver === userId) || (msg.sender === userId && msg.receiver === chatWith)) {
