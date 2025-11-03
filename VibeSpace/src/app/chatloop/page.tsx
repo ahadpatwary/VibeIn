@@ -8,8 +8,6 @@ export default function MyChatPage({ searchParams }: { searchParams: { [key: str
   const chatWith = searchParams.chatWith;
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <ChatCard userId={userId} chatWith={chatWith} />
-    </div>
+    <ChatCard userId={userId} chatWith={chatWith} />
   );
 }
