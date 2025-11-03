@@ -117,13 +117,14 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 <div className="flex flex-col h-[100vh] w-full">
 
   {/* Header */}
-  <header className="bg-white p-2 absolute top-0 left-0 right-0 flex items-center gap-3 border-b border-gray-300 flex-none">
+  <div className="bg-white p-2 absolute top-0 left-0 right-0 flex items-center gap-3 border-b border-gray-300 flex-none">
     <AvatarDemo src={picture} size="size-12 sm:size-14" />
     <div className="flex flex-col">
       <h2 className="text-base sm:text-lg font-semibold">{name}</h2>
       <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p>
     </div>
-  </header>
+  </div>
+
 
   {/* Messages */}
   <div className="grow overflow-y-auto px-2 sm:px-4 py-3 scroll-smooth bg-gray-200">
