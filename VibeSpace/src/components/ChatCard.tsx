@@ -114,81 +114,82 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   };
 
   return (   
-        <div className="flex flex-col h-screen w-full border-2">
-          <header className="bg-white p-1 text-gray-700 flex gap-4 items-center border-b border-gray-300">
-            <AvatarDemo src={picture} size="size-14" />
-            <div className='flex flex-col'>
-              <h2 className="text-lg font-semibold mt-2">{name}</h2>
-              <p className="text-sm text-gray-500">{ offline ? "Offline" : "Online" }</p>
+    <div className="flex flex-col h-screen w-full border border-gray-300 bg-gray-50">
+
+    {/* Header */}
+    <header className="bg-white p-2 sm:p-3 text-gray-700 flex items-center gap-3 sm:gap-4 border-b border-gray-300">
+      <AvatarDemo src={picture} size="size-12 sm:size-14" />
+      <div className="flex flex-col">
+        <h2 className="text-base sm:text-lg font-semibold">{name}</h2>
+        <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p>
+      </div>
+    </header>
+
+    {/* Message Area */}
+    <div className="flex-1 p-2 sm:p-4 overflow-y-auto scroll-smooth">
+      {messages.map((m, i) => {
+        const isSender = m.sender === userId;
+        return (
+          <div
+            key={i}
+            className={`mb-3 flex items-start gap-2 ${
+              isSender ? "flex-row-reverse" : "flex-row"
+            }`}
+          >
+            <div className="w-9 h-9 rounded-full flex items-center justify-center">
+              {!isSender ? (
+                <AvatarDemo src={picture} size="size-10" />
+              ) : (
+                <AvatarDemo src={myPicture} size="size-10" />
+              )}
             </div>
-           
-          </header>
 
-          <div className="h-[calc(100vh-15rem)] p-2 overflow-y-auto pb-22">
-
-
-
-            {messages.map((m, i) => {
-              const isSender = m.sender === userId;
-              return (
-
-              <div key={i} className={`mb-4 cursor-pointer flex gap-3 ${isSender ? 'flex-row-reverse justify-start' : 'justify-start'}`}>
-
-                <div className="w-9 h-9 rounded-full flex items-center justify-center mr-2">
-                  {!isSender ? 
-                    <AvatarDemo src={picture} size="size-10" /> 
-                    :
-                    <AvatarDemo src={myPicture} size="size-10" />
-                  }
-                </div> 
-                
-      
-                
-                <div
-                  className={`overflow-break text-wrap ${
-                    isSender ? 'flex max-w-60 bg-indigo-500 text-black rounded-lg p-3 gap-3' : 'flex max-w-60 text-black bg-white rounded-lg p-3 gap-3'
-                  }`}
-                >
-                  {m.text}
-                  <div className="text-xs mt-1 text-black">
-                    {new Date(m.createdAt).toLocaleTimeString()}
-                  </div>
-                </div>
-
+            <div
+              className={`max-w-[70%] sm:max-w-[60%] rounded-xl px-3 py-2 text-sm sm:text-base break-words ${
+                isSender
+                  ? "bg-indigo-500 text-white self-end"
+                  : "bg-white text-gray-800"
+              }`}
+            >
+              {m.text}
+              <div className="text-[10px] sm:text-xs mt-1 text-gray-600 text-right">
+                {new Date(m.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </div>
-
-              );
-            })}
-
-          { 
-            someoneTyping ? 
-            (
-              // <div style={{ fontStyle: "italic", color: "gray", marginTop: "5px" }} className='z-200'>
-              //   User is typing...
-              // </div>
-              <TypingIndicator />
-            ) : <div className='h-7 bg-transparent' />
-          }
-
-            <div ref={messagesEndRef}></div>
-               
+            </div>
           </div>
+        );
+      })}
 
-            <footer className="bg-gray-900 border-t border-gray-300 p-4 absolute bottom-0 w-screen">
-                <div className="flex items-center">
-                    <textarea
-                      
-                      placeholder="Type a message..." 
-                      className="w-full p-2 rounded-md border border-gray-400 focus:outline-none focus:border-blue-500 text-black resize-none h-13"
-                      value={newMessage}
-                      onChange={handleChange}
-                    />
-                    <button
-                      className="bg-indigo-500 text-white px-4 py-2 rounded-md ml-2" 
-                      onClick={handleSend}
-                    >Send</button>
-                </div>
-            </footer>
-        </div>
+      {someoneTyping ? (
+        <TypingIndicator />
+      ) : (
+        <div className="h-7 bg-transparent" />
+      )}
+
+      <div ref={messagesEndRef}></div>
+    </div>
+
+    {/* Footer */}
+    <footer className="bg-gray-100 border-t border-gray-300 p-2 sm:p-3">
+      <div className="flex items-center gap-2">
+        <textarea
+          placeholder="Type a message..."
+          className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-black resize-none h-12 sm:h-14"
+          value={newMessage}
+          onChange={handleChange}
+        />
+        <button
+          className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-md transition-colors"
+          onClick={handleSend}
+        >
+          Send
+        </button>
+      </div>
+    </footer>
+  </div>
+
   );
 }
