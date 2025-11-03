@@ -1,32 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 
-export const useChatTyping = (socket: Socket | null, roomId: string) => {
+export const useChatTyping = (socket: Socket | null, receiver: string) => {
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const typingRef = useRef(false);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ✍️ যখন user কিছু টাইপ করে
   const handleTyping = () => {
-    if (!socket || !roomId) return;
+    if (!socket || !receiver) return;
 
-    // প্রথমবার typing শুরু হলে event পাঠাও
+    // প্রথমবার typing শুরু হলে ই event পাঠাও
     if (!typingRef.current) {
-      socket.emit("typing", { roomId });
+      socket.emit("typing", { receiver });
       typingRef.current = true;
     }
 
-    // Timer clear করে নতুন Timer সেট করো
+    // আগের stop timer clear করে দাও
     if (stopTimer.current) clearTimeout(stopTimer.current);
 
-    // 1.4s ধরে user কিছু না লিখলে stopTyping পাঠাও
+    // যদি 2s ধরে user কিছু না টাইপ করে → stopTyping পাঠাও
     stopTimer.current = setTimeout(() => {
-      socket.emit("stopTyping", { roomId });
+      socket.emit("stopTyping", { receiver });
       typingRef.current = false;
     }, 1400);
   };
 
-  // 📡 socket event গুলো listen করো
   useEffect(() => {
     if (!socket) return;
 
@@ -41,13 +39,6 @@ export const useChatTyping = (socket: Socket | null, roomId: string) => {
       socket.off("someoneStopTyping", onStopTyping);
     };
   }, [socket]);
-
-  // 🔗 যখনই room change হবে, join করাও
-  useEffect(() => {
-    if (socket && roomId) {
-      socket.emit("joinRoom", roomId);
-    }
-  }, [socket, roomId]);
 
   return { handleTyping, someoneTyping };
 };
