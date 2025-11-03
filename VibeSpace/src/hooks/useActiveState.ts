@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 
 export const useActiveState = (socket: Socket , chatWith: string) => {
     
-    const [offline, setOffline] = useState(false);
+    const [offline, setOffline] = useState<Boolean>(false);
 
     useEffect(() => {
 
