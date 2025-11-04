@@ -7,12 +7,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 function Home() {
 
-  const userId: string = '6909bb1d9ec1c2078dea53fd';
 
-  const owner = (userId === '' ) ? true : false;
-  
-
-  const { data } = useFeed("cards", owner, userId);
+  const { data } = useFeed("cards");
 
 
   return (
@@ -28,7 +24,7 @@ function Home() {
                     title={card.title}
                     image={card.image?.url}
                     description={card.description}
-                    dot={ userId === '' ? true : false }
+                    dot={true}
                 />
             ))}
         </div>
