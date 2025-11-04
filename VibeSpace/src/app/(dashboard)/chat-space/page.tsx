@@ -7,6 +7,13 @@ import ChatCard from '@/components/ChatCard';
 import { Avatar } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 
+interface conversation {
+    senderId: string,
+    receiverId: string,
+    lastMessage: string,
+    lastMessageTime: Date,
+}
+
 export default function ChatSpacePage() {
     const [userId, setUserId] = useState("");
     const [chatWith, setChatWith] = useState("");
@@ -19,8 +26,9 @@ export default function ChatSpacePage() {
             if(!res.status){
                 console.error("something went wrong");
             }
-            const { conversation } = await res.json();
-            setTotalConv(conversation || []);
+            const { conversations } = await res.json();
+            console.log('conver',conversations);
+            setTotalConv(conversations || []);
         })();
     }, [])
 
@@ -32,7 +40,7 @@ export default function ChatSpacePage() {
         setChatWith("");
     }
 
-    const handleMobileClick = (senderId, receiverId) => {
+    const handleMobileClick = (senderId: string, receiverId: string) => {
         
         setUserId(senderId);
         setChatWith(receiverId);
@@ -66,23 +74,23 @@ export default function ChatSpacePage() {
                 <ScrollArea className="flex-1 p-3 overflow-y-auto">
 
                     {
-                        totalConv.map((conv) => {
+                        totalConv.map((conv : conversation) => 
                             <div 
                                 className="p-3"
                                 onClick={() => handleMobileClick(conv.senderId, conv.receiverId)}
                             >
                                 <div className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md">
                                     <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <Avatar src="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" size="size-10"/>
+                                        <img src={"https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato"} className='h-10 w-10 rounded'/>
                                     </div>
                                     <div className="flex-1">
                                         <h2 className="text-lg text-black font-semibold">Alice</h2>
                                         <p className="text-gray-600">{conv.lastMessage}</p>
-                                        <p>{conv.lastMessageTime}</p>
+                                        
                                     </div>
                                 </div>    
                             </div>
-                        })
+                        )
                     }
 
                 </ScrollArea>
@@ -127,7 +135,7 @@ export default function ChatSpacePage() {
                                 <div className="p-3 ">
                                     <div 
                                         className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md"
-                                        conClick={handleDesktopClick}
+                                        onClick={handleDesktopClick}
                                     >
                                         <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
                                             <img src="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
