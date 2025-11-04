@@ -3,12 +3,12 @@ import CreatePost from '@/components/CreatePost';
 
 function upload(){
     return(
-        <>
+        <div className='w-full h-dvh flex flex-col'>
             <MenubarDemo />
-             <div className="flex justify-center items-center h-screen w-screen">
+             <div className="flex flex-1 justify-center items-center h-screen w-screen">
                 <CreatePost disabled = {false} />
              </div>
-        </>
+        </div>
     )
 }
 export default upload;

@@ -16,8 +16,11 @@ function Profile (){
       <ResizableDemo  post = {data} Dot ={true} />
     ) : (
       <>
-        <MenubarDemo />
-        <UserProfile dot={true}  userId = "" />
+        <div className="w-full h-dvh flex flex-col">
+          <MenubarDemo />
+          <UserProfile dot={true}  userId = "" />
+        </div>
+
       </>
     )
   )

@@ -10,13 +10,11 @@ interface CustomWrapperProps {
 
 export function CustomWrapper({ children }: CustomWrapperProps) {
   return (
-      <>
-        <ScrollArea className = "w-full">
-        <div className="h-[calc(100vh-4rem)] flex flex-wrap gap-4 justify-center">
+    <>
+      <ScrollArea className = "w-full px-2  flex-wrap flex-1 gap-4 justify-center overflow-y-auto">
 
-          {children}
+        {children}
 
-        </div>
       </ScrollArea>
     </>
   );

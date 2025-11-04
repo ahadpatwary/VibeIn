@@ -60,7 +60,7 @@ function UserProfile({ dot, userId } : UserProps){
     return (
         
 
-        <div className={`h-[calc(100vh-4rem)]! ${isMobile ? 'absolute bottom-0' : ''} flex flex-col justify-between items-center pt-10 pl-4 pr-4 pb-1 w-full `} >
+        <div className={`flex flex-col flex-1 justify-between items-center pt-10 pl-4 pr-4 pb-1 w-full `} >
 
             <ScrollArea className=" w-full rounded-lg">
             <Card className = "flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
