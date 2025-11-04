@@ -62,7 +62,7 @@ function UserProfile({ dot, userId } : UserProps){
     return (
         
 
-        <div className={`flex flex-col flex-1 justify-between items-center pt-10 pl-4 pr-4 pb-1 w-full `} >
+        <div className={`flex flex-1 flex-col justify-between items-center pt-10 pl-4 pr-4 pb-1 w-full ${!isMobile ? 'h-full': ''}`} >
 
             <ScrollArea className=" w-full rounded-lg">
             <Card className = "flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
@@ -87,9 +87,6 @@ function UserProfile({ dot, userId } : UserProps){
                         : null
                 }
 
-                {/* <CardContent className="h-[30px] min-w-[50px] !max-w-[100px]">
-                    dislike
-                </CardContent> */}
                 <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
                     onClick={handleRoute} >
                     Message

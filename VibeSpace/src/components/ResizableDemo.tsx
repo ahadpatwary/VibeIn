@@ -6,7 +6,8 @@ import { ShowCard } from '@/components/ShowCard';
 import { MenubarDemo } from '@/components/Bar';
 import { UserProfile } from '@/components/UserProfile';
 import { CustomWrapper } from '@/components/CustomWrapper';
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "./ui/scroll-area";
+
 
 interface DotProps {
   post: ICard[];
@@ -16,17 +17,17 @@ interface DotProps {
 
 export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
 
-  const isMobile = useIsMobile();
   return (
 
-    !isMobile ?(
-      <div className="h-dvh w-full flex flex-col ">
+      <div className="h-dvh w-full flex flex-col"> 
+        <MenubarDemo />
 
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-[calc(100vh-4rem)]! mt-14!"
+          className="flex! flex-1!"
         >
-        <MenubarDemo />
+
+       
 
           <ResizablePanel defaultSize={30} minSize={30}>
             <UserProfile dot={Dot}  userId = {userId} />
@@ -36,28 +37,26 @@ export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
 
           <ResizablePanel defaultSize={70} 
             minSize= {50}
-            className="overflow-auto ">
-            <CustomWrapper>
-              {post.map((card) => (
-                <ShowCard
-                  key={card._id}
-                  cardId={card._id}
-                  userId={card.user}
-                  title={card.title}
-                  image={card.image?.url}
-                  description={card.description}
-                  dot={Dot}
-                />
-              ))}
-            </CustomWrapper>
+          >
+            <ScrollArea className="w-full h-full overflow-y-auto scroll-smooth"> 
+              <CustomWrapper>
+                {post.map((card) => (
+                  <ShowCard
+                    key={card._id}
+                    cardId={card._id}
+                    userId={card.user}
+                    title={card.title}
+                    image={card.image?.url}
+                    description={card.description}
+                    dot={Dot}
+                  />
+                ))}
+              </CustomWrapper>
+            </ScrollArea>
+
           </ResizablePanel>
+  
         </ResizablePanelGroup>
-      </div>
-    ) : (
-      <>
-        <MenubarDemo />
-        <UserProfile dot={Dot}  userId = {userId} />
-      </>
-    )
-  );
+        </div>
+    );
 }
