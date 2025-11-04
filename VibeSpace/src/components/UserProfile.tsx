@@ -70,7 +70,11 @@ function UserProfile({ dot, userId } : UserProps){
             <Card className = "flex justify-around items-center gap-2 w-full p-4 rounded-lg">
                 {
                     isMobile ? 
-                        <Button variant="outline" className="h-[30px] w-full cursor-pointer" >
+                        <Button
+                            variant="outline" 
+                            className="h-[30px] w-full cursor-pointer"
+                            onClick={() => router.push("/user-posts")}
+                        >
                             Posts
                         </Button> 
                         : null
