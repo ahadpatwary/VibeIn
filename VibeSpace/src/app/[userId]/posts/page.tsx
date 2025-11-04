@@ -18,7 +18,7 @@ function Home({ params }: PostsPageProps) {
 
 
   return (
-    <ScrollArea className = "w-full">
+    <ScrollArea className = "w-full  px-2 ">
         <div className=" h-dvh flex flex-wrap gap-4 justify-center">
 
             {data.map((card) => (

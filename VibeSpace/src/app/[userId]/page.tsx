@@ -17,10 +17,10 @@ export default function BlogPage() {
     !isMobile ? (
       <ResizableDemo post={data} userId={userId} Dot={false} />
     ) : (
-      <>
+      <div className="w-full h-dvh flex flex-col">
         <MenubarDemo />
-         <UserProfile dot={false}  userId = {userId} />
-      </>
+        <UserProfile dot={false}  userId = {userId} />
+      </div>
     )
   );
 }

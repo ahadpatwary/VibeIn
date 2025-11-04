@@ -15,13 +15,10 @@ function Profile (){
     !isMobile ? (
       <ResizableDemo  post = {data} Dot ={true} />
     ) : (
-      <>
-        <div className="w-full h-dvh flex flex-col">
-          <MenubarDemo />
-          <UserProfile dot={true}  userId = "" />
-        </div>
-
-      </>
+      <div className="w-full h-dvh flex flex-col">
+        <MenubarDemo />
+        <UserProfile dot={true}  userId = "" />
+      </div>
     )
   )
 }
