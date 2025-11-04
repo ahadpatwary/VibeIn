@@ -8,8 +8,6 @@ router.post("/", async (req, res) => {
   try {
     const { userId, chatWith } = req.body;
 
-    await connectToDb();
-
     const messages = await Message.find({
       $or: [
         { sender: userId, receiver: chatWith },
