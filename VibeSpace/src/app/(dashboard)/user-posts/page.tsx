@@ -8,9 +8,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 function Home({ params }: { params: { userId: string }}) {
 
   const userId = params.userId;
-  let data = [];
 
-  ( userId === '' ) ? data = useFeed("cards").data : data = useFeed("cards", false, userId).data;
+  const owner = userId === '' ? true : false;
+  
+
+  const { data } = useFeed("cards", owner, userId);
 
 
   return (
