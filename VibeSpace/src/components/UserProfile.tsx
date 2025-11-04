@@ -53,7 +53,7 @@ function UserProfile({ dot, userId } : UserProps){
     const handlePostsRoute = async ()=>{
 
         if(userId !== ''){
-            router.push(`/user-posts?userId=${userId}`);
+            router.push(`/${userId}/posts`);
         } else router.push('/profile/posts');
     }
 
