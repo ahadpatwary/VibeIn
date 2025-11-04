@@ -5,14 +5,16 @@ import useFeed from '@/hooks/useFeed';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 
-function Home() {
+interface PostsPageProps {
+  params: { userId: string }
+}
 
-  const userId: string = '6909bb1d9ec1c2078dea53fd';
+function Home({ params }: PostsPageProps) {
 
-  const owner = (userId === '' ) ? true : false;
-  
+  const { userId } = params;
 
-  const { data } = useFeed("cards", owner, userId);
+
+  const { data } = useFeed("cards", false, userId);
 
 
   return (
