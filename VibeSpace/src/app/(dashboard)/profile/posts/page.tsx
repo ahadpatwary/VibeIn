@@ -24,7 +24,7 @@ function Home() {
                     title={card.title}
                     image={card.image?.url}
                     description={card.description}
-                    dot={ userId === '' ? true : false }
+                    dot={true}
                 />
             ))}
         </div>
