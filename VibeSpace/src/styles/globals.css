@@ -112,9 +112,9 @@
   --sidebar-ring: oklch(22.499% 0.01321 258.403);
 }
 
-html, body {
+/* html, body {
   overflow: hidden;
-}
+} */
 
 
 @layer base {

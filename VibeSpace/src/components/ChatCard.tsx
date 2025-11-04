@@ -50,15 +50,6 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   };
 
 
-  // ✅ 1️⃣ Fix for mobile viewport height (real 100vh)
-  useEffect(() => {
-    const setVh = () => {
-      document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-    };
-    setVh();
-    window.addEventListener("resize", setVh);
-    return () => window.removeEventListener("resize", setVh);
-  }, []);
 
   // ✅ 2️⃣ Auto-scroll when messages change
   useEffect(() => {
@@ -68,7 +59,8 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-[calc(var(--vh)*100)] w-full bg-gray-100">
+    // h-[calc(var(--vh)*100)]
+    <div className="flex flex-col h-dvh w-full bg-gray-100">
 
       {/* Header */}
       <header className="bg-white h-16 p-2 flex items-center gap-3 border-b border-gray-300 flex-none sticky top-0 z-10">

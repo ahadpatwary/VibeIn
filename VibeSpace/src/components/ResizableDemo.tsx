@@ -15,41 +15,49 @@ interface DotProps {
 }
 
 export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
+
   const isMobile = useIsMobile();
-
   return (
-    <div className="h-screen w-full flex flex-col ">
 
-      <ResizablePanelGroup
-        direction={isMobile ? "vertical" : "horizontal"} // laptop: horizontal, mobile: vertical
-        className="h-[calc(100vh-4rem)]! mt-14!"
-      >
-      <MenubarDemo />
+    !isMobile ?(
+      <div className="h-dvh w-full flex flex-col ">
 
-        <ResizablePanel defaultSize={30} minSize={isMobile ? 2 : 1} className="" >
-          <UserProfile dot={Dot}  userId = {userId} />
-        </ResizablePanel>
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-[calc(100vh-4rem)]! mt-14!"
+        >
+        <MenubarDemo />
 
-        <ResizableHandle withHandle className={isMobile ? "h-3 " : "w-3 "} />
+          <ResizablePanel defaultSize={30} minSize={30}>
+            <UserProfile dot={Dot}  userId = {userId} />
+          </ResizablePanel>
 
-        <ResizablePanel defaultSize={70} 
-          minSize={isMobile ? 2 : 1}  
-          className="overflow-auto ">
-          <CustomWrapper>
-            {post.map((card) => (
-              <ShowCard
-                key={card._id}
-                cardId={card._id}
-                userId={card.user}
-                title={card.title}
-                image={card.image?.url}
-                description={card.description}
-                dot={Dot}
-              />
-            ))}
-          </CustomWrapper>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </div>
+          <ResizableHandle withHandle className= "w-3 " />
+
+          <ResizablePanel defaultSize={70} 
+            minSize= {50}
+            className="overflow-auto ">
+            <CustomWrapper>
+              {post.map((card) => (
+                <ShowCard
+                  key={card._id}
+                  cardId={card._id}
+                  userId={card.user}
+                  title={card.title}
+                  image={card.image?.url}
+                  description={card.description}
+                  dot={Dot}
+                />
+              ))}
+            </CustomWrapper>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    ) : (
+      <>
+        <MenubarDemo />
+        <UserProfile dot={Dot}  userId = {userId} />
+      </>
+    )
   );
 }

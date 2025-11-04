@@ -14,6 +14,7 @@ import { useSignOut } from '@/hooks/useSignOut'
 import { useUserDelete } from '@/hooks/useUserDelete'
 import { userIdClient } from '@/lib/userId'
 import { useRouter } from "next/navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface UserProps{
     name?: string;
@@ -49,36 +50,43 @@ function UserProfile({ dot, userId } : UserProps){
         router.push(`/chatloop?userId=${user}&chatWith=${userId}`);
     }
 
+    const isMobile = useIsMobile();
+
     return (
-        <>  
-            <div className="flex flex-col h-[calc(100vh-10rem)] justify-around items-center p-6 w-full">
-     
+        
 
-                <ScrollArea className=" w-full rounded-lg">
-                <Card className = "flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
-                    <AvatarDemo src={ profile } size="size-30" />
-                    <p className='text-nowrap'>{ name }</p>
-                    <p>{ email }</p>
-                </Card>
-                <ScrollBar orientation="horizontal" />
-                </ ScrollArea>
+        <div className={`h-[calc(100vh-4rem)]! ${isMobile ? 'absolute bottom-0' : ''} flex flex-col justify-between items-center pt-10 pl-4 pr-4 pb-1 w-full `} >
 
-             
-                <Card className = "flex justify-around items-center gap-2 w-full p-4 rounded-lg">
-                    <CardContent className="h-[30px] min-w-[50px] !max-w-[100px]">
-                        like
-                    </CardContent>
-                    <CardContent className="h-[30px] min-w-[50px] !max-w-[100px]">
-                        dislike
-                    </CardContent>
-                    <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
-                        onClick={handleRoute} >
-                        Message
-                    </Button>
-                </Card>
-            </div>
+            <ScrollArea className=" w-full rounded-lg">
+            <Card className = "flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
+                <AvatarDemo src={ profile } size="size-30" />
+                <p className='text-nowrap'>{ name }</p>
+                <p>{ email }</p>
+            </Card>
+            <ScrollBar orientation="horizontal" />
+            </ ScrollArea>
 
-            <Card className="w-full p-3 flex !flex-row justify-between items-center !rounded-none !border-none">
+            
+            <Card className = "flex justify-around items-center gap-2 w-full p-4 rounded-lg">
+                {
+                    isMobile ? 
+                        <Button variant="outline" className="h-[30px] w-full cursor-pointer" >
+                            Posts
+                        </Button> 
+                        : null
+                }
+
+                {/* <CardContent className="h-[30px] min-w-[50px] !max-w-[100px]">
+                    dislike
+                </CardContent> */}
+                <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
+                    onClick={handleRoute} >
+                    Message
+                </Button>
+            </Card>
+
+
+            <Card className="w-full p-3 flex !flex-row justify-between items-center !rounded !border-none">
                 <p className = 'my-auto text-nowrap overflow-hidden'>Total Profile Like :</p>
                 {dot ? (
                     <Dot>
@@ -121,7 +129,9 @@ function UserProfile({ dot, userId } : UserProps){
                     </>
                 )}
             </Card>
-        </>
+        </div> 
+            
+      
     )
 }
 
