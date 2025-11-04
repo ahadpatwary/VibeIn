@@ -50,6 +50,11 @@ function UserProfile({ dot, userId } : UserProps){
         router.push(`/chatloop?userId=${user}&chatWith=${userId}`);
     }
 
+    const handlePostsRoute = async ()=>{
+        const user = await userIdClient();
+        router.push(`/user-posts?user=${user}`);
+    }
+
     const isMobile = useIsMobile();
 
     return (
@@ -73,7 +78,7 @@ function UserProfile({ dot, userId } : UserProps){
                         <Button
                             variant="outline" 
                             className="h-[30px] w-full cursor-pointer"
-                            onClick={() => router.push(`/user-posts?userId=${userId}`)}
+                            onClick={handlePostsRoute}
                         >
                             Posts
                         </Button> 

@@ -5,11 +5,11 @@ import useFeed from '@/hooks/useFeed';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 
-function Home({ params }: { params: { userId: string }}) {
+function Home() {
 
-  const userId = params.userId;
+  const userId: string = '6909bb1d9ec1c2078dea53fd';
 
-  const owner = userId === '' ? true : false;
+  const owner = (userId === '' ) ? true : false;
   
 
   const { data } = useFeed("cards", owner, userId);
