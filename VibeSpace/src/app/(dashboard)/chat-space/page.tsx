@@ -41,7 +41,7 @@ export default function ChatSpacePage() {
     }
 
     const handleMobileClick = (senderId: string, receiverId: string) => {
-        
+        console.log("ahad", senderId, receiverId);
         setUserId(senderId);
         setChatWith(receiverId);
     }
@@ -75,8 +75,8 @@ export default function ChatSpacePage() {
 
                     {
                         totalConv.map((conv : conversation) => 
-                            <div 
-                                className="p-3"
+                            <button 
+                                className="p-3 bg-red-500"
                                 onClick={() => handleMobileClick(conv.senderId, conv.receiverId)}
                             >
                                 <div className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md">
@@ -89,7 +89,7 @@ export default function ChatSpacePage() {
                                         
                                     </div>
                                 </div>    
-                            </div>
+                            </button>
                         )
                     }
 
