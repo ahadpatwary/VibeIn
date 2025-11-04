@@ -51,8 +51,10 @@ function UserProfile({ dot, userId } : UserProps){
     }
 
     const handlePostsRoute = async ()=>{
-        const user = await userIdClient();
-        router.push(`/user-posts?user=${user}`);
+
+        if(userId !== ''){
+            router.push(`/user-posts?userId=${userId}`);
+        } else router.push('/profile/posts');
     }
 
     const isMobile = useIsMobile();
