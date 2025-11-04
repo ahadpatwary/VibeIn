@@ -12,7 +12,7 @@ function Profile (){
   const { data } = useFeed("cards");
 
   return (
-    isMobile ? (
+    !isMobile ? (
       <ResizableDemo  post = {data} Dot ={true} />
     ) : (
       <>
