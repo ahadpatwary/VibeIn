@@ -5,9 +5,13 @@ import useFeed from '@/hooks/useFeed';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 
-function Home() {
+function Home({ params }: { params: { userId: string }}) {
 
-  const { data } = useFeed("cards");
+  const userId = params.userId;
+  let data = [];
+
+  ( userId === '' ) ? data = useFeed("cards").data : data = useFeed("cards", false, userId).data;
+
 
   return (
     <ScrollArea className = "w-full">
@@ -22,7 +26,7 @@ function Home() {
                     title={card.title}
                     image={card.image?.url}
                     description={card.description}
-                    dot={true}
+                    dot={ userId === '' ? true : false }
                 />
             ))}
         </div>

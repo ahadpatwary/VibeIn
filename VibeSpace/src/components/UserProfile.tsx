@@ -73,7 +73,7 @@ function UserProfile({ dot, userId } : UserProps){
                         <Button
                             variant="outline" 
                             className="h-[30px] w-full cursor-pointer"
-                            onClick={() => router.push("/user-posts")}
+                            onClick={() => router.push(`/user-posts?userId=${userId}`)}
                         >
                             Posts
                         </Button> 
