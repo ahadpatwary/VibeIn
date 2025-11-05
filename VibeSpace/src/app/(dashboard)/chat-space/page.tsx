@@ -101,21 +101,23 @@ export default function ChatSpacePage() {
                     {
                         totalConv.map((conv : conversation) => 
                           
-                            <button 
+                            <button
                                 key={conv._id}
-                                className="p-3 w-full bg-gray-200 rounded mb-2"
+                                className="w-full mb-2 bg-gray-200 rounded hover:bg-gray-300 transition"
                                 onClick={() => handleMobileClick(conv.senderId, conv.receiverId._id)}
-                            >
-                                <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    
+                                >
+                                    <div className="flex w-full p-2">
                                     <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
-                                    
-                                    <div className="">
-                                        <h2 className="text-lg text-black text-nowrap overflow-ellipsis font-semibold">{conv.receiverId.name}</h2>
-                                        <p className="text-gray-600 overflow-ellipsis text-nowrap">{conv.lastMessage}</p>
+
+                                    <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
+                                        <div className="flex justify-between items-center w-full">
+                                        <h2 className="text-lg font-semibold text-black truncate">{conv.receiverId.name}</h2>
+                                        <p className="text-sm text-gray-500 ml-auto">time</p>
+                                        </div>
+                                        <p className="text-gray-600 text-sm truncate">{conv.lastMessage}</p>
                                     </div>
-                                </div>    
-                            </button>
+                                    </div>
+                                </button>
 
                         )
                     }
@@ -164,21 +166,24 @@ export default function ChatSpacePage() {
 
                                     {
                                         totalConv.map((conv : conversation) => 
-                                            <button 
+                                            <button
                                                 key={conv._id}
-                                                className="p-3 w-full mb-2 bg-gray-200 rounded"
+                                                className="w-full mb-2 bg-gray-200 rounded hover:bg-gray-300 transition"
                                                 onClick={() => handleDesktopClick(conv.senderId, conv.receiverId._id)}
-                                            >
-                                                <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                               
+                                                >
+                                                    <div className="flex w-full p-2">
                                                     <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
-                                                    
-                                                    <div className="">
-                                                        <h2 className="text-lg text-black font-semibold">{conv.receiverId.name}</h2>
-                                                        <p className="text-gray-600">{conv.lastMessage}</p>
+
+                                                    <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
+                                                        <div className="flex justify-between items-center w-full">
+                                                        <h2 className="text-lg font-semibold text-black truncate">{conv.receiverId.name}</h2>
+                                                        <p className="text-sm text-gray-500 ml-auto">time</p>
+                                                        </div>
+                                                        <p className="text-gray-600 text-sm truncate">{conv.lastMessage}</p>
                                                     </div>
-                                                </div>    
-                                            </button>
+                                                    </div>
+                                                </button>
+
                                         )
                                     }
                                     
