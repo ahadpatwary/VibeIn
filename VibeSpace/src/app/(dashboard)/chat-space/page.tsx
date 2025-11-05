@@ -13,25 +13,23 @@ import { AvatarDemo } from '@/components/AvaterDemo';
 interface conversation {
     _id: string,
     senderId: string,
-    receiverId: string,
+    receiverId: {
+        name:string,
+        picture: {
+            public_id: string,
+            url: string,
+        },
+        _id: string,
+    }
     lastMessage: string,
     lastMessageTime: Date,
 }
 
-interface getDataType {
-    name:string;
-    picture:{
-        url:string;
-        public_id:string;
-    }
-} 
 
 export default function ChatSpacePage() {
     const [userId, setUserId] = useState("");
     const [chatWith, setChatWith] = useState("");
     const [totalConv, setTotalConv] = useState([]);
-    const [name , setName] = useState("User");
-    const [picture, setPicture] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -47,7 +45,7 @@ export default function ChatSpacePage() {
                 console.error("something went wrong");
             }
             const { conversations } = await res.json();
-            console.log('conver',conversations);
+            console.log(conversations);
             setTotalConv(conversations || []);
         })();
     }, [])
@@ -60,10 +58,6 @@ export default function ChatSpacePage() {
 
         const sendId = user == senderId ? receiverId : senderId;
 
-        const data: getDataType = await getData(chatWith, "User", ["name", "picture"]);
-        setName(data?.name);
-        setPicture(data?.picture?.url);
-
         setUserId(user!);
         setChatWith(sendId);
     }
@@ -73,10 +67,6 @@ export default function ChatSpacePage() {
         const user = await userIdClient();
 
         const sendId = user == senderId ? receiverId : senderId;
-
-        const data: getDataType = await getData(chatWith, "User", ["name", "picture"]);
-        setName(data?.name);
-        setPicture(data?.picture?.url);
 
         router.push(`/chatloop?userId=${user}&chatWith=${sendId}`);
     }
@@ -114,14 +104,14 @@ export default function ChatSpacePage() {
                             <button 
                                 key={conv._id}
                                 className="p-3 w-full bg-gray-200 rounded mb-2"
-                                onClick={() => handleMobileClick(conv.senderId, conv.receiverId)}
+                                onClick={() => handleMobileClick(conv.senderId, conv.receiverId._id)}
                             >
                                 <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
                                     
-                                    <AvatarDemo src={picture} size="size-15" />
+                                    <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
                                     
                                     <div className="">
-                                        <h2 className="text-lg text-black font-semibold">{name}</h2>
+                                        <h2 className="text-lg text-black font-semibold">{conv.receiverId.name}</h2>
                                         <p className="text-gray-600">{conv.lastMessage}</p>
                                     </div>
                                 </div>    
@@ -177,14 +167,14 @@ export default function ChatSpacePage() {
                                             <button 
                                                 key={conv._id}
                                                 className="p-3 w-full mb-2 bg-gray-200 rounded"
-                                                onClick={() => handleDesktopClick(conv.senderId, conv.receiverId)}
+                                                onClick={() => handleDesktopClick(conv.senderId, conv.receiverId._id)}
                                             >
                                                 <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
                                                
-                                                    <AvatarDemo src={picture} size="size-15" />
+                                                    <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
                                                     
                                                     <div className="">
-                                                        <h2 className="text-lg text-black font-semibold">{name}</h2>
+                                                        <h2 className="text-lg text-black font-semibold">{conv.receiverId.name}</h2>
                                                         <p className="text-gray-600">{conv.lastMessage}</p>
                                                     </div>
                                                 </div>    
