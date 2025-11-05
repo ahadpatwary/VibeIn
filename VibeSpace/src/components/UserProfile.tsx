@@ -45,9 +45,13 @@ function UserProfile({ dot, userId } : UserProps){
 
     const { handleDelete } = useUserDelete();
 
-    const handleRoute = async ()=>{
+    const handleRoute = async () => {
         const user = await userIdClient();
         router.push(`/chatloop?userId=${user}&chatWith=${userId}`);
+    }
+
+    const handleChatSpaceRoute = async () => {
+        router.push('chat-space');
     }
 
     const handlePostsRoute = async ()=>{
@@ -56,6 +60,8 @@ function UserProfile({ dot, userId } : UserProps){
             router.push(`/${userId}/posts`);
         } else router.push('/profile/posts');
     }
+
+
 
     const isMobile = useIsMobile();
 
@@ -86,11 +92,19 @@ function UserProfile({ dot, userId } : UserProps){
                         </Button> 
                         : null
                 }
+                {dot ? (
+                    <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
+                        onClick={handleChatSpaceRoute} >
+                        ChatSpace
+                    </Button>
+                ): (
+                    <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
+                        onClick={handleRoute} >
+                        Message
+                    </Button>
+                )}
 
-                <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
-                    onClick={handleRoute} >
-                    Message
-                </Button>
+
             </Card>
 
 

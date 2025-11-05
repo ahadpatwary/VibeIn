@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { userIdClient } from '@/lib/userId'
 
 interface conversation {
+    _id: string,
     senderId: string,
     receiverId: string,
     lastMessage: string,
@@ -42,7 +43,7 @@ export default function ChatSpacePage() {
         const user = await userIdClient();
 
         const sendId = user == senderId ? receiverId : senderId;
-        setUserId(user);
+        setUserId(user!);
         setChatWith(sendId);
     }
 
@@ -85,21 +86,23 @@ export default function ChatSpacePage() {
 
                     {
                         totalConv.map((conv : conversation) => 
+                          
                             <button 
-                                className="p-3 bg-red-500"
+                                key={conv._id}
+                                className="p-3 w-full bg-gray-200 rounded mb-2"
                                 onClick={() => handleMobileClick(conv.senderId, conv.receiverId)}
                             >
-                                <div className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
+                                <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+                                    <div className="w-15 h-15 bg-gray-300 rounded-full mr-3">
                                         <img src={"https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato"} className='h-10 w-10 rounded'/>
                                     </div>
-                                    <div className="flex-1">
+                                    <div className="">
                                         <h2 className="text-lg text-black font-semibold">Alice</h2>
                                         <p className="text-gray-600">{conv.lastMessage}</p>
-                                        
                                     </div>
                                 </div>    
                             </button>
+
                         )
                     }
 
@@ -148,17 +151,17 @@ export default function ChatSpacePage() {
                                     {
                                         totalConv.map((conv : conversation) => 
                                             <button 
-                                                className="p-3 bg-red-500"
+                                                key={conv._id}
+                                                className="p-3 w-full mb-2 bg-gray-200 rounded"
                                                 onClick={() => handleDesktopClick(conv.senderId, conv.receiverId)}
                                             >
-                                                <div className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md">
-                                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
+                                                <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+                                                    <div className="w-15 h-15 bg-gray-300 rounded-full mr-3">
                                                         <img src={"https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato"} className='h-10 w-10 rounded'/>
                                                     </div>
-                                                    <div className="flex-1">
+                                                    <div className="">
                                                         <h2 className="text-lg text-black font-semibold">Alice</h2>
                                                         <p className="text-gray-600">{conv.lastMessage}</p>
-                                                        
                                                     </div>
                                                 </div>    
                                             </button>
