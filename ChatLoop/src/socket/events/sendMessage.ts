@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { activeUsers } from "../activeUsers";
 import Message from "../../models/Message";
 import Conversation from "../../models/Conversation";
+import { Types } from 'mongoose'
 
 interface objectType {
     sender: string,
@@ -23,8 +24,8 @@ export const sendMessageHandler = async (io: Server, socket: Socket) => {
 
         const existingConversation = await Conversation.findOne({
             $or: [
-                { senderId: sender, receiverId: receiver },
-                { senderId: receiver, receiverId: sender }
+                { senderId: sender, receiverId: new Types.ObjectId(receiver) },
+                { senderId: receiver, receiverId: new Types.ObjectId(sender) }
             ]
         });
 
@@ -34,7 +35,7 @@ export const sendMessageHandler = async (io: Server, socket: Socket) => {
             // নতুন conversation তৈরি করো
             conversation = new Conversation({
                 senderId: sender,
-                receiverId: receiver,
+                receiverId: new Types.ObjectId(receiver),
                 lastMessage: text,
                 lastMessageTime: new Date()
             });

@@ -70,7 +70,6 @@ export default function ChatSpacePage() {
 
     const handleMobileClick = async (senderId: string, receiverId: string) => {
 
-        console.log("ahad", senderId, receiverId);
         const user = await userIdClient();
 
         const sendId = user == senderId ? receiverId : senderId;
@@ -118,9 +117,9 @@ export default function ChatSpacePage() {
                                 onClick={() => handleMobileClick(conv.senderId, conv.receiverId)}
                             >
                                 <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-15 h-15 bg-gray-300 rounded-full mr-3">
-                                      <AvatarDemo src={picture} size="size-12 sm:size-14" />
-                                    </div>
+                                    
+                                    <AvatarDemo src={picture} size="size-15" />
+                                    
                                     <div className="">
                                         <h2 className="text-lg text-black font-semibold">{name}</h2>
                                         <p className="text-gray-600">{conv.lastMessage}</p>
@@ -181,9 +180,9 @@ export default function ChatSpacePage() {
                                                 onClick={() => handleDesktopClick(conv.senderId, conv.receiverId)}
                                             >
                                                 <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                                    <div className="w-15 h-15 bg-gray-300 rounded-full mr-3">
-                                                        <AvatarDemo src={picture} size="size-12 sm:size-14" />
-                                                    </div>
+                                               
+                                                    <AvatarDemo src={picture} size="size-15" />
+                                                    
                                                     <div className="">
                                                         <h2 className="text-lg text-black font-semibold">{name}</h2>
                                                         <p className="text-gray-600">{conv.lastMessage}</p>

@@ -1,8 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, {Types, Schema, Document } from "mongoose";
 
 export interface IConversation extends Document {
     senderId: string,
-    receiverId: string,
+    receiverId: Types.ObjectId,
     lastMessage: string,
     lastMessageTime: Date,
 }
@@ -15,7 +15,8 @@ const ConversationSchema = new Schema<IConversation>(
             required: true,
         },
         receiverId: {
-            type: String,
+            type: Schema.Types.ObjectId,
+            ref: 'User',
             required: true,
         },
         lastMessage: {

@@ -1,5 +1,7 @@
 import express from 'express'
 import Conversation from '../models/Conversation';
+import { Types } from 'mongoose'
+
 
 const router = express.Router();
 
@@ -12,9 +14,11 @@ router.post('/', async (req, res) => {
         const conversations = await Conversation.find({
             $or: [
                 { senderId: userID },
-                { receiverId: userID },
+                { receiverId: new Types.ObjectId(userID) },
             ],
-        }).sort({ createdAt: -1 });
+        })
+        .populate("receiverId", "name picture")
+        .sort({ createdAt: -1 });
 
         return res.status(200).json({ conversations });
 
