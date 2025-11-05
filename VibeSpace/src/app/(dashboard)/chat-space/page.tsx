@@ -4,7 +4,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatCard from '@/components/ChatCard';
-import { Avatar } from '@/components/ui/avatar';
+// import { Avatar } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { userIdClient } from '@/lib/userId'
@@ -25,7 +25,12 @@ export default function ChatSpacePage() {
 
     useEffect(() => {
         ;(async () => {
-            const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation');
+            const userID = await userIdClient();
+            const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userID })
+            });
 
             if(!res.status){
                 console.error("something went wrong");

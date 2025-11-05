@@ -4,10 +4,17 @@ import Conversation from '../models/Conversation';
 const router = express.Router();
 
 // GET route
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
 
-        const conversations = await Conversation.find().sort({ createdAt: -1 });
+        const { userID } = req.body;
+
+        const conversations = await Conversation.find({
+            $or: [
+                { senderId: userID },
+                { receiverId: userID },
+            ],
+        }).sort({ createdAt: -1 });
 
         return res.status(200).json({ conversations });
 

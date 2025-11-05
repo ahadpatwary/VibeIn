@@ -1,6 +1,5 @@
 import express from "express";
 import Message from "../models/Message";
-import { connectToDb } from "../lib/db";
 
 const router = express.Router();
 
