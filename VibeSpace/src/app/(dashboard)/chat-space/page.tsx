@@ -6,6 +6,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatCard from '@/components/ChatCard';
 import { Avatar } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
+import { userIdClient } from '@/lib/userId'
 
 interface conversation {
     senderId: string,
@@ -18,6 +20,7 @@ export default function ChatSpacePage() {
     const [userId, setUserId] = useState("");
     const [chatWith, setChatWith] = useState("");
     const [totalConv, setTotalConv] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         ;(async () => {
@@ -34,16 +37,23 @@ export default function ChatSpacePage() {
 
     const isMobile = useIsMobile();
 
-    const handleDesktopClick = () => {
-        
-        setUserId("");
-        setChatWith("");
+    const handleDesktopClick = async (senderId: string, receiverId: string) => {
+        console.log("ahad", senderId, receiverId);
+        const user = await userIdClient();
+
+        const sendId = user == senderId ? receiverId : senderId;
+        setUserId(user);
+        setChatWith(sendId);
     }
 
-    const handleMobileClick = (senderId: string, receiverId: string) => {
+    const handleMobileClick = async (senderId: string, receiverId: string) => {
+
         console.log("ahad", senderId, receiverId);
-        setUserId(senderId);
-        setChatWith(receiverId);
+        const user = await userIdClient();
+
+        const sendId = user == senderId ? receiverId : senderId;
+
+        router.push(`/chatloop?userId=${user}&chatWith=${sendId}`);
     }
 
 
@@ -133,78 +143,28 @@ export default function ChatSpacePage() {
                                 
                             <ScrollArea className="flex-1 p-3 overflow-y-auto">
                                 <div className="p-3 ">
-                                    <div 
-                                        className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md"
-                                        onClick={handleDesktopClick}
-                                    >
-                                        <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                            <img src="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                        </div>
-                                        <div className="flex-1">
-                                            <h2 className="text-lg text-black font-semibold">Alice</h2>
-                                            <p className="text-gray-600">Hoorayy!!</p>
-                                        </div>
-                                    </div>
+
+
+                                    {
+                                        totalConv.map((conv : conversation) => 
+                                            <button 
+                                                className="p-3 bg-red-500"
+                                                onClick={() => handleDesktopClick(conv.senderId, conv.receiverId)}
+                                            >
+                                                <div className="flex items-center mb-4 cursor-pointer       hover:bg-gray-100 p-2 rounded-md">
+                                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
+                                                        <img src={"https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato"} className='h-10 w-10 rounded'/>
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <h2 className="text-lg text-black font-semibold">Alice</h2>
+                                                        <p className="text-gray-600">{conv.lastMessage}</p>
+                                                        
+                                                    </div>
+                                                </div>    
+                                            </button>
+                                        )
+                                    }
                                     
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <img src="https://placehold.co/200x/ad922e/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold">Martin</h2>
-                                        <p className="text-gray-600">That pizza place was amazing! We should go again sometime. 🍕</p>
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <img src="https://placehold.co/200x/2e83ad/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold">Charlie</h2>
-                                        <p className="text-gray-600">Hey, do you have any recommendations for a good movie to watch?</p>
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <img src="https://placehold.co/200x/c2ebff/0f0b14.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold">David</h2>
-                                        <p className="text-gray-600">I just finished reading a great book! It was so captivating.</p>
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <img src="https://placehold.co/200x/e7c2ff/7315d1.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold">Ella</h2>
-                                        <p className="text-gray-600">What's the plan for this weekend? Anything fun?</p>
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <img src="https://placehold.co/200x/ffc2e2/ffdbdb.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold">Fiona</h2>
-                                        <p className="text-gray-600">I heard there's a new exhibit at the art museum. Interested?</p>
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-                                    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                        <img src="https://placehold.co/200x/f83f3f/4f4f4f.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold">George</h2>
-                                        <p className="text-gray-600">I tried that new cafe downtown. The coffee was fantastic!</p>
-                                    </div>
-                                    </div>
 
                                 </div>
                                     </ScrollArea>
