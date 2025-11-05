@@ -1,5 +1,6 @@
 import mongoose, {Types, Schema, Document } from "mongoose";
 
+
 export interface IConversation extends Document {
     senderId: string,
     receiverId: Types.ObjectId,

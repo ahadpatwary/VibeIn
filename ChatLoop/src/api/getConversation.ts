@@ -1,6 +1,7 @@
 import express from 'express'
 import Conversation from '../models/Conversation';
 import { Types } from 'mongoose'
+import User from '../models/DummyUser';
 
 
 
