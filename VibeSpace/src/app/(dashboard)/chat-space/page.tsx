@@ -4,10 +4,11 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatCard from '@/components/ChatCard';
-// import { Avatar } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { userIdClient } from '@/lib/userId'
+import { getData } from "@/lib/getData";
+import { AvatarDemo } from '@/components/AvaterDemo';
 
 interface conversation {
     _id: string,
@@ -17,10 +18,20 @@ interface conversation {
     lastMessageTime: Date,
 }
 
+interface getDataType {
+    name:string;
+    picture:{
+        url:string;
+        public_id:string;
+    }
+} 
+
 export default function ChatSpacePage() {
     const [userId, setUserId] = useState("");
     const [chatWith, setChatWith] = useState("");
     const [totalConv, setTotalConv] = useState([]);
+    const [name , setName] = useState("User");
+    const [picture, setPicture] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -48,6 +59,11 @@ export default function ChatSpacePage() {
         const user = await userIdClient();
 
         const sendId = user == senderId ? receiverId : senderId;
+
+        const data: getDataType = await getData(chatWith, "User", ["name", "picture"]);
+        setName(data?.name);
+        setPicture(data?.picture?.url);
+
         setUserId(user!);
         setChatWith(sendId);
     }
@@ -58,6 +74,10 @@ export default function ChatSpacePage() {
         const user = await userIdClient();
 
         const sendId = user == senderId ? receiverId : senderId;
+
+        const data: getDataType = await getData(chatWith, "User", ["name", "picture"]);
+        setName(data?.name);
+        setPicture(data?.picture?.url);
 
         router.push(`/chatloop?userId=${user}&chatWith=${sendId}`);
     }
@@ -99,10 +119,10 @@ export default function ChatSpacePage() {
                             >
                                 <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
                                     <div className="w-15 h-15 bg-gray-300 rounded-full mr-3">
-                                        <img src={"https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato"} className='h-10 w-10 rounded'/>
+                                      <AvatarDemo src={picture} size="size-12 sm:size-14" />
                                     </div>
                                     <div className="">
-                                        <h2 className="text-lg text-black font-semibold">Alice</h2>
+                                        <h2 className="text-lg text-black font-semibold">{name}</h2>
                                         <p className="text-gray-600">{conv.lastMessage}</p>
                                     </div>
                                 </div>    
@@ -162,10 +182,10 @@ export default function ChatSpacePage() {
                                             >
                                                 <div className="flex cursor-pointer hover:bg-gray-100 p-2 rounded-md">
                                                     <div className="w-15 h-15 bg-gray-300 rounded-full mr-3">
-                                                        <img src={"https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato"} className='h-10 w-10 rounded'/>
+                                                        <AvatarDemo src={picture} size="size-12 sm:size-14" />
                                                     </div>
                                                     <div className="">
-                                                        <h2 className="text-lg text-black font-semibold">Alice</h2>
+                                                        <h2 className="text-lg text-black font-semibold">{name}</h2>
                                                         <p className="text-gray-600">{conv.lastMessage}</p>
                                                     </div>
                                                 </div>    
