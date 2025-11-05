@@ -11,6 +11,8 @@ router.post('/', async (req, res) => {
 
         const { userID } = req.body;
 
+        console.log("suserId", userID);
+
         const conversations = await Conversation.find({
             $or: [
                 { senderId: userID },
@@ -19,6 +21,8 @@ router.post('/', async (req, res) => {
         })
         .populate("receiverId", "name picture")
         .sort({ createdAt: -1 });
+
+        console.log("Sconv:", conversations);
 
         return res.status(200).json({ conversations });
 
