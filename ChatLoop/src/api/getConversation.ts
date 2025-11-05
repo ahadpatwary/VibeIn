@@ -1,38 +1,30 @@
-import express from 'express'
-import Conversation from '../models/Conversation';
-import { Types } from 'mongoose'
-import User from '../models/DummyUser';
-
-
+import express from "express";
+import { Types } from "mongoose";
+import Conversation from "../models/Conversation";
+import User from "../models/UserLite"; // ✅ import dummy model
 
 const router = express.Router();
 
-// GET route
-router.post('/', async (req, res) => {
-    try {
+router.post("/", async (req, res) => {
+  try {
+    const { userID } = req.body;
 
-        const { userID } = req.body;
+    if (!userID) return res.status(400).json({ message: "userID missing" });
 
-        console.log("suserId", userID);
+    const conversations = await Conversation.find({
+      $or: [
+        { senderId: new Types.ObjectId(userID) },
+        { receiverId: new Types.ObjectId(userID) },
+      ],
+    })
+      .populate("receiverId", "name picture") // ✅ safe populate
+      .sort({ createdAt: -1 });
 
-
-        const conversations = await Conversation.find({
-            $or: [
-                { senderId: userID },
-                { receiverId: new Types.ObjectId(userID) },
-            ],
-        })
-        .populate("receiverId", "name picture")
-        .sort({ createdAt: -1 });
-
-        console.log("Sconv:", conversations);
-
-        return res.status(200).json({ conversations });
-
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
+    return res.status(200).json({ conversations });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 export default router;
