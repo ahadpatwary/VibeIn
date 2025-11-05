@@ -19,6 +19,6 @@ const userLiteSchema = new Schema<IUserLite>(
   { collection: "users" } // 👈 গুরুত্বপূর্ণ: original collection এর নাম দাও
 );
 
-const User = mongoose.model<IUserLite>("User", userLiteSchema);
+const User = mongoose.models.User || mongoose.model<IUserLite>("User", userLiteSchema);
 
 export default User;
