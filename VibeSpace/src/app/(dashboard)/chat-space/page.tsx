@@ -111,8 +111,8 @@ export default function ChatSpacePage() {
                                     <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
                                     
                                     <div className="">
-                                        <h2 className="text-lg text-black font-semibold">{conv.receiverId.name}</h2>
-                                        <p className="text-gray-600">{conv.lastMessage}</p>
+                                        <h2 className="text-lg text-black text-nowrap overflow-ellipsis font-semibold">{conv.receiverId.name}</h2>
+                                        <p className="text-gray-600 overflow-ellipsis text-nowrap">{conv.lastMessage}</p>
                                     </div>
                                 </div>    
                             </button>
