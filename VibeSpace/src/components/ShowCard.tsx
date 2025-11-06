@@ -86,13 +86,13 @@ function ShowCard({
       className="
         w-full 
         max-w-[400px] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[450px] 
-        min-w-[280px] 
+        min-w-[320px] 
         mx-auto 
         p-4 
         border border-black 
         shadow-md 
         flex-1 
-        rounded-lg 
+        rounded-md 
         m-2 sm:m-2 md:m-2 lg:m-3
       "
     >
