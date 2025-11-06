@@ -85,7 +85,7 @@ function ShowCard({
     <div
       className="
         w-full 
-        max-w-[400px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] 
+        max-w-[400px] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[450px] 
         min-w-[280px] 
         mx-auto 
         p-4 
@@ -93,7 +93,7 @@ function ShowCard({
         shadow-md 
         flex-1 
         rounded-lg 
-        m-2
+        m-2 sm:m-2 md:m-2 lg:m-3
       "
     >
       {/* Image */}
@@ -101,7 +101,7 @@ function ShowCard({
         className="
           relative 
           w-full 
-          h-[200px] sm:h-[220px] md:h-[250px] lg:h-[300px] 
+          h-[240px] sm:h-[250px] md:h-[270px] lg:h-[300px] 
           border-2 
           rounded 
           overflow-hidden 
