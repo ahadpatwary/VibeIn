@@ -59,8 +59,8 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   }, [messages]);
 
   return (
-    // h-[calc(var(--vh)*100)]
-    <div className="flex flex-col h-dvh w-full bg-gray-100">
+  
+    <div className="flex flex-col h-full w-full bg-gray-100">
 
       {/* Header */}
       <header className="bg-white h-16 p-2 flex items-center gap-3 border-b border-gray-300 flex-none sticky top-0 z-10">

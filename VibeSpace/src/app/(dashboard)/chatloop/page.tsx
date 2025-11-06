@@ -1,14 +1,16 @@
-// ✅ Force Client Component
 'use client';
 import ChatCard from '@/components/ChatCard';
 import { userIdClient } from '@/lib/userId';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
+export default function MyChatPage() {
+  const searchParams = useSearchParams();
+  const userId = searchParams.get('userId') || '';
+  const chatWith = searchParams.get('chatWith') || '';
 
-export default function MyChatPage({ searchParams }: { searchParams: { [key: string]: string } }) {
-  const userId = searchParams.userId;
-  const chatWith = searchParams.chatWith;
   const [storedUserId, setStoredUserId] = useState<string | null>(null);
+  const [viewportHeight, setViewportHeight] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
@@ -16,16 +18,39 @@ export default function MyChatPage({ searchParams }: { searchParams: { [key: str
         const fetchedUserId = await userIdClient();
         setStoredUserId(fetchedUserId);
       } catch (error) {
-        console.error("Error fetching user ID:", error);
+        console.error('Error fetching user ID:', error);
       }
     })();
-  }, [storedUserId]);
+
+    const updateHeight = () => {
+      const height = window.visualViewport
+        ? window.visualViewport.height
+        : window.innerHeight;
+
+      setViewportHeight(height);
+
+      // 👉 CSS variable set করা হচ্ছে
+      document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
+    };
+
+    updateHeight();
+    window.visualViewport?.addEventListener('resize', updateHeight);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateHeight);
+    };
+  }, []);
 
   if (!storedUserId || storedUserId !== userId) {
     return <div>Please log in to access your chat.</div>;
   }
 
   return (
-    <ChatCard userId={userId} chatWith={chatWith} />
+    <div
+      style={{ height: viewportHeight }}
+      className=''
+    >
+      <ChatCard userId={userId} chatWith={chatWith} />
+    </div>
   );
 }
