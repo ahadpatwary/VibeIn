@@ -8,9 +8,10 @@ import useFeed from '@/hooks/useFeed';
 function SavePost() {
   const { data } = useFeed("savedCards");
   return (
-    <>
+    <div className="w-full h-dvh flex flex-col">
+     
       <MenubarDemo />
-      <div className = "h-15 w-screen bg-transparent "> </div>
+
       <CustomWrapper>
         {
           data.map((card) => ( 
@@ -26,7 +27,7 @@ function SavePost() {
           )
         )}
       </CustomWrapper>
-    </>
+    </div>
   );
 }
 
