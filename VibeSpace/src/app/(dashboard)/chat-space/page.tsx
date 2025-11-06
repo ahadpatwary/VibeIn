@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { userIdClient } from '@/lib/userId'
 // import { getData } from "@/lib/getData";
 import { AvatarDemo } from '@/components/AvaterDemo';
+import Image from 'next/image';
 
 
 interface conversation {
@@ -88,9 +89,9 @@ export default function ChatSpacePage() {
     return (
         isMobile ? (
 
-             <div className="w-full h-dvh flex flex-col bg-white border-r border-gray-300">
+             <div className="w-full h-dvh flex flex-col bg-zinc-800 ">
 
-                <header className="p-4 border-b border-gray-300 flex flex-none justify-between items-center bg-indigo-600 text-white">
+                <header className="p-4 flex flex-none justify-between items-center bg-neutral-700 text-white">
                     <h1 className="text-2xl font-semibold">Chat Space</h1>
                     <div className="relative">
                         <button id="menuButton" className="focus:outline-none">
@@ -116,11 +117,11 @@ export default function ChatSpacePage() {
                           
                             <button
                                 key={conv._id}
-                                className="w-full mb-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+                                className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
                                 onClick={() => handleMobileClick(conv.senderId._id, conv.receiverId._id)}
                                 >
                                     <div className="flex w-full p-2">
-                                    <AvatarDemo
+                                    <AvatarDemo 
                                         src={ 
                                             myId === conv.senderId._id ? (
                                                 conv.receiverId.picture.url
@@ -128,11 +129,11 @@ export default function ChatSpacePage() {
                                                 conv.senderId.picture.url
                                             )
                                         }
-                                      size="size-15" />
+                                        size="size-15" />
 
                                     <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
                                         <div className="flex justify-between items-center w-full">
-                                        <h2 className="text-lg font-semibold text-black truncate">
+                                        <h2 className="text-lg font-semibold text-gray-200 truncate">
                                             {
                                                 myId === conv.senderId._id ? (
                                                     conv.receiverId.name
@@ -140,15 +141,15 @@ export default function ChatSpacePage() {
                                                     conv.senderId.name
                                                 )
                                             }
-                                        </h2>
-                                        <p className="text-sm text-gray-500 ml-auto">
+                                            </h2>
+                                        <p className="text-sm text-gray-400 ml-auto">
                                                 {new Date(conv.lastMessageTime).toLocaleTimeString([], {
                                                 hour: "2-digit",
                                                 minute: "2-digit",
                                             })}
                                         </p>
                                         </div>
-                                        <p className="text-gray-600 text-sm truncate">{conv.lastMessage}</p>
+                                        <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p>
                                     </div>
                                     </div>
                                 </button>
@@ -172,9 +173,9 @@ export default function ChatSpacePage() {
 
                 <ResizablePanel defaultSize={30} minSize={30}>
 
-                            <div className="w-full h-dvh flex flex-col bg-white border-r border-gray-300">
+                            <div className="w-full h-dvh flex flex-col bg-zinc-800 ">
 
-                                <header className="p-4 border-b border-gray-300 flex flex-none justify-between items-center bg-indigo-600 text-white">
+                                <header className="p-4 flex flex-none justify-between items-center bg-neutral-700 text-white">
                                     <h1 className="text-2xl font-semibold">Chat Space</h1>
                                     <div className="relative">
                                     <button id="menuButton" className="focus:outline-none">
@@ -202,7 +203,7 @@ export default function ChatSpacePage() {
                                         totalConv.map((conv : conversation) => 
                                             <button
                                                 key={conv._id}
-                                                className="w-full mb-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+                                                className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
                                                 onClick={() => handleDesktopClick(conv.senderId._id, conv.receiverId._id)}
                                                 >
                                                     <div className="flex w-full p-2">
@@ -218,7 +219,7 @@ export default function ChatSpacePage() {
 
                                                     <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
                                                         <div className="flex justify-between items-center w-full">
-                                                        <h2 className="text-lg font-semibold text-black truncate">
+                                                        <h2 className="text-lg font-semibold text-gray-200 truncate">
                                                             {
                                                                 myId === conv.senderId._id ? (
                                                                     conv.receiverId.name
@@ -227,14 +228,14 @@ export default function ChatSpacePage() {
                                                                 )
                                                             }
                                                             </h2>
-                                                        <p className="text-sm text-gray-500 ml-auto">
+                                                        <p className="text-sm text-gray-400 ml-auto">
                                                                 {new Date(conv.lastMessageTime).toLocaleTimeString([], {
                                                                 hour: "2-digit",
                                                                 minute: "2-digit",
                                                             })}
                                                         </p>
                                                         </div>
-                                                        <p className="text-gray-600 text-sm truncate">{conv.lastMessage}</p>
+                                                        <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p>
                                                     </div>
                                                     </div>
                                                 </button>
@@ -250,7 +251,7 @@ export default function ChatSpacePage() {
                     
                 </ResizablePanel>
 
-                <ResizableHandle className= "w-0" />
+                <ResizableHandle />
 
                 <ResizablePanel defaultSize={70} 
                     minSize= {50}
@@ -260,7 +261,16 @@ export default function ChatSpacePage() {
                         userId && chatWith ?(
                             <ChatCard userId={userId} chatWith={chatWith} />
                         ): (
-                            <h1>no chat here</h1>
+                            <div className="relative h-screen w-full">
+                                <Image
+                                    src="/chatSpace.jpg"
+                                    alt="Chat Space Background"
+                                    fill
+                                    quality={90}
+                                    className="object-cover"
+                                    priority
+                                />
+                            </div>
                         )
                     }
                     
