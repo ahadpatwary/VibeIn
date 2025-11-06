@@ -1,10 +1,12 @@
 'use client';
+
 import ChatCard from '@/components/ChatCard';
 import { userIdClient } from '@/lib/userId';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function MyChatPage() {
+function ChatPageContent() {
   const searchParams = useSearchParams();
   const userId = searchParams.get('userId') || '';
   const chatWith = searchParams.get('chatWith') || '';
@@ -28,8 +30,6 @@ export default function MyChatPage() {
         : window.innerHeight;
 
       setViewportHeight(height);
-
-      // 👉 CSS variable set করা হচ্ছে
       document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
     };
 
@@ -46,13 +46,17 @@ export default function MyChatPage() {
   }
 
   return (
-    <div
-      style={{ height: viewportHeight }}
-      className=''
-    >
-       <Suspense fallback={<div>Loading chat...</div>}>
-          <ChatCard userId={userId} chatWith={chatWith} />
-       </Suspense>
+    <div style={{ height: viewportHeight }}>
+      <ChatCard userId={userId} chatWith={chatWith} />
     </div>
+  );
+}
+
+// ✅ Suspense wrapper এখন top-level এ
+export default function MyChatPage() {
+  return (
+    <Suspense fallback={<div>Loading chat...</div>}>
+      <ChatPageContent />
+    </Suspense>
   );
 }
