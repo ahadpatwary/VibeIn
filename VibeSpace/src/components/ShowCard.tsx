@@ -85,8 +85,8 @@ function ShowCard({
     <div
       className="
         w-full 
-        max-w-[3400px] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[450px] 
-        min-w-[320px] 
+        max-w-[340px] sm:max-w-[340px] md:max-w-[400px] lg:max-w-[450px] 
+        min-w-[340px] 
         mx-auto 
         p-4 
         border border-black 
