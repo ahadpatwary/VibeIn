@@ -13,7 +13,14 @@ import { AvatarDemo } from '@/components/AvaterDemo';
 
 interface conversation {
     _id: string,
-    senderId: string,
+    senderId: {
+        name: string, 
+        picture: {
+            public_id: string,
+            url: string,
+        }
+        _id: string,
+    }
     receiverId: {
         name:string,
         picture: {
@@ -31,11 +38,15 @@ export default function ChatSpacePage() {
     const [userId, setUserId] = useState("");
     const [chatWith, setChatWith] = useState("");
     const [totalConv, setTotalConv] = useState([]);
+    const [myId, setMyId] = useState("");
+
     const router = useRouter();
 
     useEffect(() => {
         ;(async () => {
             const userID = await userIdClient();
+            if(!userID) return ;
+            setMyId(userID!);
             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -46,7 +57,7 @@ export default function ChatSpacePage() {
                 console.error("something went wrong");
             }
             const { conversations } = await res.json();
-            console.log(conversations);
+            
             setTotalConv(conversations || []);
         })();
     }, [])
@@ -56,7 +67,6 @@ export default function ChatSpacePage() {
     const isMobile = useIsMobile();
 
     const handleDesktopClick = async (senderId: string, receiverId: string) => {
-        console.log("ahad", senderId, receiverId);
         const user = await userIdClient();
 
         const sendId = user == senderId ? receiverId : senderId;
@@ -107,14 +117,30 @@ export default function ChatSpacePage() {
                             <button
                                 key={conv._id}
                                 className="w-full mb-2 bg-gray-200 rounded hover:bg-gray-300 transition"
-                                onClick={() => handleMobileClick(conv.senderId, conv.receiverId._id)}
+                                onClick={() => handleMobileClick(conv.senderId._id, conv.receiverId._id)}
                                 >
                                     <div className="flex w-full p-2">
-                                    <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
+                                    <AvatarDemo
+                                        src={ 
+                                            myId === conv.senderId._id ? (
+                                                conv.receiverId.picture.url
+                                            ) :(
+                                                conv.senderId.picture.url
+                                            )
+                                        }
+                                      size="size-15" />
 
                                     <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
                                         <div className="flex justify-between items-center w-full">
-                                        <h2 className="text-lg font-semibold text-black truncate">{conv.receiverId.name}</h2>
+                                        <h2 className="text-lg font-semibold text-black truncate">
+                                            {
+                                                myId === conv.senderId._id ? (
+                                                    conv.receiverId.name
+                                                ) :(
+                                                    conv.senderId.name
+                                                )
+                                            }
+                                        </h2>
                                         <p className="text-sm text-gray-500 ml-auto">
                                                 {new Date(conv.lastMessageTime).toLocaleTimeString([], {
                                                 hour: "2-digit",
@@ -177,14 +203,30 @@ export default function ChatSpacePage() {
                                             <button
                                                 key={conv._id}
                                                 className="w-full mb-2 bg-gray-200 rounded hover:bg-gray-300 transition"
-                                                onClick={() => handleDesktopClick(conv.senderId, conv.receiverId._id)}
+                                                onClick={() => handleDesktopClick(conv.senderId._id, conv.receiverId._id)}
                                                 >
                                                     <div className="flex w-full p-2">
-                                                    <AvatarDemo src={conv.receiverId.picture.url} size="size-15" />
+                                                    <AvatarDemo 
+                                                        src={ 
+                                                            myId === conv.senderId._id ? (
+                                                                conv.receiverId.picture.url
+                                                            ) :(
+                                                                conv.senderId.picture.url
+                                                            )
+                                                        }
+                                                     size="size-15" />
 
                                                     <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
                                                         <div className="flex justify-between items-center w-full">
-                                                        <h2 className="text-lg font-semibold text-black truncate">{conv.receiverId.name}</h2>
+                                                        <h2 className="text-lg font-semibold text-black truncate">
+                                                            {
+                                                                myId === conv.senderId._id ? (
+                                                                    conv.receiverId.name
+                                                                ) :(
+                                                                    conv.senderId.name
+                                                                )
+                                                            }
+                                                            </h2>
                                                         <p className="text-sm text-gray-500 ml-auto">
                                                                 {new Date(conv.lastMessageTime).toLocaleTimeString([], {
                                                                 hour: "2-digit",
