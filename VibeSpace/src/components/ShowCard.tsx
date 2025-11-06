@@ -96,7 +96,7 @@ function ShowCard(
     >
       
       <div 
-        className="relative w-full h-[60%] sm:h-[57%] md:h-[65%] lg:h-[70%] border-2 rounded overflow-hidden mb-4"
+        className="relative w-full h-[57%] sm:h-[55%] md:h-[65%] lg:h-[70%] border-2 rounded overflow-hidden mb-4"
       >
         <Image
           src={image as string}
