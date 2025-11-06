@@ -20,7 +20,8 @@ router.post("/", async (req, res) => {
         { receiverId: new Types.ObjectId(userID) },
       ],
     })
-      .populate("receiverId", "name picture") // ✅ safe populate
+      .populate("receiverId", "_id name picture") // ✅ safe populate
+      .populate("senderId", "_id name picture")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({ conversations });
