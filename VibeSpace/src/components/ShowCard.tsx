@@ -92,11 +92,11 @@ function ShowCard(
 
   return (
     <div
-      className="w-full max-w-[400px] min-w-[340px] mx-auto p-4 border border-black shadow-md flex-1 rounded-lg h-[70vh] md:h-[80vh] lg:h-[85vh] m-2 sm:m-2 md:m-2 lg:m-3"
+      className="w-full max-w-[400px] min-w-[340px] mx-auto p-4 border border-black shadow-md flex-1 rounded-lg h-[65vh] md:h-[80vh] lg:h-[85vh] m-2 sm:m-2 md:m-2 lg:m-3"
     >
       
       <div 
-        className="relative w-full h-[60%] md:h-[65%] lg:h-[70%] border-2 rounded overflow-hidden mb-4"
+        className="relative w-full h-[60%] sm:h-[57%] md:h-[65%] lg:h-[70%] border-2 rounded overflow-hidden mb-4"
       >
         <Image
           src={image as string}
