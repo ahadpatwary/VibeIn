@@ -11,8 +11,8 @@ interface CustomWrapperProps {
 export function CustomWrapper({ children }: CustomWrapperProps) {
   return (
     <>
-      <ScrollArea className = "w-full px-2 gap-4 overflow-y-auto">
-        <div className="flex flex-wrap">
+      <ScrollArea className = "w-full p-2 overflow-y-auto">
+        <div className="flex flex-wrap justify-around items-around">
             {children}
         </div>
       </ScrollArea>

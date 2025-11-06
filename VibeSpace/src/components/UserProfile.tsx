@@ -54,11 +54,15 @@ function UserProfile({ dot, userId } : UserProps){
         router.push('chat-space');
     }
 
-    const handlePostsRoute = async ()=>{
+    const handlePostsRoute = () => {
 
         if(userId !== ''){
             router.push(`/${userId}/posts`);
         } else router.push('/profile/posts');
+    }
+
+    const handleAboutRoute = () => {
+        router.push('/about');
     }
 
 
@@ -92,6 +96,14 @@ function UserProfile({ dot, userId } : UserProps){
                         </Button> 
                         : null
                 }
+                <Button
+                    variant="outline" 
+                    className="h-[30px] w-full cursor-pointer"
+                    onClick={handleAboutRoute}
+                >
+                    About
+                </Button> 
+                        
                 {dot ? (
                     <Button variant="outline" className="h-[30px] w-full cursor-pointer" 
                         onClick={handleChatSpaceRoute} >

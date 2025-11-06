@@ -3,15 +3,15 @@
 import {ShowCard} from '@/components/ShowCard'
 import useFeed from '@/hooks/useFeed';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import * as React from 'react';
 
+// interface PostsPageProps {
+//   params: { userId: string }
+// }
 
-interface PostsPageProps {
-  params: { userId: string }
-}
+function Home({ params }: { params: Promise<{ userId: string }> }) {
 
-function Home({ params }: PostsPageProps) {
-
-  const { userId } = params;
+  const { userId } = React.use(params);
 
 
   const { data } = useFeed("cards", false, userId);

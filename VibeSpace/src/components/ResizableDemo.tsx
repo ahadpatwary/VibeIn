@@ -33,7 +33,7 @@ export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
             <UserProfile dot={Dot}  userId = {userId} />
           </ResizablePanel>
 
-          <ResizableHandle withHandle className= "w-3 " />
+          <ResizableHandle />
 
           <ResizablePanel defaultSize={70} 
             minSize= {50}

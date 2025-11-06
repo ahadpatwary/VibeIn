@@ -12,8 +12,8 @@ function Home() {
 
 
   return (
-    <ScrollArea className = "w-full px-2">
-        <div className=" h-dvh flex flex-wrap gap-4 justify-center">
+    <ScrollArea className = "w-full p-2 overflow-y-auto">
+        <div className=" flex flex-wrap justify-around items-around ">
 
             {data.map((card) => (
                 

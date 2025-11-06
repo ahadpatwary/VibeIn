@@ -92,7 +92,7 @@ function ShowCard(
 
   return (
     <div
-      className="w-full max-w-[400px] min-w-[340px] mx-auto p-4 border border-black shadow-md flex-1 rounded-lg h-[80vh] md:h-[80vh] lg:h-[85vh] m-3"
+      className="w-full max-w-[400px] min-w-[340px] mx-auto p-4 border border-black shadow-md flex-1 rounded-lg h-[70vh] md:h-[80vh] lg:h-[85vh] m-2 sm:m-2 md:m-2 lg:m-3"
     >
       
       <div 
@@ -109,7 +109,7 @@ function ShowCard(
       </div>
 
  
-      <div className=" h-[35%] md:h-[30%] lg:h-[25%] flex flex-col justify-between">
+      <div className=" h-[35%] md:h-[30%] lg:h-[25%] w-full flex flex-col justify-between">
         <div className="flex justify-between items-center gap-2 my-2">
           
             < LikeButton cardId = {cardId} />
@@ -163,20 +163,18 @@ function ShowCard(
             }
         </div>
   
-        <div className="flex h-full items-center gap-4">
+        <div className="flex h-full w-full items-center gap-4">
           <Button 
             className ="h-15 w-15 rounded-full cursor-pointer transfarent" 
           > 
             <AvatarDemo src={profilePic} /> 
           </Button> 
 
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full overflow-hidden">
             <Link href= {`${userId}` } className="font-bold"> {userName} </Link>
-            <div className=" h-full w-fll">
-              Lorem ipsum dolor sit amet, 
-            </div>
-            {/* <p className="text-2xl font-bold">{`${title}kdjfksjfksdfjskdfksdfjsdkjfdkjskjsfd`}</p> */}
-            {/* <p> {description} </p> */}
+            <p className="text-white overflow-hidden text-md truncate">
+              Lorem ipsum dolor sit amet, vccccccccv   vcvcvcv gfhfgh fgh fdgd fdg dfg dfg dfg
+            </p>
           </div>
         </div>
       </div>
