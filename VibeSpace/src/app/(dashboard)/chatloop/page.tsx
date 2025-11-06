@@ -1,7 +1,7 @@
 'use client';
 import ChatCard from '@/components/ChatCard';
 import { userIdClient } from '@/lib/userId';
-import { useEffect, useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 export default function MyChatPage() {
@@ -50,7 +50,9 @@ export default function MyChatPage() {
       style={{ height: viewportHeight }}
       className=''
     >
-      <ChatCard userId={userId} chatWith={chatWith} />
+       <Suspense fallback={<div>Loading chat...</div>}>
+          <ChatCard userId={userId} chatWith={chatWith} />
+       </Suspense>
     </div>
   );
 }
