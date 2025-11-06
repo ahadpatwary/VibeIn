@@ -7,8 +7,9 @@ import ChatCard from '@/components/ChatCard';
 import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { userIdClient } from '@/lib/userId'
-import { getData } from "@/lib/getData";
+// import { getData } from "@/lib/getData";
 import { AvatarDemo } from '@/components/AvaterDemo';
+
 
 interface conversation {
     _id: string,
@@ -49,6 +50,8 @@ export default function ChatSpacePage() {
             setTotalConv(conversations || []);
         })();
     }, [])
+
+    
 
     const isMobile = useIsMobile();
 
@@ -112,7 +115,12 @@ export default function ChatSpacePage() {
                                     <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
                                         <div className="flex justify-between items-center w-full">
                                         <h2 className="text-lg font-semibold text-black truncate">{conv.receiverId.name}</h2>
-                                        <p className="text-sm text-gray-500 ml-auto">time</p>
+                                        <p className="text-sm text-gray-500 ml-auto">
+                                                {new Date(conv.lastMessageTime).toLocaleTimeString([], {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                        </p>
                                         </div>
                                         <p className="text-gray-600 text-sm truncate">{conv.lastMessage}</p>
                                     </div>
@@ -177,7 +185,12 @@ export default function ChatSpacePage() {
                                                     <div className="flex w-[10px] flex-col flex-1 min-w-0 px-2">
                                                         <div className="flex justify-between items-center w-full">
                                                         <h2 className="text-lg font-semibold text-black truncate">{conv.receiverId.name}</h2>
-                                                        <p className="text-sm text-gray-500 ml-auto">time</p>
+                                                        <p className="text-sm text-gray-500 ml-auto">
+                                                                {new Date(conv.lastMessageTime).toLocaleTimeString([], {
+                                                                hour: "2-digit",
+                                                                minute: "2-digit",
+                                                            })}
+                                                        </p>
                                                         </div>
                                                         <p className="text-gray-600 text-sm truncate">{conv.lastMessage}</p>
                                                     </div>
@@ -200,9 +213,7 @@ export default function ChatSpacePage() {
                 <ResizablePanel defaultSize={70} 
                     minSize= {50}
                 >
-                    {/* <ScrollArea className="w-full h-full overflow-y-auto scroll-smooth"> 
-                        // Your chat space content goes here    
-                    </ScrollArea> */}
+
                     {
                         userId && chatWith ?(
                             <ChatCard userId={userId} chatWith={chatWith} />

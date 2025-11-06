@@ -8,6 +8,7 @@ import { useSocketConnection } from '@/hooks/useSocketConnection';
 import { useChatInformation } from '@/hooks/useChatInformation';
 import { useActiveState } from '@/hooks/useActiveState';
 import { useGetMessage } from '@/hooks/useGetMessage';
+import { ScrollArea } from './ui/scroll-area';
 
 
 interface IMessage {
@@ -72,7 +73,8 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       </header>
 
       {/* Messages */}
-      <main className="flex-1 overflow-y-auto px-2 sm:px-4 py-3 scroll-smooth bg-gray-200">
+      <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-gray-200">
+      <main className=" px-2 sm:px-4 py-3">
         {messages.map((m, i) => {
           const isSender = m.sender === userId;
           return (
@@ -111,6 +113,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
         <div ref={messagesEndRef}></div>
       </main>
+      </ScrollArea>
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-300 p-2 sm:p-3 flex-none sticky bottom-0">

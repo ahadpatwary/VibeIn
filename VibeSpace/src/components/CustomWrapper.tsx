@@ -15,9 +15,6 @@ export function CustomWrapper({ children }: CustomWrapperProps) {
         <div className="flex flex-wrap">
             {children}
         </div>
-
-      
-
       </ScrollArea>
     </>
   );
