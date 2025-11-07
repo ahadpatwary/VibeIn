@@ -43,7 +43,6 @@ const groupConversationSchema = new Schema<IGroupConversation>(
         {
             type: Schema.Types.ObjectId,
             ref: 'User',
-            required: true,
         },
     ],
 
@@ -72,7 +71,7 @@ const groupConversationSchema = new Schema<IGroupConversation>(
   { timestamps: true }
 );
 
-groupConversationSchema.pre('save', function (next) {
+groupConversationSchema.pre('save', function(next) {
   if (!this.participants.includes(this.groupAdmin)) {
     this.participants.push(this.groupAdmin);
   }

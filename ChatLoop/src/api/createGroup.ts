@@ -8,6 +8,7 @@ const router = express.Router();
 router.post('/', upload.single('image'), async (req: Request, res: Response) => {
     try {
 
+        console.log("ahad patwary railway");
         const { groupName, groupBio } = req.body;
 
         if (!groupName || !req.file)
