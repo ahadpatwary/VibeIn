@@ -42,11 +42,10 @@ function App() {
       if (!res.ok) throw new Error("Upload failed");
 
       const data = await res.json();
-      alert("✅ Uploaded successfully!");
       console.log("Response:", data);
+      
     } catch (err) {
       console.error(err);
-      alert("❌ Upload failed!");
     } finally {
       setUploading(false);
     }
