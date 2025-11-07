@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from "react";
 
 
@@ -5,14 +6,14 @@ function App() {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [picture, setPicture] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setPicture(file);
-    setPreview(URL.createObjectURL(file));
+    setPreview(URL.createObjectURL(file) );
   };
 
   const handleSubmit = async (e) => {
@@ -34,7 +35,7 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: formData
       });
-      if(!res.ok) throw new Error(res.message);
+      if(!res.ok) throw new Error(res.message!);
       alert("✅ Uploaded successfully!");
     } catch (err) {
       console.error(err);
