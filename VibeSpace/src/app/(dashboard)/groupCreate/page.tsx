@@ -30,7 +30,6 @@ function CreateGroup({ disabled = false }: CreatePostProps) {
         setGroupPicture={setGroupPicture}
       />
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <button
         onClick={handleSubmit}
