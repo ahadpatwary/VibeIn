@@ -14,7 +14,6 @@ function CreateGroup({ disabled = false }: CreatePostProps) {
     setGroupName,
     groupBio,
     setGroupBio,
-    groupPicture,
     setGroupPicture,
     loading,
     handleSubmit,
