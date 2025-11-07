@@ -6,17 +6,17 @@ function App() {
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [picture, setPicture] = useState(null);
-  const [preview, setPreview] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
     setPicture(file);
     setPreview(URL.createObjectURL(file) );
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name || !bio || !picture) {
