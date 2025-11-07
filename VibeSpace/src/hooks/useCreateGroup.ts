@@ -13,7 +13,7 @@ export const useCreateGroup = () => {
 
 
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
     
         const userId = await userIdClient();

@@ -1,6 +1,6 @@
 "use client";
 
-import { ContentField } from "@/components/contentField";
+
 import { GroupCreate } from "@/components/ui/groupCreate";
 import { useCreateGroup } from "@/hooks/useCreateGroup";
 
