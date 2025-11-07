@@ -44,6 +44,7 @@ function ShowCard({
   const [state, setState] = useState<string>("");
   const [profilePic, setProfilePic] = useState<string>("");
   const [userName, setUserNmae] = useState<string>("");
+ 
 
   useEffect(() => {
     const fetchState = async () => {
@@ -180,8 +181,8 @@ function ShowCard({
             <Link href={`${userId}`} className="font-bold">
               {userName}
             </Link>
-            <p className="text-white overflow-hidden text-md truncate">
-              Lorem ipsum dolor sit amet, vccccccccv vcvcvcv gfhfgh fgh fdgd fdg dfg dfg dfg
+            <p className="text-white overflow-hidden text-lg text-bold truncate">
+              {title}
             </p>
           </div>
         </div>

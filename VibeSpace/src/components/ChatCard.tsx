@@ -61,10 +61,10 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
 
   return (
   
-    <div className="flex flex-col h-full w-full bg-gray-100">
+    <div className="flex flex-col h-full w-full ">
 
       {/* Header */}
-      <header className="bg-white h-16 p-2 flex items-center gap-3 border-b border-gray-300 flex-none sticky top-0 z-10">
+      <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
         <AvatarDemo src={picture} size="size-12 sm:size-14" />
         <div className="flex flex-col">
           <h2 className="text-base text-black sm:text-lg font-semibold">{name}</h2>
@@ -73,7 +73,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       </header>
 
       {/* Messages */}
-      <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-gray-200">
+      <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
       <main className=" px-2 sm:px-4 py-3">
         {messages.map((m, i) => {
           const isSender = m.sender === userId;
@@ -94,7 +94,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
                 }`}
               >
                 {m.text}
-                <div className="text-[10px] sm:text-xs mt-1 text-gray-600 text-right">
+                <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
                   {new Date(m.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -116,11 +116,11 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       </ScrollArea>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-300 p-2 sm:p-3 flex-none sticky bottom-0">
+      <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
         <div className="flex items-center gap-2">
           <textarea
             placeholder="Type a message..."
-            className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-black resize-none h-12 sm:h-14"
+            className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none  text-black resize-none h-12 sm:h-14"
             value={newMessage}
             onChange={handleChange}
           />
