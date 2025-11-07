@@ -9,7 +9,6 @@ interface PropsType {
   setGroupName: (value: string) => void;
   groupBio: string;
   setGroupBio: (value: string) => void;
-  groupPicture: File | null;
   setGroupPicture: (file: File | null) => void;
 }
 
