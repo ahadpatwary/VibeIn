@@ -71,13 +71,6 @@ const groupConversationSchema = new Schema<IGroupConversation>(
   { timestamps: true }
 );
 
-groupConversationSchema.pre('save', function(next) {
-  if (!this.participants.includes(this.groupAdmin)) {
-    this.participants.push(this.groupAdmin);
-  }
-  next();
-});
-
 const groupConversation =
   mongoose.models.GroupConversation ||
   mongoose.model<IGroupConversation>(

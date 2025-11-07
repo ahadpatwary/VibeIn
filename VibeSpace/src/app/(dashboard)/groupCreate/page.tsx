@@ -1,4 +1,5 @@
 'use client'
+import { userIdClient } from "@/lib/userId";
 import React, { useState } from "react";
 
 function App() {
@@ -19,17 +20,20 @@ function App() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!name || !bio || !picture) {
+    const userId = await userIdClient();
+    if (!name || !bio || !picture || !userId) {
       return alert("সব ফিল্ড পূরণ করুন!");
     }
 
     const formData = new FormData();
     formData.append("groupName", name);
     formData.append("groupBio", bio);
+    formData.append('userId', userId);
     formData.append("image", picture); // backend e jei name use korcho, oita dite hobe
 
     try {
       setUploading(true);
+      
       const res = await fetch("https://vibein-production-d87a.up.railway.app/api/createGroup", {
         method: "POST",
         body: formData, // ❌ no headers here

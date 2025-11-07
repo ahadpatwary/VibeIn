@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import groupConversation from '../models/GroupConversation';
 import { upload } from '../middlewares/multer';
 import cloudinary from '../lib/cloudinary';
+import { Types } from 'mongoose';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
     try {
 
         console.log("ahad patwary railway");
-        const { groupName, groupBio } = req.body;
+        const { groupName, userId, groupBio } = req.body;
 
         if (!groupName || !req.file)
         return res.status(400).json({ message: "groupName and groupPicture are required" });
@@ -31,9 +32,12 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             url: uploadResult.secure_url
         };
 
+        console.log(picture)
+
         const group = await groupConversation.create({
             groupName,
             groupPicture: picture,
+            groupAdmin: new Types.ObjectId(userId),
             groupBio
         });
 
