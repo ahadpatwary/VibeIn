@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
     })
       .populate("receiverId", "_id name picture") // ✅ safe populate
       .populate("senderId", "_id name picture")
-      .sort({ createdAt: -1 });
+      .sort({ lastMessageTime: -1 });
 
     return res.status(200).json({ conversations });
   } catch (error) {

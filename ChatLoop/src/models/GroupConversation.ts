@@ -39,14 +39,14 @@ const groupConversationSchema = new Schema<IGroupConversation>(
         required: true,
     },
 
-    participants: [
+    participants: [  //leav group  // group theke ber kore deoya,, // group user //
         {
             type: Schema.Types.ObjectId,
             ref: 'User',
         },
     ],
 
-    deletedBy: [
+    deletedBy: [   
         {
             type: Schema.Types.ObjectId,
             ref: 'User',
@@ -60,13 +60,20 @@ const groupConversationSchema = new Schema<IGroupConversation>(
         default: null,
     },
 
-    permissions: [
-        {
-            user: { type: Schema.Types.ObjectId, ref: 'User' },
-            canSendMessage: { type: Boolean, default: true },
-            isBlocked: { type: Boolean, default: false },
-        },
+    requestUser: [ //req to add the group // req cancle
+        { 
+            types: Schema.Types.ObjectId,
+            ref: 'User'
+        }
     ],
+
+    blockedUser: [
+        {
+            types: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ]
+
   },
   { timestamps: true }
 );
