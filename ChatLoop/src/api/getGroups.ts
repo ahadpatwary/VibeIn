@@ -6,15 +6,20 @@ const router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { userId, groupId } = req.body;
+        const { userId } = req.body;
 
-        if (!userId || !groupId)
-        return res.status(400).json({ message: 'userId and groupId are required' });
+        if (!userId)
+            return res.status(400).json({ message: 'userId and groupId are required' })
+        ;
 
-        const group = await groupConversation.find({
-            _id: new Types.ObjectId(groupId),
-            deletedBy: { $nin: [new Types.ObjectId(userId)] } // এখানে check হচ্ছে userId deletedBy array তে নেই
-        });
+        const group = await groupConversation.find(
+            {
+                $and: [
+                    { participants: { $in: [ new Types.ObjectId(userId) ]}},
+                    { deletedBy: { $nin: [new Types.ObjectId(userId)]}}
+                ]
+            }
+        );
 
         return res.status(200).json({ group });
 
