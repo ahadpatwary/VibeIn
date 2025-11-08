@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 export const useGetAllGroups = (userId: string) => {
-    const [allGroups, setAllGroups] = useState<any[]>([]);
+    const [allGroups, setAllGroups] = useState([]);
 
     useEffect(() => {
         (async () => {

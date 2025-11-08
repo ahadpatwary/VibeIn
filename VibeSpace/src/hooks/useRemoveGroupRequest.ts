@@ -3,13 +3,13 @@
 
 export const useRemoveGroupRequest = (userId: string, groupId: string) => {
     
-    const removeGroupRequest = () => {
+    const removeGroupRequest = async() => {
         try {
             
             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/cancleRequest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({userId, groupId});
+                body: JSON.stringify({userId, groupId})
             });
 
             const data = await res.json();

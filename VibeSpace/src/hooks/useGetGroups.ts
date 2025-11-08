@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 
 
-
-export const useGetAllGroups = ( userId: string ) => {
+export const useGetGroups = ( userId: string ) => {
     try {
         
         const [getGroups, setGetGroups] = useState([]);
