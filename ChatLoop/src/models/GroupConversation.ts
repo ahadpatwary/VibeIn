@@ -11,11 +11,8 @@ export interface IGroupConversation extends Document {
     participants: Types.ObjectId[];
     deletedBy: Types.ObjectId[];
     lastMessage?: Types.ObjectId;
-    permissions: {
-        user: Types.ObjectId;
-        canSendMessage: boolean;
-        isBlocked: boolean;
-    }[];
+    reqestUser: Types.ObjectId[];
+    blockedUser: Types.ObjectId[];
 }
 
 const groupConversationSchema = new Schema<IGroupConversation>(
