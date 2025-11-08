@@ -57,7 +57,7 @@ const groupConversationSchema = new Schema<IGroupConversation>(
         default: null,
     },
 
-    requestUser: [ //req to add the group // req cancle
+    requestUser: [ 
         { 
             types: Schema.Types.ObjectId,
             ref: 'User'
