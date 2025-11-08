@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'react'
+import express, { Request, Response } from 'express'
 import { Types } from 'mongoose'
 import groupConversation from '../models/GroupConversation';
 
