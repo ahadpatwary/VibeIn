@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 
 
 export const useGetGroups = ( userId: string ) => {
-    try {
-        
-        const [getGroups, setGetGroups] = useState([]);
 
-        useEffect(() => {
+        
+    const [getGroups, setGetGroups] = useState([]);
+
+    useEffect(() => {
+        try {
             ;(async() => {
-                
+            
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getGroups', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -18,13 +19,14 @@ export const useGetGroups = ( userId: string ) => {
                 const data = await res.json();
                 setGetGroups(data.groups || []);
             })
-        }, [userId])
 
-        return getGroups;
+        } catch (error) {
+            if(error instanceof Error)
+                throw new Error(error.message)
+            ;
+        }
 
-    } catch (error) {
-        if(error instanceof Error)
-            throw new Error(error.message)
-        ;
-    }
+    }, [userId])
+
+    return getGroups;
 }

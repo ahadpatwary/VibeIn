@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 
 
 export const useGetRequest = (groupId: string) => {
+   
+    const [commingRequest, setCommingRequest] = useState([]);
+    
     try {
-        
-        const [commingRequest, setCommingRequest] = useState([]);
-
         useEffect(() => {
             ;(async() => {
 
@@ -20,11 +20,11 @@ export const useGetRequest = (groupId: string) => {
             })
         },[groupId])
 
-        return commingRequest;
-        
     } catch (error) {
         if(error instanceof Error)
             throw new Error(error.message)
         ;
     }
+
+    return commingRequest;
 }
