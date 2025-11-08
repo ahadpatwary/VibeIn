@@ -11,7 +11,7 @@ export interface IGroupConversation extends Document {
     participants: Types.ObjectId[];
     deletedBy: Types.ObjectId[];
     lastMessage?: Types.ObjectId;
-    reqestUser: Types.ObjectId[];
+    requestUser: Types.ObjectId[];
     blockedUser: Types.ObjectId[];
 }
 
