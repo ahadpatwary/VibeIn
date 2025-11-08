@@ -80,6 +80,7 @@ const groupConversation =
   mongoose.model<IGroupConversation>(
     'GroupConversation',
     groupConversationSchema
-  );
+  )
+;
 
 export default groupConversation;

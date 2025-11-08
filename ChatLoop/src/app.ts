@@ -10,6 +10,10 @@ import getAllGroupsRouter from './api/getAllGroups';
 import getComingRouter from './api/getComingRequest';
 import getGroupsRouter from './api/getGroups';
 import getSendRequest from './api/getSendRequest';
+import removeGroupRouter from './api/removeGroup';
+import leaveGroupRouter from './api/leaveGroup';
+import sendGroupRequestRouter from './api/sendGroupRequest';
+
 
 const app = express();
 app.use(cors());
@@ -21,9 +25,12 @@ app.use('/api/createGroup', createGroupRoute);
 app.use('/api/blockUser', blockUserRouter);
 app.use('/api/cancleRequest', cancleRequestRouter);
 app.use('/api/getAllGroups', getAllGroupsRouter);
-app.use('/api/getComingRouter', getComingRouter);
+app.use('/api/getComingRequest', getComingRouter);
 app.use('/api/getGroups', getGroupsRouter);
 app.use('/api/getSendRequest', getSendRequest);
+app.use('/api/removeGroup', removeGroupRouter);
+app.use('/api/leaveGroup', leaveGroupRouter);
+app.use('/api/sendGroupRequest', sendGroupRequestRouter)
 
 
 export default app;

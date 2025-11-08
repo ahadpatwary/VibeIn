@@ -14,16 +14,16 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'groupId is required' })
         ;
 
-        const data = await groupConversation
+        const request = await groupConversation
             .findById(groupId)
             .populate('requestUser', 'name picture')
         ;
 
-        if(!data)
+        if(!request)
             return res.status(400).json({ message: 'group not found'});
         ;
 
-        return res.status(200).json({ message: data});
+        return res.status(200).json({ request });
             
     } catch (error) {
         return res.status(500).json({ message: 'internal server error' });

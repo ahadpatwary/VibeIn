@@ -12,7 +12,7 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'userId and groupId are required' })
         ;
 
-        const group = await groupConversation.find(
+        const groups = await groupConversation.find(
             {
                 $and: [
                     { participants: { $in: [ new Types.ObjectId(userId) ]}},
@@ -21,7 +21,7 @@ router.post('/', async (req: Request, res: Response) => {
             }
         );
 
-        return res.status(200).json({ group });
+        return res.status(200).json({ groups });
 
     } catch (error) {
         console.error(error);
