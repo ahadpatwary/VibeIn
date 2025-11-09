@@ -4,11 +4,11 @@
 import { GroupCreate } from "@/components/ui/groupCreate";
 import { useCreateGroup } from "@/hooks/useCreateGroup";
 
-type CreatePostProps = {
-  disabled?: boolean;
-};
+// type CreatePostProps = {
+//   disabled?: boolean;
+// };
 
-export default function CreateGroup ({ disabled = false }: CreatePostProps) {
+export default function CreateGroup () {
   const {
     groupName,
     setGroupName,
@@ -34,7 +34,7 @@ export default function CreateGroup ({ disabled = false }: CreatePostProps) {
 
         <button
           onClick={handleSubmit}
-          disabled={loading || disabled}
+          // disabled={loading || disabled}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
         >
           {loading ? "Creating..." : "Create Post"}
