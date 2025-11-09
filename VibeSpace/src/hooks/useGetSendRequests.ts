@@ -26,7 +26,7 @@ export const useGetSendRequest = () => {
                     throw new Error(error.message)
                 ;
             }
-        })
+        })();
     })
 
     return sendRequest;
