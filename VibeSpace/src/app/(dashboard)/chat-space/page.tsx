@@ -11,13 +11,15 @@ import { userIdClient } from '@/lib/userId'
 import { AvatarDemo } from '@/components/AvaterDemo';
 import Image from 'next/image';
 import options from "@/data/options.json";
+import React, { lazy } from 'react'
 
-const componentMap: Record<string, React.ComponentType<any>> = {
-  CreateGroup: require('@/components/CreateGroup').default,
-  AllGroup: require('@/components/AllGroup').default,
-  SendRequest: require('@/components/SendRequest').default,
-  AllRequest: require('@/components/AllRequest').default,
-};
+    // Lazy load components dynamically
+    const componentMap: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
+        CreateGroup: lazy(() => import('@/components/CreateGroup')),
+        AllGroup: lazy(() => import('@/components/AllGroup')),
+        SendRequest: lazy(() => import('@/components/SendRequest')),
+        AllRequest: lazy(() => import('@/components/AllRequest')),
+    };
 
 interface conversation {
     _id: string,
@@ -251,6 +253,7 @@ export default function ChatSpacePage() {
 
                                         ): (
                                             options.map((opt) => 
+
                                                 <button
                                                     key={opt.key}
                                                     className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition"
@@ -308,7 +311,13 @@ export default function ChatSpacePage() {
                                     />
                                 </div>
                             )
-                        ) : (SelectedComponent ? <SelectedComponent /> : <p>Select an option...</p>)
+                        ) : ( SelectedComponent ?
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    <SelectedComponent /> 
+                                </Suspense>
+                                : 
+                                <p>Select an option...</p>
+                            )
                                     
                     }     
            
