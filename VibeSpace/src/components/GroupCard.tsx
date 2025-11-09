@@ -72,7 +72,7 @@ export default function GroupCard({groupId}: propType) {
         <AvatarDemo src='' size="size-12 sm:size-14" />
         <div className="flex flex-col">
           <h2 className="text-base text-black sm:text-lg font-semibold">name</h2>
-          <p className="text-sm text-gray-500">"Offline" </p>
+          <p className="text-sm text-gray-500">Offline </p>
         </div>
       </header>
 
