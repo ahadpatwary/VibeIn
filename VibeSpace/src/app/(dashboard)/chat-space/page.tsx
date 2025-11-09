@@ -11,7 +11,7 @@ import { userIdClient } from '@/lib/userId'
 import { AvatarDemo } from '@/components/AvaterDemo';
 import Image from 'next/image';
 import options from "@/data/options.json";
-import React, { lazy, LazyExoticComponent } from "react";
+import React, { lazy, Suspense, LazyExoticComponent } from "react";
 
 // Define a safe type for components
 type LazyComponent = LazyExoticComponent<() => JSX.Element>;
