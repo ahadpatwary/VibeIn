@@ -11,15 +11,18 @@ import { userIdClient } from '@/lib/userId'
 import { AvatarDemo } from '@/components/AvaterDemo';
 import Image from 'next/image';
 import options from "@/data/options.json";
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, LazyExoticComponent } from "react";
 
-    // Lazy load components dynamically
-    const componentMap: Record<string, React.LazyExoticComponent<React.ComponentType<unknown>>> = {
-        CreateGroup: lazy(() => import('@/components/CreateGroup')),
-        AllGroup: lazy(() => import('@/components/AllGroup')),
-        SendRequest: lazy(() => import('@/components/SendRequest')),
-        AllRequest: lazy(() => import('@/components/AllRequest')),
-    };
+// Define a safe type for components
+type LazyComponent = LazyExoticComponent<() => JSX.Element>;
+
+const componentMap: Record<string, LazyComponent> = {
+  CreateGroup: lazy(() => import("@/components/CreateGroup")),
+  AllGroup: lazy(() => import("@/components/AllGroup")),
+  SendRequest: lazy(() => import("@/components/SendRequest")),
+  AllRequest: lazy(() => import("@/components/AllRequest")),
+};
+
 
 interface conversation {
     _id: string,
