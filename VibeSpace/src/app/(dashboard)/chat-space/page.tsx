@@ -19,7 +19,7 @@ type LazyComponent<P = unknown> = LazyExoticComponent<React.ComponentType<P>>;
 const componentMap: Record<string, LazyComponent> = {
   CreateGroup: lazy(() => import('@/components/CreateGroup')),
   AllGroup: lazy(() => import('@/components/AllGroup')),
-  SendRequest: lazy(() => import('@/components/SendRequest')),
+  MyGroup: lazy(() => import('@/components/MyGroup')),
   AllRequest: lazy(() => import('@/components/AllRequest')),
 };
 

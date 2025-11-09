@@ -9,21 +9,26 @@ import { useChatInformation } from '@/hooks/useChatInformation';
 import { useActiveState } from '@/hooks/useActiveState';
 import { useGetMessage } from '@/hooks/useGetMessage';
 import { ScrollArea } from './ui/scroll-area';
+import { userIdClient } from '@/lib/userId';
+import { Button } from './ui/button';
 
 
 interface IMessage {
   sender: string;
-  receiver: string;
   text: string;
   createdAt: string;
 }
 
 interface propType{
+    userId: string,
     groupId: string,
+    groupName: string,
+    groupPicture: string,
+    setIsGroupList: (prev:boolean) => void
 }
 
 
-export default function GroupCard({groupId}: propType) {
+export default function GroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
 
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
@@ -39,20 +44,20 @@ export default function GroupCard({groupId}: propType) {
 //   const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
 
-//   const handleSend = () => {
-//     if (!newMessage) return;
-//     const messageData = { sender: userId, receiver: chatWith, text: newMessage };
-//     socket?.emit('sendMessage', messageData);
-//     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
-//     setNewMessage('');
-//   };
+  const handleSend = () => {
+    if (!newMessage) return;
+    const messageData = { sender: '111111', text: newMessage };
+    // socket?.emit('sendMessage', messageData);
+    setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
+    setNewMessage('');
+  };
 
-//   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
-//     setNewMessage(e.target.value)
-//     handleTyping(); 
+    setNewMessage(e.target.value)
+    // handleTyping(); 
 
-//   };
+  };
 
 
 
@@ -69,11 +74,12 @@ export default function GroupCard({groupId}: propType) {
 
       {/* Header */}
       <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
-        <AvatarDemo src='' size="size-12 sm:size-14" />
+        <AvatarDemo src={groupPicture} size="size-12 sm:size-14" />
         <div className="flex flex-col">
-          <h2 className="text-base text-black sm:text-lg font-semibold">name</h2>
+          <h2 className="text-base text-black sm:text-lg font-semibold">{groupName}</h2>
           <p className="text-sm text-gray-500">Offline </p>
         </div>
+        <Button className='' onClick={() => setIsGroupList(prev => !prev)}/>
       </header>
 
       {/* Messages */}
@@ -126,11 +132,11 @@ export default function GroupCard({groupId}: propType) {
             placeholder="Type a message..."
             className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none  text-black resize-none h-12 sm:h-14"
             value={newMessage}
-            // onChange={handleChange}
+            onChange={handleChange}
           />
           <button
             className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-md transition-colors"
-            // onClick={handleSend}
+            onClick={handleSend}
           >
             Send
           </button>

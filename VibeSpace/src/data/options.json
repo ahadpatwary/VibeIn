@@ -13,9 +13,9 @@
     },
     {
         "key": 3,
-        "option": "Send Requst",
-        "router": "send-request",
-        "component": "SendRequest"
+        "option": "My Group",
+        "router": "my-group",
+        "component": "MyGroup"
     },
     {
         "key": 4,

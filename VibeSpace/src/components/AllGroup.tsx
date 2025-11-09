@@ -2,6 +2,7 @@ import { useGetAllGroups } from "@/hooks/useGetAllGroups"
 import { useSendGroupRequest } from "@/hooks/useSendGroupRequest";
 import { AvatarDemo } from '@/components/AvaterDemo';
 import { Button } from "./ui/button";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 
 interface propType {
@@ -20,8 +21,11 @@ export default function AllGroup() {
   const sendRequest = useSendGroupRequest();
 
   return (
-    <div className="p-3">
+          <ScrollArea className="w-full overflow-y-auto">
+
+    <div className="h-dvh ">
       {allGroups.length > 0 ? (
+        
         allGroups.map((group: propType) => (
           <div
             key={group._id}
@@ -53,5 +57,6 @@ export default function AllGroup() {
         <p>No groups found</p>
       )}
     </div>
+          </ScrollArea>
   );
 }

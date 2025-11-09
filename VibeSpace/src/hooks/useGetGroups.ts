@@ -1,7 +1,8 @@
+import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react'
 
 
-export const useGetGroups = ( userId: string ) => {
+export const useGetGroups = () => {
 
         
     const [getGroups, setGetGroups] = useState([]);
@@ -10,6 +11,8 @@ export const useGetGroups = ( userId: string ) => {
         try {
             ;(async() => {
             
+                const userId = await userIdClient();
+
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getGroups', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -18,7 +21,7 @@ export const useGetGroups = ( userId: string ) => {
 
                 const data = await res.json();
                 setGetGroups(data.groups || []);
-            })
+            })();
 
         } catch (error) {
             if(error instanceof Error)
@@ -26,7 +29,7 @@ export const useGetGroups = ( userId: string ) => {
             ;
         }
 
-    }, [userId])
+    }, [])
 
     return getGroups;
 }
