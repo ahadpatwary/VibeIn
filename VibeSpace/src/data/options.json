@@ -1,0 +1,26 @@
+[
+    {
+        "key": 1,
+        "option": "Create Group",
+        "mobilerouter": "create-group",
+        "component": "CreateGroup"
+    },
+    {
+        "key": 2,
+        "option": "All Group",
+        "router": "all-groups",
+        "component": "AllGroup"
+    },
+    {
+        "key": 3,
+        "option": "Send Requst",
+        "router": "send-request",
+        "component": "SendRequest"
+    },
+    {
+        "key": 4,
+        "option": "All Request",
+        "router": "all-request",
+        "component": "AllRequest"
+    }
+]

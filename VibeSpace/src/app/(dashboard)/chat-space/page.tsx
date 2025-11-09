@@ -11,7 +11,7 @@ import { userIdClient } from '@/lib/userId'
 import { AvatarDemo } from '@/components/AvaterDemo';
 import Image from 'next/image';
 import { CreateGroup } from '@/components/createGroup'
-
+import options from "@/data/options.json";
 
 interface conversation {
     _id: string,
@@ -238,44 +238,13 @@ export default function ChatSpacePage() {
                                             ) 
 
                                         ): (
-                                            <>
+                                            options.map((opt) => 
                                                 <button
+                                                    key={opt.id}
                                                     className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition">
-                                                        Create Group
+                                                        {opt.option}
                                                 </button>
-                                                <button
-                                                    className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition">
-                                                        Create Group
-                                                </button>
-                                                <button
-                                                    className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition">
-                                                        Create Group
-                                                </button>
-                                                <button
-                                                    className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition">
-                                                        Create Group
-                                                </button>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                                <p>ahad</p>
-                                            </>
+                                            )
                                         )
                                     }
                                     
