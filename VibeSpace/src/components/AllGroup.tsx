@@ -1,6 +1,7 @@
 import { useGetAllGroups } from "@/hooks/useGetAllGroups"
 import { useSendGroupRequest } from "@/hooks/useSendGroupRequest";
 import { AvatarDemo } from '@/components/AvaterDemo';
+import { Button } from "./ui/button";
 
 
 interface propType {
@@ -19,15 +20,14 @@ export default function AllGroup() {
   const sendRequest = useSendGroupRequest();
 
   return (
-    <div>
+    <div className="p-3">
       {allGroups.length > 0 ? (
         allGroups.map((group: propType) => (
-          <button
+          <div
             key={group._id}
-            className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
-            onClick={ () => sendRequest(group._id) }
+            className="w-full flex items-center w-full p-2 mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
           >
-            <div className="flex w-full p-2">
+            
               <AvatarDemo
                 src={group.groupPicture.url}
                 size="size-15"
@@ -37,14 +37,17 @@ export default function AllGroup() {
                   <h2 className="text-lg font-semibold text-gray-200 truncate">
                     {group.groupName}
                   </h2>
-                  <p className="text-sm text-gray-400 ml-auto">
-                    10:10
-                  </p>
                 </div>
-                <p className="text-gray-900 text-sm truncate">{group.lastMessage}</p>
+                <p className="text-gray-900 text-sm truncate">{group.lastMessage}dd</p>
               </div>
-            </div>
-          </button>
+              <Button
+                onClick={ () => sendRequest(group._id) } 
+                className="cursor-pointer"
+              >
+                Request
+              </Button>
+            
+          </div>
         ))
       ) : (
         <p>No groups found</p>

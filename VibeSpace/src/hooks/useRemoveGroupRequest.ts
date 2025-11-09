@@ -1,11 +1,14 @@
+import { userIdClient } from "@/lib/userId";
 
 
 
-export const useRemoveGroupRequest = (userId: string, groupId: string) => {
+export const useRemoveGroupRequest = () => {
     
-    const removeGroupRequest = async() => {
+    const removeGroupRequest = async(groupId: string) => {
         try {
             
+            const userId = await userIdClient();
+
             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/cancleRequest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -1,6 +1,9 @@
 import { useGetSendRequest } from '@/hooks/useGetSendRequests'
 import React from 'react'
 import { AvatarDemo } from '@/components/AvaterDemo';
+import { Button } from './ui/button';
+import { useRemoveGroupRequest } from '@/hooks/useRemoveGroupRequest';
+
 
 interface propType {
   _id: string,
@@ -14,35 +17,41 @@ interface propType {
 
 function AllRequest() {
   const sendRequest = useGetSendRequest() || [];
+  const removeGroupRequest = useRemoveGroupRequest();
   return (
-    <>
-      {
-        sendRequest.map((req: propType) => ( 
+    <div className="p-3">
+      {sendRequest.length > 0 ? (
+        sendRequest.map((group: propType) => (
           <div
-            key={req._id}
-            className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
+            key={group._id}
+            className="w-full flex items-center w-full p-2 mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
           >
-            <div className="flex w-full p-2">
+            
               <AvatarDemo
-                src={req.groupPicture.url}
+                src={group.groupPicture.url}
                 size="size-15"
               />
               <div className="flex flex-col flex-1 min-w-0 px-2">
                 <div className="flex justify-between items-center w-full">
                   <h2 className="text-lg font-semibold text-gray-200 truncate">
-                    {req.groupName}
+                    {group.groupName}
                   </h2>
-                  <p className="text-sm text-gray-400 ml-auto">
-                    10:10
-                  </p>
                 </div>
-                <p className="text-gray-900 text-sm truncate">{req.lastMessage}</p>
+                <p className="text-gray-900 text-sm truncate">{group.lastMessage}dd</p>
               </div>
-            </div>
+              <Button
+                onClick={ () => removeGroupRequest(group._id) } 
+                className="cursor-pointer"
+              >
+                Cancle Request
+              </Button>
+            
           </div>
         ))
-      }
-    </>
+      ) : (
+        <p>No groups found</p>
+      )}
+    </div>
   )
 }
 
