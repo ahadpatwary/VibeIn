@@ -240,7 +240,7 @@ export default function ChatSpacePage() {
                                         ): (
                                             options.map((opt) => 
                                                 <button
-                                                    key={opt.id}
+                                                    key={opt.key}
                                                     className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition">
                                                         {opt.option}
                                                 </button>

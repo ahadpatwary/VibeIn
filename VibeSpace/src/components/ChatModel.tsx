@@ -1,3 +1,4 @@
+import { AvatarDemo } from "./AvaterDemo"
 
 interface propType{
     key: string,
