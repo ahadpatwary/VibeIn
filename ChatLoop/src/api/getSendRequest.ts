@@ -10,23 +10,23 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response) => {
     try {
 
-        const { userId, groupId } = req.body;
+        const { userId } = req.body;
 
-        if(!userId || !groupId) 
-            return res.status(400).json({ message: 'userId and groupId must be required' })
+        if(!userId ) 
+            return res.status(400).json({ message: 'userId must be required' })
         ;
 
-        const data = await groupConversation.findByIdAndUpdate(
-            groupId,
-            {$push: { requestUser : new Types.ObjectId(userId)}},
-            {new: true}
-        )
+        const request = await groupConversation.find(
+            {
+                requestUser: {$in: [new Types.ObjectId(userId)]}
+            }
+        );
 
-        if(!data)
+        if(!request)
             return res.status(400).json({ message: "groupId not find" });
         ;
 
-        return res.status(200).json({ message: 'request send successfully' });            
+        return res.status(200).json({ request });            
 
     } catch (error) {
         return res.status(500).json({ message: "internal server error"});

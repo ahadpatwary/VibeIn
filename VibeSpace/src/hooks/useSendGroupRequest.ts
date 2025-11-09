@@ -1,13 +1,15 @@
+import { userIdClient } from "@/lib/userId";
 
 
 
-export const useSendGroupRequest = (userId: string, groupId: string) => {
+export const useSendGroupRequest = () => {
 
-    const sendGroupRequest = () => {
+    const sendGroupRequest = (groupId: string) => {
 
         ;(async() => {
             try {
                 
+                const userId = await userIdClient();
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/sendGroupRequest', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
