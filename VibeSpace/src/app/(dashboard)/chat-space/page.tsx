@@ -13,8 +13,8 @@ import Image from 'next/image';
 import options from "@/data/options.json";
 import React, { lazy, Suspense, LazyExoticComponent } from "react";
 
-// Define a safe type for components
-type LazyComponent = LazyExoticComponent<() => JSX.Element>;
+
+type LazyComponent = LazyExoticComponent<() => React.ReactElement>;
 
 const componentMap: Record<string, LazyComponent> = {
   CreateGroup: lazy(() => import("@/components/CreateGroup")),
