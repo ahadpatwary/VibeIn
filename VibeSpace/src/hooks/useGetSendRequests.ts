@@ -18,6 +18,7 @@ export const useGetSendRequest = () => {
                 })
 
                 const data = await res.json();
+                console.log(data.request);
                 setSendRequest(data.request || []);
 
             } catch (error) {
