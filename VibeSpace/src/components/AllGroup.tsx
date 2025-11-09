@@ -2,9 +2,14 @@ import { useGetAllGroups } from "@/hooks/useGetAllGroups"
 import { useSendGroupRequest } from "@/hooks/useSendGroupRequest";
 
 
-interface PropType{
+interface propType {
   _id: string,
-  groupName: string;
+  groupName: string,
+  groupPicture: {
+    public_id: string,
+    url: string,
+  },
+  lastMessage: string
 }
 
 export default function AllGroup() {
@@ -15,13 +20,29 @@ export default function AllGroup() {
   return (
     <div>
       {allGroups.length > 0 ? (
-        allGroups.map((group: PropType) => (
-          <button 
-            key={group._id} 
-            className="block p-2 bg-gray-200 rounded my-1"
+        allGroups.map((group: propType) => (
+          <button
+            key={req._id}
+            className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
             onClick={ () => sendRequest(group._id) }
           >
-            {group.groupName || group._id}
+            <div className="flex w-full p-2">
+              <AvatarDemo
+                src={req.groupPicture.url}
+                size="size-15"
+              />
+              <div className="flex flex-col flex-1 min-w-0 px-2">
+                <div className="flex justify-between items-center w-full">
+                  <h2 className="text-lg font-semibold text-gray-200 truncate">
+                    {req.groupName}
+                  </h2>
+                  <p className="text-sm text-gray-400 ml-auto">
+                    10:10
+                  </p>
+                </div>
+                <p className="text-gray-900 text-sm truncate">{req.lastMessage}</p>
+              </div>
+            </div>
           </button>
         ))
       ) : (
