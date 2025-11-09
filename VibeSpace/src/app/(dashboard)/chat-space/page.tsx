@@ -14,7 +14,7 @@ import options from "@/data/options.json";
 import React, { lazy, Suspense } from 'react'
 
     // Lazy load components dynamically
-    const componentMap: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
+    const componentMap: Record<string, React.LazyExoticComponent<React.ComponentType<unknown>>> = {
         CreateGroup: lazy(() => import('@/components/CreateGroup')),
         AllGroup: lazy(() => import('@/components/AllGroup')),
         SendRequest: lazy(() => import('@/components/SendRequest')),
