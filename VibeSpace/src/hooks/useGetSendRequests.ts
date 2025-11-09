@@ -27,7 +27,7 @@ export const useGetSendRequest = () => {
                 ;
             }
         })();
-    })
+    },[])
 
     return sendRequest;
 }
