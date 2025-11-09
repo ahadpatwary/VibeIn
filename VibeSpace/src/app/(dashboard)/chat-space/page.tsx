@@ -11,7 +11,7 @@ import { userIdClient } from '@/lib/userId'
 import { AvatarDemo } from '@/components/AvaterDemo';
 import Image from 'next/image';
 import options from "@/data/options.json";
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 
     // Lazy load components dynamically
     const componentMap: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {

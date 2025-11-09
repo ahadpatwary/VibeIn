@@ -113,8 +113,8 @@ function ShowCard({
           src={image as string}
           fill
           alt="image"
+          loading="lazy"
           sizes="(max-width: 640px) 220px, (max-width: 768px) 250px, 300px"
-          priority
           className="object-contain rounded"
         />
       </div>
