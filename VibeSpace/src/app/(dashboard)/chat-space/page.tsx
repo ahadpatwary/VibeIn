@@ -13,9 +13,10 @@ import { AvatarDemo } from '@/components/AvaterDemo';
 import options from '@/data/options.json';
 
 // ---------------- Lazy Components ----------------
+// Props type নির্ভর করে component এ
 type LazyComponent<P = {}> = LazyExoticComponent<React.ComponentType<P>>;
 
-const componentMap: Record<string, LazyComponent<any>> = {
+const componentMap: Record<string, LazyComponent<{}>> = {
   CreateGroup: lazy(() => import('@/components/CreateGroup')),
   AllGroup: lazy(() => import('@/components/AllGroup')),
   SendRequest: lazy(() => import('@/components/SendRequest')),
