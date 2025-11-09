@@ -5,7 +5,10 @@ import { AvatarDemo } from '@/components/AvaterDemo';
 interface propType {
   _id: string,
   groupName: string,
-  groupPicture: string,
+  groupPicture: {
+    public_id: string,
+    url: string,
+  },
   lastMessage: string
 }
 
@@ -21,7 +24,7 @@ function AllRequest() {
           >
             <div className="flex w-full p-2">
               <AvatarDemo
-                src={req.groupPicture}
+                src={req.groupPicture.url}
                 size="size-15"
               />
               <div className="flex flex-col flex-1 min-w-0 px-2">

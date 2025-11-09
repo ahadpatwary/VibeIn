@@ -5,7 +5,10 @@ import { AvatarDemo } from '@/components/AvaterDemo';
 interface propType {
   _id: string,
   groupName: string,
-  groupPicture: string,
+  groupPicture: {
+    public_id: string,
+    url: string,
+  },
   lastMessage: string
 }
 function SendRequest() {
