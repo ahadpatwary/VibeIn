@@ -10,7 +10,7 @@ interface propType {
 }
 
 function AllRequest() {
-  const sendRequest = useGetSendRequest();
+  const sendRequest = useGetSendRequest() || [];
   return (
     <>
       {
