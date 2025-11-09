@@ -2,12 +2,19 @@ import { useGetSendRequest } from '@/hooks/useGetSendRequests'
 import React from 'react'
 import { AvatarDemo } from '@/components/AvaterDemo';
 
+interface propType {
+  _id: string,
+  groupName: string,
+  groupPicture: string,
+  lastMessage: string
+}
+
 function AllRequest() {
   const sendRequest = useGetSendRequest();
   return (
     <>
       {
-        sendRequest.map((req) => ( 
+        sendRequest.map((req: propType) => ( 
           <div
             key={req._id}
             className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
