@@ -8,7 +8,7 @@ type CreatePostProps = {
   disabled?: boolean;
 };
 
-export const CreateGroup = ({ disabled = false }: CreatePostProps) => {
+export default function CreateGroup ({ disabled = false }: CreatePostProps) {
   const {
     groupName,
     setGroupName,

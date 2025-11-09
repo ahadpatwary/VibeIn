@@ -1,13 +1,14 @@
+import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react'
 
-export const useGetAllGroups = (userId: string) => {
+export const useGetAllGroups = () => {
     const [allGroups, setAllGroups] = useState([]);
 
     useEffect(() => {
         (async () => {
             try {
-                
-                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getAllGroups', {
+                const userId = await userIdClient();
+                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getTotalGroups', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ userId }),
@@ -22,7 +23,7 @@ export const useGetAllGroups = (userId: string) => {
                 }
             }
         })();
-    }, [userId]); // ✅ dependency তে userId থাকা উচিত
+    }, []); // ✅ dependency তে userId থাকা উচিত
 
     return allGroups;
 };

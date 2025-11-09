@@ -13,7 +13,7 @@ import getSendRequest from './api/getSendRequest';
 import removeGroupRouter from './api/removeGroup';
 import leaveGroupRouter from './api/leaveGroup';
 import sendGroupRequestRouter from './api/sendGroupRequest';
-
+import getTotalGroupsRouter from './api/getTotalGroups'
 
 const app = express();
 app.use(cors());
@@ -31,6 +31,7 @@ app.use('/api/getSendRequest', getSendRequest);
 app.use('/api/removeGroup', removeGroupRouter);
 app.use('/api/leaveGroup', leaveGroupRouter);
 app.use('/api/sendGroupRequest', sendGroupRequestRouter)
+app.use('/api/getTotalGroups', getTotalGroupsRouter)
 
 
 export default app;

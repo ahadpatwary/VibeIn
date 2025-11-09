@@ -10,8 +10,14 @@ import { userIdClient } from '@/lib/userId'
 // import { getData } from "@/lib/getData";
 import { AvatarDemo } from '@/components/AvaterDemo';
 import Image from 'next/image';
-import { CreateGroup } from '@/components/createGroup'
 import options from "@/data/options.json";
+
+const componentMap: Record<string, React.ComponentType<any>> = {
+  CreateGroup: require('@/components/CreateGroup').default,
+  AllGroup: require('@/components/AllGroup').default,
+  SendRequest: require('@/components/SendRequest').default,
+  AllRequest: require('@/components/AllRequest').default,
+};
 
 interface conversation {
     _id: string,
@@ -42,8 +48,14 @@ export default function ChatSpacePage() {
     const [totalConv, setTotalConv] = useState([]);
     const [myId, setMyId] = useState("");
     const [isClick, setIsClick] = useState(false);
-
+    const [selected, setSelected] = useState<string | null>(null);
     const router = useRouter();
+
+      const handleSelect = (compName: string) => {
+    setSelected(compName);
+  };
+
+    const SelectedComponent = selected ? componentMap[selected] : null;
 
     useEffect(() => {
         ;(async () => {
@@ -241,7 +253,9 @@ export default function ChatSpacePage() {
                                             options.map((opt) => 
                                                 <button
                                                     key={opt.key}
-                                                    className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition">
+                                                    className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition"
+                                                    onClick={() => handleSelect(opt.component)}
+                                                    >
                                                         {opt.option}
                                                 </button>
                                             )
@@ -277,6 +291,7 @@ export default function ChatSpacePage() {
                     minSize= {50}
                 >
 
+
                     {
                         !isClick ? ( 
                             userId && chatWith ?(
@@ -293,7 +308,7 @@ export default function ChatSpacePage() {
                                     />
                                 </div>
                             )
-                        ) : (< CreateGroup />)
+                        ) : (SelectedComponent ? <SelectedComponent /> : <p>Select an option...</p>)
                                     
                     }     
            
