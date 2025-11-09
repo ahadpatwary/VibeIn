@@ -1,5 +1,6 @@
 import { useGetAllGroups } from "@/hooks/useGetAllGroups"
 import { useSendGroupRequest } from "@/hooks/useSendGroupRequest";
+import { AvatarDemo } from '@/components/AvaterDemo';
 
 
 interface propType {
