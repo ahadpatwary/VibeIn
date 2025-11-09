@@ -32,14 +32,17 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             url: uploadResult.secure_url
         };
 
-        console.log(picture)
-
         const group = await groupConversation.create({
             groupName,
             groupPicture: picture,
             groupAdmin: new Types.ObjectId(userId),
-            groupBio
+            groupBio,
+            participants: [new Types.ObjectId(userId)]
         });
+
+        if(!group)
+            return res.status(400).json({ message: 'user not created successfully' })
+        ;
 
         return res.status(200).json({ message: "Group created successfully", group });
     } catch (error) {

@@ -40,6 +40,7 @@ const groupConversationSchema = new Schema<IGroupConversation>(
         {
             type: Schema.Types.ObjectId,
             ref: 'User',
+            default: []
         },
     ],
 
