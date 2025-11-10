@@ -43,8 +43,10 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 //   const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+
+    if(!socket) return;
     // 🔹 group এ join করার চেষ্টা
-    socket.emit("group", { groupId, userId });
+    socket.emit("join-group", { groupId, userId });
 
     // socket.on("joined_group", (id) => {
     //   console.log("Joined group:", id);
@@ -85,7 +87,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
       groupId,
       text: newMessage 
     };
-    socket?.emit('send-message', messageData);
+    socket?.emit('sendGroupMessage', messageData);
     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
   };
