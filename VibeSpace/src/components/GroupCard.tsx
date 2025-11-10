@@ -11,6 +11,7 @@ import { useGetMessage } from '@/hooks/useGetMessage';
 import { ScrollArea } from './ui/scroll-area';
 import { userIdClient } from '@/lib/userId';
 import { Button } from './ui/button';
+import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 
 
 interface IMessage {
@@ -31,7 +32,8 @@ interface propType{
 export default function GroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
 
   const [newMessage, setNewMessage] = useState('');
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  // const [messages, setMessages] = useState<IMessage[]>([]);
+  const { groupMessage, setGroupMessage } = useGetGroupMessage(groupId);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
 //   const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
@@ -88,7 +90,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
       text: newMessage 
     };
     socket?.emit('sendGroupMessage', messageData);
-    setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
+    setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
   };
 
@@ -125,7 +127,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
       {/* Messages */}
       <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
       <main className=" px-2 sm:px-4 py-3">
-        {messages.map((m, i) => {
+        {groupMessage.map((m, i) => {
           const isSender = true;
           return (
             <div
