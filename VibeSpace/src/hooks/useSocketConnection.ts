@@ -3,12 +3,12 @@ import { io, Socket } from "socket.io-client";
 
 
 
-export const useSocketConnection = (userId: string, chatWith: string) => {
+export const useSocketConnection = (userId: string) => {
     const socketRef = useRef<Socket | null>(null);
 
     useEffect(() => {
 
-        if(userId === "" || chatWith === "") return;
+        if(userId === "") return;
 
         socketRef.current = io("https://vibein-production-d87a.up.railway.app", {
             transports: ["websocket"],
@@ -23,7 +23,7 @@ export const useSocketConnection = (userId: string, chatWith: string) => {
         return () => {
             socketRef.current?.disconnect();
         };
-    }, [userId, chatWith]);
+    }, [userId]);
 
 
     return socketRef.current;

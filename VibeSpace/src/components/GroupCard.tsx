@@ -33,21 +33,59 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  console.log(groupId);
-//   const socket = useSocketConnection(userId, chatWith);
+  const socket = useSocketConnection(userId);
 //   const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
 
 //   const offline = useActiveState(socket!, chatWith);
 
 //   useGetMessage(socket!, userId, chatWith, setMessages);
 
-//   const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
+//   const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    // 🔹 group এ join করার চেষ্টা
+    socket.emit("group", { groupId, userId });
+
+    // socket.on("joined_group", (id) => {
+    //   console.log("Joined group:", id);
+    // });
+
+    socket.on("error", (msg) => {
+      alert(msg);
+    });
+
+    socket.on("receiveGroupMessage", (data) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
+    return () => {
+      socket.off("receiveGroupMessage");
+      // socket.off("error_message");
+    };
+  }, [groupId, userId]);
+
+  // const sendMessage = () => {
+  //   if (message.trim() === "") return;
+  //   socket.emit("send_message", {
+  //     groupId,
+  //     message,
+  //     senderId: userId,
+  //   });
+  //   setMessage("");
+  // };
+
+
+
 
 
   const handleSend = () => {
     if (!newMessage) return;
-    const messageData = { sender: '111111', text: newMessage };
-    // socket?.emit('sendMessage', messageData);
+    const messageData = { 
+      userId,
+      groupId,
+      text: newMessage 
+    };
+    socket?.emit('send-message', messageData);
     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
   };
