@@ -35,7 +35,7 @@ app.use('/api/leaveGroup', leaveGroupRouter);
 app.use('/api/sendGroupRequest', sendGroupRequestRouter)
 app.use('/api/getTotalGroups', getTotalGroupsRouter)
 app.use('/api/getSendRequest', getSendRequestRouter);
-app.use('/api/getGroupMessagae', getGroupMessageRouter);
+app.use('/api/getGroupMessage', getGroupMessageRouter);
 
 
 export default app;

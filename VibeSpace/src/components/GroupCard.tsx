@@ -59,7 +59,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     });
 
     socket.on("receiveGroupMessage", (data) => {
-      setMessages((prev) => [...prev, data]);
+      setGroupMessage((prev) => [...prev, data]);
     });
 
     return () => {
@@ -108,7 +108,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 50);
-  }, [messages]);
+  }, [groupMessage]);
 
   return (
   
