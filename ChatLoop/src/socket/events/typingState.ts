@@ -1,41 +1,36 @@
 import { Server, Socket } from 'socket.io'
 import { activeUsers } from "../activeUsers";
 
+interface propType {
+    receiver: string;
+}
 
 export const typingStateHandler = (io: Server, socket: Socket) => {
-    
-    try {
         
-        socket.on('typing', async({ receiver }) => {
+    socket.on('typing', ({ receiver }: propType) => {
 
-            if(!receiver) return;
+        if(!receiver) return;
 
-            const receiverSocketId = activeUsers[receiver];
+        const receiverSocketId = activeUsers[receiver];
 
-            if(receiverSocketId){
-                io.to(receiverSocketId)
-                    .emit('someoneTyping')
-                ;
-            }
-
-        })
-
-        socket.on('stopTyping', async ({ receiver }) => {
-
-            if(!receiver) return;
-
-            const receiverSocketId = activeUsers[receiver];
-
-            receiverSocketId && io.to(receiverSocketId)
-                .emit('someoneStopTyping')
+        if(receiverSocketId){
+            io.to(receiverSocketId)
+                .emit('someoneTyping')
             ;
-            
-
-        })
-
-    } catch (error) {
-        if(error instanceof Error){
-            console.log(error.message);
         }
-    }
+
+    })
+
+    socket.on('stopTyping', ({ receiver }: propType) => {
+
+        if(!receiver) return;
+
+        const receiverSocketId = activeUsers[receiver];
+
+        receiverSocketId && io.to(receiverSocketId)
+            .emit('someoneStopTyping')
+        ;
+        
+    })
+
 }

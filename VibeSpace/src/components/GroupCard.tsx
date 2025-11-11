@@ -44,7 +44,8 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 
 //   useGetMessage(socket!, userId, chatWith, setMessages);
 
-//   const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);  const [messages, setMessages] = useState([]);
+  const { handleTyping, someoneTyping } = useChatTyping(socket!, groupId);  
+// const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     console.log("ahad");
@@ -97,14 +98,14 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
       text: newMessage 
     };
     socket?.emit('sendGroupMessage', messageData);
-    setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
+    // setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     setNewMessage(e.target.value)
-    // handleTyping(); 
+    handleTyping(); 
 
   };
 
@@ -164,11 +165,11 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
           );
         })}
 
-        {/* {someoneTyping ? (
+        {someoneTyping ? (
           <div className="mb-2 flex justify-start">
             <TypingIndicator />
           </div>
-        ) : <div className='h-7' />} */}
+        ) : <div className='h-7' />}
 
         <div ref={messagesEndRef}></div>
       </main>
