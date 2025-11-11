@@ -17,13 +17,14 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             if(!userId || !groupId || !text) return;
 
-            const message  = await groupMessage.create(
+            let message  = await groupMessage.create(
                 {
                     senderId: new Types.ObjectId(userId),
                     groupId: new Types.ObjectId(groupId),
                     text
                 }
             );
+            message = await message.populate('senderId', '_id name picture');
 
             if(!message) return;
 
