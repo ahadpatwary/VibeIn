@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 
 interface Message {
-  _id: string;
-  senderId: string;
+  userId: string;
+  groupId: string;
   text: string;
   createdAt: string;
 }
