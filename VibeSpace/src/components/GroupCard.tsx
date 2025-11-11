@@ -61,7 +61,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     socket.on("receiveGroupMessage", (data) => {
       setMessages((prev) => [...prev, data]);
     });
-
+  
     return () => {
       socket.off("receiveGroupMessage");
       // socket.off("error_message");
