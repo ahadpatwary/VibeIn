@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 
-export const useChatTyping = (socket: Socket | null, groupId: string) => {
+export const useGroupChatTyping = (socket: Socket | null, groupId: string) => {
   const [someOneGroupTyping, setsomeOneGroupTyping] = useState(false);
   const typingRef = useRef(false);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

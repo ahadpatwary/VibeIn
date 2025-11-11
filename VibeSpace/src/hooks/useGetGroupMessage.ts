@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react'
 
 interface Message {
-  userId: string;
+  senderId: {
+    _id: string,
+    name: string,
+    picture: {
+      public_id: string,
+      url: string,
+    }
+  };
   groupId: string;
   text: string;
   createdAt: string;
