@@ -16,8 +16,8 @@ router.post('/', async(req: Request, res: Response) => {
 
         const messages = await groupMessage.find(
             { groupId: new Types.ObjectId(groupId) }
-        )
-        console.log("message", messages)
+        ).populate('senderId', '_id name picture')
+        
 
         return res.status(200).json({messages});
 
