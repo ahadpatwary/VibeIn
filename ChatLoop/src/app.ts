@@ -15,6 +15,7 @@ import leaveGroupRouter from './api/leaveGroup';
 import sendGroupRequestRouter from './api/sendGroupRequest';
 import getTotalGroupsRouter from './api/getTotalGroups'
 import getSendRequestRouter from './api/getSendRequest';
+import getGroupMessageRouter from './api/getGroupMessage';
 
 const app = express();
 app.use(cors());
@@ -34,6 +35,7 @@ app.use('/api/leaveGroup', leaveGroupRouter);
 app.use('/api/sendGroupRequest', sendGroupRequestRouter)
 app.use('/api/getTotalGroups', getTotalGroupsRouter)
 app.use('/api/getSendRequest', getSendRequestRouter);
+app.use('/api/getGroupMessage', getGroupMessageRouter);
 
 
 export default app;

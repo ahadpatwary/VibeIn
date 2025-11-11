@@ -15,7 +15,8 @@ import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 
 
 interface IMessage {
-  sender: string;
+  userId: string;
+  groupId: string;
   text: string;
   createdAt: string;
 }
@@ -36,6 +37,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
   const { groupMessage, setGroupMessage } = useGetGroupMessage(groupId);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
+  console.log("soc", socket);
 //   const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
 
 //   const offline = useActiveState(socket!, chatWith);
@@ -45,10 +47,13 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 //   const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-
+    console.log("ahad");
+    console.log(socket);
     if(!socket) return;
+    console.log("abid");
     // 🔹 group এ join করার চেষ্টা
     socket.emit("join-group", { groupId, userId });
+    console.log("socket.id");
 
     // socket.on("joined_group", (id) => {
     //   console.log("Joined group:", id);
@@ -59,14 +64,15 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     });
 
     socket.on("receiveGroupMessage", (data) => {
-      setMessages((prev) => [...prev, data]);
+      console.log(data);
+      setGroupMessage((prev) => [...prev, data]);
     });
   
     return () => {
       socket.off("receiveGroupMessage");
       // socket.off("error_message");
     };
-  }, [groupId, userId]);
+  }, [socket, groupId, userId]);
 
   // const sendMessage = () => {
   //   if (message.trim() === "") return;
@@ -84,6 +90,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 
   const handleSend = () => {
     if (!newMessage) return;
+    console.log("send Message");
     const messageData = { 
       userId,
       groupId,
@@ -108,7 +115,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 50);
-  }, [messages]);
+  }, [groupMessage]);
 
   return (
   
