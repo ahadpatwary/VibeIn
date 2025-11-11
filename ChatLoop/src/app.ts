@@ -16,6 +16,7 @@ import sendGroupRequestRouter from './api/sendGroupRequest';
 import getTotalGroupsRouter from './api/getTotalGroups'
 import getSendRequestRouter from './api/getSendRequest';
 import getGroupMessageRouter from './api/getGroupMessage';
+import linkPreviewRouter from './api/linkPreview';
 
 const app = express();
 app.use(cors());
@@ -36,6 +37,7 @@ app.use('/api/sendGroupRequest', sendGroupRequestRouter)
 app.use('/api/getTotalGroups', getTotalGroupsRouter)
 app.use('/api/getSendRequest', getSendRequestRouter);
 app.use('/api/getGroupMessage', getGroupMessageRouter);
+app.use('/api/linkPreview', linkPreviewRouter);
 
 
 export default app;

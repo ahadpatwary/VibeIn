@@ -13,6 +13,7 @@ import { userIdClient } from '@/lib/userId';
 import { Button } from './ui/button';
 import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
+import { LinkPreview } from './LinkPreview';
 
 
 interface Message {
@@ -56,17 +57,11 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 // const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    console.log("ahad");
-    console.log(socket);
+ 
     if(!socket) return;
-    console.log("abid");
-    // 🔹 group এ join করার চেষ্টা
+ 
     socket.emit("join-group", { groupId, userId });
     console.log("socket.id");
-
-    // socket.on("joined_group", (id) => {
-    //   console.log("Joined group:", id);
-    // });
 
     socket.on("error", (msg) => {
       alert(msg);
@@ -83,23 +78,10 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     };
   }, [socket, groupId, userId]);
 
-  // const sendMessage = () => {
-  //   if (message.trim() === "") return;
-  //   socket.emit("send_message", {
-  //     groupId,
-  //     message,
-  //     senderId: userId,
-  //   });
-  //   setMessage("");
-  // };
-
-
-
-
 
   const handleSend = () => {
-    if (!newMessage) return;
-    console.log("send Message");
+    if (newMessage.trim() === "") return;
+   
     const messageData = { 
       userId,
       groupId,
@@ -116,6 +98,8 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     handleTyping(); 
 
   };
+
+  const isLink = (text) => /(https?:\/\/[^\s]+)/g.test(text);
 
 
 
@@ -162,7 +146,9 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                     : "bg-white text-gray-800"
                 }`}
               >
-                {m.text}
+                {
+                  isLink(m.text) ? <LinkPreview url={m.text}/> : m.text
+                }
                 <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
                   {new Date(m.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
