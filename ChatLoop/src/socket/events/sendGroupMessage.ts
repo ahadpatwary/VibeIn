@@ -47,7 +47,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                         referenceMessage: null,
                     }
                 );
-                message = await message.populate('sererId', 'name picture');
+                message = await message.populate('senderId', 'name picture');
             }
 
             if(!message) return;

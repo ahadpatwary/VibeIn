@@ -7,6 +7,8 @@ export function LinkPreview({ url }) {
     ogDescription: "comming description"
   }
 
+  console.log("data input");
+
   // if (isLoading) return <div>Loading preview...</div>;
   // if (!data?.ogTitle) return null;
 
