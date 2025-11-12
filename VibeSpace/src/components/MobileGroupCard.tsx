@@ -48,7 +48,7 @@ interface propType {
 }
 
 
-export default function GroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
+export default function MobileGroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
 
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
@@ -175,7 +175,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
               <button 
                 onClick={() => handleMessageRefrence(message._id, message.text)}
               >
-              {/* { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />} */}
+              { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
               </button>
             </div>
           );

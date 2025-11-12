@@ -52,6 +52,10 @@ export default function ChatSpacePage() {
 
   const SelectedComponent = selected ? componentMap[selected] : null;
 
+  const handleRouteChange = () => {
+    router.push('')
+  }
+
   // ---------------- Fetch Conversations ----------------
   useEffect(() => {
     (async () => {
@@ -133,6 +137,11 @@ export default function ChatSpacePage() {
             </button>
           ))}
         </ScrollArea>
+        <header className="py-3 px-7 flex justify-between items-center bg-neutral-700 text-white">
+          <button className="text-2xl font-semibold" onClick={handleRouteChange}>
+            O
+          </button>
+        </header>
       </div>
     );
   }

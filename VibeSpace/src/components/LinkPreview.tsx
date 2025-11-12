@@ -14,7 +14,7 @@ export function LinkPreview({ url }: PropType) {
     };
 
   return (
-    <div className="p-2 border rounded-md bg-gray-100 mt-1">
+    <div className="p-2 w-full border rounded-md bg-gray-100 mt-1">
       {data.ogImage?.length > 0 && (
         <img
           src={data.ogImage[0].url}
