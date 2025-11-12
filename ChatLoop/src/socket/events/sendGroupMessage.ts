@@ -26,16 +26,13 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                     referenceMessage: new Types.ObjectId(referenceMessage),
                 }
             );
-            message = await message
-                .populate('senderId', '_id name picture')
-                .populate({
-                    path: 'referenceMessage',       // ১ম populate referenceMessage
-                    populate: {                     // তার ভেতরে nested populate
-                        path: 'senderId',           // referenceMessage এর ভেতরের senderId
-                        select: 'name picture'      // যে ফিল্ডগুলো নিতে চাও
-                    }
-                })
-            ;
+            message = await message.populate([
+            { path: 'senderId', select: '_id name picture' },
+            { 
+                path: 'referenceMessage',
+                populate: { path: 'senderId', select: 'name picture' }
+            }
+            ]);
 
             if(!message) return;
 
