@@ -25,7 +25,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const socket = useSocketConnection(userId, chatWith);
+  const socket = useSocketConnection(userId);
   const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
 
   const offline = useActiveState(socket!, chatWith);
