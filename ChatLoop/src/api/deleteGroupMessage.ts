@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'router'
+import express, { Request, Response } from 'express'
 import groupMessage from '../models/GroupMessage';
 
 
