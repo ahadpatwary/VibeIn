@@ -3,7 +3,8 @@ import mongoose, { Types, Schema, Document } from 'mongoose'
 export interface IGroupMessage extends Document {
     groupId: Types.ObjectId,
     senderId: Types.ObjectId,
-    text: string
+    text: string,
+    referenceMessage: Types.ObjectId
 }
 
 
