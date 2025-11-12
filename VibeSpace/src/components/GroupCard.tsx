@@ -1,15 +1,10 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { AvatarDemo } from "@/components/AvaterDemo"
-import { useChatTyping } from '@/hooks/useChatTyping';
 import React from 'react';
 import TypingIndicator from '@/components/TypingIndicator';
 import { useSocketConnection } from '@/hooks/useSocketConnection';
-import { useChatInformation } from '@/hooks/useChatInformation';
-import { useActiveState } from '@/hooks/useActiveState';
-import { useGetMessage } from '@/hooks/useGetMessage';
 import { ScrollArea } from './ui/scroll-area';
-import { userIdClient } from '@/lib/userId';
 import { Button } from './ui/button';
 import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
@@ -122,7 +117,6 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
   const isLink = (text) => /(https?:\/\/[^\s]+)/g.test(text);
 
 
-
   useEffect(() => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -146,16 +140,15 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
       {/* Messages */}
       <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
       <main className=" px-2 sm:px-4 py-3">
-        {groupMessage.map((m: Message, i) => {
-          // console.log(m);
-          const isSender = m.senderId._id == userId;
+        {groupMessage.map((message: Message, i) => {
+          const isSender = message.senderId._id == userId;
           return (
             <div
               key={i}
               className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                <AvatarDemo src={m.senderId.picture.url} size="size-10" />
+                <AvatarDemo src={message.senderId.picture.url} size="size-10" />
               </div>
 
               <div
@@ -165,8 +158,10 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                     : "bg-white text-gray-800"
                 }`}
               >
-                {isLink(m.text) && <LinkPreview url={m.text} />}
-                {replyMessage && <ReplyMessage replyText={replyMessage}  />}
+                {isLink(message.text) && <LinkPreview url={message.text} />}
+                {message.referenceMessage.text && 
+                  <ReplyMessage replyText={message.referenceMessage.text} />
+                }
                   m.text
                 <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
                   {new Date(m.createdAt).toLocaleTimeString([], {

@@ -5,7 +5,8 @@ import { Types } from 'mongoose'
 interface dataType{
     userId: string,
     groupId: string,
-    text: string
+    text: string,
+    referenceMessage: string,
 }
 
 export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
@@ -13,18 +14,28 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
         
         socket.on('sendGroupMessage', async(data: dataType) => {
 
-            const {userId, groupId, text}: dataType = data;
+            const {userId, groupId, text, referenceMessage}: dataType = data;
 
-            if(!userId || !groupId || !text) return;
+            if(!userId || !groupId || !text || !referenceMessage) return;
 
             let message  = await groupMessage.create(
                 {
                     senderId: new Types.ObjectId(userId),
                     groupId: new Types.ObjectId(groupId),
-                    text
+                    text,
+                    referenceMessage: new Types.ObjectId(referenceMessage),
                 }
             );
-            message = await message.populate('senderId', '_id name picture');
+            message = await message
+                .populate('senderId', '_id name picture')
+                .populate({
+                    path: 'referenceMessage',       // ১ম populate referenceMessage
+                    populate: {                     // তার ভেতরে nested populate
+                        path: 'senderId',           // referenceMessage এর ভেতরের senderId
+                        select: 'name picture'      // যে ফিল্ডগুলো নিতে চাও
+                    }
+                })
+            ;
 
             if(!message) return;
 
