@@ -45,7 +45,8 @@ function ChatPageContent() {
 
   return (
     <div style={{ height: viewportHeight }}>
-      <GroupCard groupId={groupId}/>
+      {/* <GroupCard groupId={groupId}/> */}
+      <p>ahad</p>
     </div>
   );
 }
