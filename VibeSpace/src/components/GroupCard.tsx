@@ -14,9 +14,11 @@ import { Button } from './ui/button';
 import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
 import { LinkPreview } from './LinkPreview';
+import { ReplyMessage } from './ReplyMessage';
 
 
 interface Message {
+  _id: string,
   senderId: {
     _id: string,
     name: string,
@@ -51,7 +53,8 @@ interface propType{
 
 export default function GroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
 
-  const [replyMessage, setReplyMessage] = useState(null);
+  const [replyMessage, setReplyMessage] = useState<string | null>(null);
+  const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
   // const [messages, setMessages] = useState<IMessage[]>([]);
   const { groupMessage, setGroupMessage } = useGetGroupMessage(groupId);
@@ -84,6 +87,16 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     };
   }, [socket, groupId, userId]);
 
+  const handleMessageRefrence = (refMessageId: string, message: string) => {
+    setReplyMessage(message!);
+    setRefMessageId(refMessageId);
+    console.log(message);
+  }
+
+  const cancleRefMessage = () =>{
+    setReplyMessage(null);
+    setRefMessageId(null);
+  } 
 
   const handleSend = () => {
     if (newMessage.trim() === "") return;
@@ -91,7 +104,8 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     const messageData = { 
       userId,
       groupId,
-      text: newMessage 
+      text: newMessage,
+      referenceMessage: refMessageId
     };
     socket?.emit('sendGroupMessage', messageData);
     // setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
@@ -151,9 +165,9 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                     : "bg-white text-gray-800"
                 }`}
               >
-                {
-                  isLink(m.text) ? <LinkPreview url={m.text}/> : m.text
-                }
+                {isLink(m.text) && <LinkPreview url={m.text} />}
+                {replyMessage && <ReplyMessage replyText={replyMessage}  />}
+                  m.text
                 <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
                   {new Date(m.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -161,7 +175,9 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                   })}
                 </div>
               </div>
-              <button >X</button>
+              <button 
+                onClick={() => handleMessageRefrence(m._id, m.text)}
+              >X</button>
             </div>
           );
         })}
@@ -178,6 +194,19 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 
       {/* Footer */}
       <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
+                  {replyMessage && (
+            <div className="overflow-hidden rounded pb-3 mb-3 bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between">
+            <div className="flex-1 text-sm">
+            <div className="text-xs text-gray-400">Replying to</div>
+            <div className="max-w-[70%] truncate font-medium text-sm text-gray-100">{replyMessage}</div>
+            {/* <div className="text-xs text-gray-400">— {replyMessage.senderName || replyMessage.senderId}</div> */}
+            </div>
+            <button 
+              className="ml-3 text-gray-300 hover:text-white" 
+              onClick={cancleRefMessage} 
+              aria-label="Cancel reply">✕</button>
+            </div>
+            )}
         <div className="flex items-center gap-2">
           <textarea
             placeholder="Type a message..."
