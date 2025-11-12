@@ -15,8 +15,16 @@ router.post('/', async(req: Request, res: Response) => {
         ;
 
         const messages = await groupMessage.find(
-            { groupId: new Types.ObjectId(groupId) }
-        ).populate('senderId', '_id name picture')
+        { groupId: new Types.ObjectId(groupId) }
+        )
+        .populate('senderId', '_id name picture')
+        .populate({
+        path: 'referenceMessage',       // ১ম populate referenceMessage
+        populate: {                     // তার ভেতরে nested populate
+            path: 'senderId',             // referenceMessage এর ভেতরের senderId
+            select: 'name picture'    // যে ফিল্ডগুলো নিতে চাও
+        }
+        });
         
 
         return res.status(200).json({messages});

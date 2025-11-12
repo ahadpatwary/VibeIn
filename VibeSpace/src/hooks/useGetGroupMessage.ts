@@ -9,6 +9,16 @@ interface Message {
       url: string,
     }
   };
+  referenceMessage: {
+    senderId:{
+      name: string,
+      picture: {
+        public_id: string,
+        url: string,
+      }
+    },
+    text: string,
+  }
   groupId: string;
   text: string;
   createdAt: string;

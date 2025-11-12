@@ -25,6 +25,16 @@ interface Message {
       url: string,
     }
   };
+  referenceMessage: {
+    senderId:{
+      name: string,
+      picture: {
+        public_id: string,
+        url: string,
+      }
+    },
+    text: string,
+  }
   groupId: string;
   text: string;
   createdAt: string;
@@ -41,17 +51,13 @@ interface propType{
 
 export default function GroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
 
+  const [replyMessage, setReplyMessage] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   // const [messages, setMessages] = useState<IMessage[]>([]);
   const { groupMessage, setGroupMessage } = useGetGroupMessage(groupId);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
-  console.log("soc", socket);
-//   const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
 
-//   const offline = useActiveState(socket!, chatWith);
-
-//   useGetMessage(socket!, userId, chatWith, setMessages);
 
   const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, groupId);  
 // const [messages, setMessages] = useState([]);
@@ -103,7 +109,6 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 
 
 
-  // ✅ 2️⃣ Auto-scroll when messages change
   useEffect(() => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -156,6 +161,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                   })}
                 </div>
               </div>
+              <button >X</button>
             </div>
           );
         })}

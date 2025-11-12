@@ -26,6 +26,13 @@ const groupMessageSchema = new Schema<IGroupMessage>(
             required: true,
             trim: true
         },
+
+        referenceMessage: {
+            type: Schema.Types.ObjectId,
+            ref: 'GroupMessage',
+            default: null
+        }
+
     },{ timestamps: true}
 )
 
