@@ -10,6 +10,8 @@ import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
 import { LinkPreview } from './LinkPreview';
 import { ReplyMessage } from './ReplyMessage';
+import { BsArrow90DegRight } from "react-icons/bs";
+import { BsArrow90DegLeft } from "react-icons/bs";
 
 
 interface Message {
@@ -172,7 +174,9 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
               </div>
               <button 
                 onClick={() => handleMessageRefrence(message._id, message.text)}
-              >X</button>
+              >
+              { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
+              </button>
             </div>
           );
         })}
