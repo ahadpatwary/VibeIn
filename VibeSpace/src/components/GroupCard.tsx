@@ -105,6 +105,8 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     socket?.emit('sendGroupMessage', messageData);
     // setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
+    setReplyMessage(null);
+    setRefMessageId(null);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -114,7 +116,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 
   };
 
-  const isLink = (text) => /(https?:\/\/[^\s]+)/g.test(text);
+  const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
 
 
   useEffect(() => {
@@ -159,19 +161,19 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                 }`}
               >
                 {isLink(message.text) && <LinkPreview url={message.text} />}
-                {message.referenceMessage.text && 
-                  <ReplyMessage replyText={message.referenceMessage.text} />
+                {message.referenceMessage?.text && 
+                  <ReplyMessage replyText={message?.referenceMessage?.text} />
                 }
-                  m.text
+                  {message.text}
                 <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
-                  {new Date(m.createdAt).toLocaleTimeString([], {
+                  {new Date(message.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </div>
               </div>
               <button 
-                onClick={() => handleMessageRefrence(m._id, m.text)}
+                onClick={() => handleMessageRefrence(message._id, message.text)}
               >X</button>
             </div>
           );

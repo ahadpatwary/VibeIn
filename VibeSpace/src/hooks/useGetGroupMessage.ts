@@ -25,7 +25,29 @@ interface Message {
 }
 
 export const useGetGroupMessage = (groupId: string) => {
-  const [groupMessage, setGroupMessage] = useState<Message[]>([]);
+  const [groupMessage, setGroupMessage] = useState<Message[]>([{
+    senderId: {
+      _id: "123",
+      name: "ahad",
+      picture: {
+        public_id: "",
+        url: "",
+      }
+    },
+    referenceMessage: {
+      senderId:{
+        name: "",
+        picture: {
+          public_id: "",
+          url: "",
+        }
+      },
+      text: "ahad",
+    },
+    groupId: "",
+    text: "",
+    createdAt: ""
+  }]);
 
   useEffect(() => {
     (async () => {
