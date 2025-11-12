@@ -1,8 +1,12 @@
 import {useState, useEffect } from 'react'
-
+interface HookType {
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: { url: string }[];
+}
 
 export const useLinkPreview = (url: string) => {
-    const [data, setData] = useState("");
+    const [data, setData] = useState<HookType>();
     useEffect(() => {
         ;(async() => {
             try {

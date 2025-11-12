@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 interface Message {
+  _id: string,
   senderId: {
     _id: string,
     name: string,
@@ -26,6 +27,7 @@ interface Message {
 
 export const useGetGroupMessage = (groupId: string) => {
   const [groupMessage, setGroupMessage] = useState<Message[]>([{
+    _id: '123456',
     senderId: {
       _id: "123",
       name: "ahad",

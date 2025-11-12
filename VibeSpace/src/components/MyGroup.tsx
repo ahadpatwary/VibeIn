@@ -16,7 +16,7 @@ interface PropType {
 
 export default function MyGroup() {
   const getGroup = useGetGroups() || [];
-  const [isGroupList, setIsGroupList] = useState(true);
+  const [isGroupList, setIsGroupList] = useState<boolean>(true);
   const [groupName, setGroupName] = useState('U');
   const [groupPicture, setGroupPicture] = useState("");
   const [userId, setUserId] = useState('');

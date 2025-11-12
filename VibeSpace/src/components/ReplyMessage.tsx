@@ -1,14 +1,8 @@
-// LinkPreview.jsx
-// import { useLinkPreview } from '@/hooks/useLinkPreview';
+interface propType{
+  replyText: string,
+}
 
-export function ReplyMessage({ replyText }) {
-//   const  data = useLinkPreview(url) || {
-//     ogTitle: "comming data",
-//     ogDescription: "comming description"
-//   }
-
-  // if (isLoading) return <div>Loading preview...</div>;
-  // if (!data?.ogTitle) return null;
+export function ReplyMessage({ replyText }: propType) {
 
   return (
     <div className="p-2 border rounded-md bg-gray-100 mt-1">

@@ -37,12 +37,12 @@ interface Message {
   createdAt: string;
 }
 
-interface propType{
-    userId: string,
-    groupId: string,
-    groupName: string,
-    groupPicture: string,
-    setIsGroupList: (prev: boolean) => boolean
+interface propType {
+  userId: string;
+  groupId: string;
+  groupName: string;
+  groupPicture: string;
+  setIsGroupList: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
@@ -51,14 +51,12 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
-  // const [messages, setMessages] = useState<IMessage[]>([]);
   const { groupMessage, setGroupMessage } = useGetGroupMessage(groupId);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
 
 
   const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, groupId);  
-// const [messages, setMessages] = useState([]);
 
   useEffect(() => {
  
@@ -136,17 +134,17 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
           <h2 className="text-base text-black sm:text-lg font-semibold">{groupName}</h2>
           <p className="text-sm text-gray-500">Offline </p>
         </div>
-        <Button className='' onClick={() => setIsGroupList((prev ) => !prev)}/>
+        <Button className='' onClick={() => setIsGroupList((prev) => !prev)}/>
       </header>
 
       {/* Messages */}
       <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
       <main className=" px-2 sm:px-4 py-3">
-        {groupMessage.map((message: Message, i) => {
+        {groupMessage.map((message: Message) => {
           const isSender = message.senderId._id == userId;
           return (
             <div
-              key={i}
+              key={message._id}
               className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center">
