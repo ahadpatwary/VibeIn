@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import {useState, useEffect } from 'react'
 
 
 export const useLinkPreview = (url: string) => {
-    
+    const [data, setData] = useState("");
     useEffect(() => {
         ;(async() => {
             try {
@@ -13,8 +13,9 @@ export const useLinkPreview = (url: string) => {
                     body: JSON.stringify({url})
                 })
 
-                const data = res.json();
-                console.log(data);
+                const data = await res.json();
+                console.log("data", data.result);
+                setData(data.result.result);
 
             } catch (error) {
                 if(error instanceof Error)
@@ -24,4 +25,5 @@ export const useLinkPreview = (url: string) => {
         })();
 
     }, [url])
+    return data;
 }
