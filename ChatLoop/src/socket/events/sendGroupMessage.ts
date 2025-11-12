@@ -16,23 +16,39 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             const {userId, groupId, text, referenceMessage}: dataType = data;
 
-            if(!userId || !groupId || !text || !referenceMessage) return;
+            if(!userId || !groupId || !text) return;
 
-            let message  = await groupMessage.create(
-                {
-                    senderId: new Types.ObjectId(userId),
-                    groupId: new Types.ObjectId(groupId),
-                    text,
-                    referenceMessage: new Types.ObjectId(referenceMessage),
+            let message  ;
+
+            if(referenceMessage) {
+
+                message  = await groupMessage.create(
+                    {
+                        senderId: new Types.ObjectId(userId),
+                        groupId: new Types.ObjectId(groupId),
+                        text,
+                        referenceMessage: new Types.ObjectId(referenceMessage),
+                    }
+                );
+
+                message = await message.populate([
+                { path: 'senderId', select: '_id name picture' },
+                { 
+                    path: 'referenceMessage',
+                    populate: { path: 'senderId', select: 'name picture' }
                 }
-            );
-            message = await message.populate([
-            { path: 'senderId', select: '_id name picture' },
-            { 
-                path: 'referenceMessage',
-                populate: { path: 'senderId', select: 'name picture' }
+                ]);
+            }else{
+                message  = await groupMessage.create(
+                    {
+                        senderId: new Types.ObjectId(userId),
+                        groupId: new Types.ObjectId(groupId),
+                        text,
+                        referenceMessage: null,
+                    }
+                );
+                message = await message.populate('sererId', 'name picture');
             }
-            ]);
 
             if(!message) return;
 
