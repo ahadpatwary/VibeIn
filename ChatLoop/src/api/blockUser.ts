@@ -15,7 +15,10 @@ router.post('/', async (req: Request, res: Response) => {
 
         const data = await groupConversation.findByIdAndUpdate(
             groupId, 
-            { $push: { blockedUser: userObjectId } }, 
+            {
+                $push: { blockedUser: userObjectId },
+                $pull: { participants: userObjectId } 
+            }, 
             { new: true } 
         );
 
