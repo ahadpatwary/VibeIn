@@ -130,7 +130,7 @@ export default function MobileGroupCard({userId, groupId, groupName, groupPictur
   return (
     <>
       {
-        isGroup && (
+        isGroup ? (
         <div className="flex flex-col h-full w-full ">
 
         {/* Header */}
@@ -141,6 +141,7 @@ export default function MobileGroupCard({userId, groupId, groupName, groupPictur
             <p className="text-sm text-gray-500">Offline </p>
           </div>
           <Button className='' onClick={() => setIsGroupList((prev) => !prev)}/>
+          <Button className='' onClick={() => setIsGroup((prev) => !prev)}>A</Button>
         </header>
 
         {/* Messages */}

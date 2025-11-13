@@ -28,7 +28,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
 
     return(
         <div className='h-dvh w-full overflow-y-auto'>
-            <Button onClick={() => setIsGroup(prev => !prev)}> <- </Button>
+            <Button onClick={() => setIsGroup(prev => !prev)}>back</Button>
             <ScrollArea className=" w-full rounded-lg">
                 <Card className = "flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
                     <AvatarDemo src={ groupPicture } size="size-30" />
@@ -40,7 +40,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
             <Card>
                 <div className='flex border-none'>
                     <div>{`https://vibe-in-teal.vercel.app/chat-space/group/${groupId}`}</div>
-                    <Button onClick={handleCopyLink}>Copy Link</Button>
+                    <Button >Copy Link</Button>
                 </div>
 
                 <ScrollArea className=" w-full rounded-lg">

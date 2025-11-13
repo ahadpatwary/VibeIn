@@ -12,11 +12,10 @@ router.post('/', async(req: Request, res: Response) => {
         if(!groupId)
             return  res.status(400).json({ message: 'groupId must be required' })
         ;
-        const { participants } = await groupConversation
+        const participants  = await groupConversation
             .findById(groupId)
             .select('participants')
             .populate('participants', '_id name picture')
-            .lean()
         ; // object হিসেবে পাবে
 
         return res.status(200).json({ members: participants });
