@@ -17,7 +17,6 @@ export const useGetGroupMember = (groupId: string) => {
                 });
 
                 const { members } = await res.json();
-                console.log(members.participants);
                 setMembers(members.participants);
 
             } catch (error) {
