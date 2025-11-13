@@ -141,6 +141,8 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
             <p className="text-sm text-gray-500">Offline </p>
           </div>
           <Button className='' onClick={() => setIsGroupList((prev) => !prev)}/>
+          <Button className='' onClick={() => setIsGroup((prev) => !prev)}>A</Button>
+            
         </header>
 
         {/* Messages */}
