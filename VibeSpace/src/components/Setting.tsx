@@ -17,6 +17,15 @@ interface propType{
     userId: string
 }
 
+interface type{
+    _id: string,
+    name: string,
+    picture: {
+        public_id: string,
+        url: string
+    }
+}
+
 export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: propType) => {
     
     const blockUser = useBlockUser(groupId);
@@ -72,7 +81,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                         className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
                     >
                         {
-                            members.map(member => {
+                            members.map((member: type) => {
                                 return (
                                     <div
                                         key={member._id}
@@ -93,7 +102,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                             </p> */}
 
                                             <Button
-                                                onClick={blockUser(member._id)} // change............. 
+                                                onClick={() => {blockUser(member._id)}} // change............. 
                                             >Block</Button>
                                             </div>
                                         </div>
@@ -111,7 +120,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                         className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
                     >
                         {
-                            commingRequest.length ? (  commingRequest.map(request => {
+                            commingRequest.length ? (  commingRequest.map((request: type) => {
                                 return (
                                     <div
                                         key={request._id}
@@ -132,7 +141,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                             </p> */}
 
                                             <Button
-                                                onClick={acceptRequst(request._id)} // change............. 
+                                                onClick={() => {acceptRequst(request._id)}} // change............. 
                                             >Accept Request</Button>
                                             </div>
                                         </div>
@@ -171,7 +180,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                             </p> */}
 
                                             <Button
-                                                onClick={acceptRequst(user._id)} // change............. 
+                                                onClick={() => {acceptRequst(user._id)}} // change............. 
                                             >Accept Request</Button>
                                             </div>
                                         </div>
