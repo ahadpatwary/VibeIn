@@ -1,9 +1,19 @@
 import { userIdClient } from '@/lib/userId'
 import { useState, useEffect } from 'react'
 
+interface propType {
+  _id: string,
+  groupName: string,
+  groupPicture: {
+    public_id: string,
+    url: string,
+  },
+  lastMessage: string
+}
+
 export const useGetSendRequest = () => {
 
-    const [sendRequest, setSendRequest] = useState([]);
+    const [sendRequest, setSendRequest] = useState<propType[]>([]);
 
     useEffect(() => {
         ;(async() => {

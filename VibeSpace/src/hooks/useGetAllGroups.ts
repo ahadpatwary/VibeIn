@@ -2,8 +2,18 @@ import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react'
 
 
+interface propType {
+  _id: string,
+  groupName: string,
+  groupPicture: {
+    public_id: string,
+    url: string,
+  },
+  lastMessage: string
+}
+
 export const useGetAllGroups = () => {
-    const [allGroups, setAllGroups] = useState([]);
+    const [allGroups, setAllGroups] = useState<propType[]>([]);
 
     useEffect(() => {
         (async () => {
