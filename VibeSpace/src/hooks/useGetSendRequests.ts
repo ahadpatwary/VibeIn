@@ -29,5 +29,5 @@ export const useGetSendRequest = () => {
         })();
     },[])
 
-    return sendRequest;
+    return {sendRequest, setSendRequest};
 }

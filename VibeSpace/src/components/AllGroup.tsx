@@ -17,8 +17,13 @@ interface propType {
 
 export default function AllGroup() {
 
-  const allGroups = useGetAllGroups();
+  const {allGroups, setAllGroups} = useGetAllGroups();
   const sendRequest = useSendGroupRequest();
+
+  const handleClick = (groupId: string) => {
+    setAllGroups((prev: propType[]) => prev.filter((group: propType) => groupId !== group._id))
+    sendRequest(groupId);
+  }
 
   return (
     <ScrollArea className="w-full overflow-y-auto">
@@ -45,7 +50,7 @@ export default function AllGroup() {
                   <p className="text-gray-900 text-sm truncate">{group.lastMessage}dd</p>
                 </div>
                 <Button
-                  onClick={ () => sendRequest(group._id) } 
+                  onClick={ () =>  handleClick(group._id)} 
                   className="cursor-pointer"
                 >
                   Request

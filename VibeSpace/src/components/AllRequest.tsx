@@ -16,8 +16,14 @@ interface propType {
 }
 
 function AllRequest() {
-  const sendRequest = useGetSendRequest() || [];
+  const {sendRequest, setSendRequest} = useGetSendRequest() || [];
   const removeGroupRequest = useRemoveGroupRequest();
+
+  const handleClick = (groupId: string) => {
+    setSendRequest((prev: propType[]) => prev.filter((group: propType) => groupId !== group._id))
+    removeGroupRequest(groupId);
+  }
+  
   return (
     <div className="p-3">
       {sendRequest.length > 0 ? (
@@ -40,7 +46,7 @@ function AllRequest() {
                 <p className="text-gray-900 text-sm truncate">{group.lastMessage}dd</p>
               </div>
               <Button
-                onClick={ () => removeGroupRequest(group._id) } 
+                onClick={ () => handleClick(group._id) } 
                 className="cursor-pointer"
               >
                 Cancle Request
