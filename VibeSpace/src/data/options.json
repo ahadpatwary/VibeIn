@@ -22,5 +22,11 @@
         "option": "All Request",
         "router": "all-request",
         "component": "AllRequest"
+    },
+    {
+        "key": 5,
+        "option": "Join Group",
+        "router": "join-group",
+        "component": "JoinGroup"
     }
 ]

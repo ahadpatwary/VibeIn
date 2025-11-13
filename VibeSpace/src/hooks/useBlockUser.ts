@@ -1,9 +1,9 @@
 
 
 
-export const useBlockUser = (userId: string, groupId: string) => {
+export const useBlockUser = ( groupId: string) => {
     
-    const blockUser = () => {
+    const blockUser = (userId: string) => {
         ;(async() => {
             try {
                 
