@@ -24,36 +24,38 @@ const componentMap: Record<string, LazyComponent> = {
 
 
 export default function Home(){
-  const [selected, setSelected] = useState<string | null>(null);
 
-  const handleSelect = (compName: string) => setSelected(compName);
+  const router = useRouter();
+  const handleSelect = (routerName: string) => {
+    router.push(`/chat-space/groupInfo/${routerName}`);
+  }
 
     return (
-                  <div className="w-full h-dvh flex flex-col bg-zinc-800">
-                    <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
-                      <h1 className="text-2xl font-semibold">Chat Space</h1>
-                      <button className="text-2xl font-semibold" >
-                        O
-                      </button>
-                    </header>
-        
-                    <ScrollArea className="flex-1 p-3 overflow-y-auto">
-                        {options.map((opt) => (
-                            <button
-                              key={opt.key}
-                              className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition"
-                              onClick={() => handleSelect(opt.component)}
-                            >
-                              {opt.option}
-                            </button>
-                          ))}
-                    </ScrollArea>
-        
-                    <header className="py-2 px-7 flex justify-between items-center bg-neutral-700 text-white">
-                      <button className="text-2xl font-semibold" >
-                        O
-                      </button>
-                    </header>
-                  </div>
+      <div className="w-full h-dvh flex flex-col bg-zinc-800">
+        <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
+          <h1 className="text-2xl font-semibold">Chat Space</h1>
+          <button className="text-2xl font-semibold" >
+            O
+          </button>
+        </header>
+
+        <ScrollArea className="flex-1 p-3 overflow-y-auto">
+            {options.map((opt) => (
+              <button
+                key={opt.key}
+                className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition"
+                onClick={() => handleSelect(opt.router)}
+              >
+                {opt.option}
+              </button>
+            ))}
+        </ScrollArea>
+
+        <header className="py-2 px-7 flex justify-between items-center bg-neutral-700 text-white">
+          <button className="text-2xl font-semibold" >
+            O
+          </button>
+        </header>
+      </div>
     )
 }

@@ -2,13 +2,13 @@
     {
         "key": 1,
         "option": "Create Group",
-        "mobilerouter": "create-group",
+        "router": "create-group",
         "component": "CreateGroup"
     },
     {
         "key": 2,
         "option": "All Group",
-        "router": "all-groups",
+        "router": "all-group",
         "component": "AllGroup"
     },
     {

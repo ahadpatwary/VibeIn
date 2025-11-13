@@ -53,7 +53,7 @@ export default function ChatSpacePage() {
   const SelectedComponent = selected ? componentMap[selected] : null;
 
   const handleRouteChange = () => {
-    router.push('')
+    router.push('/chat-space/groupInfo');
   }
 
   // ---------------- Fetch Conversations ----------------
