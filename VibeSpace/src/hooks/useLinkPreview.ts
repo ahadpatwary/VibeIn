@@ -18,7 +18,6 @@ export const useLinkPreview = (url: string) => {
                 })
 
                 const data = await res.json();
-                console.log("data", data.result);
                 setData(data.result.result);
 
             } catch (error) {

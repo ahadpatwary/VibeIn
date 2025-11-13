@@ -20,7 +20,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
     const blockUser = useBlockUser( groupId);
 
     const commingRequest = useCommingRequest(groupId) || [{
-        id: 1,
+        _id: 1,
         name: "ahad",
         picture: {
             public_id: "",
@@ -29,7 +29,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
     }];
   
     const members = useGetGroupMember(groupId) || [{
-        id: 1,
+        _id: 1,
         name: "ahad",
         picture: {
             public_id: "",
@@ -56,7 +56,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
 
                 <ScrollArea className=" w-full rounded-lg">
                     <Card
-                        className = "flex flex-col mb-2 h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
+                        className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
                     >
                         {
                             members.map(member => {
@@ -95,10 +95,10 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
 
                 <ScrollArea className=" w-full rounded-lg">
                     <Card
-                        className = "flex flex-col mb-2 h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
+                        className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
                     >
                         {
-                            commingRequest.map(member => {
+                            commingRequest.length ? (  commingRequest.map(member => {
                                 return (
                                     <div
                                         key={member._id}
@@ -126,7 +126,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                         </div>
                                     </div>
                                 )
-                            })
+                            }) ): <p>No User Request</p>
                         }
 
                     </Card>
