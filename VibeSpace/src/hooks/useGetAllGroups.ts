@@ -2,18 +2,8 @@ import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react'
 
 
-interface GroupType {
-  _id: string;
-  groupName: string;
-  groupPicture: {
-    public_id: string;
-    url: string;
-  };
-  lastMessage?: string;
-}
-
 export const useGetAllGroups = () => {
-    const [allGroups, setAllGroups] = useState<GroupType[]>([]);
+    const [allGroups, setAllGroups] = useState([]);
 
     useEffect(() => {
         (async () => {
