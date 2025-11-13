@@ -61,7 +61,8 @@ const groupConversationSchema = new Schema<IGroupConversation>(
     requestUser: [ 
         { 
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            default: []
         }
     ],
 
