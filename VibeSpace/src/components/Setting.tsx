@@ -7,6 +7,7 @@ import React from 'react'
 import { useBlockUser } from "@/hooks/useBlockUser"
 import { useCommingRequest } from '@/hooks/useCommingRequest'
 import { useAcceptRequest } from "@/hooks/useAcceptRequest"
+import { useGetBlockUser } from "@/hooks/useGetBlockUser"
 
 interface propType{
     groupName: string,
@@ -14,15 +15,6 @@ interface propType{
     setIsGroup: React.Dispatch<React.SetStateAction<boolean>>
     groupId: string
     userId: string
-}
-
-interface type{
-    _id: string, 
-    name: string,
-    picture: {
-        public_id: string,
-        url: string
-    }
 }
 
 export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: propType) => {
@@ -48,6 +40,16 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
         }
     }];
 
+    const {blockUsers, setBlockUsers} = useGetBlockUser(userId, groupId) || [{
+        _id: 1,
+        name: "ahad",
+        picture: {
+            public_id: "",
+            url:""
+        }
+    }];
+    
+
     return(
         <div className='h-dvh w-full overflow-y-auto'>
             <Button onClick={() => setIsGroup(prev => !prev)}>back</Button>
@@ -70,7 +72,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                         className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
                     >
                         {
-                            members.map((member: type) => {
+                            members.map(member => {
                                 return (
                                     <div
                                         key={member._id}
@@ -91,7 +93,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                             </p> */}
 
                                             <Button
-                                                onClick={() => { blockUser(member._id) }} // change............. 
+                                                onClick={blockUser(member._id)} // change............. 
                                             >Block</Button>
                                             </div>
                                         </div>
@@ -109,7 +111,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                         className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
                     >
                         {
-                            commingRequest.length ? (  commingRequest.map((request: type) => {
+                            commingRequest.length ? (  commingRequest.map(request => {
                                 return (
                                     <div
                                         key={request._id}
@@ -130,7 +132,46 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                             </p> */}
 
                                             <Button
-                                                onClick={() => { acceptRequst(request._id)}} // change............. 
+                                                onClick={acceptRequst(request._id)} // change............. 
+                                            >Accept Request</Button>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                )
+                            }) ): <p>No User Request</p>
+                        }
+
+                    </Card>
+                </ ScrollArea>
+
+                <ScrollArea className=" w-full rounded-lg">
+                    <Card
+                        className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
+                    >
+                        {
+                            blockUsers.length ? (  blockUsers.map(user => {
+                                return (
+                                    <div
+                                        key={user._id}
+                                        className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
+                                    >
+                                        <div className="flex w-full p-2">
+                                        <AvatarDemo
+                                            src={user.picture.url}
+                                            size="size-15"
+                                        />
+                                        <div className="flex flex-col flex-1 min-w-0 px-2">
+                                            <div className="flex justify-between items-center w-full">
+                                            <h2 className="text-lg font-semibold text-gray-200 truncate">
+                                                {user.name} 
+                                            </h2> 
+                                            {/* <p className="text-sm text-gray-400 ml-auto">
+                                                {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </p> */}
+
+                                            <Button
+                                                onClick={acceptRequst(user._id)} // change............. 
                                             >Accept Request</Button>
                                             </div>
                                         </div>

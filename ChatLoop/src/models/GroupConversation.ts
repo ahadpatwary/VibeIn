@@ -69,7 +69,8 @@ const groupConversationSchema = new Schema<IGroupConversation>(
     blockedUser: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            default: []
         }
     ]
 
