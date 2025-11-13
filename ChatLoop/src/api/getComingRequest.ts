@@ -16,7 +16,8 @@ router.post('/', async (req: Request, res: Response) => {
 
         const request = await groupConversation
             .findById(groupId)
-            .populate('requestUser', 'name picture')
+            .select('reqestUser')
+            .populate('requestUser', '_id name picture')
         ;
 
         if(!request)

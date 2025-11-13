@@ -9,14 +9,15 @@ export const useCommingRequest = (groupId: string) => {
         ;( async() => {
             try {
 
-                const res =await fetch('https://vibein-production-d87a.up.railway.app/api/getComingRequest', {
+                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getComingRequest', {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({groupId})
                 })
 
                 const data = await res.json();
-                setCommingRequest(data.request);
+                console.log("req", daat.reqestUser)
+                setCommingRequest(data.reqestUser);
 
             } catch (error) {
                 if(error instanceof Error)
