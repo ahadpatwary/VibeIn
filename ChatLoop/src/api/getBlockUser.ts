@@ -7,9 +7,9 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response) => {
     try {
         
-        const {userId, groupId} = req.body;
+        const { groupId } = req.body;
 
-        if(!userId || !groupId)
+        if( !groupId)
             return res.status(400).json({ message: 'userId and groupId must be required' })
         ;
 

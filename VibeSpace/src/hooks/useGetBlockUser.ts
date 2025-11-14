@@ -9,7 +9,7 @@ interface blockUserType {
     }
 }
 
-export const useGetBlockUser = (userId: string, groupId: string) => {
+export const useGetBlockUser = (groupId: string) => {
 
     const [blockUsers, setBlockUsers] = useState<blockUserType[]>([]);
 
@@ -17,10 +17,10 @@ export const useGetBlockUser = (userId: string, groupId: string) => {
         ;(async() => {
             try {
 
-                const res = await fetch('', {
+                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getBlockUser', {
                     method: 'POSt',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({userId, groupId})
+                    body: JSON.stringify({groupId})
                 })
 
                 const data = await res.json();

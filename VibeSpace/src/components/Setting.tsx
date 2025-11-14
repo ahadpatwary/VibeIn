@@ -51,7 +51,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
         }
     }];
 
-    const {blockUsers, setBlockUsers} = useGetBlockUser(userId, groupId) || [{
+    const {blockUsers, setBlockUsers} = useGetBlockUser(userId) || [{
         _id: 1,
         name: "ahad",
         picture: {
