@@ -22,6 +22,7 @@ import deleteMessageRouter from './api/deleteMessage';
 import getGroupMembersRouter from './api/getGroupMember'
 import acceptRequestRouter from './api/acceptRequest';
 import getBlockUserRouter from './api/getBlockUser';
+import unBlockUserRouter from './api/unBlockUser';
 
 
 const app = express();
@@ -50,5 +51,6 @@ app.use('/api/deleteMessage', deleteMessageRouter);
 app.use('/api/getGroupMembers', getGroupMembersRouter);
 app.use('/api/acceptRequest', acceptRequestRouter);
 app.use('/api/getBlockUser', getBlockUserRouter);
+app.use('/api/unBlockUser', unBlockUserRouter);
 
 export default app;

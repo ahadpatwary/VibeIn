@@ -8,6 +8,7 @@ import { useBlockUser } from "@/hooks/useBlockUser"
 import { useCommingRequest } from '@/hooks/useCommingRequest'
 import { useAcceptRequest } from "@/hooks/useAcceptRequest"
 import { useGetBlockUser } from "@/hooks/useGetBlockUser"
+import { useUnBlockUser } from "@/hooks/useUnBlockUser"
 
 interface propType{
     groupName: string,
@@ -30,6 +31,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
     
     const blockUser = useBlockUser(groupId);
     const acceptRequst = useAcceptRequest(groupId);
+    const unblockUser = useUnBlockUser(groupId);
 
     const commingRequest = useCommingRequest(groupId) || [{
         _id: 1,
@@ -180,8 +182,8 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
                                             </p> */}
 
                                             <Button
-                                                onClick={() => {acceptRequst(user._id)}} // change............. 
-                                            >Accept Request</Button>
+                                                onClick={() => {unblockUser(user._id)}} // change............. 
+                                            >Unblock</Button>
                                             </div>
                                         </div>
                                         </div>
