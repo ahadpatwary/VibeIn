@@ -16,7 +16,7 @@ export const useCommingRequest = (groupId: string) => {
                 })
 
                 const data = await res.json();
-                setCommingRequest(data.reqestUser || []);
+                setCommingRequest(data.request.reqestUser || []);
 
             } catch (error) {
                 if(error instanceof Error)
