@@ -18,7 +18,7 @@ export const useGetBlockUser = (groupId: string) => {
             try {
 
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getBlockUser', {
-                    method: 'POSt',
+                    method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({groupId})
                 })
