@@ -25,6 +25,8 @@ export const useGetBlockUser = (userId: string, groupId: string) => {
 
                 const data = await res.json();
 
+                console.log("blockUsers",data.blockUser.blockedUser)
+
                 setBlockUsers(data.blockUser.blockedUser || []);
 
             } catch (error) {
