@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
         obj.session.user = {
           id: obj.token.id as string,
           email: obj.token.email as string,
-          sum: "12345" as string
+          sum: obj.token.sum as string
         };
       }
       return obj.session;
@@ -95,6 +95,7 @@ export const authOptions: NextAuthOptions = {
       if (obj.user) {
         obj.token.id =  obj.user.id.toString();
         obj.token.email = obj.user.email;
+        obj.token.sum = "12345";
       }
       return obj.token;
     },
