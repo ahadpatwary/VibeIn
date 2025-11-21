@@ -41,6 +41,8 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user._id.toString(),
             email: user.email,
+            image: user.picture.url, 
+            name: user.name,
           };
         } catch (error: unknown) {
           if (error instanceof Error) {
