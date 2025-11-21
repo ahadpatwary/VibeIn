@@ -95,8 +95,9 @@ export const authOptions: NextAuthOptions = {
       console.log("jwt:",obj);
 
       if (obj.user) {
-        obj.token.id =  obj.user.id.toString();
-        obj.token.email = obj.user.email;
+        obj.token = {
+          ...obj.user
+        }
       }
       return obj.token;
     },
