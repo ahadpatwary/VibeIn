@@ -75,20 +75,9 @@ export const authOptions: NextAuthOptions = {
       }
     },
 
-    async jwt(obj) {
-
-      console.log(obj);
-
-      if (obj.user) {
-        obj.token.id =  obj.user.id.toString();
-        obj.token.email = obj.user.email;
-      }
-      return obj.token;
-    },
-
     async session(obj) {
 
-      console.log(obj);
+      console.log("session:",obj);
       if (obj.token) {
         obj.session.user = {
           id: obj.token.id as string,
@@ -96,6 +85,17 @@ export const authOptions: NextAuthOptions = {
         };
       }
       return obj.session;
+    },
+
+    async jwt(obj) {
+
+      console.log("jwt:",obj);
+
+      if (obj.user) {
+        obj.token.id =  obj.user.id.toString();
+        obj.token.email = obj.user.email;
+      }
+      return obj.token;
     },
   },
 
