@@ -75,13 +75,14 @@ export const authOptions: NextAuthOptions = {
       }
     },
 
-    async session(obj) {
+    async session(obj){
 
       console.log("session:",obj);
       if (obj.token) {
         obj.session.user = {
           id: obj.token.id as string,
           email: obj.token.email as string,
+          sum: "12345",
         };
       }
       return obj.session;
