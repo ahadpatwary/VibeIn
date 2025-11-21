@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
         obj.session.user = {
           id: obj.token.id as string,
           email: obj.token.email as string,
-          sum: "12345",
+          sum: "12345" as string
         };
       }
       return obj.session;
