@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
+    console.log("server Session", session)
     const id = session?.user?.id ?? null;
 
     return NextResponse.json({ success: true, id });
