@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDb } from "@/lib/db";
 import Card from "@/models/Card";
-import { redis } from "./lib/redis";
+import { redis } from "@/lib/redis";
 
 export async function GET() {
   try {
