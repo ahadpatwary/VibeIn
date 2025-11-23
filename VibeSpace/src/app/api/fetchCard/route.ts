@@ -9,6 +9,11 @@ export async function GET() {
     await connectToDb();
 
     await redis.set("foo", "bar");
+    await redis.set("obj", {
+      id: "12345",
+      name: "Abdul Ahad",
+      role: "Admin"
+    });
 
     const allCards = await Card.find();
 
