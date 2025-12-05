@@ -5,9 +5,9 @@ import { redis } from "@/lib/redis";
 
 export async function GET() {
   try {
-
     await connectToDb();
 
+    // Redis test values
     await redis.set("foo", "bar");
     await redis.set(
       "obj",
@@ -18,12 +18,18 @@ export async function GET() {
       })
     );
 
-    const allCards = await Card.find();
 
-    const activeAllCards = allCards.filter(card => card.videoPrivacy === "public");
+    const allActiveCards = await Card.find({
+      videoPrivacy: { $ne: "private" },  // NOT EQUAL properly
+    })
+      .sort({ createdAt: -1 })           // createAt → createdAt হওয়া উচিত
+      .skip(1)
+      .limit(25)
+    ;
 
+  
     return NextResponse.json(
-      { activeCards: activeAllCards },
+      { activeCards: allActiveCards },
       { status: 200 }
     );
 
