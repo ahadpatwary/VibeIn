@@ -3,7 +3,7 @@ import { connectToDb } from './lib/db';
 import { Server } from 'socket.io'
 import { setupSocket } from "./socket";
 import app from './app';
-const cluster = require('cluster');
+import cluster from 'node:cluster';
 
 
 const server = http.createServer(app);
@@ -41,11 +41,10 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', (worker, code, signal) => {
+  cluster.on('exit', (worker: cluster.Worker, code: number | null, signal: NodeJS.Signals | null) => {
     console.log(`Worker ${worker.process.pid} died`);
-    cluster.fork(); // worker মারা গেলে নতুন spawn
+    cluster.fork();
   });
-
 } else {
   const PORT = process.env.PORT || 8080;
   server.listen(PORT, () => {
