@@ -3,13 +3,11 @@ import { connectToDb } from './lib/db';
 import { Server } from 'socket.io';
 import { setupSocket } from "./socket";
 import app from './app';
-import * as cluster from 'node:cluster';
-import * as os from 'os';
+import cluster from 'node:cluster';
+import os from 'os';
 
 const server = http.createServer(app);
 const numCPUs = os.cpus().length;
-
-console.log("corecup", numCPUs);
 
 const io = new Server(server, {
   cors: {
@@ -30,19 +28,20 @@ setupSocket(io);
   }
 })();
 
-if (cluster.isMaster) {
+// Node.js cluster check
+if (cluster.isPrimary) { // <-- use isPrimary instead of isMaster
   const workerCount = numCPUs - 2; // reserve 2 cores for OS / DB
-  console.log(`Master ${process.pid} is running`);
+  console.log(`Primary ${process.pid} is running`);
 
   for (let i = 0; i < workerCount; i++) {
-    cluster.fork();
+    cluster.fork(); // <-- fork exists under cluster
   }
 
   cluster.on(
     'exit',
     (worker: cluster.Worker, code: number | null, signal: NodeJS.Signals | null) => {
       console.log(`Worker ${worker.process.pid} died`);
-      cluster.fork();
+      cluster.fork(); // respawn worker
     }
   );
 } else {
