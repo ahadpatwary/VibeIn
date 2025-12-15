@@ -9,7 +9,7 @@ const server = http.createServer(app);
 
 const numCPUs = require('os').cpus().length;
 
-console.log(numCPUs);
+console.log("corecup", numCPUs);
 
 const io = new Server(server, {
   cors: {
