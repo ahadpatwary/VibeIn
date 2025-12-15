@@ -32,8 +32,22 @@ setupSocket(io);
 })();
 
 
+if (cluster.isMaster) {
+  const workerCount = numCPUs - 2; // reserve 1 core for OS
+  console.log(`Master ${process.pid} is running`);
 
-const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
-  console.log(`socket server is running on PORT ${PORT}`);
-})
+  for (let i = 0; i < workerCount; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+    cluster.fork(); // worker মারা গেলে নতুন spawn
+  });
+
+} else {
+  const PORT = process.env.PORT || 8080;
+  server.listen(PORT, () => {
+    console.log(`socket server is running on PORT ${PORT}`);
+  })
+}
