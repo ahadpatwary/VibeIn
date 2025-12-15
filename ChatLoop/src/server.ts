@@ -1,48 +1,43 @@
 import http from 'http';
 import { connectToDb } from './lib/db';
 import { Server } from 'socket.io';
-import { setupSocket } from "./socket";
+import { setupSocket } from './socket';
 import app from './app';
-import * as cluster from 'node:cluster'; // ✅ namespace import
-import * as os from 'os';
 
+const PORT = process.env.PORT || 8080;
+
+// HTTP server create
 const server = http.createServer(app);
-const numCPUs = os.cpus().length;
 
+// Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "https://vibe-in-teal.vercel.app"],
-    methods: ["GET", "POST"],
+    origin: [
+      'http://localhost:3000',
+      'https://vibe-in-teal.vercel.app'
+    ],
+    methods: ['GET', 'POST'],
     credentials: true,
   },
 });
 
+// Socket event handlers
 setupSocket(io);
 
-(async () => {
+// DB connect
+async function startServer() {
   try {
     await connectToDb();
-    console.log("Connected to DB");
+    console.log('✅ Connected to DB');
+
+    // Server listen
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
   } catch (error) {
-    console.error(error);
+    console.error('❌ DB connection failed:', error);
+    process.exit(1); // Exit if DB fails
   }
-})();
-
-if (cluster.isPrimary) { // ✅ Node 18+ use isPrimary
-  const workerCount = numCPUs - 2;
-  console.log(`Primary ${process.pid} is running`);
-
-  for (let i = 0; i < workerCount; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('exit', (worker: cluster.Worker, code: number | null, signal: NodeJS.Signals | null) => {
-    console.log(`Worker ${worker.process.pid} died`);
-    cluster.fork();
-  });
-} else {
-  const PORT = process.env.PORT || 8080;
-  server.listen(PORT, () => {
-    console.log(`Worker ${process.pid} running on PORT ${PORT}`);
-  });
 }
+
+startServer();
