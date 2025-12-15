@@ -3,6 +3,7 @@ import { connectToDb } from './lib/db';
 import { Server } from 'socket.io'
 import { setupSocket } from "./socket";
 import app from './app';
+const cluster = require('cluster');
 
 
 const server = http.createServer(app);
