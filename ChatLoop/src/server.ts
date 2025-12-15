@@ -1,37 +1,49 @@
 import cluster from 'node:cluster';
 import os from 'os';
 import http from 'http';
+import net from 'net';
 import { connectToDb } from './lib/db';
 import { setupSocket } from './socket';
 import app from './app';
 import { Server } from 'socket.io';
-import net from 'net';
 
-const PORT = process.env.PORT || 8080;
+const PORT = Number(process.env.PORT) || 8080;
 const numCPUs = os.cpus().length;
 
 if (cluster.isPrimary) {
     console.log(`Primary ${process.pid} is running`);
 
-    for (let i = 0; i < numCPUs - 2; i++) {
+    // Fork workers
+    for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
 
+    // Restart worker if it dies
     cluster.on('exit', (worker) => {
         console.log(`Worker ${worker.process.pid} died. Forking a new worker...`);
         cluster.fork();
     });
 
+    // Sticky session server
+    const stickyServer = net.createServer((socket) => {
+        // Hash by remote port or IP to assign worker
+        const workerIndex = socket.remotePort! % numCPUs;
+        const worker = Object.values(cluster.workers!)[workerIndex + 1]; // cluster.workers is object
+        worker!.send('sticky-session', socket);
+    });
+
+    stickyServer.listen(PORT, () => {
+        console.log(`Primary listening for connections on port ${PORT}`);
+    });
+
 } else {
+    // Worker process
     async function startWorker() {
         try {
             await connectToDb();
             console.log(`Worker ${process.pid} connected to DB`);
 
-            // Create server without listen
             const server = http.createServer(app);
-
-            // Setup Socket.IO
             const io = new Server(server, {
                 cors: {
                     origin: [
@@ -45,13 +57,16 @@ if (cluster.isPrimary) {
 
             setupSocket(io);
 
-            // Sticky session: only primary process listens on the port
-            server.listen(PORT, () => {
-                console.log(`Worker ${process.pid} running on port ${PORT}`);
+            // Listen for sticky session sockets from primary
+            process.on('message', (msg: any, socket: any) => {
+                if (msg === 'sticky-session' && socket) {
+                    server.emit('connection', socket);
+                }
             });
 
-        } catch (error) {
-            console.error(`Worker ${process.pid} DB connection failed:`, error);
+            console.log(`Worker ${process.pid} ready`);
+        } catch (err) {
+            console.error(`Worker ${process.pid} failed:`, err);
             process.exit(1);
         }
     }
