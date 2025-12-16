@@ -6,9 +6,6 @@
     "build": "tsc",
     "start": "pm2-runtime ecosystem.config.js"
   },
-  "dependencies": {
-    "pm2": "^5.4.2"
-  },
   "devDependencies": {
     "@types/node": "^25.0.2",
     "ts-node": "^10.9.2",
