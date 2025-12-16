@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "pm2 start ecosystem.config.js"
+    "start": "pm2-runtime ecosystem.config.js"
   },
-  "keywords": [],
-  "dependencies": {},
+  "dependencies": {
+    "pm2": "^5.4.2"
+  },
   "devDependencies": {
     "@types/node": "^25.0.2",
     "ts-node": "^10.9.2",
