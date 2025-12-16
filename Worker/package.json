@@ -1,9 +1,10 @@
 {
   "name": "worker",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "pm2 start ecosystem.config.js",
+    "start": "pm2 start ecosystem.config.js"
   },
   "keywords": [],
   "dependencies": {},
@@ -13,4 +14,3 @@
     "typescript": "^5.9.3"
   }
 }
-
