@@ -10,7 +10,7 @@ module.exports = {
     // },
     {
       name: 'queue-workers',
-      script: 'dist/workers/start-workers.js',
+      script: 'dist/start-workers.js',
       instances: 1,
       autorestart: true,
       watch: false,
