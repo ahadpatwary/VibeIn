@@ -1,1 +1,1 @@
-console.log("✅email worker running");
+console.log("✅email worker running because");
