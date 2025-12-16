@@ -1,18 +1,16 @@
 {
   "name": "worker",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "pm2-runtime ecosystem.config.js",
+    "start": "pm2 start ecosystem.config.js",
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^25.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
 }
+
