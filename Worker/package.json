@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "pm2-runtime ecosystem.config.js"
+    "start": "npx pm2-runtime ecosystem.config.js"
   },
   "devDependencies": {
     "@types/node": "^25.0.2",
