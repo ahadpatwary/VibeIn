@@ -217,7 +217,7 @@ export default function ChatSpacePage() {
             ) : (
               <div className="relative h-screen w-full">
                 <Image
-                  src="/chatSpace.jpg"
+                  src="/ChatSpace_dark.png"
                   alt="Chat Space Background"
                   fill
                   quality={90}
