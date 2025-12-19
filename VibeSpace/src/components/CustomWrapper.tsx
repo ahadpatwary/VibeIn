@@ -13,7 +13,7 @@ export function CustomWrapper({ children }: CustomWrapperProps) {
     <>
       <ScrollArea className = "w-full p-2 overflow-y-auto">
         <div className="flex flex-wrap justify-around items-around">
-            {children}
+          {children}
         </div>
       </ScrollArea>
     </>
