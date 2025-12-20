@@ -85,12 +85,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: error}, { status: 500 });
   }
 }
-
-// ---------------------------
-// Disable default body parser
-// ---------------------------
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};

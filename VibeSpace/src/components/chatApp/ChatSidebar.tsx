@@ -21,9 +21,12 @@ interface Conversation {
 }
 
 interface ChatSidebarProps {
-    setIsClick?: React.Dispatch<React.SetStateAction<boolean>>;
-    setUserId?: React.Dispatch<React.SetStateAction<string>>;
-    setChatWith?: React.Dispatch<React.SetStateAction<string>>;
+    // setIsClick?: React.Dispatch<React.SetStateAction<boolean>>;
+    // setUserId?: React.Dispatch<React.SetStateAction<string>>;
+    // setChatWith?: React.Dispatch<React.SetStateAction<string>>;
+    setIsClick: (value: boolean) => void;
+    setUserId: (value: string) => void;
+    setChatWith: (value: string) => void;
 }
 
 const ChatSidebar = ({setIsClick, setUserId, setChatWith }: ChatSidebarProps) => {
