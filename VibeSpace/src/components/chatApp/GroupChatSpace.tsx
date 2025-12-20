@@ -1,7 +1,8 @@
 
+
 const GroupChatSpace = () => {
     return (
-        <h1>Group Chat Space</h1>
+        <h1>ahad</h1>
     )
 }
 export default GroupChatSpace;
