@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { userIdClient } from "@/lib/userId";
 import { useRouter } from 'next/navigation';
 import { set } from "lodash";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 interface ConversationUser {
@@ -24,9 +25,9 @@ interface ChatSidebarProps {
     // setIsClick?: React.Dispatch<React.SetStateAction<boolean>>;
     // setUserId?: React.Dispatch<React.SetStateAction<string>>;
     // setChatWith?: React.Dispatch<React.SetStateAction<string>>;
-    setIsClick: (value: boolean) => void;
-    setUserId: (value: string) => void;
-    setChatWith: (value: string) => void;
+    setIsClick?: (value: boolean) => void;
+    setUserId?: (value: string) => void;
+    setChatWith?: (value: string) => void;
 }
 
 const ChatSidebar = ({setIsClick, setUserId, setChatWith }: ChatSidebarProps) => {
@@ -69,8 +70,11 @@ const ChatSidebar = ({setIsClick, setUserId, setChatWith }: ChatSidebarProps) =>
     if (!user) return;
 
     const sendId = user === senderId ? receiverId : senderId;
-    setUserId(user);
-    setChatWith(sendId);
+    if( setUserId && setChatWith){
+      setUserId(user);
+      setChatWith(sendId);
+    }
+
   };
     const handleClick = () => {
         router.push('/chat-space/groupInfo');
