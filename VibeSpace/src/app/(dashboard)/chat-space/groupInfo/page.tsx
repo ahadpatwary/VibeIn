@@ -137,7 +137,7 @@ const GroupInfo = () => {
                     <div className="h-full w-full flex items-center justify-center">
                       <div className="text-center">
                         <Image
-                          src="/chat-illustration.png"
+                          src="/Chat_llustration.png"
                           alt="Chat Illustration"
                           width={300}
                           height={300}

@@ -276,7 +276,7 @@ const ChatSpacePage = () => {
                     ) : (
                       <div className="relative h-screen w-full">
                         <Image
-                          src="/ChatSpace_dark.png"
+                          src="/Chat_llustration.png"
                           alt="Chat Space Background"
                           fill
                           quality={90}
