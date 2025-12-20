@@ -6,7 +6,11 @@ import { userIdClient } from "@/lib/userId";
 import { useRouter } from 'next/navigation';
 import { set } from "lodash";
 import { useIsMobile } from "@/hooks/use-mobile";
-
+import { Button } from "../ui/button";
+import { MdGroup } from "react-icons/md";
+import { MdGroups2 } from "react-icons/md";
+import { HiDotsVertical } from "react-icons/hi";
+import Image from "next/image";
 
 interface ConversationUser {
   _id: string;
@@ -82,7 +86,16 @@ const ChatSidebar = ({setIsClick, setUserId, setChatWith }: ChatSidebarProps) =>
     return (
         <div className="w-full h-dvh flex flex-col bg-zinc-800">
         <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
+          <Image 
+              src="/ChatSpace_dark.png" 
+              alt="VibeIn Logo"
+              width={10}
+              height={10}
+            />
           <h1 className="text-2xl font-semibold">Chat Space</h1>
+          <button className="text-2xl font-semibold" onClick={handleClick}>
+            <HiDotsVertical />
+          </button>
         </header>
 
         <ScrollArea className="flex-1 p-3 overflow-y-auto">
@@ -120,9 +133,12 @@ const ChatSidebar = ({setIsClick, setUserId, setChatWith }: ChatSidebarProps) =>
           ))}
         </ScrollArea>
         <header className="py-3 px-7 flex justify-between items-center bg-neutral-700 text-white">
-          <button className="text-2xl font-semibold" onClick={handleClick}>
-            O
-          </button>
+          <Button>
+            <MdGroup />
+          </Button>
+          <Button>
+            <MdGroups2 />
+          </Button>
         </header>
       </div>
     )
