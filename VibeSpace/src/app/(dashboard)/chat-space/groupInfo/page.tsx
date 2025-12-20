@@ -1,83 +1,14 @@
-// 'use client';
-
-// import React, {lazy, LazyExoticComponent } from 'react';
-// import { useRouter } from 'next/navigation';
-
-// import { ScrollArea } from '@/components/ui/scroll-area';
-
-// import options from '@/data/options.json';
-// import SettingSidebar from '@/components/chatApp/SettingSidebar';
-
-// type LazyComponent<P = unknown> = LazyExoticComponent<React.ComponentType<P>>;
-
-// const componentMap: Record<string, LazyComponent> = {
-//   CreateGroup: lazy(() => import('@/components/CreateGroup')),
-//   AllGroup: lazy(() => import('@/components/AllGroup')),
-//   MyGroup: lazy(() => import('@/components/MyGroup')),
-//   AllRequest: lazy(() => import('@/components/AllRequest')),
-// };
-
-
-
-// export default function groupInfo(){
-
-//   const router = useRouter();
-//   const handleSelect = (routerName: string) => {
-//     router.push(`/chat-space/groupInfo/${routerName}`);
-//   }
-
-//     return (
-//       // <div className="w-full h-dvh flex flex-col bg-zinc-800">
-//       //   <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
-//       //     <h1 className="text-2xl font-semibold">Chat Space</h1>
-//       //     <button className="text-2xl font-semibold" >
-//       //       O
-//       //     </button>
-//       //   </header>
-
-//       //   <ScrollArea className="flex-1 p-3 overflow-y-auto">
-//       //       {options.map((opt) => (
-//       //         <button
-//       //           key={opt.key}
-//       //           className="w-full mb-2 bg-zinc-700 rounded p-3 hover:bg-zinc-700 transition"
-//       //           onClick={() => handleSelect(opt.router)}
-//       //         >
-//       //           {opt.option}
-//       //         </button>
-//       //       ))}
-//       //   </ScrollArea>
-
-//       //   <header className="py-2 px-7 flex justify-between items-center bg-neutral-700 text-white">
-//       //     <button className="text-2xl font-semibold" >
-//       //       O
-//       //     </button>
-//       //   </header>
-//       // </div>
-
-//       <SettingSidebar />
-//     )
-// }
-
 'use client';
 
 import ChatSidebar from "@/components/chatApp/ChatSidebar";
 import { useIsMobile } from "@/hooks/useIsMobile";
-
-import React, { useState, useEffect, lazy, Suspense, LazyExoticComponent } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, lazy, Suspense, LazyExoticComponent } from 'react';
 import Image from 'next/image';
-
-
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import ChatCard from '@/components/ChatCard';
-import { userIdClient } from '@/lib/userId';
-import { AvatarDemo } from '@/components/AvaterDemo';
-import options from '@/data/options.json';
 import SettingSidebar from "@/components/chatApp/SettingSidebar";
 
-// ---------------- Lazy Components ----------------
-// Props type নির্ভর করে component এ
+
+
 type LazyComponent<P = unknown> = LazyExoticComponent<React.ComponentType<P>>;
 
 const componentMap: Record<string, LazyComponent> = {
@@ -103,11 +34,7 @@ interface Conversation {
 }
 
 
-
 const GroupInfo = () => {
-  const [isClick, setIsClick] = useState(false);
-  const [userId, setUserId] = useState('');
-  const [chatWith, setChatWith] = useState('');
   const isMobile = useIsMobile();
   const [selected, setSelected] = useState<string | null>(null);
 

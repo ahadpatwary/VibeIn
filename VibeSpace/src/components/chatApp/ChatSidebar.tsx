@@ -4,8 +4,6 @@ import { AvatarDemo } from "../AvaterDemo";
 import { useEffect, useState } from "react";
 import { userIdClient } from "@/lib/userId";
 import { useRouter } from 'next/navigation';
-import { set } from "lodash";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "../ui/button";
 import { MdGroup } from "react-icons/md";
 import { MdGroups2 } from "react-icons/md";
@@ -26,12 +24,9 @@ interface Conversation {
 }
 
 interface ChatSidebarProps {
-    // setIsClick?: React.Dispatch<React.SetStateAction<boolean>>;
-    // setUserId?: React.Dispatch<React.SetStateAction<string>>;
-    // setChatWith?: React.Dispatch<React.SetStateAction<string>>;
-    setIsClick?: (value: boolean) => void;
-    setUserId?: (value: string) => void;
-    setChatWith?: (value: string) => void;
+  setIsClick?: (value: boolean) => void;
+  setUserId?: (value: string) => void;
+  setChatWith?: (value: string) => void;
 }
 
 const ChatSidebar = ({setIsClick, setUserId, setChatWith }: ChatSidebarProps) => {

@@ -2,29 +2,22 @@
 
 import React, {lazy, LazyExoticComponent } from 'react';
 import { useRouter } from 'next/navigation';
-
 import { ScrollArea } from '@/components/ui/scroll-area';
-
 import options from '@/data/options.json';
+import { Button } from "../ui/button";
+import { MdGroup } from "react-icons/md";
+import { MdGroups2 } from "react-icons/md";
+import { HiDotsVertical } from "react-icons/hi";
+import Image from "next/image";
 
-type LazyComponent<P = unknown> = LazyExoticComponent<React.ComponentType<P>>;
-
-const componentMap: Record<string, LazyComponent> = {
-  CreateGroup: lazy(() => import('@/components/CreateGroup')),
-  AllGroup: lazy(() => import('@/components/AllGroup')),
-  MyGroup: lazy(() => import('@/components/MyGroup')),
-  AllRequest: lazy(() => import('@/components/AllRequest')),
-};
 
 interface componentProps {
   setSelected: (routerName: string) => void;
 }
+
 const SettingSidebar = ({ setSelected }: componentProps ) => {
 
   const router = useRouter();
-  const handleSelect = (routerName: string) => {
-    router.push(`/chat-space/groupInfo/${routerName}`);
-  }
 
   const handleRoute = () => {
     router.push('/chat-space');
@@ -33,9 +26,15 @@ const SettingSidebar = ({ setSelected }: componentProps ) => {
     return (
       <div className="w-full h-dvh flex flex-col bg-zinc-800">
         <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
+          <Image 
+              src="/ChatSpace_dark.png" 
+              alt="VibeIn Logo"
+              width={25}
+              height={25}
+            />
           <h1 className="text-2xl font-semibold">Chat Space</h1>
-          <button className="text-2xl font-semibold" onClick={ handleRoute }>
-            O
+          <button className="text-2xl font-semibold" onClick={handleRoute}>
+            <HiDotsVertical />
           </button>
         </header>
 
@@ -51,10 +50,13 @@ const SettingSidebar = ({ setSelected }: componentProps ) => {
             ))}
         </ScrollArea>
 
-        <header className="py-2 px-7 flex justify-between items-center bg-neutral-700 text-white">
-          <button className="text-2xl font-semibold" onClick={ handleRoute } >
-            O
-          </button>
+        <header className="py-3 px-7 flex justify-between items-center bg-neutral-700 text-white">
+          <Button>
+            <MdGroup />
+          </Button>
+          <Button>
+            <MdGroups2 />
+          </Button>
         </header>
       </div>
     )
