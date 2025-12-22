@@ -5,6 +5,7 @@ import { connectToDb } from './lib/db';
 import { Server } from 'socket.io';
 import { setupSocket } from './socket';
 import app from './app';
+import { setSocketConnections } from './lib/socket_io';
 
 
 const PORT = process.env.PORT || 8080;
@@ -26,21 +27,10 @@ if (cluster.isPrimary) {
     // Worker process
     async function startWorker() {
         try {
-            await connectToDb();
             console.log(`✅ Worker ${process.pid} connected to DB`);
 
-            const server = http.createServer(app);
-
-            const io = new Server(server, {
-                cors: {
-                    origin: [
-                        'http://localhost:3000',
-                        'https://vibe-in-teal.vercel.app'
-                    ],
-                    methods: ['GET', 'POST'],
-                    credentials: true,
-                },
-            });
+            await connectToDb();
+            const { io, server } = setSocketConnections();
 
             setupSocket(io);
 
