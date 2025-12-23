@@ -2,7 +2,8 @@ import { Server } from 'socket.io';
 import http from 'http';
 import app from '../app';
 
-let socketConnection: Server | null = null;
+let socketConnection: { io: Server; server: http.Server } | null = null;
+
 
 export const setSocketConnections = () => {
     if(!socketConnection) {
@@ -32,5 +33,6 @@ export const initializeSocketIO = () => {
         if(error instanceof Error)
             throw new Error(error.message)
         ;
+        return null;        ;
     }
 };

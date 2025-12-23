@@ -4,9 +4,13 @@ import http from 'http';
 import { connectToDb } from './lib/db';
 import { Server } from 'socket.io';
 import { setupSocket } from './socket';
-import app from './app';
 import { setSocketConnections } from './lib/socket_io';
+import { connectToRabbitMQ } from './lib/rabbitMQ';
 
+interface ExtendedServer  {
+    io: Server;
+    server: http.Server;
+};
 
 const PORT = process.env.PORT || 8080;
 const numCPUs = os.cpus().length;
@@ -30,7 +34,8 @@ if (cluster.isPrimary) {
             console.log(`✅ Worker ${process.pid} connected to DB`);
 
             await connectToDb();
-            const { io, server } = setSocketConnections();
+            await connectToRabbitMQ();
+            const { io, server } = setSocketConnections() as ExtendedServer;
 
             setupSocket(io);
 
