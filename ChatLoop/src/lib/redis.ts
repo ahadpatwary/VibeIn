@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 
-let redisClient: Redis.Redis | null = null;
+let redisClient: Redis | null = null;
 
 
 export const connectToRedis = () => {
@@ -15,10 +15,11 @@ export const connectToRedis = () => {
         if(error instanceof Error)
             throw new Error(error.message)
         ;
+        return null;
     }
 }
 
-export const getRedisClient = (): Redis.Redis => {
+export const getRedisClient = () => {
     if (!redisClient) { 
         redisClient = connectToRedis();
     }
