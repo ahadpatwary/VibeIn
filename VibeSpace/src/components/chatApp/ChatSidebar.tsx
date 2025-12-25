@@ -10,29 +10,35 @@ import { MdGroups2 } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
 
-interface ConversationUser {
-  _id: string;
-  name: string;
-  picture: { public_id: string; url: string };
-}
+
 interface Conversation {
   _id: string;
-  // senderId: ConversationUser;
-  // receiverId: ConversationUser;
+  type: 'oneToOne' | 'group';
+
   participants: string[];
+  deletedBy: string[];
+  blockedUser: string[];
+  requestUser: string[];
+
   lastMessage: string;
-  lastMessageTime: string | Date;
-  otherParticipant: {
+  lastMessageTime: Date;
+
+  info: {
     name: string;
-    picture: { public_id: string; url: string };
-  }
+    picture: {
+      public_id: string;
+      url: string;
+    };
+    bio?: string;
+    admin?: string;
+  };
 }
 
 interface ChatSidebarProps {
   setUserId?: (value: string) => void;
   setChatWith?: (value: string) => void;
   setGroupId?: (value: string) => void;
-  conversations?: string[];
+  conversations?: Conversation[];
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
@@ -87,9 +93,9 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
         </header>
 
         <ScrollArea className="flex-1 p-3 overflow-y-auto">
-          {conversations?.length > 0 &&conversations.map((conv) => (
+          {conversations?.length! > 0 && conversations?.map((conv)=> (
             <>
-              { conv.otherParticipant ? (
+              { conv.type == "oneToOne" ? (
               <div
                 key={conv._id}
                 className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
@@ -98,7 +104,7 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
                       handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
                     console.log(conv);
-                      handleDesktopClick(conv._doc.participants[0], conv._doc.participants[1]);
+                      handleDesktopClick(conv.participants[0], conv.participants[1]);
                       // setIsClick(true);
                   }
                 }}
@@ -106,14 +112,14 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
                 <div className="flex w-full p-2">
                   <AvatarDemo
                     // src={myId === conv.senderId._id ? conv.receiverId.picture.url : conv.senderId.picture.url}
-                    src={conv.otherParticipant.picture.url}
+                    src={conv.info.picture.url}
                     size="size-15"
                   />
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
                         {/* {myId === conv.senderId._id ? conv.receiverId.name : conv.senderId.name} */}
-                        {conv.otherParticipant.name}
+                        {conv.info.name}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
                         {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -125,26 +131,26 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
               </div>
               ) : (
             <button
-              key={conv._doc._id}
+              key={conv._id}
               className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
               onClick={() => {
                 if(window.innerWidth <= 768){
                     // handleMobileClick(conv._doc.participants[0], conv._doc.participants[1])
                 }else{
                     // handleDesktopClick(conv._doc.participants[0], conv._doc.participants[1]);
-                    handleGroup(conv._doc._id);
+                    handleGroup(conv._id);
                 }
               }}
             >
               <div className="flex w-full p-2">
                 <AvatarDemo
-                  src={conv.groupData.groupPicture.url}
+                  src={conv.info.picture.url}
                   size="size-15"
                 />
                 <div className="flex flex-col flex-1 min-w-0 px-2">
                   <div className="flex justify-between items-center w-full">
                     <h2 className="text-lg font-semibold text-gray-200 truncate">
-                      {conv.groupData.groupName}
+                      {conv.info.name}
                     </h2>
                     <p className="text-sm text-gray-400 ml-auto">
                       {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

@@ -140,7 +140,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
             <h2 className="text-base text-black sm:text-lg font-semibold">{groupName}</h2>
             <p className="text-sm text-gray-500">Offline </p>
           </div>
-          <Button className='' onClick={() => setIsGroupList((prev) => !prev)}/>
+          <Button className='' onClick={() => !!setIsGroupList && setIsGroupList((prev) => !prev)}/>
           <Button className='' onClick={() => setIsGroup((prev) => !prev)}>A</Button>
             
         </header>

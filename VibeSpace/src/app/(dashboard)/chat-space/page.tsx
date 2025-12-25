@@ -10,26 +10,41 @@ import useGetConversation from "@/hooks/useGetConversation";
 import GroupCard from "@/components/GroupCard";
 
 
-interface ConversationUser {
-  _id: string;
-  name: string;
-  picture: { public_id: string; url: string };
-}
+
 
 interface Conversation {
   _id: string;
-  senderId: ConversationUser;
-  receiverId: ConversationUser;
-  lastMessage: string;
-  lastMessageTime: string | Date;
+  type: 'oneToOne' | 'group';
+
+  participants: string[];
+  deletedBy: string[];
+  blockedUser: string[];
+  requestUser: string[];
+
+  lastMessage?: string;
+
+  info?: {
+    name?: string;
+    picture?: {
+      public_id: string;
+      url: string;
+    };
+    bio?: string;
+    admin?: string;
+  };
 }
+
+
+
 
 const ChatSpacePage = () => {
   // const [isClick, setIsClick] = useState(false);
   const [userId, setUserId] = useState('');
   const [chatWith, setChatWith] = useState('');
   const isMobile = useIsMobile();
-  const conversations = useGetConversation() || [];
+ const conversations = useGetConversation();
+
+
   const [state, setState] = useState<"empty" | "group" | "oneToOne">("empty");
   const [groupId, setGroupId] = useState('');
 
@@ -60,12 +75,12 @@ const ChatSpacePage = () => {
                     if (state === "oneToOne" && userId && chatWith) {
                       return <ChatCard userId={userId} chatWith={chatWith} />;
                     } 
-                    else if (state === "group" && groupId) {
+                    else if (state === "group" && groupId && userId) {
                       return( 
                         <GroupCard 
                             userId={userId} 
                             groupId={groupId} 
-                            groupName="ajmol Group" 
+                            groupName="" 
                             groupPicture=""
                         />
                       )
