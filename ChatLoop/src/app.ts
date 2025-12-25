@@ -8,7 +8,6 @@ import blockUserRouter from './api/blockUser';
 import cancleRequestRouter from './api/cancleRequest'
 import getAllGroupsRouter from './api/getAllGroups';
 import getComingRouter from './api/getComingRequest';
-import getGroupsRouter from './api/getGroups';
 import getSendRequest from './api/getSendRequest';
 import removeGroupRouter from './api/removeGroup';
 import leaveGroupRouter from './api/leaveGroup';
@@ -37,7 +36,7 @@ app.use('/api/blockUser', blockUserRouter);
 app.use('/api/cancleRequest', cancleRequestRouter);
 app.use('/api/getAllGroups', getAllGroupsRouter);
 app.use('/api/getComingRequest', getComingRouter);
-app.use('/api/getGroups', getGroupsRouter);
+// app.use('/api/getGroups', getGroupsRouter);
 app.use('/api/getSendRequest', getSendRequest);
 app.use('/api/removeGroup', removeGroupRouter);
 app.use('/api/leaveGroup', leaveGroupRouter);
