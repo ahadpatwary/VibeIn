@@ -45,7 +45,7 @@ interface propType {
   groupId: string;
   groupName: string;
   groupPicture: string;
-  setIsGroupList: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsGroupList?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 

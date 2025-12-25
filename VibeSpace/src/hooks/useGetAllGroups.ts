@@ -26,6 +26,7 @@ export const useGetAllGroups = () => {
                 });
 
                 const data = await res.json(); // ✅ important
+                console.log("Fetched groups:", data.groups); // ✅ check fetched data
                 setAllGroups(data.groups || []); // ✅ data থেকে group নিচ্ছি
 
             } catch (error) {

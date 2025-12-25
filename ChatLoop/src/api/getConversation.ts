@@ -37,29 +37,41 @@ router.post("/", async (req: Request, res: Response) => {
 
     const result = await Conversation.find({
       participants: { $in: [new Types.ObjectId(userID)] },
-    }).sort({ lastMessage: -1 });
+    })
+    .sort({ lastMessage: -1 })
+    .lean();
 
     
     const conversations = await Promise.all(
-      result.map(async conv => {
-        if (conv.type === 'group') {
-          // group conversation: extraFields already embedded
-          return {
-            ...conv,
-            groupData: conv.extraFields,
-          };
-        } else {
-          // oneToOne conversation
-          const otherPersonId = conv.participants.find(
-            (id: any) => id.toString() !== userID
-          );
+      result.map(async (conv) => {
 
-          const otherUser = await User.findById(otherPersonId).select('name picture').lean();
+        if (conv.type === "group") {
           return {
             ...conv,
-            otherParticipant: otherUser,
+
+            info: {
+              name: conv.extraFields?.groupName,
+              picture: conv.extraFields?.groupPicture,
+              bio: conv.extraFields?.groupBio,
+              admin: conv.extraFields?.groupAdmin,
+            },
           };
         }
+
+        // oneToOne
+        const otherPersonId = conv.participants.find(
+          (id: any) => id.toString() !== userID
+        );
+
+        const otherUser = await User.findById(otherPersonId)
+          .select("name picture")
+          .lean();
+
+        return {
+          ...conv,
+
+          info: otherUser,
+        };
       })
     );
 

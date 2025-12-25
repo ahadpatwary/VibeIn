@@ -6,6 +6,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import ChatCard from '@/components/ChatCard';
+import useGetConversation from "@/hooks/useGetConversation";
+import GroupCard from "@/components/GroupCard";
 
 
 interface ConversationUser {
@@ -23,10 +25,14 @@ interface Conversation {
 }
 
 const ChatSpacePage = () => {
-  const [isClick, setIsClick] = useState(false);
+  // const [isClick, setIsClick] = useState(false);
   const [userId, setUserId] = useState('');
   const [chatWith, setChatWith] = useState('');
   const isMobile = useIsMobile();
+  const conversations = useGetConversation() || [];
+  const [state, setState] = useState<"empty" | "group" | "oneToOne">("empty");
+  const [groupId, setGroupId] = useState('');
+
 
   return (
     <>
@@ -38,35 +44,49 @@ const ChatSpacePage = () => {
               <ResizablePanel defaultSize={30} minSize={30}>
                   
                 <ChatSidebar 
-                  setIsClick={setIsClick} 
+                  // setIsClick={setIsClick} 
                   setUserId={setUserId} 
                   setChatWith={setChatWith}
+                  setGroupId ={setGroupId}
+                  conversations = {conversations}
+                  setState ={setState}
+
                 />
               </ResizablePanel>
 
               <ResizableHandle />
-
-              <ResizablePanel defaultSize={70} minSize={50}>
-                {
-                  !isClick ? (
-                    userId && chatWith ? (
-                      <ChatCard userId={userId} chatWith={chatWith} />
-                    ) : (
-                      <div className="relative h-screen w-full">
-                        <Image
-                          src="/Chat_llustration.png"
-                          alt="Chat Space Background"
-                          fill
-                          quality={90}
-                          className="object-cover"
-                          priority
+                <ResizablePanel defaultSize={70} minSize={50}>
+                  {(() => {
+                    if (state === "oneToOne" && userId && chatWith) {
+                      return <ChatCard userId={userId} chatWith={chatWith} />;
+                    } 
+                    else if (state === "group" && groupId) {
+                      return( 
+                        <GroupCard 
+                            userId={userId} 
+                            groupId={groupId} 
+                            groupName="ajmol Group" 
+                            groupPicture=""
                         />
-                      </div>
-                    )
-                  
-                  ): <h1>ahad</h1>
-                }
-              </ResizablePanel>
+                      )
+                    } 
+                    else {
+                      return (
+                        <div className="relative h-screen w-full">
+                          <Image
+                            src="/Chat_llustration.png"
+                            alt="Chat Space Background"
+                            fill
+                            quality={90}
+                            className="object-cover"
+                            priority
+                          />
+                        </div>
+                      );
+                    }
+                  })()}
+                </ResizablePanel>
+
             </ResizablePanelGroup>
           </div>
         )
