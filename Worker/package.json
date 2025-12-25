@@ -7,8 +7,16 @@
     "start": "npx pm2-runtime ecosystem.config.js"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/ioredis": "^5.0.0",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^25.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "ioredis": "^5.8.2",
+    "mongoose": "^9.0.2"
   }
 }
