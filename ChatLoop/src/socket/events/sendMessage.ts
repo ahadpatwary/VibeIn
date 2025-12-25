@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { activeUsers } from "../activeUsers";
 import Message from "../../models/Message";
-import Conversation from "../../models/Conversation";
+import Conversation from "../../models/Conversations";
 import { Types } from 'mongoose'
 
 interface objectType {
@@ -23,9 +23,13 @@ export const sendMessageHandler = async (io: Server, socket: Socket) => {
             const message = await Message.create(data);
 
             const existingConversation = await Conversation.findOne({
-                $or: [
-                    { senderId: sender, receiverId: new Types.ObjectId(receiver) },
-                    { senderId: receiver, receiverId: new Types.ObjectId(sender) }
+                // $or: [
+                //     { senderId: sender, receiverId: new Types.ObjectId(receiver) },
+                //     { senderId: receiver, receiverId: new Types.ObjectId(sender) }
+                // ]
+                $and: [
+                    { type: 'oneToOne' },
+                    { participants: { $all: [new Types.ObjectId(sender), new Types.ObjectId(receiver)] } }
                 ]
             });
 
@@ -34,8 +38,10 @@ export const sendMessageHandler = async (io: Server, socket: Socket) => {
             if (!existingConversation) {
                 // নতুন conversation তৈরি করো
                 conversation = new Conversation({
-                    senderId: sender,
-                    receiverId: new Types.ObjectId(receiver),
+                    // senderId: sender,
+                    // receiverId: new Types.ObjectId(receiver),
+                    type: 'oneToOne',
+                    participants: [new Types.ObjectId(sender), new Types.ObjectId(receiver)],
                     lastMessage: text,
                     lastMessageTime: new Date()
                 });

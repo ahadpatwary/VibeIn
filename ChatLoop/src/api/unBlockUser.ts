@@ -1,7 +1,6 @@
 import express, {Request, Response} from 'express'
 import { Types } from 'mongoose'
-import groupConversation from '../models/GroupConversation';
-
+import Conversation from '../models/Conversations';
 
 const router = express.Router();
 
@@ -14,7 +13,7 @@ router.post('/', async(req: Request, res: Response) => {
             return res.status(400).json({ message: 'userId and groupId must be required' })
         ;
 
-        const data = await groupConversation.findByIdAndUpdate(
+        const data = await Conversation.findByIdAndUpdate(
             groupId,
             {$pull: {blockedUser: new Types.ObjectId(userId)}}
         )

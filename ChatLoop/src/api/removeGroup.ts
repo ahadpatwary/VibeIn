@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose'
-import groupConversation from '../models/GroupConversation';
 import groupMessage from '../models/GroupMessage';
-
+import Conversation from '../models/Conversations';
 
 
 const router = express.Router();
@@ -16,21 +15,21 @@ router.post('/', async(req: Request, res: Response) => {
             return res.status(400).json({ message: 'userId and groupId must be required' })
         ;
 
-        const isAdmin = await groupConversation.exists({
+        const isAdmin = await Conversation.exists({
             _id: groupId,
-            groupAdmin: userId,
+            extraFields: { groupAdmin: userId }
         });
 
         if(isAdmin){
             await groupMessage.deleteMany(
                 { groupId: new Types.ObjectId(groupId) }
             )
-            await groupConversation.findByIdAndDelete(groupId);
+            await Conversation.findByIdAndDelete(groupId);
 
             return res.status(200).json({ message: "group delete successfully" });
         }
 
-        await groupConversation.findByIdAndUpdate(
+        await Conversation.findByIdAndUpdate(
             groupId,
             { $push: { deletedBy: userId }}
         )

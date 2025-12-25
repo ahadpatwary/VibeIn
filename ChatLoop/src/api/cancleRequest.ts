@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose'
-import groupConversation from '../models/GroupConversation';
-
+import Conversation from '../models/Conversations';
 
 // need userId and groupId
 const router = express.Router();
@@ -16,7 +15,7 @@ router.post('/', async(req: Request, res: Response) => {
 
         const userObjectId = new Types.ObjectId(userId);
 
-        const data = await groupConversation.findByIdAndUpdate(
+        const data = await Conversation.findByIdAndUpdate(
             groupId,
             { $pull: { requestUser: userObjectId } },
             { new: true}

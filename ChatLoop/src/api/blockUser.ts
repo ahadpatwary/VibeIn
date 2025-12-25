@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import groupConversation from '../models/GroupConversation';
 import { Types } from 'mongoose';
+import Conversation from '../models/Conversations';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post('/', async (req: Request, res: Response) => {
 
         const userObjectId = new Types.ObjectId(userId);
 
-        const data = await groupConversation.findByIdAndUpdate(
+        const data = await Conversation.findByIdAndUpdate(
             groupId, 
             {
                 $push: { blockedUser: userObjectId },

@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express'
 import { Types } from 'mongoose'
-import groupConversation from '../models/GroupConversation';
-
+import Conversation from '../models/Conversations';
 
 //need user Id and groupId
 
@@ -16,7 +15,7 @@ router.post('/', async (req: Request, res: Response) => {
             return res.status(400).json({ message: 'userId must be required' })
         ;
 
-        const request = await groupConversation.find(
+        const request = await Conversation.find(
             {
                 requestUser: {$in: [new Types.ObjectId(userId)]}
             }

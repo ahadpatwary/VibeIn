@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
-import groupConversation from '../models/GroupConversation';
 import { upload } from '../middlewares/multer';
 import cloudinary from '../lib/cloudinary';
 import { Types } from 'mongoose';
+import Conversation from '../models/Conversations';
 
 const router = express.Router();
 
@@ -32,12 +32,15 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             url: uploadResult.secure_url
         };
 
-        const group = await groupConversation.create({
-            groupName,
-            groupPicture: picture,
-            groupAdmin: new Types.ObjectId(userId),
-            groupBio,
-            participants: [new Types.ObjectId(userId)]
+        const group = await Conversation.create({
+            type: 'group',
+            participants: [new Types.ObjectId(userId)],
+            extraFields: {
+                groupName,
+                groupPicture: picture,
+                groupAdmin: new Types.ObjectId(userId),
+                groupBio
+            }
         });
 
         if(!group)

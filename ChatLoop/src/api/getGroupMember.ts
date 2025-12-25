@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express'
-import groupConversation from '../models/GroupConversation';
-
+import Conversation from '../models/Conversations';
 
 const router = express.Router();
 
@@ -12,7 +11,7 @@ router.post('/', async(req: Request, res: Response) => {
         if(!groupId)
             return  res.status(400).json({ message: 'groupId must be required' })
         ;
-        const participants  = await groupConversation
+        const participants  = await Conversation
             .findById(groupId)
             .select('participants')
             .populate('participants', '_id name picture')
