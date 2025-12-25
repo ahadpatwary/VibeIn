@@ -64,11 +64,9 @@ const conversationSchema = new Schema<IConversation>(
     },
 
     lastMessage: {
-      type: Schema.Types.ObjectId,
-      ref: 'Message',
-      default: null,
+      type: String, default: null,
     },
-    
+
     lastMessageTime: { type: Date, default: null },
 
     extraFields: {
