@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { Types } from 'mongoose'
-import groupConversation from '../../models/GroupConversation';
-
+import Conversation from '../../models/Conversations'
 interface dataType {
     userId: string,
     groupId: string
@@ -15,7 +14,7 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
 
             if(!userId || !groupId) return;
 
-            const isMember = await groupConversation.findOne(
+            const isMember = await Conversation.findOne(
                 {
                     _id: new Types.ObjectId(groupId),
                     participants:{ $in: [new Types.ObjectId(userId)]}

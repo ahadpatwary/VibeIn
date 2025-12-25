@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
+    "@types/dotenv": "^8.2.3",
     "@types/ioredis": "^5.0.0",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^25.0.2",
@@ -16,6 +17,7 @@
   },
   "dependencies": {
     "amqplib": "^0.10.9",
+    "dotenv": "^17.2.3",
     "ioredis": "^5.8.2",
     "mongoose": "^9.0.2"
   }

@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express'
-import groupConversation from '../models/GroupConversation';  // eita ektu dekho
-
+import Conversation from '../models/Conversations';
 
 //need userId and groupId
 const router = express.Router();
@@ -15,7 +14,7 @@ router.post('/', async(req: Request, res: Response) => {
         ;
 
 
-        const groups = await groupConversation.find()
+        const groups = await Conversation.find()
 
         return res.status(200).json({ groups });
 
