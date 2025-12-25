@@ -9,6 +9,7 @@ export interface IConversation extends Document {
   requestUser: Types.ObjectId[];
 
   lastMessage?: Types.ObjectId;
+  lastMessageTime?: Date;
 
   extraFields?: {
     groupName?: string;
@@ -67,6 +68,8 @@ const conversationSchema = new Schema<IConversation>(
       ref: 'Message',
       default: null,
     },
+    
+    lastMessageTime: { type: Date, default: null },
 
     extraFields: {
       type: extraFieldsSchema,
