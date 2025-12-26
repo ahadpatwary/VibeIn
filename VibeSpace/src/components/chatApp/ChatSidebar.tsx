@@ -43,10 +43,12 @@ interface ChatSidebarProps {
 }
 
 const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setState }: ChatSidebarProps) => {
-    const router = useRouter();
+
+  const [ selected, setSelected ] = useState<string | null>(null);
+  const router = useRouter();
   
 
-    const handleMobileClick = async (senderId: string, receiverId: string) => {
+  const handleMobileClick = async (senderId: string, receiverId: string) => {
     const user = await userIdClient();
     if (!user) return;
 
@@ -55,12 +57,11 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
   };
    
   const handleGroup = (groupId: string) => {  
-    console.log("ahadz", groupId);  
     if(!!setState) setState("group");
     if(!!setGroupId) setGroupId(groupId);
   }
 
-    const handleDesktopClick = async (senderId: string, receiverId: string) => {
+  const handleDesktopClick = async (senderId: string, receiverId: string) => {
     const user = await userIdClient();
     if (!user) return;
 
@@ -74,18 +75,18 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
     }
 
   };
-    const handleClick = () => {
-        router.push('/chat-space/groupInfo');
-    } 
+  const handleClick = () => {
+    router.push('/chat-space/groupInfo');
+  } 
     return (
         <div className="w-full h-dvh flex flex-col bg-zinc-800">
         <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
-          <Image 
-              src="/ChatSpace_dark.png" 
-              alt="VibeIn Logo"
-              width={10}
-              height={10}
-            />
+          <Image
+            src="/ChatSpace_dark.png" 
+            alt="VibeIn Logo"
+            width={10}
+            height={10}
+          />
           <h1 className="text-2xl font-semibold">Chat Space</h1>
           <button className="text-2xl font-semibold" onClick={handleClick}>
             <HiDotsVertical />
@@ -111,14 +112,12 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
               >
                 <div className="flex w-full p-2">
                   <AvatarDemo
-                    // src={myId === conv.senderId._id ? conv.receiverId.picture.url : conv.senderId.picture.url}
                     src={conv.info.picture.url}
-                    size="size-15"
+                    size="size-15" 
                   />
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
-                        {/* {myId === conv.senderId._id ? conv.receiverId.name : conv.senderId.name} */}
                         {conv.info.name}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
@@ -137,7 +136,6 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
                 if(window.innerWidth <= 768){
                     // handleMobileClick(conv._doc.participants[0], conv._doc.participants[1])
                 }else{
-                    // handleDesktopClick(conv._doc.participants[0], conv._doc.participants[1]);
                     handleGroup(conv._id);
                 }
               }}

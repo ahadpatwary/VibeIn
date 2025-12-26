@@ -59,13 +59,11 @@ const ChatSpacePage = () => {
               <ResizablePanel defaultSize={30} minSize={30}>
                   
                 <ChatSidebar 
-                  // setIsClick={setIsClick} 
                   setUserId={setUserId} 
                   setChatWith={setChatWith}
                   setGroupId ={setGroupId}
                   conversations = {conversations}
                   setState ={setState}
-
                 />
               </ResizablePanel>
 
