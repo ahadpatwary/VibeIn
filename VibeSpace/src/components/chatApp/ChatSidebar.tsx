@@ -57,15 +57,17 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
   };
    
   const handleGroup = (groupId: string) => {  
+    setSelected(groupId);
     if(!!setState) setState("group");
     if(!!setGroupId) setGroupId(groupId);
   }
 
-  const handleDesktopClick = async (senderId: string, receiverId: string) => {
+  const handleDesktopClick = async (chatId: string, senderId: string, receiverId: string) => {
     const user = await userIdClient();
     if (!user) return;
 
     if(!!setState) setState("oneToOne");
+    setSelected(chatId);
 
 
     const sendId = user === senderId ? receiverId : senderId;
@@ -95,18 +97,15 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
 
         <ScrollArea className="flex-1 p-3 overflow-y-auto">
           {conversations?.length! > 0 && conversations?.map((conv)=> (
-            <>
-              { conv.type == "oneToOne" ? (
               <div
                 key={conv._id}
-                className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
+                className={`w-full ${conv._id === selected ? "bg-zinc-600" : "bg-zinc-700"} mb-2 rounded transition`}
+
                 onClick={() => {
                   if(window.innerWidth <= 768){
                       handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
-                    console.log(conv);
-                      handleDesktopClick(conv.participants[0], conv.participants[1]);
-                      // setIsClick(true);
+                      conv?.type == 'oneToOne' ? handleDesktopClick(conv._id, conv.participants[0], conv.participants[1]) : handleGroup(conv._id);
                   }
                 }}
               >
@@ -127,39 +126,7 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
                     <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p>
                   </div>
                 </div>
-              </div>
-              ) : (
-            <button
-              key={conv._id}
-              className="w-full mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
-              onClick={() => {
-                if(window.innerWidth <= 768){
-                    // handleMobileClick(conv._doc.participants[0], conv._doc.participants[1])
-                }else{
-                    handleGroup(conv._id);
-                }
-              }}
-            >
-              <div className="flex w-full p-2">
-                <AvatarDemo
-                  src={conv.info.picture.url}
-                  size="size-15"
-                />
-                <div className="flex flex-col flex-1 min-w-0 px-2">
-                  <div className="flex justify-between items-center w-full">
-                    <h2 className="text-lg font-semibold text-gray-200 truncate">
-                      {conv.info.name}
-                    </h2>
-                    <p className="text-sm text-gray-400 ml-auto">
-                      {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                  </div>
-                  <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p>
-                </div>
-              </div>
-            </button>
-              )}
-            </>
+              </div> 
           ))}
         </ScrollArea>
         <header className="py-3 px-7 flex justify-between items-center bg-neutral-700 text-white">

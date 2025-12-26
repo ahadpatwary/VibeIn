@@ -12,9 +12,6 @@ interface IMessage {
 
 export const useGetMessage = (socket: Socket , userId: string, chatWith: string, setMessages: React.Dispatch<React.SetStateAction<IMessage[]>>) => {
 
-    // const [messages, setMessages] = useState<IMessage[]>([]);
-
-
     useEffect(() => {
 
         if(!socket || !userId || !chatWith) return;
