@@ -29,6 +29,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 conversationName,
                 conversationPicture
             }: dataType = data;
+            console.log("data", data);
 
             if(!name || !joinId || !text || !messageTime || !conversationName) return;
 
@@ -39,7 +40,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 referenceMessage,
                 messageTime
             }
-
+            console.log("messa", message);
             if(referenceMessage) {
 
                 // message  = await groupMessage.create(
@@ -70,7 +71,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 // message = await message.populate('senderId', 'name picture');
             }
 
-            if(!message) return;
+            // if(!message) return;
 
             io.to(joinId).emit('receiveGroupMessage', message)
         })
