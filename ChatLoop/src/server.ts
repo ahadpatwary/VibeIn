@@ -7,6 +7,7 @@ import { setupSocket } from './socket';
 import { setSocketConnections } from './lib/socket_io';
 import { connectToRabbitMQ } from './lib/rabbitMQ';
 
+
 interface ExtendedServer  {
     io: Server;
     server: http.Server;
