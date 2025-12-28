@@ -30,7 +30,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 conversationPicture
             }: dataType = data;
 
-            if(!name || !joinId || !text || messageTime || conversationName) return;
+            if(!name || !joinId || !text || !messageTime || !conversationName) return;
 
             let message = {
                 name,

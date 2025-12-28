@@ -16,6 +16,7 @@ import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { BsArrow90DegRight } from "react-icons/bs";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
+import { useActiveState } from '@/hooks/useActiveState';
 
 
 interface receiveMessagePropType {
@@ -67,7 +68,6 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
   const socket = useSocketConnection(userId);
   const { userName, profilePicture } = useProfileInformation();
 
-  // const offline = useActiveState(socket!, chatWith);
     const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
 
   // useGetMessage(socket!, userId, chatWith, setMessages);
@@ -148,10 +148,10 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
 
       {/* Header */}
       <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
-        <AvatarDemo src={picture} size="size-12 sm:size-14" />
+        <AvatarDemo src={conversationPicture} size="size-12 sm:size-14" />
         <div className="flex flex-col">
-          <h2 className="text-base text-black sm:text-lg font-semibold">{name}</h2>
-          <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p>
+          <h2 className="text-base text-black sm:text-lg font-semibold">{conversationName}</h2>
+          {/* <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p> */}
         </div>
       </header>
 
@@ -166,7 +166,7 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
               className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                <AvatarDemo src={isSender ? myPicture : picture} size="size-10" />
+                {/* <AvatarDemo src={isSender ? myPicture : picture} size="size-10" /> */}
                 {/* user message send korar time e tar picture pathabe// pore thik korbo */}
               </div>
 

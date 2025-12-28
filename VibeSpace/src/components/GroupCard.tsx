@@ -110,6 +110,7 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
       conversationName,
       conversationPicture
     };
+    console.log(messageData);
     socket?.emit('sendGroupMessage', messageData);
     // setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
@@ -141,9 +142,9 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
 
         {/* Header */}
         <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
-          <AvatarDemo src={groupPicture} size="size-12 sm:size-14" />
+          <AvatarDemo src={conversationPicture} size="size-12 sm:size-14" />
           <div className="flex flex-col">
-            <h2 className="text-base text-black sm:text-lg font-semibold">{groupName}</h2>
+            <h2 className="text-base text-black sm:text-lg font-semibold">{conversationName}</h2>
             <p className="text-sm text-gray-500">Offline </p>
           </div>
           <Button className='' onClick={() => !!setIsGroupList && setIsGroupList((prev) => !prev)}/>
@@ -236,8 +237,8 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
       </div>
       ): (
         <Setting 
-          groupName={groupName} 
-          groupPicture={groupPicture} 
+          groupName={conversationName} 
+          groupPicture={conversationPicture} 
           setIsGroup={setIsGroup}
           joinId={joinId} 
           userId={userId}

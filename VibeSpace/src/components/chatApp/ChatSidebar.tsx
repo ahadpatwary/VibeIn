@@ -56,7 +56,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
   };
    
 
-  const handleDesktopClick = (joinId: string, conversationId: string, conversationName: string, conversationPicture: string) => {
+  const handleDesktopClick = (joinId: string, conversationName: string, conversationPicture: string) => {
     if(!!setConversationName) setConversationName(conversationName);
     if(!!setConversationPicture) setConversationPicture(conversationPicture);
     if(!!setState) setState("group");
@@ -90,6 +90,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
                   if(window.innerWidth <= 768){
                       handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
+                    // console.log("name", conv.info.name);
                       handleDesktopClick(conv._id, conv.info.name, conv.info.picture.url);
                       setSelected(conv._id);
                   }
