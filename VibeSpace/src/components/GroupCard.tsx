@@ -84,9 +84,9 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
     };
   }, [socket, joinId, userId]);
 
-  const handleMessageRefrence = (refMessageId: string, message: string) => {
+  const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
     setReplyMessage(message!);
-    setRefMessageId(refMessageId);
+    setRefMessageId(refMessageId!);
     console.log(message);
   }
 
@@ -112,7 +112,7 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
     };
     console.log(messageData);
     socket?.emit('sendGroupMessage', messageData);
-    // setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
+    setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
     setReplyMessage(null);
     setRefMessageId(null);
@@ -155,7 +155,7 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
         {/* Messages */}
         <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
         <main className=" px-2 sm:px-4 py-3">
-          {groupMessage.length > 0 && groupMessage.map((message: Message) => {
+          {groupMessage.length > 0 && groupMessage.map((message) => {
             const isSender = message.senderId == userId;
             return (
               <div

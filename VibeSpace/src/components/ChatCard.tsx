@@ -17,6 +17,8 @@ import { BsArrow90DegRight } from "react-icons/bs";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
 import { useActiveState } from '@/hooks/useActiveState';
+import { ReplyMessage } from './ReplyMessage';
+import { LinkPreview } from './LinkPreview';
 
 
 interface receiveMessagePropType {
@@ -32,10 +34,14 @@ interface receiveMessagePropType {
 
 
 interface IMessage {
-  sender: string;
-  receiver: string;
-  text: string;
-  createdAt: string;
+  _id?: string,
+  messageId?: string,
+  senderId: string,
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string,
+  messageTime: string,
 }
 
 interface ChatCardProps {
@@ -74,6 +80,8 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
 
   // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
+  const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
+
     useEffect(() => {
    
       if(!socket) return;
@@ -96,9 +104,9 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
     }, [socket, joinId, userId]);
   
 
-  const handleMessageRefrence = (refMessageId: string, message: string) => {
+  const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
     setReplyMessage(message!);
-    setRefMessageId(refMessageId);
+    setRefMessageId(refMessageId!);
     console.log(message);
   }
 
@@ -148,25 +156,25 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
 
       {/* Header */}
       <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
-        <AvatarDemo src={conversationPicture} size="size-12 sm:size-14" />
-        <div className="flex flex-col">
-          <h2 className="text-base text-black sm:text-lg font-semibold">{conversationName}</h2>
+        {/* <AvatarDemo src={messages[0]?.conversationPicture} size="size-12 sm:size-14" /> */}
+        {/* <div className="flex flex-col"> */}
+          {/* <h2 className="text-base text-black sm:text-lg font-semibold">{messages[0]?.conversationName}</h2> */}
           {/* <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p> */}
-        </div>
+        {/* </div> */}
       </header>
 
       {/* Messages */}
       <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
       <main className=" px-2 sm:px-4 py-3">
-        {messages.map((m, i) => {
-          const isSender = m.sender === userId;
+        {messages?.length > 0 && messages.map((m) => {
+          const isSender = m.senderId === userId;
           return (
             <div
-              key={i}
+              key={m._id || m.messageId}
               className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                {/* <AvatarDemo src={isSender ? myPicture : picture} size="size-10" /> */}
+                <AvatarDemo src={m.picture} size="size-10" />
                 {/* user message send korar time e tar picture pathabe// pore thik korbo */}
               </div>
 
@@ -176,17 +184,21 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
                     ? "bg-indigo-500 text-white self-end"
                     : "bg-white text-gray-800"
                 }`}
-              >
+>                   
+                {isLink(m.text) && <LinkPreview url={m.text} />}
+                {m.referenceMessage && 
+                  <ReplyMessage replyText={m.referenceMessage} />
+                }
                 {m.text}
                 <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
-                  {new Date(m.createdAt).toLocaleTimeString([], {
+                  {new Date(m.messageTime).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
                 </div>
               </div>
               <button 
-                onClick={() => handleMessageRefrence(message._id || message.messageId, message.text)}
+                onClick={() => handleMessageRefrence(m._id || m.messageId, m.text)}
               >
               { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
               </button>
@@ -204,23 +216,6 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
       </main>
       </ScrollArea>
 
-      {/* Footer */}
-      {/* <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
-        <div className="flex items-center gap-2">
-          <textarea
-            placeholder="Type a message..."
-            className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none  text-black resize-none h-12 sm:h-14"
-            value={newMessage}
-            onChange={handleChange}
-          />
-          <button
-            className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-md transition-colors"
-            onClick={handleSend}
-          >
-            Send
-          </button>
-        </div>
-      </footer> */}
               <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
             {replyMessage && (
               <div className="overflow-hidden rounded pb-3 mb-3 bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between">

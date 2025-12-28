@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 
 interface receiveMessagePropType {
+  _id?: string,
+  messageId?: string,
+  sererId: string,
   name: string,
   picture: string,
   text: string,
