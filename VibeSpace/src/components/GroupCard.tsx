@@ -13,68 +13,68 @@ import { ReplyMessage } from './ReplyMessage';
 import { BsArrow90DegRight } from "react-icons/bs";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { Setting } from './Setting';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { useProfileInformation } from '@/hooks/useProfileInformation';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
-  _id: string,
-  senderId: {
-    _id: string,
-    name: string,
-    picture: {
-      public_id: string,
-      url: string,
-    }
-  };
-  referenceMessage: {
-    senderId:{
-      name: string,
-      picture: {
-        public_id: string,
-        url: string,
-      }
-    },
-    text: string,
-  }
-  groupId: string;
-  text: string;
-  createdAt: string;
+  _id?: string,
+  messageId?: string,
+  senderId: string,
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string,
+  messageTime: string,
 }
 
 interface propType {
-  userId: string;
-  groupId: string;
-  groupName: string;
-  groupPicture: string;
+  joinId: string;
+  conversationName: string;
+  conversationPicture: string;
   setIsGroupList?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface receiveMessagePropType {
+  _id?: string,
+  messageId?: string,
+  senderId: string,
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string,
+  messageTime: string,
+}
 
-export default function GroupCard({userId, groupId, groupName, groupPicture, setIsGroupList}: propType) {
 
+export default function GroupCard({ joinId, conversationName, conversationPicture, setIsGroupList}: propType) {
+
+  const userId = useSelector((state: RootState) => state.user.id);
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
-  const { groupMessage, setGroupMessage } = useGetGroupMessage(groupId);
+  const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
   const [isGroup, setIsGroup] = useState(true);
+  const { userName, profilePicture } = useProfileInformation();
 
 
-  const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, groupId);  
+  const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);  
 
   useEffect(() => {
  
     if(!socket) return;
- 
-    socket.emit("join-group", { groupId, userId });
-    console.log("socket.id");
+
+    socket.emit("join-group", { joinId, userId });
 
     socket.on("error", (msg) => {
       alert(msg);
     });
 
-    socket.on("receiveGroupMessage", (data) => {
-      console.log(data);
+    socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+      console.log("Received group message:", data);
       setGroupMessage((prev) => [...prev, data]);
     });
   
@@ -82,7 +82,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
       socket.off("receiveGroupMessage");
       // socket.off("error_message");
     };
-  }, [socket, groupId, userId]);
+  }, [socket, joinId, userId]);
 
   const handleMessageRefrence = (refMessageId: string, message: string) => {
     setReplyMessage(message!);
@@ -99,10 +99,16 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
     if (newMessage.trim() === "") return;
    
     const messageData = { 
-      userId,
-      groupId,
+      messageId: uuidv4(),
+      senderId: userId,
+      name: userName,
+      picture: profilePicture,
+      joinId,
       text: newMessage,
-      referenceMessage: refMessageId
+      referenceMessage: refMessageId,
+      messageTime: new Date().toISOString(),
+      conversationName,
+      conversationPicture
     };
     socket?.emit('sendGroupMessage', messageData);
     // setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
@@ -148,15 +154,15 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
         {/* Messages */}
         <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
         <main className=" px-2 sm:px-4 py-3">
-          {groupMessage.map((message: Message) => {
-            const isSender = message.senderId._id == userId;
+          {groupMessage.length > 0 && groupMessage.map((message: Message) => {
+            const isSender = message.senderId == userId;
             return (
               <div
-                key={message._id}
+                key={message._id || message.messageId}
                 className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
               >
                 <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                  <AvatarDemo src={message.senderId.picture.url} size="size-10 " />
+                  <AvatarDemo src={message.picture} size="size-10 " />
                 </div>
 
                 <div
@@ -167,19 +173,19 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                   }`}
                 >
                   {isLink(message.text) && <LinkPreview url={message.text} />}
-                  {message.referenceMessage?.text && 
-                    <ReplyMessage replyText={message?.referenceMessage?.text} />
+                  {message.referenceMessage && 
+                    <ReplyMessage replyText={message.referenceMessage} />
                   }
                     {message.text}
                   <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
-                    {new Date(message.createdAt).toLocaleTimeString([], {
+                    {new Date(message.messageTime).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </div>
                 </div>
                 <button 
-                  onClick={() => handleMessageRefrence(message._id, message.text)}
+                  onClick={() => handleMessageRefrence(message._id || message.messageId, message.text)}
                 >
                 { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
                 </button>
@@ -199,7 +205,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
 
         {/* Footer */}
         <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
-                    {replyMessage && (
+            {replyMessage && (
               <div className="overflow-hidden rounded pb-3 mb-3 bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between">
               <div className="flex-1 text-sm">
               <div className="text-xs text-gray-400">Replying to</div>
@@ -211,7 +217,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
                 onClick={cancleRefMessage} 
                 aria-label="Cancel reply">✕</button>
               </div>
-              )}
+            )}
           <div className="flex items-center gap-2">
             <textarea
               placeholder="Type a message..."
@@ -233,7 +239,7 @@ export default function GroupCard({userId, groupId, groupName, groupPicture, set
           groupName={groupName} 
           groupPicture={groupPicture} 
           setIsGroup={setIsGroup}
-          groupId={groupId} 
+          joinId={joinId} 
           userId={userId}
         />
       )

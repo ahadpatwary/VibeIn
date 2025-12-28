@@ -1,14 +1,33 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { AvatarDemo } from "@/components/AvaterDemo"
-import { useChatTyping } from '@/hooks/useChatTyping';
+// import { useChatTyping } from '@/hooks/useChatTyping';
 import React from 'react';
 import TypingIndicator from '@/components/TypingIndicator';
 import { useSocketConnection } from '@/hooks/useSocketConnection';
-import { useChatInformation } from '@/hooks/useChatInformation';
-import { useActiveState } from '@/hooks/useActiveState';
-import { useGetMessage } from '@/hooks/useGetMessage';
+// import { useChatInformation } from '@/hooks/useChatInformation';
+// import { useActiveState } from '@/hooks/useActiveState';
+// import { useGetMessage } from '@/hooks/useGetMessage';
 import { ScrollArea } from './ui/scroll-area';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { v4 as uuidv4 } from 'uuid';
+import { useProfileInformation } from '@/hooks/useProfileInformation';
+import { BsArrow90DegRight } from "react-icons/bs";
+import { BsArrow90DegLeft } from "react-icons/bs";
+import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
+
+
+interface receiveMessagePropType {
+  _id?: string,
+  messageId?: string,
+  senderId: string,
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string,
+  messageTime: string,
+}
 
 
 interface IMessage {
@@ -18,26 +37,90 @@ interface IMessage {
   createdAt: string;
 }
 
+interface ChatCardProps {
+  joinId: string;
+  conversationName?: string;
+  conversationPicture?: string;
+}
+
+interface Message {
+  _id?: string,
+  messageId?: string,
+  senderId: string,
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string,
+  messageTime: string,
+}
 
 
-export default function ChatCard({ userId, chatWith }: { userId: string, chatWith: string }) {
 
+export default function ChatCard({ joinId, conversationName, conversationPicture }: ChatCardProps) {
+
+  const userId = useSelector((state: RootState) => state.user.id);
+  const [replyMessage, setReplyMessage] = useState<string | null>(null);
+  const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
-  const { name, picture, myPicture } = useChatInformation( userId, chatWith, setMessages);
+  const { userName, profilePicture } = useProfileInformation();
 
-  const offline = useActiveState(socket!, chatWith);
+  // const offline = useActiveState(socket!, chatWith);
+    const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
 
-  useGetMessage(socket!, userId, chatWith, setMessages);
+  // useGetMessage(socket!, userId, chatWith, setMessages);
 
-  const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
+  // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
+    useEffect(() => {
+   
+      if(!socket) return;
+  
+      socket.emit("join-group", { joinId, userId });
+  
+      socket.on("error", (msg) => {
+        alert(msg);
+      });
+  
+      socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+        console.log("Received group message:", data);
+        setMessages((prev) => [...prev, data]);
+      });
+    
+      return () => {
+        socket.off("receiveGroupMessage");
+        // socket.off("error_message");
+      };
+    }, [socket, joinId, userId]);
+  
+
+  const handleMessageRefrence = (refMessageId: string, message: string) => {
+    setReplyMessage(message!);
+    setRefMessageId(refMessageId);
+    console.log(message);
+  }
+
+  const cancleRefMessage = () =>{
+    setReplyMessage(null);
+    setRefMessageId(null);
+  } 
 
   const handleSend = () => {
     if (!newMessage) return;
-    const messageData = { sender: userId, receiver: chatWith, text: newMessage };
+        const messageData = { 
+          messageId: uuidv4(),
+          senderId: userId,
+          name: userName,
+          picture: profilePicture,
+          joinId,
+          text: newMessage,
+          referenceMessage: refMessageId,
+          messageTime: new Date().toISOString(),
+          conversationName,
+          conversationPicture,
+        };
     socket?.emit('sendMessage', messageData);
     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
@@ -84,6 +167,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
             >
               <div className="w-9 h-9 rounded-full flex items-center justify-center">
                 <AvatarDemo src={isSender ? myPicture : picture} size="size-10" />
+                {/* user message send korar time e tar picture pathabe// pore thik korbo */}
               </div>
 
               <div
@@ -101,11 +185,16 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
                   })}
                 </div>
               </div>
+              <button 
+                onClick={() => handleMessageRefrence(message._id || message.messageId, message.text)}
+              >
+              { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
+              </button>
             </div>
           );
         })}
 
-        {someoneTyping ? (
+        {someOneGroupTyping ? (
           <div className="mb-2 flex justify-start">
             <TypingIndicator />
           </div>
@@ -116,7 +205,7 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
       </ScrollArea>
 
       {/* Footer */}
-      <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
+      {/* <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
         <div className="flex items-center gap-2">
           <textarea
             placeholder="Type a message..."
@@ -131,7 +220,36 @@ export default function ChatCard({ userId, chatWith }: { userId: string, chatWit
             Send
           </button>
         </div>
-      </footer>
+      </footer> */}
+              <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
+            {replyMessage && (
+              <div className="overflow-hidden rounded pb-3 mb-3 bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between">
+              <div className="flex-1 text-sm">
+              <div className="text-xs text-gray-400">Replying to</div>
+              <div className="max-w-[70%] truncate font-medium text-sm text-gray-100">{replyMessage}</div>
+              {/* <div className="text-xs text-gray-400">— {replyMessage.senderName || replyMessage.senderId}</div> */}
+              </div>
+              <button 
+                className="ml-3 text-gray-300 hover:text-white" 
+                onClick={cancleRefMessage} 
+                aria-label="Cancel reply">✕</button>
+              </div>
+            )}
+          <div className="flex items-center gap-2">
+            <textarea
+              placeholder="Type a message..."
+              className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none  text-black resize-none h-12 sm:h-14"
+              value={newMessage}
+              onChange={handleChange}
+            />
+            <button
+              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-md transition-colors"
+              onClick={handleSend}
+            >
+              Send
+            </button>
+          </div>
+        </footer>
     </div>
   );
 }

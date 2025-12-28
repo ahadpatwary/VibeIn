@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import reducer from '../features/todo/todosSlice'
-
+import userId from '../features/userId/userIdSlice'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-        counter: reducer,
+      counter: reducer,
+      user: userId,
     },
   })
 }

@@ -1,55 +1,15 @@
 import { useState, useEffect } from 'react'
 
-interface Message {
-  _id: string,
-  senderId: {
-    _id: string,
-    name: string,
-    picture: {
-      public_id: string,
-      url: string,
-    }
-  };
-  referenceMessage: {
-    senderId:{
-      name: string,
-      picture: {
-        public_id: string,
-        url: string,
-      }
-    },
-    text: string,
-  }
-  groupId: string;
-  text: string;
-  createdAt: string;
+interface receiveMessagePropType {
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string,
+  messageTime: string,
 }
 
 export const useGetGroupMessage = (groupId: string) => {
-  const [groupMessage, setGroupMessage] = useState<Message[]>([{
-    _id: '123456',
-    senderId: {
-      _id: "123",
-      name: "ahad",
-      picture: {
-        public_id: "",
-        url: "",
-      }
-    },
-    referenceMessage: {
-      senderId:{
-        name: "",
-        picture: {
-          public_id: "",
-          url: "",
-        }
-      },
-      text: "ahad",
-    },
-    groupId: "",
-    text: "",
-    createdAt: ""
-  }]);
+  const [groupMessage, setGroupMessage] = useState<receiveMessagePropType[]>([]);
 
   useEffect(() => {
     (async () => {

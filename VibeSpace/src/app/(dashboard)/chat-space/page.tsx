@@ -38,15 +38,14 @@ interface Conversation {
 
 
 const ChatSpacePage = () => {
-  // const [isClick, setIsClick] = useState(false);
-  const [userId, setUserId] = useState('');
-  const [chatWith, setChatWith] = useState('');
   const isMobile = useIsMobile();
- const conversations = useGetConversation();
+  const conversations = useGetConversation();
 
 
   const [state, setState] = useState<"empty" | "group" | "oneToOne">("empty");
-  const [groupId, setGroupId] = useState('');
+  const [joinId, setJoinId] = useState('');
+  const [conversationName , setConversationName] = useState('');
+  const [conversationPicture, setConversationPicture] = useState('');
 
 
   return (
@@ -59,9 +58,9 @@ const ChatSpacePage = () => {
               <ResizablePanel defaultSize={30} minSize={30}>
                   
                 <ChatSidebar 
-                  setUserId={setUserId} 
-                  setChatWith={setChatWith}
-                  setGroupId ={setGroupId}
+                  setConversationName={setConversationName} 
+                  setConversationPicture={setConversationPicture}
+                  setJoinId={setJoinId} 
                   conversations = {conversations}
                   setState ={setState}
                 />
@@ -70,16 +69,21 @@ const ChatSpacePage = () => {
               <ResizableHandle />
                 <ResizablePanel defaultSize={70} minSize={50}>
                   {(() => {
-                    if (state === "oneToOne" && userId && chatWith) {
-                      return <ChatCard userId={userId} chatWith={chatWith} />;
+                    if (state === "oneToOne" && joinId) {
+                      return(
+                        <ChatCard 
+                          joinId={joinId} 
+                          conversationName={conversationName}
+                          conversationPicture={conversationPicture}
+                        />
+                      )
                     } 
-                    else if (state === "group" && groupId && userId) {
+                    else if (state === "group" && joinId) {
                       return( 
                         <GroupCard 
-                            userId={userId} 
-                            groupId={groupId} 
-                            groupName="" 
-                            groupPicture=""
+                            joinId={joinId}
+                            conversationName={conversationName}
+                            conversationPicture={conversationPicture}
                         />
                       )
                     } 

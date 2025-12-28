@@ -6,9 +6,26 @@ import { motion } from "framer-motion";
 import { FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { useRouter } from "next/navigation"
 import Link from "next/link";
+import { userIdClient } from "@/lib/userId";
+import { useDispatch } from 'react-redux';
+import { addUserId } from "@/lib/features/userId/userIdSlice";
+import { useEffect } from "react";
 
 export default function DarkLandingPageFull() {
   const router = useRouter()
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const id = await userIdClient();
+        dispatch(addUserId(id || ''));
+      } catch (err) {
+        console.error('Failed to fetch userId:', err);
+        dispatch(addUserId('')); // optional fallback
+      }
+    })();
+  }, [dispatch]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-gray-800 to-gray-950">

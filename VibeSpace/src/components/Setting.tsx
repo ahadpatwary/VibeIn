@@ -14,7 +14,7 @@ interface propType{
     groupName: string,
     groupPicture: string
     setIsGroup: React.Dispatch<React.SetStateAction<boolean>>
-    groupId: string
+    joinId: string
     userId: string
 }
 
@@ -27,13 +27,13 @@ interface type{
     }
 }
 
-export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: propType) => {
+export const Setting = ({groupName, groupPicture, setIsGroup, joinId, userId}: propType) => {
     
-    const blockUser = useBlockUser(groupId);
-    const acceptRequst = useAcceptRequest(groupId);
-    const unblockUser = useUnBlockUser(groupId);
+    const blockUser = useBlockUser(joinId);
+    const acceptRequst = useAcceptRequest(joinId);
+    const unblockUser = useUnBlockUser(joinId);
 
-    const commingRequest = useCommingRequest(groupId) || [{
+    const commingRequest = useCommingRequest(joinId) || [{
         _id: 1,
         name: "ahad",
         picture: {
@@ -42,7 +42,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
         }
     }];
   
-    const members = useGetGroupMember(groupId) || [{
+    const members = useGetGroupMember(joinId) || [{
         _id: 1,
         name: "ahad",
         picture: {
@@ -51,7 +51,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
         }
     }];
 
-    const {blockUsers, setBlockUsers} = useGetBlockUser(groupId) || [{
+    const {blockUsers, setBlockUsers} = useGetBlockUser(joinId) || [{
         _id: 1,
         name: "ahad",
         picture: {
@@ -74,7 +74,7 @@ export const Setting = ({groupName, groupPicture, setIsGroup, groupId, userId}: 
             </ ScrollArea>
             <div>
                 <Card className='flex my-2 border-none'>
-                    <div>{`https://vibe-in-teal.vercel.app/chat-space/group/${groupId}`}</div>
+                    <div>{`https://vibe-in-teal.vercel.app/chat-space/group/${joinId}`}</div>
                     <Button >Copy Link</Button>
                 </Card>
 

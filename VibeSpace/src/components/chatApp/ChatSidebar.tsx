@@ -1,14 +1,15 @@
 'use client'
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AvatarDemo } from "../AvaterDemo";
-import { useEffect, useState } from "react";
-import { userIdClient } from "@/lib/userId";
+import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { Button } from "../ui/button";
 import { MdGroup } from "react-icons/md";
 import { MdGroups2 } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 
 interface Conversation {
@@ -35,47 +36,31 @@ interface Conversation {
 }
 
 interface ChatSidebarProps {
-  setUserId?: (value: string) => void;
-  setChatWith?: (value: string) => void;
-  setGroupId?: (value: string) => void;
+  setConversationName?: (value: string) => void;
+  setConversationPicture?: (value: string) => void;
+  setJoinId?: (value: string) => void;
   conversations?: Conversation[];
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
-const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setState }: ChatSidebarProps) => {
+const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, conversations, setState }: ChatSidebarProps) => {
 
   const [ selected, setSelected ] = useState<string | null>(null);
   const router = useRouter();
+  const userId = useSelector((state: RootState) => state.user.userId);
   
 
   const handleMobileClick = async (senderId: string, receiverId: string) => {
-    const user = await userIdClient();
-    if (!user) return;
-
-    const sendId = user === senderId ? receiverId : senderId;
-    router.push(`/chatloop?userId=${user}&chatWith=${sendId}`);
+    const sendId = userId === senderId ? receiverId : senderId;
+    router.push(`/chatloop?userId=${userId}&chatWith=${sendId}`);
   };
    
-  const handleGroup = (groupId: string) => {  
-    setSelected(groupId);
+
+  const handleDesktopClick = (joinId: string, conversationId: string, conversationName: string, conversationPicture: string) => {
+    if(!!setConversationName) setConversationName(conversationName);
+    if(!!setConversationPicture) setConversationPicture(conversationPicture);
     if(!!setState) setState("group");
-    if(!!setGroupId) setGroupId(groupId);
-  }
-
-  const handleDesktopClick = async (chatId: string, senderId: string, receiverId: string) => {
-    const user = await userIdClient();
-    if (!user) return;
-
-    if(!!setState) setState("oneToOne");
-    setSelected(chatId);
-
-
-    const sendId = user === senderId ? receiverId : senderId;
-    if( setUserId && setChatWith){
-      setUserId(user);
-      setChatWith(sendId);
-    }
-
+    if(!!setJoinId) setJoinId(joinId);
   };
   const handleClick = () => {
     router.push('/chat-space/groupInfo');
@@ -105,7 +90,8 @@ const ChatSidebar = ({ setUserId, setChatWith, setGroupId, conversations, setSta
                   if(window.innerWidth <= 768){
                       handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
-                      conv?.type == 'oneToOne' ? handleDesktopClick(conv._id, conv.participants[0], conv.participants[1]) : handleGroup(conv._id);
+                      handleDesktopClick(conv._id, conv.info.name, conv.info.picture.url);
+                      setSelected(conv._id);
                   }
                 }}
               >
