@@ -47,7 +47,7 @@ interface IMessage {
 
 interface ChatCardProps {
   chatWith?: string;
-  joinId: string;
+  joinId?: string;
   conversationName?: string;
   conversationPicture?: string;
 }
