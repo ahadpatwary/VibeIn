@@ -54,16 +54,21 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                     type: 'oneToOne',
                     participants: { $all: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ] }
                 });
-
+                console.log('isExistGroup:', isExistGroup);
                 let groupId = '';
                 if(!isExistGroup) {
-                    const newGroup = await conversation.create({
-                        type: 'oneToOne',
-                        participants: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ], 
-                        lastMessage: text,
-                        lastMessageTime: new Date(messageTime),
-                    })
-                    groupId = newGroup._id.toString();
+                    try{
+                        const newGroup = await conversation.create({
+                            type: 'oneToOne',
+                            participants: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ], 
+                            lastMessage: text,
+                            lastMessageTime: new Date(messageTime),
+                        })
+                        groupId = newGroup._id.toString();
+                    }catch(err){
+                        console.error('Error creating one-to-one conversation:', err);
+                        return;
+                    }
                 } else {
                     groupId = isExistGroup._id.toString();
                 }
