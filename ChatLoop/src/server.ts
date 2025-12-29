@@ -45,9 +45,6 @@ if (cluster.isPrimary) {
             if (!pubClient) throw new Error("Redis pub client failed to initialize");
             const subClient = pubClient.duplicate();
 
-            // Ensure both clients are connected
-            await pubClient.connect();
-            await subClient.connect();
 
             // Redis event handlers
             [pubClient, subClient].forEach(client => {
