@@ -49,7 +49,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 messageTime
             }
 
-            if(type === 'oneToOne') {
+            if(type === 'oneToOne' && senderId && receiverId) {
                 const isExistGroup = await conversation.findOne({
                     type: 'oneToOne',
                     participants: { $all: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ] }
