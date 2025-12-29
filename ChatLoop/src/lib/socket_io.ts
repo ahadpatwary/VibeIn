@@ -9,6 +9,7 @@ let socketConnection: { io: Server; server: http.Server } | null = null;
 
 /**
  * Initialize Socket.IO with Redis adapter
+ * pubClient and subClient must be connected
  */
 export const initializeSocketIO = (pubClient: Redis, subClient: Redis) => {
     const server = http.createServer(app);
@@ -29,7 +30,7 @@ export const initializeSocketIO = (pubClient: Redis, subClient: Redis) => {
 };
 
 /**
- * Set socket connections (singleton)
+ * Singleton Socket.IO connection per worker
  */
 export const setSocketConnections = (pubClient: Redis, subClient: Redis) => {
     if (!socketConnection) {

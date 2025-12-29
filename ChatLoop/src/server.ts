@@ -31,28 +31,27 @@ if (cluster.isPrimary) {
     });
 
 } else {
-    // Worker process
     const startWorker = async () => {
         try {
             console.log(`✅ Worker ${process.pid} starting...`);
 
             // Connect to DB & RabbitMQ
             await connectToDb();
+            console.log(`✅ MongoDB connected successfully!`);
             await connectToRabbitMQ();
 
+            // Each worker gets its own Redis client
             const pubClient = getRedisClient();
             if (!pubClient) throw new Error("Redis pub client failed to initialize");
-
-            await pubClient.connect();
-
             const subClient = pubClient.duplicate();
+
+            // Ensure both clients are connected
+            await pubClient.connect();
             await subClient.connect();
 
-            // Initialize Redis clients
-  
             // Redis event handlers
             [pubClient, subClient].forEach(client => {
-                client.on('connect', () => console.log(`✅ Redis client connected`));
+                client.on('connect', () => console.log('✅ Redis client connected'));
                 client.on('error', (err) => console.error(`❌ Redis error: ${err.message}`));
             });
 
