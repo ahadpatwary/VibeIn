@@ -23,8 +23,9 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
 
             if(isMember){
                 socket.join(joinId);
-                console.log("joined successful");
+                console.log("joined successful, because this user is a member of this group");
             }else{
+                console.log("joined unsuccessful, This user is not a member of this group");
                 socket.emit('error', 'You are not a member of this group');
             }
         })

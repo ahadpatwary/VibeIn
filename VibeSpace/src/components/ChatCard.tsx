@@ -85,8 +85,10 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
     useEffect(() => {
    
       if(!socket) return;
+
+      console.log("userId", userId);
   
-      socket.emit("join-group", { joinId, userId });
+      socket.emit("join-group", { userId ,joinId });
   
       socket.on("error", (msg) => {
         alert(msg);
