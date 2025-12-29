@@ -83,13 +83,12 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
   const socket = useSocketConnection(userId);
   const { userName, profilePicture } = useProfileInformation();
 
-    const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
+  if(joinId){
 
   // useGetMessage(socket!, userId, chatWith, setMessages);
 
   // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
-  const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
     console.log("ahad");
 
     useEffect(() => {
@@ -115,6 +114,11 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
         // socket.off("error_message");
       };
     }, []);
+  }
+
+  // const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
+  const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
+
   
 
   const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
@@ -144,7 +148,8 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
           conversationName,
           conversationPicture,
         };
-    socket?.emit('sendMessage', messageData);
+        console.log("messageData", messageData);
+    socket?.emit('sendGroupMessage', messageData);
     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
   };
@@ -221,11 +226,11 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
           );
         })}
 
-        {someOneGroupTyping ? (
+        {/* {someOneGroupTyping ? (
           <div className="mb-2 flex justify-start">
             <TypingIndicator />
           </div>
-        ) : <div className='h-7' />}
+        ) : <div className='h-7' />} */}
 
         <div ref={messagesEndRef}></div>
       </main>

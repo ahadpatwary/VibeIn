@@ -56,10 +56,11 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
   };
    
 
-  const handleDesktopClick = (joinId: string, conversationName: string, conversationPicture: string) => {
+  const handleDesktopClick = (joinId: string, type: string, conversationName: string, conversationPicture: string) => {
     if(!!setConversationName) setConversationName(conversationName);
     if(!!setConversationPicture) setConversationPicture(conversationPicture);
-    if(!!setState) setState("group");
+    if(!!setState && type === "oneToOne") setState("oneToOne");
+    if(!!setState && type === "group") setState("group");
     if(!!setJoinId) setJoinId(joinId);
   };
   const handleClick = () => {
@@ -91,7 +92,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
                       handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
                     // console.log("name", conv.info.name);
-                      handleDesktopClick(conv._id, conv.info.name, conv.info.picture.url);
+                      handleDesktopClick(conv._id,conv.type, conv.info.name, conv.info.picture.url);
                       setSelected(conv._id);
                   }
                 }}
