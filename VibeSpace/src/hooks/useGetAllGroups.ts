@@ -18,9 +18,7 @@ export const useGetAllGroups = () => {
     useEffect(() => {
         (async () => {
             try {
-                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getTotalGroups', {
-                    method: "POST",
-                });
+                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getTotalGroups');
 
                 const data = await res.json(); // ✅ important
                 console.log("Fetched groups:", data.groups); // ✅ check fetched data
