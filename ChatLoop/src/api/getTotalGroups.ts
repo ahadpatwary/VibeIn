@@ -1,20 +1,16 @@
-import express, { Request, Response } from 'express'
+import express, {  Response } from 'express'
 import Conversation from '../models/Conversations';
 
 //need userId and groupId
 const router = express.Router();
 
-router.post('/', async(req: Request, res: Response) => {
+router.post('/', async( res: Response) => {
     try {
-        
-        const { userId } = req.body;
-
-        if(!userId ) 
-            return res.status(400).json({ message: 'userId and groupId mest be required'})
-        ;
-
-
-        const groups = await Conversation.find()
+    
+        const groups = await Conversation.find({ type: 'group' })
+            .select('_id extraFields')
+            .lean()
+            .exec();
 
         return res.status(200).json({ groups });
 

@@ -81,9 +81,10 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
   // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
   const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
+    console.log("ahad");
 
     useEffect(() => {
-   
+      console.log("HKDSFJSDKFJSDKLFJSDLKFJSDKLFSD;JFSDKLFJLDSK")
       if(!socket) return;
 
       console.log("userId", userId);
@@ -103,7 +104,7 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
         socket.off("receiveGroupMessage");
         // socket.off("error_message");
       };
-    }, [socket, joinId, userId]);
+    }, []);
   
 
   const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {

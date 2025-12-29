@@ -18,11 +18,8 @@ export const useGetAllGroups = () => {
     useEffect(() => {
         (async () => {
             try {
-                const userId = await userIdClient();
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getTotalGroups', {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userId }),
                 });
 
                 const data = await res.json(); // ✅ important
