@@ -1,29 +1,19 @@
 import { Server } from 'socket.io';
 import http from 'http';
 import app from '../app';
-import { createAdapter } from "@socket.io/redis-adapter";
-import { getRedisClient } from './redis';
 let socketConnection: { io: Server; server: http.Server } | null = null;
+import { createAdapter } from "@socket.io/redis-adapter";
 
 
-const pubClient = getRedisClient();
-pubClient?.on("connect", () => console.log("✅ Redis pub connected"));
-pubClient?.on("error", (err) => console.error("Redis pub error:", err.message));
-
-const subClient = pubClient?.duplicate();
-subClient?.on("connect", () => console.log("✅ Redis sub connected"));
-subClient?.on("error", (err) => console.error("Redis sub error:", err.message));
-
-
-export const setSocketConnections = () => {
+export const setSocketConnections = (pubClient, subClient) => {
     if(!socketConnection) {
-        socketConnection = initializeSocketIO();
+        socketConnection = initializeSocketIO(pubClient, subClient);
     }
     return socketConnection;
 };
 
 
-export const initializeSocketIO = () => {
+export const initializeSocketIO = (pubClient, subClient) => {
     try {
         const server = http.createServer(app);
 

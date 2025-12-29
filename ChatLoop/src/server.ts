@@ -6,7 +6,14 @@ import { Server } from 'socket.io';
 import { setupSocket } from './socket';
 import { setSocketConnections } from './lib/socket_io';
 import { connectToRabbitMQ } from './lib/rabbitMQ';
+import { getRedisClient } from './lib/redis';
+const pubClient = getRedisClient();
+pubClient?.on("connect", () => console.log("✅ Redis pub connected"));
+pubClient?.on("error", (err) => console.error("Redis pub error:", err.message));
 
+const subClient = pubClient?.duplicate();
+subClient?.on("connect", () => console.log("✅ Redis sub connected"));
+subClient?.on("error", (err) => console.error("Redis sub error:", err.message));
 
 interface ExtendedServer  {
     io: Server;
@@ -36,7 +43,7 @@ if (cluster.isPrimary) {
 
             await connectToDb();
             await connectToRabbitMQ();
-            const { io, server } = setSocketConnections() as ExtendedServer;
+            const { io, server } = setSocketConnections(pubClient, subClient) as ExtendedServer;
 
             setupSocket(io);
 
