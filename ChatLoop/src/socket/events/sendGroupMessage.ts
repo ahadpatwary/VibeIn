@@ -48,6 +48,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 referenceMessage,
                 messageTime
             }
+            console.log('sendGroupMessage data received:', data);
 
             if(type === 'oneToOne' && senderId && receiverId) {
                 const isExistGroup = await conversation.findOne({
