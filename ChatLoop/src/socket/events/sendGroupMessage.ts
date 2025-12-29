@@ -1,5 +1,4 @@
 import { Server, Socket } from 'socket.io'
-import groupMessage from '../../models/GroupMessage';
 import { Types } from 'mongoose'
 import conversation from '../../models/Conversations';
 
@@ -48,14 +47,16 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 referenceMessage,
                 messageTime
             }
-            console.log('sendGroupMessage data received:', data);
-
+            
+            
             if(type === 'oneToOne' && senderId && receiverId) {
+
                 const isExistGroup = await conversation.findOne({
                     type: 'oneToOne',
                     participants: { $all: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ] }
                 });
-                console.log('isExistGroup:', senderId, receiverId, isExistGroup);
+
+
                 let groupId = '';
                 if(!isExistGroup) {
                     try{
@@ -74,9 +75,12 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 } else {
                     groupId = isExistGroup._id.toString();
                 }
+
                 socket.join(groupId);
-                console.log(`Socket joined one-to-one group: ${groupId}`);
                 socket.to(groupId).emit('receiveGroupMessage', message)
+                return;
+            }else{
+                socket.to(joinId).emit('receiveGroupMessage', message)
                 return;
             }
 
@@ -113,7 +117,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             // if(!message) return;
 
-            socket.to(joinId).emit('receiveGroupMessage', message)
         })
     } catch (error) {
         if(error instanceof Error)

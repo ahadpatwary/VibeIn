@@ -52,28 +52,27 @@ interface ChatCardProps {
   conversationPicture?: string;
 }
 
-interface Message {
-  _id?: string,
-  messageId?: string,
-  senderId: string,
-  name: string,
-  picture: string,
-  text: string,
-  referenceMessage: string,
-  messageTime: string,
-}
+// interface Message {
+//   _id?: string,
+//   messageId?: string,
+//   senderId: string,
+//   name: string,
+//   picture: string,
+//   text: string,
+//   referenceMessage: string,
+//   messageTime: string,
+// }
 
 
 
 export default function ChatCard({chatWith, joinId, conversationName, conversationPicture }: ChatCardProps) {
 
-    const [userId, setUserId] = useState('');
-    ;(async() => {
-      const id = await userIdClient()!;
-      if(!id) return ;
-      setUserId(id);
-  
-    })();
+  const [userId, setUserId] = useState('');
+  ;(async() => {
+    const id = await userIdClient()!;
+    if(!id) return ;
+    setUserId(id);
+  })();
  
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
@@ -91,34 +90,24 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
 
 
     useEffect(() => {
-      console.log("HKDSFJSDKFJSDKLFJSDLKFJSDKLFSD;JFSDKLFJLDSK")
       if(!socket) return;
 
       console.log("userId", userId);
 
-  
       socket.emit("join-group", { userId ,joinId });
   
       socket.on("error", (msg) => {
         alert(msg);
       });
   
-
-    
-      return () => {
-        // socket.off("receiveGroupMessage");
-        // socket.off("error_message");
-      };
-    }, [userId, socket]);
+    }, [userId, socket, joinId]);
   }
 
   // const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
   const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
 
 
-
   useEffect(() => {
-    console.log("l;dkfd");
     socket?.on("receiveGroupMessage", (data: receiveMessagePropType) => {
       console.log("Received group message:", data);
       setMessages((prev) => [...prev, data]);
@@ -140,21 +129,21 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
 
   const handleSend = () => {
     if (!newMessage) return;
-        const messageData = { 
-          type: 'oneToOne',
-          messageId: uuidv4(),
-          senderId: userId,
-          receiverId: chatWith,
-          name: userName,
-          picture: profilePicture,
-          joinId,
-          text: newMessage,
-          referenceMessage: refMessageId,
-          messageTime: new Date().toISOString(),
-          conversationName,
-          conversationPicture,
-        };
-        console.log("messageData", messageData);
+    const messageData = { 
+      type: 'oneToOne',
+      messageId: uuidv4(),
+      senderId: userId,
+      receiverId: chatWith,
+      name: userName,
+      picture: profilePicture,
+      joinId,
+      text: newMessage,
+      referenceMessage: refMessageId,
+      messageTime: new Date().toISOString(),
+      conversationName,
+      conversationPicture,
+    };
+
     socket?.emit('sendGroupMessage', messageData);
     setMessages(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
     setNewMessage('');
@@ -163,7 +152,7 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     setNewMessage(e.target.value)
-    handleTyping(); 
+    // handleTyping(); 
 
   };
 
@@ -182,11 +171,11 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
 
       {/* Header */}
       <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
-        {/* <AvatarDemo src={messages[0]?.conversationPicture} size="size-12 sm:size-14" /> */}
-        {/* <div className="flex flex-col"> */}
-          {/* <h2 className="text-base text-black sm:text-lg font-semibold">{messages[0]?.conversationName}</h2> */}
+        <AvatarDemo src={conversationPicture} size="size-12 sm:size-14" />
+        <div className="flex flex-col">
+          <h2 className="text-base text-black sm:text-lg font-semibold">{conversationName}</h2>
           {/* <p className="text-sm text-gray-500">{offline ? "Offline" : "Online"}</p> */}
-        {/* </div> */}
+        </div>
       </header>
 
       {/* Messages */}
@@ -242,7 +231,7 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
       </main>
       </ScrollArea>
 
-              <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
+        <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
             {replyMessage && (
               <div className="overflow-hidden rounded pb-3 mb-3 bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between">
               <div className="flex-1 text-sm">
@@ -274,27 +263,3 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
     </div>
   );
 }
-
-
-            // if(type === 'oneToOne' && chatWithId && userId) {
-            //     await conversation.create({
-            //         type,
-            //         participants: [ new Types.ObjectId(userId), new Types.ObjectId(chatWithId) ],
-            //         deletedBy: [],
-            //         blockedUser: [],
-            //         requestUser: [],
-            //         lastMessage: null,
-            //         lastMessageTime: new Date(messageTime),
-            //         extraFields: {
-            //             groupName: conversationName,
-            //             groupPicture: conversationPicture ? {
-            //                 public_id: '',
-            //                 url: conversationPicture
-            //             } : undefined,
-            //             groupBio: '',
-            //             groupAdmin: undefined,
-            //         }
-            //     })
-            //     io.to(chatWithId!).emit('receiveGroupMessage', message);
-            //     return;
-            // }

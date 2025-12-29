@@ -5,11 +5,14 @@ import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { useProfileInformation } from '@/hooks/useProfileInformation';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
   const userId = searchParams.get('userId') || '';
   const chatWith = searchParams.get('chatWith') || '';
+
+  const { userName,  profilePicture } = useProfileInformation(chatWith);
 
   const [storedUserId, setStoredUserId] = useState<string | null>(null);
   const [viewportHeight, setViewportHeight] = useState<number>(0);
@@ -49,6 +52,8 @@ function ChatPageContent() {
     <div style={{ height: viewportHeight }}>
       <ChatCard 
         chatWith={chatWith} 
+        conversationName={userName}
+        conversationPicture={profilePicture}
       />
     </div>
   );

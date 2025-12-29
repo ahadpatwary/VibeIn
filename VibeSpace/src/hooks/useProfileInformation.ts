@@ -11,7 +11,7 @@ interface dataType {
     }
 }
 
-export const useProfileInformation = () => {
+export const useProfileInformation = (chatWith?: string) => {
     const [userName, setUserName] = useState<string>("");
     const [profilePicture, setProfilePicture] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -23,13 +23,13 @@ export const useProfileInformation = () => {
         ( async ()=>{
             try {
 
-                const userId = await userIdClient();
+                const userId = chatWith || await userIdClient();
                 if(!userId){
                     setError("user Id not find");
                     return;
                 }
 
-                const data: dataType = await getData(userId as string, "User", ["name", "email", "picture"]);
+                const data: dataType = await getData(userId, "User", ["name", "email", "picture"]);
 
                 if(!data.name || !data.email || !data.picture?.url){
                     setError("data not comint from server");
