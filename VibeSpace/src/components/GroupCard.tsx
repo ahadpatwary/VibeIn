@@ -107,8 +107,10 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
     if (newMessage.trim() === "") return;
    
     const messageData = { 
+      type: 'oneToOne',
       messageId: uuidv4(),
       senderId: userId,
+      receiverId: null,
       name: userName,
       picture: profilePicture,
       joinId,
@@ -116,7 +118,7 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
       referenceMessage: refMessageId,
       messageTime: new Date().toISOString(),
       conversationName,
-      conversationPicture
+      conversationPicture,
     };
     console.log(messageData);
     socket?.emit('sendGroupMessage', messageData);

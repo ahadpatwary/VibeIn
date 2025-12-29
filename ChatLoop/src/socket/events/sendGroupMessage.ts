@@ -1,16 +1,21 @@
 import { Server, Socket } from 'socket.io'
 import groupMessage from '../../models/GroupMessage';
 import { Types } from 'mongoose'
+import conversation from '../../models/Conversations';
 
 interface dataType{
+    type: 'oneToOne'| 'group',
+    messageId: string,
+    senderId: string,
+    receiverId: string | null,
     name: string,
     picture: string,
     joinId: string,
     text: string,
-    referenceMessage?: string,
+    referenceMessage: string | null,
     messageTime: string,
-    conversationName: string,
-    conversationPicture: string,
+    conversationName: string | null,
+    conversationPicture: string | null,
 }
 
 
@@ -20,6 +25,10 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
         socket.on('sendGroupMessage', async(data: dataType) => {
 
             const {
+                type, 
+                messageId,
+                senderId,
+                receiverId,
                 name,
                 picture,
                 joinId,
@@ -29,9 +38,8 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 conversationName,
                 conversationPicture
             }: dataType = data;
-            console.log("data", data);
 
-            if(!name || !joinId || !text || !messageTime || !conversationName) return;
+            // if(!name || !joinId || !text || !messageTime || !conversationName) return;
 
             let message = {
                 name,
@@ -40,7 +48,28 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 referenceMessage,
                 messageTime
             }
-            console.log("messa", message);
+
+            if(type === 'oneToOne') {
+                const isExistGroup = await conversation.findOne({
+                    type: 'oneToOne',
+                    participants: { $all: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ] }
+                });
+
+                let groupId = '';
+                if(!isExistGroup) {
+                    const newGroup = await conversation.create({
+                        type: 'oneToOne',
+                        participants: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ], 
+                        lastMessage: text,
+                        lastMessageTime: new Date(messageTime),
+                    })
+                    groupId = newGroup._id.toString();
+                } else {
+                    groupId = isExistGroup._id.toString();
+                }
+            }
+
+
             if(referenceMessage) {
 
                 // message  = await groupMessage.create(

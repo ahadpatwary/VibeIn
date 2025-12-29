@@ -46,6 +46,7 @@ interface IMessage {
 }
 
 interface ChatCardProps {
+  chatWith?: string;
   joinId: string;
   conversationName?: string;
   conversationPicture?: string;
@@ -64,7 +65,7 @@ interface Message {
 
 
 
-export default function ChatCard({ joinId, conversationName, conversationPicture }: ChatCardProps) {
+export default function ChatCard({chatWith, joinId, conversationName, conversationPicture }: ChatCardProps) {
 
     const [userId, setUserId] = useState('');
     ;(async() => {
@@ -130,8 +131,10 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
   const handleSend = () => {
     if (!newMessage) return;
         const messageData = { 
+          type: 'oneToOne',
           messageId: uuidv4(),
           senderId: userId,
+          receiverId: chatWith,
           name: userName,
           picture: profilePicture,
           joinId,
@@ -260,3 +263,27 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
     </div>
   );
 }
+
+
+            // if(type === 'oneToOne' && chatWithId && userId) {
+            //     await conversation.create({
+            //         type,
+            //         participants: [ new Types.ObjectId(userId), new Types.ObjectId(chatWithId) ],
+            //         deletedBy: [],
+            //         blockedUser: [],
+            //         requestUser: [],
+            //         lastMessage: null,
+            //         lastMessageTime: new Date(messageTime),
+            //         extraFields: {
+            //             groupName: conversationName,
+            //             groupPicture: conversationPicture ? {
+            //                 public_id: '',
+            //                 url: conversationPicture
+            //             } : undefined,
+            //             groupBio: '',
+            //             groupAdmin: undefined,
+            //         }
+            //     })
+            //     io.to(chatWithId!).emit('receiveGroupMessage', message);
+            //     return;
+            // }

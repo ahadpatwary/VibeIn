@@ -47,7 +47,9 @@ function ChatPageContent() {
 
   return (
     <div style={{ height: viewportHeight }}>
-      <ChatCard userId={userId} chatWith={chatWith} />
+      <ChatCard 
+        chatWith={chatWith} 
+      />
     </div>
   );
 }
