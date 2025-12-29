@@ -40,12 +40,15 @@ if (cluster.isPrimary) {
             await connectToDb();
             await connectToRabbitMQ();
 
-            // Initialize Redis clients
             const pubClient = getRedisClient();
+            await pubClient.connect();
             if (!pubClient) throw new Error("Redis pub client failed to initialize");
 
             const subClient = pubClient.duplicate();
+            await subClient.connect();
 
+            // Initialize Redis clients
+  
             // Redis event handlers
             [pubClient, subClient].forEach(client => {
                 client.on('connect', () => console.log(`✅ Redis client connected`));
