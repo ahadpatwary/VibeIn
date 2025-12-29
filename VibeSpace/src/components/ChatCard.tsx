@@ -73,6 +73,7 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
       setUserId(id);
   
     })();
+ 
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
@@ -95,6 +96,7 @@ export default function ChatCard({ joinId, conversationName, conversationPicture
       if(!socket) return;
 
       console.log("userId", userId);
+
   
       socket.emit("join-group", { userId ,joinId });
   
