@@ -67,6 +67,8 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 } else {
                     groupId = isExistGroup._id.toString();
                 }
+                socket.to(groupId).emit('receiveGroupMessage', message)
+                return;
             }
 
 
