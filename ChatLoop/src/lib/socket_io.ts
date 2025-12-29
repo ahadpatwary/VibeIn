@@ -6,7 +6,10 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import Redis  from 'ioredis';
 
 
-export const setSocketConnections = (pubClient: Redis, subClient: Redis) => {
+export const setSocketConnections = (pubClient: Redis | null, subClient: Redis | null) => {
+    if(!pubClient || !subClient) {
+        throw new Error("Redis clients are required for socket connections");
+    }
     if(!socketConnection) {
         socketConnection = initializeSocketIO(pubClient, subClient);
     }
