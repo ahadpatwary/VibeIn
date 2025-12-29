@@ -38,13 +38,13 @@ export default function AllGroup() {
             >
               
                 <AvatarDemo
-                  src={group.info.picture}
+                  src={group.extraFields.groupPicture}
                   size="size-15"
                 />
                 <div className="flex flex-col flex-1 min-w-0 px-2">
                   <div className="flex justify-between items-center w-full">
                     <h2 className="text-lg font-semibold text-gray-200 truncate">
-                      {group.info.name}
+                      {group.extraFields.groupName}
                     </h2>
                   </div>
                   {/* <p className="text-gray-900 text-sm truncate">{group.lastMessage}dd</p> */}

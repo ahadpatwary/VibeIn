@@ -19,6 +19,7 @@ import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
 import { useActiveState } from '@/hooks/useActiveState';
 import { ReplyMessage } from './ReplyMessage';
 import { LinkPreview } from './LinkPreview';
+import { userIdClient } from '@/lib/userId';
 
 
 interface receiveMessagePropType {
@@ -65,7 +66,13 @@ interface Message {
 
 export default function ChatCard({ joinId, conversationName, conversationPicture }: ChatCardProps) {
 
-  const userId = useSelector((state: RootState) => state.user.id);
+    const [userId, setUserId] = useState('');
+    ;(async() => {
+      const id = await userIdClient()!;
+      if(!id) return ;
+      setUserId(id);
+  
+    })();
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');

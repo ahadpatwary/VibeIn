@@ -73,7 +73,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             // if(!message) return;
 
-            io.to(joinId).emit('receiveGroupMessage', message)
+            socket.to(joinId).emit('receiveGroupMessage', message)
         })
     } catch (error) {
         if(error instanceof Error)

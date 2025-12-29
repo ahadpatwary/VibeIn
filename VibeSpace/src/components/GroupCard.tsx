@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
+import { userIdClient } from '@/lib/userId';
 
 interface Message {
   _id?: string,
@@ -50,7 +51,13 @@ interface receiveMessagePropType {
 
 export default function GroupCard({ joinId, conversationName, conversationPicture, setIsGroupList}: propType) {
 
-  const userId = useSelector((state: RootState) => state.user.id);
+  const [userId, setUserId] = useState('');
+  ;(async() => {
+    const id = await userIdClient()!;
+    if(!id) return ;
+    setUserId(id);
+
+  })();
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
@@ -66,8 +73,9 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
   useEffect(() => {
  
     if(!socket) return;
+    console.log("group:userId", userId);
 
-    socket.emit("join-group", { joinId, userId });
+    socket.emit("join-group", { userId, joinId });
 
     socket.on("error", (msg) => {
       alert(msg);
@@ -82,7 +90,7 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
       socket.off("receiveGroupMessage");
       // socket.off("error_message");
     };
-  }, [socket, joinId, userId]);
+  }, [socket,userId, joinId]);
 
   const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
     setReplyMessage(message!);
