@@ -1,7 +1,6 @@
 import { Server } from "socket.io";
 import { addUserHandler } from "./events/addUser";
 import { disConnectUserHandler } from "./events/disConnectuser";
-import { sendMessageHandler } from "./events/sendMessage";
 import { typingStateHandler } from "./events/typingState";
 import { joinGroupHandler } from "./events/jointGroup";
 import { sendGroupMessageHandler } from "./events/sendGroupMessage";
@@ -13,7 +12,6 @@ export const setupSocket = (io: Server) => {
     console.log("New user connected:", socket.id);
 
     addUserHandler(io, socket);
-    sendMessageHandler(io, socket);
     typingStateHandler(io, socket);
     groupTypingStateHandler(io, socket);
     joinGroupHandler(io, socket);
