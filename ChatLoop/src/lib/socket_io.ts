@@ -3,9 +3,10 @@ import http from 'http';
 import app from '../app';
 let socketConnection: { io: Server; server: http.Server } | null = null;
 import { createAdapter } from "@socket.io/redis-adapter";
+import Redis  from 'ioredis';
 
 
-export const setSocketConnections = (pubClient, subClient) => {
+export const setSocketConnections = (pubClient: Redis, subClient: Redis) => {
     if(!socketConnection) {
         socketConnection = initializeSocketIO(pubClient, subClient);
     }
@@ -13,7 +14,7 @@ export const setSocketConnections = (pubClient, subClient) => {
 };
 
 
-export const initializeSocketIO = (pubClient, subClient) => {
+export const initializeSocketIO = (pubClient: Redis, subClient: Redis) => {
     try {
         const server = http.createServer(app);
 
