@@ -7,7 +7,13 @@ let socketConnection: { io: Server; server: http.Server } | null = null;
 
 
 const pubClient = getRedisClient();
+pubClient?.on("connect", () => console.log("✅ Redis pub connected"));
+pubClient?.on("error", (err) => console.error("Redis pub error:", err.message));
+
 const subClient = pubClient?.duplicate();
+subClient?.on("connect", () => console.log("✅ Redis sub connected"));
+subClient?.on("error", (err) => console.error("Redis sub error:", err.message));
+
 
 export const setSocketConnections = () => {
     if(!socketConnection) {
@@ -38,6 +44,6 @@ export const initializeSocketIO = () => {
         if(error instanceof Error)
             throw new Error(error.message)
         ;
-        return null;        ;
+        return null;
     }
 };
