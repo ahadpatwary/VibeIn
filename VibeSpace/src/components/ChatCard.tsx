@@ -109,16 +109,22 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
         // socket.off("receiveGroupMessage");
         // socket.off("error_message");
       };
-    }, []);
+    }, [userId, socket]);
   }
 
   // const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
   const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
 
-  socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
-    console.log("Received group message:", data);
-    setMessages((prev) => [...prev, data]);
-  });
+
+
+  useEffect(() => {
+    console.log("l;dkfd");
+    socket?.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+      console.log("Received group message:", data);
+      setMessages((prev) => [...prev, data]);
+    });
+  }, [userId, socket])
+
   
 
   const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
