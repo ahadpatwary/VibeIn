@@ -55,7 +55,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                     type: 'oneToOne',
                     participants: { $all: [ new Types.ObjectId(senderId), new Types.ObjectId(receiverId) ] }
                 });
-                console.log('isExistGroup:', isExistGroup);
+                console.log('isExistGroup:', senderId, receiverId, isExistGroup);
                 let groupId = '';
                 if(!isExistGroup) {
                     try{
@@ -65,6 +65,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             lastMessage: text,
                             lastMessageTime: new Date(messageTime),
                         })
+                        console.log('New one-to-one conversation created:', newGroup);
                         groupId = newGroup._id.toString();
                     }catch(err){
                         console.error('Error creating one-to-one conversation:', err);
@@ -74,6 +75,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                     groupId = isExistGroup._id.toString();
                 }
                 socket.join(groupId);
+                console.log(`Socket joined one-to-one group: ${groupId}`);
                 socket.to(groupId).emit('receiveGroupMessage', message)
                 return;
             }

@@ -89,7 +89,6 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
 
   // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
 
-    console.log("ahad");
 
     useEffect(() => {
       console.log("HKDSFJSDKFJSDKLFJSDLKFJSDKLFSD;JFSDKLFJLDSK")
@@ -104,13 +103,10 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
         alert(msg);
       });
   
-      socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
-        console.log("Received group message:", data);
-        setMessages((prev) => [...prev, data]);
-      });
+
     
       return () => {
-        socket.off("receiveGroupMessage");
+        // socket.off("receiveGroupMessage");
         // socket.off("error_message");
       };
     }, []);
@@ -119,6 +115,10 @@ export default function ChatCard({chatWith, joinId, conversationName, conversati
   // const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);
   const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
 
+  socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+    console.log("Received group message:", data);
+    setMessages((prev) => [...prev, data]);
+  });
   
 
   const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
