@@ -55,7 +55,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             const Redis = getRedisClient();
             if(!Redis) return;
             
-            await Redis.hSet(`message:${joinId}`, message);
+            await Redis.hset(`message:${joinId}`, message);
             
             if(senderId && receiverId) {
 
@@ -74,7 +74,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             lastMessage: text,
                             lastMessageTime: new Date(messageTime),
                         })
-                        await Redis.zAdd(
+                        await Redis.zadd(
                         `chat:conversations:${newGroup._id.toString()}`,
                         {
                             score: messageTime ? new Date(messageTime).getTime() : Date.now(),
