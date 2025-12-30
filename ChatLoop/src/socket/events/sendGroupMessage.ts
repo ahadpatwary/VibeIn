@@ -1,9 +1,10 @@
 import { Server, Socket } from 'socket.io'
 import { Types } from 'mongoose'
 import conversation from '../../models/Conversations';
+import { group } from 'node:console';
 
 interface dataType{
-    type: 'oneToOne'| 'group',
+    // type: 'oneToOne'| 'group',
     messageId: string,
     senderId: string,
     receiverId: string | null,
@@ -23,8 +24,8 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
         
         socket.on('sendGroupMessage', async(data: dataType) => {
 
-            const {
-                type, 
+            let {
+                // type, 
                 messageId,
                 senderId,
                 receiverId,
@@ -49,7 +50,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             }
             
             
-            if(type === 'oneToOne' && senderId && receiverId) {
+            if(senderId && receiverId) {
 
                 const isExistGroup = await conversation.findOne({
                     type: 'oneToOne',
@@ -75,7 +76,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 } else {
                     groupId = isExistGroup._id.toString();
                 }
-
+        
                 socket.join(groupId);
                 socket.to(groupId).emit('receiveGroupMessage', message)
                 return;

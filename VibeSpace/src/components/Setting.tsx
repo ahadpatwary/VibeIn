@@ -9,6 +9,7 @@ import { useCommingRequest } from '@/hooks/useCommingRequest'
 import { useAcceptRequest } from "@/hooks/useAcceptRequest"
 import { useGetBlockUser } from "@/hooks/useGetBlockUser"
 import { useUnBlockUser } from "@/hooks/useUnBlockUser"
+import { GiFastBackwardButton } from "react-icons/gi";
 
 interface propType{
     groupName: string,
@@ -62,8 +63,8 @@ export const Setting = ({groupName, groupPicture, setIsGroup, joinId, userId}: p
     
 
     return(
-        <div className='h-dvh w-full overflow-y-auto'>
-            <Button onClick={() => setIsGroup(prev => !prev)}>back</Button>
+        <div className='h-dvh w-full sm:p-2 md:p-3 lg: p-4 bg-black overflow-y-auto'>
+            <button onClick={() => setIsGroup(prev => !prev)}><GiFastBackwardButton /></button>
             <ScrollArea className=" w-full rounded-lg">
                 <Card className = "flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
                     <AvatarDemo src={ groupPicture } size="size-30" />
@@ -73,14 +74,14 @@ export const Setting = ({groupName, groupPicture, setIsGroup, joinId, userId}: p
                 <ScrollBar orientation="horizontal" />
             </ ScrollArea>
             <div>
-                <Card className='flex my-2 border-none'>
+                <Card className='flex my-2 px-2 border-none'>
                     <div>{`https://vibe-in-teal.vercel.app/chat-space/group/${joinId}`}</div>
-                    <Button >Copy Link</Button>
+                    <Button className="" >Copy Link</Button>
                 </Card>
 
                 <ScrollArea className=" w-full rounded-lg">
                     <Card
-                        className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-2 w-full p-4 rounded-lg "
+                        className = "flex flex-col mb-2 max-h-[400px] justify-center items-center gap-1 w-full p-2 rounded-lg "
                     >
                         {
                             members.map((member: type) => {
@@ -195,10 +196,10 @@ export const Setting = ({groupName, groupPicture, setIsGroup, joinId, userId}: p
                     </Card>
                 </ ScrollArea>
 
-                <Card className='my-2'>
-                    <div>leave group</div>
-                    <div>delete group</div>
-                    <div>Report group</div>
+                <Card className='my-1 px-5 py-2 gap-2'>
+                    <Button className="bg-red-200 text-red-500 p-0 m-0">leave group</Button>
+                    <Button className="bg-red-200 text-red-500 p-0 m-0">delete group</Button>
+                    <Button className="bg-red-200 text-red-500 p-0 m-0">Report group</Button>
                 </Card>
             </div>
         </div>

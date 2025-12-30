@@ -8,6 +8,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import ChatCard from '@/components/ChatCard';
 import useGetConversation from "@/hooks/useGetConversation";
 import GroupCard from "@/components/GroupCard";
+import { Group } from "lucide-react";
 
 
 
@@ -71,7 +72,7 @@ const ChatSpacePage = () => {
                   {(() => {
                     if (state === "oneToOne" && joinId) {
                       return(
-                        <ChatCard 
+                        <GroupCard 
                           joinId={joinId} 
                           conversationName={conversationName}
                           conversationPicture={conversationPicture}

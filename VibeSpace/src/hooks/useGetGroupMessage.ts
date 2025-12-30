@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react'
 
 interface receiveMessagePropType {
-  _id?: string,
-  messageId?: string,
-  sererId: string,
-  name: string,
-  picture: string,
-  text: string,
-  referenceMessage: string,
-  messageTime: string,
+    // type: 'oneToOne'| 'group',
+    _id?: string,
+    messageId?: string,
+    senderId: string,
+    receiverId?: string | null,
+    name: string,
+    picture: string,
+    joinId: string,
+    text: string,
+    referenceMessage: string | null,
+    messageTime: string,
+    conversationName: string,
+    conversationPicture: string,
 }
 
 export const useGetGroupMessage = (groupId: string) => {
   const [groupMessage, setGroupMessage] = useState<receiveMessagePropType[]>([]);
+  if(groupId === undefined) return { groupMessage, setGroupMessage };
+
 
   useEffect(() => {
     (async () => {

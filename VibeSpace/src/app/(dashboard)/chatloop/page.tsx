@@ -1,11 +1,11 @@
 'use client';
 
-import ChatCard from '@/components/ChatCard';
 import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
+import GroupCard from '@/components/GroupCard';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
@@ -50,7 +50,7 @@ function ChatPageContent() {
 
   return (
     <div style={{ height: viewportHeight }}>
-      <ChatCard 
+      <GroupCard
         chatWith={chatWith} 
         conversationName={userName}
         conversationPicture={profilePicture}

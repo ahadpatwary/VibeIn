@@ -5,7 +5,6 @@ import React from 'react';
 import TypingIndicator from '@/components/TypingIndicator';
 import { useSocketConnection } from '@/hooks/useSocketConnection';
 import { ScrollArea } from './ui/scroll-area';
-import { Button } from './ui/button';
 import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
 import { LinkPreview } from './LinkPreview';
@@ -13,43 +12,37 @@ import { ReplyMessage } from './ReplyMessage';
 import { BsArrow90DegRight } from "react-icons/bs";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { Setting } from './Setting';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
 import { userIdClient } from '@/lib/userId';
+import { AiFillSetting } from "react-icons/ai";
 
-interface Message {
-  _id?: string,
-  messageId?: string,
-  senderId: string,
-  name: string,
-  picture: string,
-  text: string,
-  referenceMessage: string,
-  messageTime: string,
-}
 
 interface propType {
-  joinId: string;
+  chatWith?: string;
+  joinId?: string;
   conversationName: string;
   conversationPicture: string;
-  setIsGroupList?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface receiveMessagePropType {
-  _id?: string,
-  messageId?: string,
-  senderId: string,
-  name: string,
-  picture: string,
-  text: string,
-  referenceMessage: string,
-  messageTime: string,
+    // type: 'oneToOne'| 'group',
+    _id?: string,
+    messageId?: string,
+    senderId: string,
+    receiverId: string | null,
+    name: string,
+    picture: string,
+    joinId: string,
+    text: string,
+    referenceMessage: string | null,
+    messageTime: string,
+    conversationName: string,
+    conversationPicture: string,
 }
 
 
-export default function GroupCard({ joinId, conversationName, conversationPicture, setIsGroupList}: propType) {
+export default function GroupCard({chatWith, joinId, conversationName, conversationPicture}: propType) {
 
   const [userId, setUserId] = useState('');
   ;(async() => {
@@ -61,36 +54,66 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null> (null);
   const [newMessage, setNewMessage] = useState('');
-  const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId);
+  const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId!);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocketConnection(userId);
   const [isGroup, setIsGroup] = useState(true);
   const { userName, profilePicture } = useProfileInformation();
 
 
-  const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId);  
+  const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId!);  
 
-  useEffect(() => {
+  // useEffect(() => {
  
-    if(!socket) return;
-    console.log("group:userId", userId);
+  //   if(!socket) return;
+  //   console.log("group:userId", userId);
 
-    socket.emit("join-group", { userId, joinId });
+  //   socket.emit("join-group", { userId, joinId });
 
-    socket.on("error", (msg) => {
-      alert(msg);
-    });
+  //   socket.on("error", (msg) => {
+  //     alert(msg);
+  //   });
 
-    socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
-      console.log("Received group message:", data);
-      setGroupMessage((prev) => [...prev, data]);
-    });
+  //   socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+  //     console.log("Received group message:", data);
+  //     setGroupMessage((prev) => [...prev, data]);
+  //   });
   
-    return () => {
-      socket.off("receiveGroupMessage");
-      // socket.off("error_message");
-    };
-  }, [socket,userId, joinId]);
+  //   return () => {
+  //     socket.off("receiveGroupMessage");
+  //     // socket.off("error_message");
+  //   };
+  // }, [socket,userId, joinId]);
+
+
+    if(joinId){
+  
+    // useGetMessage(socket!, userId, chatWith, setMessages);
+  
+    // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
+  
+  
+      useEffect(() => {
+        if(!socket) return;
+  
+        console.log("userId", userId);
+  
+        socket.emit("join-group", { userId ,joinId });
+    
+        socket.on("error", (msg) => {
+          alert(msg);
+        });
+    
+      }, [userId, socket, joinId]);
+    }
+
+
+      useEffect(() => {
+        socket?.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+          console.log("Received group message:", data);
+          setGroupMessage((prev) => [...prev, data]);
+        });
+      }, [userId, socket])
 
   const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
     setReplyMessage(message!);
@@ -106,23 +129,22 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
   const handleSend = () => {
     if (newMessage.trim() === "") return;
    
-    const messageData = { 
-      type: 'oneToOne',
+    const messageData: receiveMessagePropType = { 
+      // type: 'oneToOne',
       messageId: uuidv4(),
       senderId: userId,
-      receiverId: null,
+      receiverId: chatWith || null,
       name: userName,
       picture: profilePicture,
-      joinId,
+      joinId: joinId || "123",
       text: newMessage,
       referenceMessage: refMessageId,
       messageTime: new Date().toISOString(),
       conversationName,
       conversationPicture,
     };
-    console.log(messageData);
     socket?.emit('sendGroupMessage', messageData);
-    setGroupMessage(prev => [...prev, { ...messageData, createdAt: new Date().toISOString() }]);
+    setGroupMessage(prev => [...prev, { ...messageData}]);
     setNewMessage('');
     setReplyMessage(null);
     setRefMessageId(null);
@@ -152,13 +174,16 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
 
         {/* Header */}
         <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
+          {/* <Button className='' onClick={() => !!setIsGroupList && setIsGroupList((prev) => !prev)}/> */}
           <AvatarDemo src={conversationPicture} size="size-12 sm:size-14" />
           <div className="flex flex-col">
             <h2 className="text-base text-black sm:text-lg font-semibold">{conversationName}</h2>
             <p className="text-sm text-gray-500">Offline </p>
           </div>
-          <Button className='' onClick={() => !!setIsGroupList && setIsGroupList((prev) => !prev)}/>
-          <Button className='' onClick={() => setIsGroup((prev) => !prev)}>A</Button>
+
+          <button className='absolute right-2 hover:bg-transparent ' onClick={() => joinId && setIsGroup((prev) => !prev)}>
+            <AiFillSetting className='size-7'/>
+          </button>
             
         </header>
 
@@ -250,7 +275,7 @@ export default function GroupCard({ joinId, conversationName, conversationPictur
           groupName={conversationName} 
           groupPicture={conversationPicture} 
           setIsGroup={setIsGroup}
-          joinId={joinId} 
+          joinId={joinId!} 
           userId={userId}
         />
       )
