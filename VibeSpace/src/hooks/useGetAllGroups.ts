@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react'
 
 interface propType {
   _id: string,
-  groupName: string,
-  groupPicture: {
-    public_id: string,
-    url: string,
-  },
-  lastMessage: string
+  extraFields: {
+    groupName: string,
+    groupPicture: {
+      public_id: string,
+      url: string,
+    }
+  }
 }
-
 export const useGetAllGroups = () => {
     const [allGroups, setAllGroups] = useState<propType[]>([]);
 

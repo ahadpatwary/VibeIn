@@ -2,38 +2,11 @@
 
 import ChatSidebar from "@/components/chatApp/ChatSidebar";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import useGetConversation from "@/hooks/useGetConversation";
 import GroupCard from "@/components/GroupCard";
-
-
-
-
-interface Conversation {
-  _id: string;
-  type: 'oneToOne' | 'group';
-
-  participants: string[];
-  deletedBy: string[];
-  blockedUser: string[];
-  requestUser: string[];
-
-  lastMessage?: string;
-
-  info?: {
-    name?: string;
-    picture?: {
-      public_id: string;
-      url: string;
-    };
-    bio?: string;
-    admin?: string;
-  };
-}
-
-
 
 
 const ChatSpacePage = () => {

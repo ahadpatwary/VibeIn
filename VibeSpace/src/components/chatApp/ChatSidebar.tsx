@@ -8,7 +8,6 @@ import { MdGroup } from "react-icons/md";
 import { MdGroups2 } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
-import { useSelector } from 'react-redux';
 import { userIdClient } from "@/lib/userId";
 
 
@@ -73,7 +72,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
     router.push('/chat-space/groupInfo');
   } 
     return (
-        <div className="w-full h-dvh flex flex-col bg-zinc-800">
+      <div className="w-full h-dvh flex flex-col bg-zinc-800">
         <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
           <Image
             src="/ChatSpace_dark.png" 
@@ -87,7 +86,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
           </button>
         </header>
 
-        <ScrollArea className="flex-1 p-3 overflow-y-auto">
+        <ScrollArea className = "w-full overflow-y-auto h-[100%] p-2">
           {conversations?.length! > 0 && conversations?.map((conv)=> (
               <div
                 key={conv._id}
@@ -123,6 +122,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
               </div> 
           ))}
         </ScrollArea>
+
         <header className="py-3 px-7 flex justify-between items-center bg-neutral-700 text-white">
           <Button>
             <MdGroup />
