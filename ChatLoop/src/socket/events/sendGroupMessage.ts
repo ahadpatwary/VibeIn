@@ -43,6 +43,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             let message = {
                 messageId,
+                joinId,
                 name,
                 picture,
                 text,
@@ -55,7 +56,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             const Redis = getRedisClient();
             if(!Redis) return;
             
-            await Redis.hset(`message:${joinId}`, message);
+            await Redis.hset(`message:${messageId}`, message);
             
             if(senderId && receiverId) {
 
