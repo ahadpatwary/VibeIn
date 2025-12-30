@@ -1,11 +1,9 @@
 'use client';
 
-import ChatCard from '@/components/ChatCard';
 import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import GroupCard from '@/components/GroupCard'
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
