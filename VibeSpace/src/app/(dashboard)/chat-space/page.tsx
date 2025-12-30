@@ -5,10 +5,8 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
-import ChatCard from '@/components/ChatCard';
 import useGetConversation from "@/hooks/useGetConversation";
 import GroupCard from "@/components/GroupCard";
-import { Group } from "lucide-react";
 
 
 

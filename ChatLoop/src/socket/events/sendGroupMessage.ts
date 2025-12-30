@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { Types } from 'mongoose'
 import conversation from '../../models/Conversations';
-import { group } from 'node:console';
 
 interface dataType{
     // type: 'oneToOne'| 'group',
