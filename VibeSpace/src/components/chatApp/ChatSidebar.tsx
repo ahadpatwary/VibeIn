@@ -9,7 +9,7 @@ import { MdGroups2 } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
 import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
+import { userIdClient } from "@/lib/userId";
 
 
 interface Conversation {
@@ -47,7 +47,13 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
 
   const [ selected, setSelected ] = useState<string | null>(null);
   const router = useRouter();
-  const userId = useSelector((state: RootState) => state.user.userId);
+  const [userId, setUserId] = useState('');
+
+  ;(async() => {
+    const id = await userIdClient();
+    if(!id) return;
+    setUserId(id);
+  })()
   
 
   const handleMobileClick = async (senderId: string, receiverId: string) => {
