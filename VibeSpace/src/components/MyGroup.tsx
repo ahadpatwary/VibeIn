@@ -70,11 +70,10 @@ export default function MyGroup() {
         )
       ) : (
             <GroupCard 
-              userId= {userId}
-              groupId={groupId} 
-              setIsGroupList={setIsGroupList} 
-              groupName={groupName} 
-              groupPicture={groupPicture}
+              joinId={groupId} 
+              // setIsGroupList={setIsGroupList} 
+              conversationName={groupName} 
+              conversationPicture={groupPicture}
             />
       )}
     </>
