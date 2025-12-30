@@ -75,11 +75,11 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             lastMessageTime: new Date(messageTime),
                         })
                         await Redis.zadd(
-                        `chat:conversations:${newGroup._id.toString()}`,
-                        {
-                            score: messageTime ? new Date(messageTime).getTime() : Date.now(),
-                            value: newGroup._id.toString()
-                        }
+                        `user:${senderId}:conversations`,
+                        messageTime
+                            ? new Date(messageTime).getTime()
+                            : Date.now(),
+                        newGroup._id.toString()
                         );
                         groupId = newGroup._id.toString();
                     }catch(err){
