@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { Types } from 'mongoose'
 import conversation from '../../models/Conversations';
+import { getRedisClient } from '../../lib/redis';
 
 interface dataType{
     // type: 'oneToOne'| 'group',
@@ -41,13 +42,20 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             // if(!name || !joinId || !text || !messageTime || !conversationName) return;
 
             let message = {
+                messageId,
                 name,
                 picture,
                 text,
                 referenceMessage,
-                messageTime
-            }
+                messageTime,
+                conversationName,
+                conversationPicture
+            };
+
+            const Redis = getRedisClient();
+            if(!Redis) return;
             
+            await Redis.hSet(`message:${joinId}`, message);
             
             if(senderId && receiverId) {
 
@@ -66,7 +74,13 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             lastMessage: text,
                             lastMessageTime: new Date(messageTime),
                         })
-                        console.log('New one-to-one conversation created:', newGroup);
+                        await Redis.zAdd(
+                        `chat:conversations:${newGroup._id.toString()}`,
+                        {
+                            score: messageTime ? new Date(messageTime).getTime() : Date.now(),
+                            value: newGroup._id.toString()
+                        }
+                        );
                         groupId = newGroup._id.toString();
                     }catch(err){
                         console.error('Error creating one-to-one conversation:', err);
@@ -83,39 +97,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 socket.to(joinId).emit('receiveGroupMessage', message)
                 return;
             }
-
-
-            if(referenceMessage) {
-
-                // message  = await groupMessage.create(
-                //     {
-                //         senderId: new Types.ObjectId(userId),
-                //         groupId: new Types.ObjectId(groupId),
-                //         text,
-                //         referenceMessage: new Types.ObjectId(referenceMessage),
-                //     }
-                // );
-
-                // message = await message.populate([
-                // { path: 'senderId', select: '_id name picture' },
-                // { 
-                //     path: 'referenceMessage',
-                //     populate: { path: 'senderId', select: 'name picture' }
-                // }
-                // ]);
-            }else{
-                // message  = await groupMessage.create(
-                //     {
-                //         senderId: new Types.ObjectId(userId),
-                //         groupId: new Types.ObjectId(groupId),
-                //         text,
-                //         referenceMessage: null,
-                //     }
-                // );
-                // message = await message.populate('senderId', 'name picture');
-            }
-
-            // if(!message) return;
 
         })
     } catch (error) {
