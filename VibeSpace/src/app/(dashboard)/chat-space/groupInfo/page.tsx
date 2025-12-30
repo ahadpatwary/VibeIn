@@ -25,14 +25,6 @@ interface ConversationUser {
   picture: { public_id: string; url: string };
 }
 
-interface Conversation {
-  _id: string;
-  senderId: ConversationUser;
-  receiverId: ConversationUser;
-  lastMessage: string;
-  lastMessageTime: string | Date;
-}
-
 
 const GroupInfo = () => {
   const isMobile = useIsMobile();
@@ -58,7 +50,9 @@ const GroupInfo = () => {
                 {
                   SelectedComponent ? (
                     <Suspense fallback={<div className="p-4">Loading...</div>}>
-                       <SelectedComponent />
+                      <div className="m-2">
+                        <SelectedComponent/>
+                      </div>
                     </Suspense>
                   ) : (
                     <div className="h-full w-full flex items-center justify-center">

@@ -27,15 +27,15 @@ export default function AllGroup() {
   }
 
   return (
-    <ScrollArea className="w-full overflow-y-auto">
+    <div className=""> 
+    <ScrollArea className="">
 
-      <div className="h-dvh ">
         {allGroups.length > 0 ? (
           
           allGroups.map((group) => (
             <div
               key={group._id}
-              className="w-full flex items-center w-full p-2 mb-2 bg-zinc-700 rounded hover:bg-zinc-700 transition"
+              className="w-full flex p-2 my-2 items-center w-full bg-zinc-700 rounded hover:bg-zinc-700 transition bg-red-500"
             >
               
                 <AvatarDemo
@@ -62,7 +62,7 @@ export default function AllGroup() {
         ) : (
           <p>No groups found</p>
         )}
-      </div>
     </ScrollArea>
+    </div>
   );
 }
