@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { AvatarDemo } from "@/components/AvaterDemo";
 import { useGetGroups } from "@/hooks/useGetGroups";
 import { userIdClient } from "@/lib/userId";
-import MobileGroupCard from "@/components/MobileGroupCard";
+import GroupCard from "@/components/GroupCard";
 
 interface PropType {
   _id: string;
@@ -71,12 +71,11 @@ export default function MyGroup() {
         )
       ) : (
         <div className="h-dvh w-screen"> 
-            <MobileGroupCard
-              userId= {userId}
-              groupId={groupId} 
-              setIsGroupList={setIsGroupList} 
-              groupName={groupName} 
-              groupPicture={groupPicture}
+            <GroupCard
+              joinId={groupId} 
+              // setIsGroupList={setIsGroupList} 
+              conversationName={groupName} 
+              conversationPicture={groupPicture}
             />
         </div>
       )}
