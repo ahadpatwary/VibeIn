@@ -43,6 +43,10 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             // if(!name || !joinId || !text || !messageTime || !conversationName) return;
 
 
+                            
+            if(joinId == null && type == "oneToOne" && receiverId){
+                io.to(receiverId!).emit("joinId", joinId);
+            }
 
             const Redis = getRedisClient();
             if(!Redis) return;     
@@ -110,7 +114,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                     }
                 )
             );
-                
+
             socket.to(joinId!).emit('receiveGroupMessage', message)
             return;
 
