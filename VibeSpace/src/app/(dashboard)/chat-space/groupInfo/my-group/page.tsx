@@ -72,6 +72,7 @@ export default function MyGroup() {
       ) : (
         <div className="h-dvh w-screen"> 
             <GroupCard
+              type="group"
               joinId={groupId} 
               // setIsGroupList={setIsGroupList} 
               conversationName={groupName} 
