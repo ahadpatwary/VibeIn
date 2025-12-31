@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 
 interface receiveMessagePropType {
-    // type: 'oneToOne'| 'group',
+    type: 'oneToOne'| 'group',
     _id?: string,
     messageId?: string,
     senderId: string,
-    receiverId?: string | null,
+    receiverId: string | null,
     name: string,
     picture: string,
-    joinId: string,
+    joinId: string | null,
     text: string,
     referenceMessage: string | null,
     messageTime: string,

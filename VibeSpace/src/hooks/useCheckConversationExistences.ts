@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react'
 
+interface propType{
+    joinId: string,
+    conversationName: string,
+    conversationPicture: string,
+}
 
-
-export const useCheckConversationExistence = (userId: string, chatWith: string) => {
-    
-    const [joinId, setJoinId] = useState<string | null>(null);
-
+export const useCheckConversationExistence = (userId: string, chatWith: string, setJoinId: (value: string | null) => void) => {
 
     useEffect(() => {
         ;(async() => {
             try {
-                const res = await fetch('',{
-                    method:"POST"
+                const res = await fetch('https://vibein-production-d87a.up.railway.app/api/checkGroupIsExistOrNot',{
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({userId, chatWith})
                 })
 
                 if(!res.ok) return;
@@ -23,7 +26,7 @@ export const useCheckConversationExistence = (userId: string, chatWith: string) 
                     return;
                 }
 
-                
+                setJoinId(data.message._id);
 
             } catch (error) {
                 if(error instanceof Error)
@@ -33,4 +36,5 @@ export const useCheckConversationExistence = (userId: string, chatWith: string) 
 
         })();
     }, [userId, chatWith])
+
 }

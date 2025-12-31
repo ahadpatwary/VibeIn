@@ -12,9 +12,10 @@ function ChatPageContent() {
   const searchParams = useSearchParams();
   const userId = searchParams.get('userId') || '';
   const chatWith = searchParams.get('chatWith') || '';
+  const [joinId, setJoinId] = useState<string | null>(null);
 
 
-  const { joinId } = useCheckConversationExistence(userId, chatWith);
+  useCheckConversationExistence(userId, chatWith, setJoinId)!;
 
   const { userName,  profilePicture } = useProfileInformation(chatWith);
 
@@ -55,7 +56,9 @@ function ChatPageContent() {
   return (
     <div style={{ height: viewportHeight }}>
       <GroupCard
+        type= "oneToOne"
         joinId={joinId}
+        setJoinId={setJoinId}
         chatWith={chatWith} 
         conversationName={userName}
         conversationPicture={profilePicture}

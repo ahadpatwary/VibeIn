@@ -44,6 +44,7 @@ const ChatSpacePage = () => {
                     if (state === "oneToOne" && joinId) {
                       return(
                         <GroupCard 
+                          type= "oneToOne"
                           joinId={joinId} 
                           conversationName={conversationName}
                           conversationPicture={conversationPicture}
@@ -53,6 +54,7 @@ const ChatSpacePage = () => {
                     else if (state === "group" && joinId) {
                       return( 
                         <GroupCard 
+                            type="group"
                             joinId={joinId}
                             conversationName={conversationName}
                             conversationPicture={conversationPicture}

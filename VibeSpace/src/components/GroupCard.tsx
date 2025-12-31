@@ -16,24 +16,28 @@ import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
 import { userIdClient } from '@/lib/userId';
 import { AiFillSetting } from "react-icons/ai";
+import { NoUndefined } from 'zod/v4/core/util.cjs';
 
 
 interface propType {
+  type: string,
   chatWith?: string;
-  joinId?: string;
+  joinId: string | null;
+  setJoinId?: ((value: string) => void) | undefined,
   conversationName: string;
   conversationPicture: string;
 }
 
 interface receiveMessagePropType {
-    // type: 'oneToOne'| 'group',
+    type: 'oneToOne'| 'group',
     _id?: string,
     messageId?: string,
     senderId: string,
     receiverId: string | null,
     name: string,
     picture: string,
-    joinId: string,
+    joinId: string | null,
+    setJoinId: ((value: string) => void) | undefined,
     text: string,
     referenceMessage: string | null,
     messageTime: string,
@@ -42,7 +46,7 @@ interface receiveMessagePropType {
 }
 
 
-export default function GroupCard({chatWith, joinId, conversationName, conversationPicture}: propType) {
+export default function GroupCard({type, chatWith, joinId,setJoinId, conversationName, conversationPicture}: propType) {
 
   const [userId, setUserId] = useState('');
   ;(async() => {
@@ -62,29 +66,6 @@ export default function GroupCard({chatWith, joinId, conversationName, conversat
 
 
   const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId!);  
-
-  // useEffect(() => {
- 
-  //   if(!socket) return;
-  //   console.log("group:userId", userId);
-
-  //   socket.emit("join-group", { userId, joinId });
-
-  //   socket.on("error", (msg) => {
-  //     alert(msg);
-  //   });
-
-  //   socket.on("receiveGroupMessage", (data: receiveMessagePropType) => {
-  //     console.log("Received group message:", data);
-  //     setGroupMessage((prev) => [...prev, data]);
-  //   });
-  
-  //   return () => {
-  //     socket.off("receiveGroupMessage");
-  //     // socket.off("error_message");
-  //   };
-  // }, [socket,userId, joinId]);
-
 
     if(joinId){
   
@@ -130,13 +111,14 @@ export default function GroupCard({chatWith, joinId, conversationName, conversat
     if (newMessage.trim() === "") return;
    
     const messageData: receiveMessagePropType = { 
-      // type: 'oneToOne',
+      type: type === "oneToOne" ? "oneToOne" : "group",
       messageId: uuidv4(),
       senderId: userId,
       receiverId: chatWith || null,
       name: userName,
       picture: profilePicture,
-      joinId: joinId || "123",
+      joinId: joinId,
+      setJoinId: setJoinId,
       text: newMessage,
       referenceMessage: refMessageId,
       messageTime: new Date().toISOString(),
