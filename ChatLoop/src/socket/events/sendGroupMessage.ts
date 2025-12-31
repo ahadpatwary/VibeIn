@@ -112,8 +112,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                         return;
                     }
                 } else {
-                    const key = `chat:list:${joinId}`;
-                    await Redis.rpush(key, JSON.stringify(message));
                     groupId = isExistGroup._id.toString();
                 }
 
@@ -124,6 +122,9 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 socket.to(groupId).emit('receiveGroupMessage', message)
                 return;
             }else{
+                const key = `chat:list:${joinId}`;
+                await Redis.rpush(key, JSON.stringify(message));
+                
                 socket.to(joinId).emit('receiveGroupMessage', message)
                 return;
             }
