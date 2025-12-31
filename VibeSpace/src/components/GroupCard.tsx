@@ -49,7 +49,6 @@ export default function GroupCard({
   conversationPicture
 }: PropType) {
 
-  /* -------------------- STATE -------------------- */
   const [userId, setUserId] = useState('');
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null>(null);
@@ -58,7 +57,6 @@ export default function GroupCard({
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  /* -------------------- USER ID -------------------- */
   useEffect(() => {
     (async () => {
       const id = await userIdClient();
@@ -66,19 +64,13 @@ export default function GroupCard({
     })();
   }, []);
 
-  /* -------------------- SOCKET -------------------- */
   const socket = useSocketConnection(userId);
 
-  /* -------------------- PROFILE -------------------- */
   const { userName, profilePicture } = useProfileInformation();
-
-  /* -------------------- GROUP MESSAGE -------------------- */
   const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId!);
 
-  /* -------------------- TYPING -------------------- */
   const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket, joinId!);
 
-  /* -------------------- JOIN GROUP -------------------- */
   useEffect(() => {
     if (!socket || !joinId || !userId) return;
 
@@ -92,11 +84,11 @@ export default function GroupCard({
     };
   }, [socket, joinId, userId]);
 
-  /* -------------------- RECEIVE MESSAGE -------------------- */
   useEffect(() => {
     if (!socket) return;
 
     const handler = (data: ReceiveMessage) => {
+      console.log("datajoinId", data)
       if (data.joinId) setJoinId?.(data.joinId);
       setGroupMessage(prev => [...prev, data]);
     };
@@ -108,19 +100,17 @@ export default function GroupCard({
     };
   }, [socket, setGroupMessage, setJoinId]);
 
-  /* -------------------- AUTO SCROLL -------------------- */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [groupMessage]);
 
-  /* -------------------- HELPERS -------------------- */
   const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
 
   const handleSend = () => {
     if (!newMessage.trim() || !socket || !joinId) return;
 
     const messageData: ReceiveMessage = {
-      type: "group",
+      type: type === 'OneToOne' ? 'oneToOne' : 'group',
       messageId: uuidv4(),
       senderId: userId,
       receiverId: chatWith || null,
