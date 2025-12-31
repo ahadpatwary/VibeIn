@@ -57,8 +57,11 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             if(!Redis) return;
             
             // await Redis.hset(`message:${messageId}`, message);
-            const key = `chat:list:${joinId}`;
-            await Redis.rpush(key, JSON.stringify(message));
+            if(joinId){
+                const key = `chat:list:${joinId}`;
+                await Redis.rpush(key, JSON.stringify(message));
+            }
+
             
             if(senderId && receiverId) {
 
@@ -92,6 +95,9 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 } else {
                     groupId = isExistGroup._id.toString();
                 }
+
+                const key = `chat:list:${groupId}`;
+                await Redis.rpush(key, JSON.stringify(message));
         
                 socket.join(groupId);
                 socket.to(groupId).emit('receiveGroupMessage', message)
