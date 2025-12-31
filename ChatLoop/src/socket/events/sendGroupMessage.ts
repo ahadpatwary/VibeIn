@@ -57,12 +57,8 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             if(!Redis) return;
             
             // await Redis.hset(`message:${messageId}`, message);
-            if(joinId){
-                const key = `chat:list:${joinId}`;
-                await Redis.rpush(key, JSON.stringify(message));
-            }
-
-            
+     
+         
             if(senderId && receiverId) {
 
                 const isExistGroup = await conversation.findOne({
@@ -81,18 +77,38 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             lastMessageTime: new Date(messageTime),
                         })
                         await Redis.zadd(
-                        `user:${senderId}:conversations`,
-                        messageTime
-                            ? new Date(messageTime).getTime()
-                            : Date.now(),
-                        newGroup._id.toString()
+                            `user:${senderId}:conversations`,
+                            messageTime
+                                ? new Date(messageTime).getTime()
+                                : Date.now(),
+                            JSON.stringify(
+                                {
+                                    type: 'oneToOne',
+                                    participants: [senderId, receiverId]
+                                }
+                            )
                         );
+                        await Redis.zadd(
+                            `user:${receiverId}:conversations`,
+                            messageTime
+                                ? new Date(messageTime).getTime()
+                                : Date.now(),
+                            JSON.stringify(
+                                {
+                                    type: 'oneToOne',
+                                    participants: [senderId, receiverId]
+                                }
+                            )
+                        );
+
                         groupId = newGroup._id.toString();
                     }catch(err){
                         console.error('Error creating one-to-one conversation:', err);
                         return;
                     }
                 } else {
+                    const key = `chat:list:${joinId}`;
+                    await Redis.rpush(key, JSON.stringify(message));
                     groupId = isExistGroup._id.toString();
                 }
 
