@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
-import { AvatarDemo } from "@/components/AvaterDemo"
-import React from 'react';
+
+import React, { useEffect, useState, useRef } from 'react';
+import { AvatarDemo } from "@/components/AvaterDemo";
 import TypingIndicator from '@/components/TypingIndicator';
 import { useSocketConnection } from '@/hooks/useSocketConnection';
 import { ScrollArea } from './ui/scroll-area';
@@ -9,260 +9,210 @@ import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
 import { LinkPreview } from './LinkPreview';
 import { ReplyMessage } from './ReplyMessage';
-import { BsArrow90DegRight } from "react-icons/bs";
-import { BsArrow90DegLeft } from "react-icons/bs";
+import { BsArrow90DegRight, BsArrow90DegLeft } from "react-icons/bs";
 import { Setting } from './Setting';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
 import { userIdClient } from '@/lib/userId';
 import { AiFillSetting } from "react-icons/ai";
-import { NoUndefined } from 'zod/v4/core/util.cjs';
 
-
-interface propType {
-  type: string,
+interface PropType {
+  type: string;
   chatWith?: string;
   joinId: string | null;
-  setJoinId?: ((value: string) => void) | undefined,
+  setJoinId?: (value: string) => void;
   conversationName: string;
   conversationPicture: string;
 }
 
-interface receiveMessagePropType {
-    type: 'oneToOne'| 'group',
-    _id?: string,
-    messageId?: string,
-    senderId: string,
-    receiverId: string | null,
-    name: string,
-    picture: string,
-    joinId: string | null,
-    setJoinId: ((value: string) => void) | undefined,
-    text: string,
-    referenceMessage: string | null,
-    messageTime: string,
-    conversationName: string,
-    conversationPicture: string,
+interface ReceiveMessage {
+  type: 'oneToOne' | 'group';
+  messageId?: string;
+  senderId: string;
+  receiverId: string | null;
+  name: string;
+  picture: string;
+  joinId: string | null;
+  text: string;
+  referenceMessage: string | null;
+  messageTime: string;
+  conversationName: string;
+  conversationPicture: string;
 }
 
+export default function GroupCard({
+  type,
+  chatWith,
+  joinId,
+  setJoinId,
+  conversationName,
+  conversationPicture
+}: PropType) {
 
-export default function GroupCard({type, chatWith, joinId,setJoinId, conversationName, conversationPicture}: propType) {
-
+  /* -------------------- STATE -------------------- */
   const [userId, setUserId] = useState('');
-  ;(async() => {
-    const id = await userIdClient()!;
-    if(!id) return ;
-    setUserId(id);
-
-  })();
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
-  const [refMessageId, setRefMessageId] = useState<string | null> (null);
+  const [refMessageId, setRefMessageId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
-  const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId!);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const socket = useSocketConnection(userId);
   const [isGroup, setIsGroup] = useState(true);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  /* -------------------- USER ID -------------------- */
+  useEffect(() => {
+    (async () => {
+      const id = await userIdClient();
+      if (id) setUserId(id);
+    })();
+  }, []);
+
+  /* -------------------- SOCKET -------------------- */
+  const socket = useSocketConnection(userId);
+
+  /* -------------------- PROFILE -------------------- */
   const { userName, profilePicture } = useProfileInformation();
 
+  /* -------------------- GROUP MESSAGE -------------------- */
+  const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId!);
 
-  const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket!, joinId!);  
+  /* -------------------- TYPING -------------------- */
+  const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket, joinId!);
 
-    if(joinId){
-  
-    // useGetMessage(socket!, userId, chatWith, setMessages);
-  
-    // const { handleTyping, someoneTyping } = useChatTyping(socket!, chatWith);
-  
-  
-      useEffect(() => {
-        if(!socket) return;
-  
-        console.log("userId", userId);
-  
-        socket.emit("join-group", { userId ,joinId });
-    
-        socket.on("error", (msg) => {
-          alert(msg);
-        });
-    
-      }, [userId, socket, joinId]);
-    }
+  /* -------------------- JOIN GROUP -------------------- */
+  useEffect(() => {
+    if (!socket || !joinId || !userId) return;
 
+    socket.emit("join-group", { userId, joinId });
 
-      useEffect(() => {
-        socket?.on("receiveGroupMessage", (data: receiveMessagePropType) => {
-          console.log("datajoinID", data);
-          if(!!setJoinId) setJoinId(data.joinId!);
-          setGroupMessage((prev) => [...prev, data]);
-        });
-      }, [userId, socket])
+    const onError = (msg: string) => alert(msg);
+    socket.on("error", onError);
 
-  const handleMessageRefrence = (refMessageId: string | undefined, message: string) => {
-    setReplyMessage(message!);
-    setRefMessageId(refMessageId!);
-    console.log(message);
-  }
+    return () => {
+      socket.off("error", onError);
+    };
+  }, [socket, joinId, userId]);
 
-  const cancleRefMessage = () =>{
-    setReplyMessage(null);
-    setRefMessageId(null);
-  } 
+  /* -------------------- RECEIVE MESSAGE -------------------- */
+  useEffect(() => {
+    if (!socket) return;
+
+    const handler = (data: ReceiveMessage) => {
+      if (data.joinId) setJoinId?.(data.joinId);
+      setGroupMessage(prev => [...prev, data]);
+    };
+
+    socket.on("receiveGroupMessage", handler);
+
+    return () => {
+      socket.off("receiveGroupMessage", handler);
+    };
+  }, [socket, setGroupMessage, setJoinId]);
+
+  /* -------------------- AUTO SCROLL -------------------- */
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [groupMessage]);
+
+  /* -------------------- HELPERS -------------------- */
+  const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
 
   const handleSend = () => {
-    if (newMessage.trim() === "") return;
-   
-    const messageData: receiveMessagePropType = { 
-      type: type === "oneToOne" ? "oneToOne" : "group",
+    if (!newMessage.trim() || !socket || !joinId) return;
+
+    const messageData: ReceiveMessage = {
+      type: "group",
       messageId: uuidv4(),
       senderId: userId,
       receiverId: chatWith || null,
       name: userName,
       picture: profilePicture,
-      joinId: joinId,
-      setJoinId: setJoinId,
+      joinId,
       text: newMessage,
       referenceMessage: refMessageId,
       messageTime: new Date().toISOString(),
       conversationName,
       conversationPicture,
     };
-    socket?.emit('sendGroupMessage', messageData);
-    setGroupMessage(prev => [...prev, { ...messageData}]);
+
+    socket.emit('sendGroupMessage', messageData);
+    setGroupMessage(prev => [...prev, messageData]);
+
     setNewMessage('');
     setReplyMessage(null);
     setRefMessageId(null);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-
-    setNewMessage(e.target.value)
-    handleTyping(); 
-
-  };
-
-  const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
-
-
-  useEffect(() => {
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 50);
-  }, [groupMessage]);
-
+  /* -------------------- UI -------------------- */
   return (
-    <> 
-    {
-      isGroup ? (
-          <div className="flex flex-col h-full w-full ">
+    <>
+      {isGroup ? (
+        <div className="flex flex-col h-full w-full">
 
-        {/* Header */}
-        <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3 flex-none sticky top-0 z-10">
-          {/* <Button className='' onClick={() => !!setIsGroupList && setIsGroupList((prev) => !prev)}/> */}
-          <AvatarDemo src={conversationPicture} size="size-12 sm:size-14" />
-          <div className="flex flex-col">
-            <h2 className="text-base text-black sm:text-lg font-semibold">{conversationName}</h2>
-            <p className="text-sm text-gray-500">Offline </p>
-          </div>
-
-          <button className='absolute right-2 hover:bg-transparent ' onClick={() => joinId && setIsGroup((prev) => !prev)}>
-            <AiFillSetting className='size-7'/>
-          </button>
-            
-        </header>
-
-        {/* Messages */}
-        <ScrollArea className = "flex-1 w-full gap-4 overflow-y-auto bg-zinc-700">
-        <main className=" px-2 sm:px-4 py-3">
-          {groupMessage.length > 0 && groupMessage.map((message) => {
-            const isSender = message.senderId == userId;
-            return (
-              <div
-                key={message._id || message.messageId}
-                className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
-              >
-                <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                  <AvatarDemo src={message.picture} size="size-10 " />
-                </div>
-
-                <div
-                  className={`max-w-[70%] sm:max-w-[65%] rounded-xl px-3 py-2 text-sm sm:text-base break-words ${
-                    isSender
-                      ? "bg-indigo-500 text-white self-end"
-                      : "bg-white text-gray-800"
-                  }`}
-                >
-                  {isLink(message.text) && <LinkPreview url={message.text} />}
-                  {message.referenceMessage && 
-                    <ReplyMessage replyText={message.referenceMessage} />
-                  }
-                    {message.text}
-                  <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
-                    {new Date(message.messageTime).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </div>
-                </div>
-                <button 
-                  onClick={() => handleMessageRefrence(message._id || message.messageId, message.text)}
-                >
-                { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
-                </button>
-              </div>
-            );
-          })}
-
-          {someOneGroupTyping ? (
-            <div className="mb-2 flex justify-start">
-              <TypingIndicator />
+          {/* Header */}
+          <header className="bg-neutral-600 h-16 p-2 flex items-center gap-3">
+            <AvatarDemo src={conversationPicture} size="size-12" />
+            <div>
+              <h2 className="font-semibold">{conversationName}</h2>
+              <p className="text-sm text-gray-500">Offline</p>
             </div>
-          ) : <div className='h-7' />}
-
-          <div ref={messagesEndRef}></div>
-        </main>
-        </ScrollArea>
-
-        {/* Footer */}
-        <footer className="bg-zinc-600 p-2 sm:p-3 flex-none sticky bottom-0">
-            {replyMessage && (
-              <div className="overflow-hidden rounded pb-3 mb-3 bg-gray-800 border-t border-gray-700 px-4 py-2 flex items-center justify-between">
-              <div className="flex-1 text-sm">
-              <div className="text-xs text-gray-400">Replying to</div>
-              <div className="max-w-[70%] truncate font-medium text-sm text-gray-100">{replyMessage}</div>
-              {/* <div className="text-xs text-gray-400">— {replyMessage.senderName || replyMessage.senderId}</div> */}
-              </div>
-              <button 
-                className="ml-3 text-gray-300 hover:text-white" 
-                onClick={cancleRefMessage} 
-                aria-label="Cancel reply">✕</button>
-              </div>
-            )}
-          <div className="flex items-center gap-2">
-            <textarea
-              placeholder="Type a message..."
-              className="w-full p-2 sm:p-3 rounded-md border border-gray-400 focus:outline-none  text-black resize-none h-12 sm:h-14"
-              value={newMessage}
-              onChange={handleChange}
-            />
             <button
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-md transition-colors"
-              onClick={handleSend}
+              className="absolute right-2"
+              onClick={() => setIsGroup(false)}
             >
+              <AiFillSetting className="size-7" />
+            </button>
+          </header>
+
+          {/* Messages */}
+          <ScrollArea className="flex-1 bg-zinc-700">
+            <main className="p-3">
+              {groupMessage.map(msg => {
+                const isSender = msg.senderId === userId;
+                return (
+                  <div
+                    key={msg.messageId}
+                    className={`mb-3 flex ${isSender ? 'flex-row-reverse' : ''}`}
+                  >
+                    <AvatarDemo src={msg.picture} size="size-10" />
+                    <div className={`mx-2 p-2 rounded ${isSender ? 'bg-indigo-500 text-white' : 'bg-white'}`}>
+                      {msg.referenceMessage && <ReplyMessage replyText={msg.referenceMessage} />}
+                      {isLink(msg.text) && <LinkPreview url={msg.text} />}
+                      {msg.text}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {someOneGroupTyping && <TypingIndicator />}
+              <div ref={messagesEndRef} />
+            </main>
+          </ScrollArea>
+
+          {/* Footer */}
+          <footer className="p-3 bg-zinc-600 flex gap-2">
+            <textarea
+              value={newMessage}
+              onChange={(e) => {
+                setNewMessage(e.target.value);
+                handleTyping();
+              }}
+              className="flex-1 p-2 text-black rounded"
+            />
+            <button onClick={handleSend} className="bg-indigo-500 px-4 rounded text-white">
               Send
             </button>
-          </div>
-        </footer>
-      </div>
-      ): (
-        <Setting 
-          groupName={conversationName} 
-          groupPicture={conversationPicture} 
+          </footer>
+
+        </div>
+      ) : (
+        <Setting
+          groupName={conversationName}
+          groupPicture={conversationPicture}
           setIsGroup={setIsGroup}
-          joinId={joinId!} 
+          joinId={joinId!}
           userId={userId}
         />
-      )
-    }
+      )}
     </>
   );
 }
