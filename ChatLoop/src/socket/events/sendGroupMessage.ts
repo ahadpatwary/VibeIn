@@ -56,7 +56,9 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             const Redis = getRedisClient();
             if(!Redis) return;
             
-            await Redis.hset(`message:${messageId}`, message);
+            // await Redis.hset(`message:${messageId}`, message);
+            const key = `chat:list:${joinId}`;
+            await Redis.rpush(key, JSON.stringify(message));
             
             if(senderId && receiverId) {
 
