@@ -90,13 +90,13 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                 await Redis.zadd(
                     `user:${senderId}:conversations`,
-                    messageTime,
+                    messageTime ? new Date(messageTime).getTime() : Date.now(),
                     groupId,
                 );
 
                 await Redis.zadd(
                     `user:${receiverId}:conversations`,
-                    messageTime,
+                    messageTime ? new Date(messageTime).getTime() : Date.now(),
                     groupId,
                 );
 
@@ -123,13 +123,13 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                 await Redis.zadd(
                     `user:${senderId}:conversations`,
-                    messageTime,
+                    messageTime ? new Date(messageTime).getTime() : Date.now(),
                     joinId,
                 );
 
                 await Redis.zadd(
                     `user:${receiverId}:conversations`,
-                    messageTime,
+                    messageTime ? new Date(messageTime).getTime() : Date.now(),
                     joinId,
                 );
 
