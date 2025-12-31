@@ -3,6 +3,7 @@ import { upload } from '../middlewares/multer';
 import cloudinary from '../lib/cloudinary';
 import { Types } from 'mongoose';
 import Conversation from '../models/Conversations';
+import { getRedisClient } from '../lib/redis';
 
 const router = express.Router();
 
@@ -32,6 +33,9 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             url: uploadResult.secure_url
         };
 
+            const Redis = getRedisClient();
+            if(!Redis) return;
+
         const group = await Conversation.create({
             type: 'group',
             participants: [new Types.ObjectId(userId)],
@@ -43,6 +47,24 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             }
         });
 
+        const conversation = {
+            type: 'group',
+            participants: [userId],
+            extraFields: {
+                groupName,
+                groupPicture: picture,
+                groupAdmin: userId,
+                groupBio
+            }
+        }
+
+
+        await Redis.zadd(
+            `user:${userId}:conversations`,
+            Date.now(),
+            JSON.stringify(conversation)
+        );
+        
         if(!group)
             return res.status(400).json({ message: 'user not created successfully' })
         ;
