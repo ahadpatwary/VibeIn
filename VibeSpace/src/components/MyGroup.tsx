@@ -70,6 +70,7 @@ export default function MyGroup() {
         )
       ) : (
             <GroupCard 
+              type="group"
               joinId={groupId} 
               // setIsGroupList={setIsGroupList} 
               conversationName={groupName} 
