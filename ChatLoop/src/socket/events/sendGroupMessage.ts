@@ -78,32 +78,35 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             messageTime
                                 ? new Date(messageTime).getTime()
                                 : Date.now(),
-                            JSON.stringify(
-                                {
-                                    type: 'oneToOne',
-                                    participants: [senderId, receiverId],
-                                    extraFields: {
-                                        conversationName: conversationName || "",
-                                        conversationPicture: conversationPicture || ""
-                                    }
-                                }
-                            )
+
+                            joinId,
+                            // JSON.stringify(
+                            //     {
+                            //         type: 'oneToOne',
+                            //         participants: [senderId, receiverId],
+                            //         extraFields: {
+                            //             conversationName: conversationName || "",
+                            //             conversationPicture: conversationPicture || ""
+                            //         }
+                            //     }
+                            // )
                         );
                         await Redis.zadd(
                             `user:${receiverId}:conversations`,
                             messageTime
                                 ? new Date(messageTime).getTime()
                                 : Date.now(),
-                            JSON.stringify(
-                                {
-                                    type: 'oneToOne',
-                                    participants: [senderId, receiverId],
-                                    extraFields: {
-                                        conversationName: name || "",
-                                        conversationPicture: picture || ""
-                                    }
-                                }
-                            )
+                            joinId,
+                            // JSON.stringify(
+                            //     {
+                            //         type: 'oneToOne',
+                            //         participants: [senderId, receiverId],
+                            //         extraFields: {
+                            //             conversationName: name || "",
+                            //             conversationPicture: picture || ""
+                            //         }
+                            //     }
+                            // )
                         );
 
                         groupId = newGroup._id.toString();
@@ -117,13 +120,61 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                 const key = `chat:list:${groupId}`;
                 await Redis.rpush(key, JSON.stringify(message));
-        
+
+                await Redis.zadd(
+                    `user:${senderId}:conversations`,
+                    messageTime
+                );
+
+                await Redis.zadd(
+                    `user:${receiverId}:conversations`,
+                    messageTime
+                );
+
+                await Redis.hset(`conversation:data`,
+                    groupId,
+                    JSON.stringify(
+                        {
+                            type: 'oneToOne',
+                            participants: [senderId, receiverId],
+                            extraFields: {
+                                conversationName: conversationName || "",
+                                conversationPicture: conversationPicture || ""
+                            }
+                        }
+                    )
+                );
+
                 socket.join(groupId);
                 socket.to(groupId).emit('receiveGroupMessage', message)
                 return;
             }else{
                 const key = `chat:list:${joinId}`;
                 await Redis.rpush(key, JSON.stringify(message));
+
+                                await Redis.zadd(
+                    `user:${senderId}:conversations`,
+                    messageTime
+                );
+
+                await Redis.zadd(
+                    `user:${receiverId}:conversations`,
+                    messageTime
+                );
+
+                await Redis.hset(`conversation:data`,
+                    joinId,
+                    JSON.stringify(
+                        {
+                            type: 'oneToOne',
+                            participants: [senderId, receiverId],
+                            extraFields: {
+                                conversationName: conversationName || "",
+                                conversationPicture: conversationPicture || ""
+                            }
+                        }
+                    )
+                );
                 
                 socket.to(joinId).emit('receiveGroupMessage', message)
                 return;
