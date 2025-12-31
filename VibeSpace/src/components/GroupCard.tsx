@@ -91,7 +91,9 @@ export default function GroupCard({type, chatWith, joinId,setJoinId, conversatio
 
       useEffect(() => {
         socket?.on("receiveGroupMessage", (data: receiveMessagePropType) => {
-          console.log("Received group message:", data);
+          // if(data.joinId !== null){
+          //   setJoinId(data.joinId);
+          // }
           setGroupMessage((prev) => [...prev, data]);
         });
       }, [userId, socket])

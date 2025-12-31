@@ -12,7 +12,6 @@ interface dataType {
     name: string,
     picture: string,
     joinId: string | null,
-    setJoinId:((value: string) => void) | undefined,
     text: string,
     referenceMessage: string | null,
     messageTime: string,
@@ -34,7 +33,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 name,
                 picture,
                 joinId,
-                setJoinId,
                 text,
                 referenceMessage,
                 messageTime,
@@ -64,7 +62,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                     joinId = newGroup._id.toString();
                     socket.join(joinId as string);
-                    if(!!setJoinId) setJoinId(joinId!);
 
                 }catch(err){
                     console.error('Error creating one-to-one conversation:', err);
@@ -88,17 +85,17 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             const key = `chat:list:${joinId}`;
             await Redis.rpush(key, JSON.stringify(message));
 
-            await Redis.zadd(
-                `user:${senderId}:conversations`,
-                Date.now(),
-                joinId 
-            );
+            // await Redis.zadd(
+            //     `user:${senderId}:conversations`,
+            //     Date.now(),
+            //     joinId 
+            // );
 
-            await Redis.zadd(
-                `user:${receiverId}:conversations`,
-                Date.now(),
-                joinId,
-            );
+            // await Redis.zadd(
+            //     `user:${receiverId}:conversations`,
+            //     Date.now(),
+            //     joinId,
+            // );
 
             await Redis.hset(`conversation:data`,
                 joinId!,
