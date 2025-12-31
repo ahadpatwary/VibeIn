@@ -43,10 +43,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             // if(!name || !joinId || !text || !messageTime || !conversationName) return;
 
 
-                            
-            if(joinId == null && type == "oneToOne" && receiverId){
-                io.to(receiverId!).emit("joinId", joinId);
-            }
 
             const Redis = getRedisClient();
             if(!Redis) return;     
@@ -66,6 +62,8 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                     joinId = newGroup._id.toString();
                     socket.join(joinId as string);
+                    io.to(receiverId!).emit("joinId", joinId);
+
 
                 }catch(err){
                     console.error('Error creating one-to-one conversation:', err);
