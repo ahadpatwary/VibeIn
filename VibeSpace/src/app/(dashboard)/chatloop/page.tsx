@@ -6,11 +6,15 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import GroupCard from '@/components/GroupCard';
+import { useCheckConversationExistence } from '@/hooks/useCheckConversationExistences';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
   const userId = searchParams.get('userId') || '';
   const chatWith = searchParams.get('chatWith') || '';
+
+
+  const { joinId } = useCheckConversationExistence(userId, chatWith);
 
   const { userName,  profilePicture } = useProfileInformation(chatWith);
 
@@ -51,6 +55,7 @@ function ChatPageContent() {
   return (
     <div style={{ height: viewportHeight }}>
       <GroupCard
+        joinId={joinId}
         chatWith={chatWith} 
         conversationName={userName}
         conversationPicture={profilePicture}

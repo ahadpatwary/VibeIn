@@ -22,6 +22,7 @@ import getGroupMembersRouter from './api/getGroupMember'
 import acceptRequestRouter from './api/acceptRequest';
 import getBlockUserRouter from './api/getBlockUser';
 import unBlockUserRouter from './api/unBlockUser';
+import checkGroupIsExistOrNot from './api/checkGroupIsExistOrNot'
 
 
 const app = express();
@@ -51,5 +52,6 @@ app.use('/api/getGroupMembers', getGroupMembersRouter);
 app.use('/api/acceptRequest', acceptRequestRouter);
 app.use('/api/getBlockUser', getBlockUserRouter);
 app.use('/api/unBlockUser', unBlockUserRouter);
+app.use('/api/checkGroupIsExistOrNot', checkGroupIsExistOrNot);
 
 export default app;
