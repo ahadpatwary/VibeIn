@@ -88,15 +88,11 @@ export default function GroupCard({type, chatWith, joinId,setJoinId, conversatio
       }, [userId, socket, joinId]);
     }
 
-      if(joinId == null && type == "oneToOne" && chatWith){
-          socket?.on("joinId", (data: string) => {
-            console.log("joinIdby accept", data);
-            if(!!setJoinId) setJoinId(data);
-          });
-      }
 
       useEffect(() => {
         socket?.on("receiveGroupMessage", (data: receiveMessagePropType) => {
+          console.log("datajoinID", data);
+          if(!!setJoinId) setJoinId(data.joinId!);
           setGroupMessage((prev) => [...prev, data]);
         });
       }, [userId, socket])

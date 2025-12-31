@@ -62,8 +62,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                     joinId = newGroup._id.toString();
                     socket.join(joinId as string);
-                    io.to(senderId).emit("joinId", joinId);
-
 
                 }catch(err){
                     console.error('Error creating one-to-one conversation:', err);
@@ -113,7 +111,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 )
             );
 
-            socket.to(joinId!).emit('receiveGroupMessage', message)
+            io.to(joinId!).emit('receiveGroupMessage', message)
             return;
 
         })
