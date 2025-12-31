@@ -54,10 +54,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             };
 
             const Redis = getRedisClient();
-            if(!Redis) return;
-            
-            // await Redis.hset(`message:${messageId}`, message);
-     
+            if(!Redis) return;     
          
             if(senderId && receiverId) {
 
@@ -84,7 +81,11 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             JSON.stringify(
                                 {
                                     type: 'oneToOne',
-                                    participants: [senderId, receiverId]
+                                    participants: [senderId, receiverId],
+                                    extraFields: {
+                                        conversationName: conversationName || "",
+                                        conversationPicture: conversationPicture || ""
+                                    }
                                 }
                             )
                         );
@@ -96,7 +97,11 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                             JSON.stringify(
                                 {
                                     type: 'oneToOne',
-                                    participants: [senderId, receiverId]
+                                    participants: [senderId, receiverId],
+                                    extraFields: {
+                                        conversationName: name || "",
+                                        conversationPicture: picture || ""
+                                    }
                                 }
                             )
                         );
