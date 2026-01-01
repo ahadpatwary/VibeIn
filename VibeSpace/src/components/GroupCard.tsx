@@ -93,10 +93,10 @@ export default function GroupCard({
       setGroupMessage(prev => [...prev, data]);
     };
 
-    socket.on(`conversation:${joinId}:active`, handler);
+    socket.on("receiveGroupMessage", handler);
 
     return () => {
-      socket.off(`conversation:${joinId}:active`, handler);
+      socket.off("receiveGroupMessage", handler);
     };
   }, [socket, setGroupMessage, setJoinId]);
 
