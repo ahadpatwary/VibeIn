@@ -31,12 +31,12 @@ export const useGroupChatTyping = (socket: Socket | null, groupId: string) => {
     const onTyping = () => setsomeOneGroupTyping(true);
     const onStopTyping = () => setsomeOneGroupTyping(false);
 
-    socket.on("someoneGroupTyping", onTyping);
-    socket.on("someOneStopGroupTyping", onStopTyping);
+    socket?.on("someoneGroupTyping", onTyping);
+    socket?.on("someOneStopGroupTyping", onStopTyping);
 
     return () => {
-      socket.off("someoneGroupTyping", onTyping);
-      socket.off("someOneStopGroupTyping", onStopTyping);
+      socket?.off("someoneGroupTyping", onTyping);
+      socket?.off("someOneStopGroupTyping", onStopTyping);
     };
   }, [socket]);
 

@@ -11,13 +11,13 @@ export const groupTypingStateHandler = (io: Server, socket: Socket) => {
         
         if(!groupId) return;
 
-        socket.to(groupId).emit('someoneGroupTyping');
+        socket.to(`conversation:${groupId}:active`).emit('someoneGroupTyping');
     })
 
     socket.on('stopGroupTyping', ({ groupId }: propType) => {
 
         if(!groupId) return;
 
-        socket.to(groupId).emit('someOneStopGroupTyping');
+        socket.to(`conversation:${groupId}:active`).emit('someOneStopGroupTyping');
     })
 }

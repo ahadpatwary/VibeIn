@@ -105,7 +105,8 @@ export default function GroupCard({
   }, [groupMessage]);
 
   const isLink = (text: string) => /(https?:\/\/[^\s]+)/g.test(text);
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 
     setNewMessage(e.target.value)
     handleTyping(); 
