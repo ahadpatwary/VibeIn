@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
-export const getSocket = (userId?: string) => {
+export const useSocketConnection = (userId?: string) => {
   if (!socket) {
     socket = io("https://vibein-production-d87a.up.railway.app", {
       transports: ["websocket"],
