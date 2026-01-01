@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import GroupCard from '@/components/GroupCard';
 import { useCheckConversationExistence } from '@/hooks/useCheckConversationExistences';
+// import { useSocketConnection } from '@/hooks/useSocketConnection';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
@@ -18,9 +19,13 @@ function ChatPageContent() {
   useCheckConversationExistence(userId, chatWith, setJoinId)!;
 
   const { userName,  profilePicture } = useProfileInformation(chatWith);
-
   const [storedUserId, setStoredUserId] = useState<string | null>(null);
   const [viewportHeight, setViewportHeight] = useState<number>(0);
+  // const socket = useSocketConnection(userId);
+
+
+
+  
 
   useEffect(() => {
     (async () => {
@@ -52,6 +57,7 @@ function ChatPageContent() {
   if (!storedUserId || storedUserId !== userId) {
     return <div>Please log in to access your chat.</div>;
   }
+  // socket?.emit("join-group", { userId, joinId: '', newJoinId: joinId });
 
   return (
     <div style={{ height: viewportHeight }}>
