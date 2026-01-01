@@ -12,7 +12,7 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
         socket.on('join-group', async(data: dataType) => {
 
             const { userId, joinId, newJoinId }: dataType = data;
-            console.log("hi", socket, joinId, newJoinId);
+            
             // if(!userId || !joinId) return;
 
             // const isMember = await Conversation.findOne(

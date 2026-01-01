@@ -111,7 +111,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             //     )
             // );
 
-            io.to(`conversation:${joinId}:active`).emit('receiveGroupMessage', message);
+            socket.to(`conversation:${joinId}:active`).emit('receiveGroupMessage', message);
             const participants = [senderId, receiverId];
 
             const participantRooms = participants.map(id => `user:${id}`);
