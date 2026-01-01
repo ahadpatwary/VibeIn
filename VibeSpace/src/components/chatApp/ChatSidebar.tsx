@@ -38,7 +38,7 @@ interface Conversation {
 interface ChatSidebarProps {
   setConversationName?: (value: string) => void;
   setConversationPicture?: (value: string) => void;
-  joinId: string;
+  joinId?: string;
   setJoinId?: (value: string) => void;
   conversations?: Conversation[];
   setState?: (value: "empty" | "group" | "oneToOne") => void;
