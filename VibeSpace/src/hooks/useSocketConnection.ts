@@ -1,3 +1,4 @@
+'use client'
 import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
@@ -14,6 +15,7 @@ export const useSocketConnection = (userId?: string) => {
   }
 
   if (userId) {
+    socket?.emit("universalGroup", { userId });
     socket.emit("addUser", userId);
   }
 

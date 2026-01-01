@@ -88,12 +88,14 @@ export default function GroupCard({
     if (!socket) return;
 
     const handler = (data: ReceiveMessage) => {
-      console.log("datajoinId", data)
-      if (data.joinId) setJoinId?.(data.joinId);
       setGroupMessage(prev => [...prev, data]);
     };
 
     socket.on("receiveGroupMessage", handler);
+
+    socket.on("joinId", (data: string) => {
+      if (data) setJoinId?.(data);
+    })
 
     return () => {
       socket.off("receiveGroupMessage", handler);

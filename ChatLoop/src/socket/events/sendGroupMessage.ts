@@ -61,7 +61,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                     if(!newGroup) return;
 
                     joinId = newGroup._id.toString();
-                    socket?.join(`conversation:${joinId}:active`);
+                    io.to(`user:${senderId}`).emit('joinId', joinId);
 
                 }catch(err){
                     console.error('Error creating one-to-one conversation:', err);
