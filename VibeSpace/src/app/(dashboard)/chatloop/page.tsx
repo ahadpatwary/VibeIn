@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import GroupCard from '@/components/GroupCard';
 import { useCheckConversationExistence } from '@/hooks/useCheckConversationExistences';
-// import { useSocketConnection } from '@/hooks/useSocketConnection';
+import { useSocketConnection } from '@/hooks/useSocketConnection';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
@@ -21,7 +21,7 @@ function ChatPageContent() {
   const { userName,  profilePicture } = useProfileInformation(chatWith);
   const [storedUserId, setStoredUserId] = useState<string | null>(null);
   const [viewportHeight, setViewportHeight] = useState<number>(0);
-  // const socket = useSocketConnection(userId);
+  const socket = useSocketConnection(userId);
 
 
 
