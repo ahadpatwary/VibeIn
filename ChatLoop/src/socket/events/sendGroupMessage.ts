@@ -111,6 +111,10 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             //     )
             // );
 
+            if(!socket.rooms.has(`conversation:${joinId}:active`)){
+                socket?.join(`conversation:${joinId}:active`);
+            }
+
             socket.to(`conversation:${joinId}:active`).emit('receiveGroupMessage', message);
             const participants = [senderId, receiverId];
 
