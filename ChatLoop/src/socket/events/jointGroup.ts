@@ -13,22 +13,22 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
 
             const { userId, joinId, newJoinId }: dataType = data;
 
-            if(!userId || !joinId) return;
+            // if(!userId || !joinId) return;
 
-            const isMember = await Conversation.findOne(
-                {
-                    _id: new Types.ObjectId(joinId),
-                    participants:{ $in: [new Types.ObjectId(userId)]}
-                }
-            )
+            // const isMember = await Conversation.findOne(
+            //     {
+            //         _id: new Types.ObjectId(joinId),
+            //         participants:{ $in: [new Types.ObjectId(userId)]}
+            //     }
+            // )
 
-            if(isMember){
+            // if(isMember){
                 (joinId !== '') && socket?.leave(`conversation:${joinId}:active`);
                 socket?.join(`conversation:${newJoinId}:active`);
-            }else{
-                console.log("joined unsuccessful, This user is not a member of this group");
-                socket.emit('error', 'You are not a member of this group');
-            }
+            // }else{
+            //     console.log("joined unsuccessful, This user is not a member of this group");
+            //     socket.emit('error', 'You are not a member of this group');
+            // }
         })
     } catch (error) {
         if(error instanceof Error)
