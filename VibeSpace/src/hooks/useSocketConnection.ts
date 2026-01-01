@@ -1,31 +1,27 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 
-
-
 export const useSocketConnection = (userId: string) => {
-    const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (!userId) return;
+    if (socketRef.current) return;
 
-        if(userId === "") return;
-        if(socketRef.current) return socketRef.current;
+    const socket = io("https://vibein-production-d87a.up.railway.app", {
+      transports: ["websocket"],
+      secure: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+    });
 
-        socketRef.current = io("https://vibein-production-d87a.up.railway.app", {
-            transports: ["websocket"],
-            secure: true,
-            reconnection: true,
-            reconnectionAttempts: 3,
-            reconnectionDelay: 1000,
-        });
-        
-        socketRef.current && socketRef.current.emit('addUser', userId);
+    socket.emit("addUser", userId);
 
-        return () => {
-            socketRef.current?.disconnect();
-        };
-    }, [userId]);
+    socketRef.current = socket;
 
+    // ❌ disconnect here korbo na
+  }, [userId]);
 
-    return socketRef.current;
-}
+  return socketRef;
+};
