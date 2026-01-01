@@ -12,7 +12,7 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
         socket.on('join-group', async(data: dataType) => {
 
             const { userId, joinId, newJoinId }: dataType = data;
-
+            console.log("hi", socket, joinId, newJoinId);
             // if(!userId || !joinId) return;
 
             // const isMember = await Conversation.findOne(
@@ -23,7 +23,9 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
             // )
 
             // if(isMember){
-                (joinId !== '') && socket?.leave(`conversation:${joinId}:active`);
+                if (joinId) {
+                    socket.leave(`conversation:${joinId}:active`);
+                }
                 socket?.join(`conversation:${newJoinId}:active`);
             // }else{
             //     console.log("joined unsuccessful, This user is not a member of this group");

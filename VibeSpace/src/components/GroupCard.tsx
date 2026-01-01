@@ -98,7 +98,7 @@ export default function GroupCard({
     return () => {
       socket.off("receiveGroupMessage", handler);
     };
-  }, [socket, setGroupMessage, setJoinId]);
+  }, [socket, setGroupMessage]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
