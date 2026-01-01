@@ -57,7 +57,7 @@ function ChatPageContent() {
   if (!storedUserId || storedUserId !== userId) {
     return <div>Please log in to access your chat.</div>;
   }
-  // socket?.emit("join-group", { userId, joinId: '', newJoinId: joinId });
+  socket?.emit("join-group", { userId, joinId: '', newJoinId: joinId });
 
   return (
     <div style={{ height: viewportHeight }}>
