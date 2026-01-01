@@ -32,6 +32,7 @@ const ChatSpacePage = () => {
                 <ChatSidebar 
                   setConversationName={setConversationName} 
                   setConversationPicture={setConversationPicture}
+                  joinId={joinId}
                   setJoinId={setJoinId} 
                   conversations = {conversations}
                   setState ={setState}

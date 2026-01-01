@@ -9,6 +9,7 @@ import { MdGroups2 } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
 import { userIdClient } from "@/lib/userId";
+import { useSocketConnection } from "@/hooks/useSocketConnection";
 
 
 interface Conversation {
@@ -37,12 +38,13 @@ interface Conversation {
 interface ChatSidebarProps {
   setConversationName?: (value: string) => void;
   setConversationPicture?: (value: string) => void;
+  joinId: string;
   setJoinId?: (value: string) => void;
   conversations?: Conversation[];
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
-const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, conversations, setState }: ChatSidebarProps) => {
+const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJoinId, conversations, setState }: ChatSidebarProps) => {
 
   const [ selected, setSelected ] = useState<string | null>(null);
   const router = useRouter();
@@ -53,6 +55,10 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
     if(!id) return;
     setUserId(id);
   })()
+
+
+  const socket = useSocketConnection(userId);
+
   
 
   const handleMobileClick = async (senderId: string, receiverId: string) => {
@@ -61,13 +67,19 @@ const ChatSidebar = ({setConversationName, setConversationPicture, setJoinId, co
   };
    
 
-  const handleDesktopClick = (joinId: string, type: string, conversationName: string, conversationPicture: string) => {
+  const handleDesktopClick = (newJoinId: string, type: string, conversationName: string, conversationPicture: string) => {
     if(!!setConversationName) setConversationName(conversationName);
     if(!!setConversationPicture) setConversationPicture(conversationPicture);
     if(!!setState && type === "oneToOne") setState("oneToOne");
     if(!!setState && type === "group") setState("group");
-    if(!!setJoinId) setJoinId(joinId);
+
+    (joinId !== '') && socket.leave(`conversation:${joinId}:active`);
+    socket.join(`conversation:${newJoinId}:active`);
+
+  
+    if(!!setJoinId) setJoinId(newJoinId);
   };
+
   const handleClick = () => {
     router.push('/chat-space/groupInfo');
   } 

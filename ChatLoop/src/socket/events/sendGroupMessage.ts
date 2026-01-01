@@ -82,8 +82,8 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             };
 
 
-            const key = `chat:list:${joinId}`;
-            await Redis.rpush(key, JSON.stringify(message));
+            // const key = `chat:list:${joinId}`;
+            // await Redis.rpush(key, JSON.stringify(message));
 
             // await Redis.zadd(
             //     `user:${senderId}:conversations`,
@@ -97,23 +97,34 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             //     joinId,
             // );
 
-            await Redis.hset(`conversation:data`,
-                joinId!,
-                JSON.stringify(
-                    {
-                        type: 'oneToOne',
-                        participants: [senderId, receiverId],
-                        extraFields: {
-                            conversationName: conversationName || "",
-                            conversationPicture: conversationPicture || ""
-                        }
-                    }
-                )
+            // await Redis.hset(`conversation:data`,
+            //     joinId!,
+            //     JSON.stringify(
+            //         {
+            //             type: 'oneToOne',
+            //             participants: [senderId, receiverId],
+            //             extraFields: {
+            //                 conversationName: conversationName || "",
+            //                 conversationPicture: conversationPicture || ""
+            //             }
+            //         }
+            //     )
+            // );
+
+            io.to(`conversation:${joinId}:active`).emit('receiveGroupMessage', message);
+            const participants = [senderId, receiverId];
+
+            const participantRooms = participants.map(id => `user:${id}`);
+
+            io.to( participantRooms )
+                .except(`conversation:${joinId}:active`)
+                .emit('conversation_update', {
+                    joinId,
+                    text,
+                    messageTime
+                }
             );
-
-            io.to(joinId!).emit('receiveGroupMessage', message)
-            return;
-
+            
         })
     } catch (error) {
         if(error instanceof Error)

@@ -71,18 +71,18 @@ export default function GroupCard({
 
   const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket, joinId!);
 
-  useEffect(() => {
-    if (!socket || !joinId || !userId) return;
+  // useEffect(() => {
+  //   if (!socket || !joinId || !userId) return;
 
-    socket.emit("join-group", { userId, joinId });
+  //   socket.emit("join-group", { userId, joinId });
 
-    const onError = (msg: string) => alert(msg);
-    socket.on("error", onError);
+  //   const onError = (msg: string) => alert(msg);
+  //   socket.on("error", onError);
 
-    return () => {
-      socket.off("error", onError);
-    };
-  }, [socket, joinId, userId]);
+  //   return () => {
+  //     socket.off("error", onError);
+  //   };
+  // }, [socket, joinId, userId]);
 
   useEffect(() => {
     if (!socket) return;
@@ -93,10 +93,10 @@ export default function GroupCard({
       setGroupMessage(prev => [...prev, data]);
     };
 
-    socket.on("receiveGroupMessage", handler);
+    socket.on(`conversation:${joinId}:active`, handler);
 
     return () => {
-      socket.off("receiveGroupMessage", handler);
+      socket.off(`conversation:${joinId}:active`, handler);
     };
   }, [socket, setGroupMessage, setJoinId]);
 

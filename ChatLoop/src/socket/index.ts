@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { addUserHandler } from "./events/addUser";
 import { disConnectUserHandler } from "./events/disConnectuser";
 import { typingStateHandler } from "./events/typingState";
@@ -8,8 +8,11 @@ import { groupTypingStateHandler } from "./events/groupTypingState";
 
 export const setupSocket = (io: Server) => {
 
-  io.on("connection", (socket) => {
-    console.log("New user connected:", socket.id);
+  io.on("connection", (socket: Socket) => {
+
+    // const userId = '1234567';
+
+    // socket.join(`user:${userId}`)
 
     addUserHandler(io, socket);
     typingStateHandler(io, socket);
