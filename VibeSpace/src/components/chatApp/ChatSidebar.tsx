@@ -73,7 +73,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
     if(!!setState && type === "oneToOne") setState("oneToOne");
     if(!!setState && type === "group") setState("group");
 
-    (joinId !== '') && socket.leave(`conversation:${joinId}:active`);
+    (joinId !== '') && socket?.leave(`conversation:${joinId}:active`);
     socket?.join(`conversation:${newJoinId}:active`);
 
   
