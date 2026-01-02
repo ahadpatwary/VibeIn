@@ -1,8 +1,6 @@
 import express, { Request, Response } from "express";
 import { Types } from "mongoose";
-import Conversation from "../models/Conversations";
-import User from "../models/UserLite"; // ✅ import dummy model
-import mongoose, { Schema, Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { getRedisClient } from "../lib/redis";
 
 export interface IConversation extends Document {
@@ -103,7 +101,7 @@ router.post("/", async (req: Request, res: Response) => {
     const results = await pipeline.exec();
 
     const conversations = results && results
-      .map(([err, data]: [Error, dataType], index: number) => {
+      .map(([err, data], index) => {
         if (err || !data || Object.keys(data).length === 0) return null;
 
         return {
