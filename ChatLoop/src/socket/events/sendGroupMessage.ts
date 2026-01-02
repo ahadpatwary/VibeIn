@@ -82,34 +82,30 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             };
 
 
-            // const key = `chat:list:${joinId}`;
-            // await Redis.rpush(key, JSON.stringify(message));
+            const key = `chat:list:${joinId}`;
+            await Redis.rpush(key, JSON.stringify(message));
 
-            // await Redis.zadd(
-            //     `user:${senderId}:conversations`,
-            //     Date.now(),
-            //     joinId 
-            // );
+            await Redis.zadd(
+                `user:${senderId}:conversations`,
+                Date.now(),
+                joinId 
+            );
 
-            // await Redis.zadd(
-            //     `user:${receiverId}:conversations`,
-            //     Date.now(),
-            //     joinId,
-            // );
+            await Redis.zadd(
+                `user:${receiverId}:conversations`,
+                Date.now(),
+                joinId,
+            );
 
-            // await Redis.hset(`conversation:data`,
-            //     joinId!,
-            //     JSON.stringify(
-            //         {
-            //             type: 'oneToOne',
-            //             participants: [senderId, receiverId],
-            //             extraFields: {
-            //                 conversationName: conversationName || "",
-            //                 conversationPicture: conversationPicture || ""
-            //             }
-            //         }
-            //     )
-            // );
+            await Redis.hset(
+                `conversation:${joinId}`,
+                {
+                    type: 'oneToOne',
+                    participants: JSON.stringify([senderId, receiverId]),
+                    conversationName: conversationName || "",
+                    conversationPicture: conversationPicture || ""
+                }
+            );
 
             if(!socket.rooms.has(`conversation:${joinId}:active`)){
                 socket?.join(`conversation:${joinId}:active`);

@@ -10,10 +10,6 @@ export const setupSocket = (io: Server) => {
 
   io.on("connection", (socket: Socket) => {
 
-    // const userId = '1234567';
-
-    // socket.join(`user:${userId}`)
-
     addUserHandler(io, socket);
     typingStateHandler(io, socket);
     groupTypingStateHandler(io, socket);

@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import Conversation from "../models/Conversations";
 import User from "../models/UserLite"; // ✅ import dummy model
 import mongoose, { Schema, Document } from 'mongoose';
+import { getRedisClient } from "../lib/redis";
 
 export interface IConversation extends Document {
   type: 'oneToOne' | 'group';
@@ -25,55 +26,93 @@ export interface IConversation extends Document {
   };
 }
 
+interface dataType{
+  type: 'oneToOne' | 'group',
+  participants: string[],
+  extraFields: {
+    conversationName: string,
+    conversationPicture: string,
+  }
+}
+
 const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { userID } = req.body;
+    const redis = getRedisClient();
 
-    if (!userID) return res.status(400).json({ message: "userID missing" });
+    if (!userID || !redis) return res.status(400).json({ message: "userID missing" });
 
-    await User.findById(userID);
+    // await User.findById(userID);
 
-    const result = await Conversation.find({
-      participants: { $in: [new Types.ObjectId(userID)] },
-    })
-    .sort({ lastMessage: -1 })
-    .lean();
+    // const result = await Conversation.find({
+    //   participants: { $in: [new Types.ObjectId(userID)] },
+    // })
+    // .sort({ lastMessage: -1 })
+    // .lean();
 
     
-    const conversations = await Promise.all(
-      result.map(async (conv) => {
+    // const conversations = await Promise.all(
+    //   result.map(async (conv) => {
 
-        if (conv.type === "group") {
-          return {
-            ...conv,
+    //     if (conv.type === "group") {
+    //       return {
+    //         ...conv,
 
-            info: {
-              name: conv.extraFields?.groupName,
-              picture: conv.extraFields?.groupPicture,
-              bio: conv.extraFields?.groupBio,
-              admin: conv.extraFields?.groupAdmin,
-            },
-          };
-        }
+    //         info: {
+    //           name: conv.extraFields?.groupName,
+    //           picture: conv.extraFields?.groupPicture,
+    //           bio: conv.extraFields?.groupBio,
+    //           admin: conv.extraFields?.groupAdmin,
+    //         },
+    //       };
+    //     }
 
-        // oneToOne
-        const otherPersonId = conv.participants.find(
-          (id: any) => id.toString() !== userID
-        );
+    //     // oneToOne
+    //     const otherPersonId = conv.participants.find(
+    //       (id: any) => id.toString() !== userID
+    //     );
 
-        const otherUser = await User.findById(otherPersonId)
-          .select("name picture")
-          .lean();
+    //     const otherUser = await User.findById(otherPersonId)
+    //       .select("name picture")
+    //       .lean();
+
+    //     return {
+    //       ...conv,
+
+    //       info: otherUser,
+    //     };
+    //   })
+    // );
+
+  
+
+    const conversationIds = await redis.zrevrange(
+      `user:${userID}:conversations`,
+      0,
+      -1
+    );
+
+    const pipeline = redis.pipeline();
+
+    conversationIds.forEach((convId: string) => {
+      pipeline.hgetall(`conversation:${convId}`);
+    });
+
+    const results = await pipeline.exec();
+
+    const conversations = results
+      .map(([err, data]: [Error, dataType], index: number) => {
+        if (err || !data || Object.keys(data).length === 0) return null;
 
         return {
-          ...conv,
-
-          info: otherUser,
+          conversationId: conversationIds[index],
+          ...data
         };
       })
-    );
+      .filter(Boolean);
+
 
     return res.status(200).json({ conversations });
 

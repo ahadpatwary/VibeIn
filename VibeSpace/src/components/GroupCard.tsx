@@ -71,18 +71,6 @@ export default function GroupCard({
 
   const { handleTyping, someOneGroupTyping } = useGroupChatTyping(socket, joinId!);
 
-  // useEffect(() => {
-  //   if (!socket || !joinId || !userId) return;
-
-  //   socket.emit("join-group", { userId, joinId });
-
-  //   const onError = (msg: string) => alert(msg);
-  //   socket.on("error", onError);
-
-  //   return () => {
-  //     socket.off("error", onError);
-  //   };
-  // }, [socket, joinId, userId]);
 
   useEffect(() => {
     if (!socket) return;
