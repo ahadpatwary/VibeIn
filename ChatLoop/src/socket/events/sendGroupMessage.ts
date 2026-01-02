@@ -72,7 +72,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                     joinId = newGroup._id.toString();
 
-                    await Redis.rpush(`conversation:${joinId}:participants`, senderId, receiverId);
+                    await Redis.rpush(`conversation:${joinId}:participants`, senderId, receiverId!);
 
                     // await Redis.rpush(`conversation:${joinId}:requestList`);
                     // await Redis.rpush(`conversation:${joinId}:blockUser`);
