@@ -93,7 +93,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             await Redis.hset(
                 `message:${messageId}`,
-                JSON.stringify(message)
+                message
             );
 
             await Redis.zadd(
