@@ -5,6 +5,7 @@ export interface IGroupMessage extends Document {
     senderId: Types.ObjectId,
     text: string,
     referenceMessage: Types.ObjectId
+    messageTime: number
 }
 
 
@@ -32,6 +33,10 @@ const groupMessageSchema = new Schema<IGroupMessage>(
             type: Schema.Types.ObjectId,
             ref: 'GroupMessage',
             default: null
+        },
+        messageTime: {
+            type: Number,
+            required: true
         }
 
     },{ timestamps: true}

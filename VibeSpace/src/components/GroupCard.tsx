@@ -27,7 +27,7 @@ interface PropType {
 
 interface ReceiveMessage {
   type: 'oneToOne' | 'group';
-  messageId?: string;
+  _id: string;
   senderId: string;
   receiverId: string | null;
   name: string;
@@ -35,7 +35,7 @@ interface ReceiveMessage {
   joinId: string | null;
   text: string;
   referenceMessage: string | null;
-  messageTime: string;
+  messageTime: number;
   conversationName: string;
   conversationPicture: string;
 }
@@ -108,7 +108,7 @@ export default function GroupCard({
 
     const messageData: ReceiveMessage = {
       type: type === 'OneToOne' ? 'oneToOne' : 'group',
-      messageId: uuidv4(),
+      _id: uuidv4(),
       senderId: userId,
       receiverId: chatWith || null,
       name: userName,
@@ -116,7 +116,7 @@ export default function GroupCard({
       joinId,
       text: newMessage,
       referenceMessage: refMessageId,
-      messageTime: new Date().toISOString(),
+      messageTime: Date.now(),
       conversationName,
       conversationPicture,
     };
@@ -169,7 +169,7 @@ export default function GroupCard({
             const isSender = message.senderId == userId;
             return (
               <div
-                key={message._id || message.messageId}
+                key={message._id}
                 className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
               >
                 <div className="w-9 h-9 rounded-full flex items-center justify-center">
@@ -196,7 +196,7 @@ export default function GroupCard({
                   </div>
                 </div>
                 <button 
-                  onClick={() => handleMessageRefrence(message._id || message.messageId, message.text)}
+                  onClick={() => handleMessageRefrence(message._id, message.text)}
                 >
                 { !isSender ? <BsArrow90DegRight /> : <BsArrow90DegLeft />}
                 </button>
