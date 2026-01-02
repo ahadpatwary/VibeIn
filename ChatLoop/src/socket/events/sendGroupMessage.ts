@@ -82,14 +82,23 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             };
 
 
-            const key = `chat:list:${joinId}`;
-            await Redis.rpush(key, JSON.stringify(message));
+            // const key = `chat:list:${joinId}`;
+            // await Redis.rpush(key, JSON.stringify(message));
+
+            await Redis.zadd(
+                `conversation:${joinId}:messages`,
+                Date.now(),
+                messageId
+            );
+
+            await Redis.hset(
+                `message:${messageId}`,
+                JSON.stringify(message)
+            );
 
             await Redis.zadd(
                 `user:${senderId}:conversations`,
-                Date.now(),
-                // joinId 
-                // 22,
+                Date.now(), // must be use messageTime
                 joinId as string
             );
 

@@ -52,12 +52,6 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
                 group._id as string
             );
 
-            // await Redis.zadd(
-            //     `user:${receiverId}:conversations`,
-            //     Date.now(),
-            //     joinId as string,
-            // );
-
             await Redis.hset(
                 `conversation:${group._id}`,
                 {

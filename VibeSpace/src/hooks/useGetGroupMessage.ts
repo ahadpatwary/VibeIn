@@ -31,6 +31,7 @@ export const useGetGroupMessage = (groupId: string) => {
         })
 
         const data = await res.json();
+        console.log("message", data);
         setGroupMessage(data.messages || []);
 
       } catch (error) {
