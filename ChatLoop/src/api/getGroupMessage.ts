@@ -71,12 +71,11 @@ router.post('/', async(req: Request, res: Response) => {
 
                 return { ...data };
             })
-            .filter(Boolean)
-        ;
+            .filter(Boolean);
         
         const userIds = new Set<string>();
 
-        messages.forEach((msg: propType) => {
+        messages?.forEach((msg: propType) => {
             if (msg.senderId) userIds.add(msg.senderId);
             if (msg.receiverId) userIds.add(msg.receiverId);
         });
@@ -96,7 +95,7 @@ router.post('/', async(req: Request, res: Response) => {
         const userMap: any = {};
         const missingUserIds: string[] = [];
 
-        userResults.forEach(([err, data], index) => {
+        userResults?.forEach(([err, data], index) => {
             const userId = uniqueUserIds[index];
 
             if (!err && data && Object.keys(data).length > 0) {
@@ -125,7 +124,7 @@ router.post('/', async(req: Request, res: Response) => {
             });
         }
 
-        const populatedMessages = messages.map((msg: messagePropType) => ({
+        const populatedMessages = messages?.map((msg: messagePropType) => ({
             ...msg,
             senderId: userMap[msg.senderId] || null,
             receiverId: userMap[msg.receiverId] || null,
