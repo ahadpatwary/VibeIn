@@ -1,8 +1,6 @@
 import express, { Request, Response } from "express";
 import { Types } from "mongoose";
-import Conversation from "../models/Conversations";
-import User from "../models/UserLite"; // ✅ import dummy model
-import mongoose, { Schema, Document } from 'mongoose';
+import  {  Document } from 'mongoose';
 import { getRedisClient } from "../lib/redis";
 
 export interface IConversation extends Document {
@@ -29,10 +27,9 @@ export interface IConversation extends Document {
 interface dataType{
   type: 'oneToOne' | 'group',
   participants: string[],
-  extraFields: {
-    conversationName: string,
-    conversationPicture: string,
-  }
+  conversationName: string,
+  conversationPicture: string,
+  
 }
 
 const router = express.Router();
