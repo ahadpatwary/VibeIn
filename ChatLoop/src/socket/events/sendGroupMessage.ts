@@ -127,6 +127,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 {
                     _id,
                     senderId,
+                    receiverId,
                     text,
                     referenceMessage,
                     messageTime,

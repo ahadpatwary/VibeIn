@@ -8,6 +8,8 @@ export interface IUserLite extends Document {
   };
 }
 
+
+
 const userLiteSchema = new Schema<IUserLite>(
   {
     name: { type: String, required: true },

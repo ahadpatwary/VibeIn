@@ -4,6 +4,28 @@ import groupMessage from '../models/GroupMessage';
 import { getRedisClient } from '../lib/redis';
 import User from '../models/UserLite';
 
+interface propType{
+    senderId: string,
+    receiverId: string,
+}
+
+interface messagePropType {
+  _id: string,
+  senderId: string,
+  receiverId: string,
+  text: string,
+  referenceMessage: string | null,
+  messageTime: number,
+}
+
+interface userPropType {
+    _id: string,
+    name: string;
+    picture: {
+        url: string;
+        public_id: string;
+    };
+}
 
 const router = express.Router();
 
@@ -54,7 +76,7 @@ router.post('/', async(req: Request, res: Response) => {
         
         const userIds = new Set<string>();
 
-        messages.forEach(msg => {
+        messages.forEach((msg: propType) => {
             if (msg.senderId) userIds.add(msg.senderId);
             if (msg.receiverId) userIds.add(msg.receiverId);
         });
@@ -90,7 +112,7 @@ router.post('/', async(req: Request, res: Response) => {
                 _id: { $in: missingUserIds }
             }).lean();
 
-            usersFromDB.forEach(user => {
+            usersFromDB.forEach((user: userPropType) => {
                 userMap[user._id] = user;
 
                 // cache in Redis
@@ -103,14 +125,14 @@ router.post('/', async(req: Request, res: Response) => {
             });
         }
 
-        const populatedMessages = messages.map(msg => ({
+        const populatedMessages = messages.map((msg: messagePropType) => ({
             ...msg,
             senderId: userMap[msg.senderId] || null,
             receiverId: userMap[msg.receiverId] || null,
         }));
 
 
-        return res.status(200).json({populatedMessages});
+        return res.status(200).json({messages: populatedMessages});
 
     } catch (error) {
         return res.status(500).json({ message: "internal server error" });
