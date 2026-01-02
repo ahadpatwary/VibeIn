@@ -19,6 +19,19 @@ interface dataType {
     conversationPicture: string,
 }
 
+interface receiveMessagePropType {
+    _id: string,
+    type: 'oneToOne'| 'group',
+    senderId: string,
+    name: string,
+    picture: string,
+    text: string,
+    referenceMessage: string | null,
+    messageTime: number,
+    conversationName: string,
+    conversationPicture: string,
+}
+
 
 export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
     try {
@@ -30,22 +43,23 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 _id,
                 senderId,
                 receiverId,
+                name,
+                picture,
                 joinId,
                 text,
                 referenceMessage,
                 messageTime,
+                conversationName,
+                conversationPicture
             }: dataType = data;
 
-            // if(!name || !joinId || !text || !messageTime || !conversationName) return;
-
-
+            if(!type || !text || !messageTime) return;
 
             const Redis = getRedisClient();
             if(!Redis) return;     
 
-            // joinId has null or string,
 
-            if(joinId === null ){  // first send message
+            if(joinId === null ){  
                 try{
                     const newGroup = await conversation.create({
                         type: 'oneToOne',
@@ -58,14 +72,18 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
                     joinId = newGroup._id.toString();
 
+                    await Redis.rpush(`conversation:${joinId}:participants`, senderId, receiverId);
+
+                    // await Redis.rpush(`conversation:${joinId}:requestList`);
+                    // await Redis.rpush(`conversation:${joinId}:blockUser`);
                   
-                    await Redis.hset(
-                        `conversation:${joinId}`,
-                        {
-                            type,
-                            participants: JSON.stringify([senderId, receiverId]),
-                        }
-                    )
+                    // await Redis.hset( 
+                    //     `conversation:${joinId}`,
+                    //     {
+                    //         type,
+                    //         participants: JSON.stringify([senderId, receiverId]),
+                    //     }
+                    // )
 
                     io.to(`user:${senderId}`).emit('joinId', joinId);
 
@@ -75,18 +93,28 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 }
             }
         
-            let message = {
+            const message: receiveMessagePropType = {
                 _id,
-                joinId,
+                type,
                 senderId,
+                name,
+                picture,
                 text,
                 referenceMessage,
                 messageTime,
+                conversationName,
+                conversationPicture
             };
 
 
             // const key = `chat:list:${joinId}`;
             // await Redis.rpush(key, JSON.stringify(message));
+
+            await Redis.hset(`conversation:${joinId}`, { 
+                type,
+                text,
+                messageTime,
+            });
 
             await Redis.zadd(
                 `conversation:${joinId}:messages`,
@@ -96,7 +124,13 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
             await Redis.hset(
                 `message:${_id}`,
-                message
+                {
+                    _id,
+                    senderId,
+                    text,
+                    referenceMessage,
+                    messageTime,
+                }
             );
 
             await Redis.zadd(
@@ -117,9 +151,12 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             }
 
             socket.to(`conversation:${joinId}:active`).emit('receiveGroupMessage', message);
-            const participants = [senderId, receiverId];
 
-            const participantRooms = participants.map(id => `user:${id}`);
+
+            // const participants = [senderId, receiverId];
+            const participants = await Redis.lrange(`conversation:${joinId}:participants`, 0, -1);
+
+            const participantRooms = participants.map((id: string) => `user:${id}`);
 
             io.to( participantRooms )
                 .except(`conversation:${joinId}:active`)

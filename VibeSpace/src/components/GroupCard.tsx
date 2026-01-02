@@ -106,9 +106,13 @@ export default function GroupCard({
   const handleSend = () => {
     if (!newMessage.trim() || !socket) return;
 
+    const id = uuidv4();
+    const conversationType = type === 'OneToOne' ? 'oneToOne' : 'group';
+    const messageTime = Date.now();
+
     const messageData: ReceiveMessage = {
-      type: type === 'OneToOne' ? 'oneToOne' : 'group',
-      _id: uuidv4(),
+      _id: id,
+      type: conversationType,
       senderId: userId,
       receiverId: chatWith || null,
       name: userName,
@@ -116,13 +120,25 @@ export default function GroupCard({
       joinId,
       text: newMessage,
       referenceMessage: refMessageId,
-      messageTime: Date.now(),
+      messageTime,
       conversationName,
       conversationPicture,
     };
 
     socket.emit('sendGroupMessage', messageData);
-    setGroupMessage(prev => [...prev, messageData]);
+    
+    setGroupMessage(prev => [...prev, {
+      _id: id,
+      type: conversationType,
+      senderId: userId,
+      name: userName,
+      picture: profilePicture,
+      text: newMessage,
+      referenceMessage: refMessageId,
+      messageTime,
+      conversationName,
+      conversationPicture,
+    }]);
 
     setNewMessage('');
     setReplyMessage(null);
@@ -173,7 +189,7 @@ export default function GroupCard({
                 className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
               >
                 <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                  <AvatarDemo src={message.picture} size="size-10 " />
+                  <AvatarDemo src={isSender ? message.picture : message.conversationPicture} size="size-10 " />
                 </div>
 
                 <div

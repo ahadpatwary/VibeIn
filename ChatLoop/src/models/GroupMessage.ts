@@ -14,7 +14,8 @@ const groupMessageSchema = new Schema<IGroupMessage>(
         groupId: {
             type: Schema.Types.ObjectId,
             ref: 'GroupConversation',
-            required: true
+            required: true,
+            index: true,
         },
 
         senderId: {

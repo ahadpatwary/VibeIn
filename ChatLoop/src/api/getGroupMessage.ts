@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express'
 import { Types } from 'mongoose'
 import groupMessage from '../models/GroupMessage';
 import { getRedisClient } from '../lib/redis';
+import User from '../models/UserLite';
 
 
 const router = express.Router();
@@ -48,10 +49,68 @@ router.post('/', async(req: Request, res: Response) => {
 
                 return { ...data };
             })
-            .filter(Boolean);
-                    
+            .filter(Boolean)
+        ;
+        
+        const userIds = new Set<string>();
 
-        return res.status(200).json({messages});
+        messages.forEach(msg => {
+            if (msg.senderId) userIds.add(msg.senderId);
+            if (msg.receiverId) userIds.add(msg.receiverId);
+        });
+
+        const uniqueUserIds = [...userIds];
+
+
+        const userPipeline = redis.pipeline();
+
+        uniqueUserIds.forEach(id => {
+            userPipeline.hgetall(`user:${id}`);
+        });
+
+        const userResults = await userPipeline.exec();
+
+
+        const userMap: any = {};
+        const missingUserIds: string[] = [];
+
+        userResults.forEach(([err, data], index) => {
+            const userId = uniqueUserIds[index];
+
+            if (!err && data && Object.keys(data).length > 0) {
+                userMap[userId] = data;
+            } else {
+                missingUserIds.push(userId);
+            }
+        });
+
+
+        if (missingUserIds.length > 0) {
+            const usersFromDB = await User.find({
+                _id: { $in: missingUserIds }
+            }).lean();
+
+            usersFromDB.forEach(user => {
+                userMap[user._id] = user;
+
+                // cache in Redis
+                redis.hset(`user:${user._id}`, {
+                    _id: user._id.toString(),
+                    name: user.name,
+                    picture: user.picture
+                });
+                redis.expire(`user:${user._id}`, 60 * 60); // 1 hour
+            });
+        }
+
+        const populatedMessages = messages.map(msg => ({
+            ...msg,
+            senderId: userMap[msg.senderId] || null,
+            receiverId: userMap[msg.receiverId] || null,
+        }));
+
+
+        return res.status(200).json({populatedMessages});
 
     } catch (error) {
         return res.status(500).json({ message: "internal server error" });
