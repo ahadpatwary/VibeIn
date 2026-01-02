@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { Types } from "mongoose";
-import  {  Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { getRedisClient } from "../lib/redis";
 
 export interface IConversation extends Document {
@@ -24,13 +24,7 @@ export interface IConversation extends Document {
   };
 }
 
-interface dataType{
-  type: 'oneToOne' | 'group',
-  participants: string[],
-  conversationName: string,
-  conversationPicture: string,
-  
-}
+
 
 const router = express.Router();
 
@@ -100,7 +94,7 @@ router.post("/", async (req: Request, res: Response) => {
     const results = await pipeline.exec();
 
     const conversations = results && results
-      .map(([err, data]: [Error, dataType], index: number) => {
+      .map(([err, data], index) => {
         if (err || !data || Object.keys(data).length === 0) return null;
 
         return {

@@ -88,7 +88,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             await Redis.zadd(
                 `conversation:${joinId}:messages`,
                 Date.now(),
-                messageId
+                messageId as string
             );
 
             await Redis.hset(
