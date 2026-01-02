@@ -135,23 +135,27 @@ router.post('/', async (req: Request, res: Response) => {
        5️⃣ DB fallback + cache
     ======================= */
 
-    if (missingUserIds.length > 0) {
-      const usersFromDB = await User.find({
-        _id: { $in: missingUserIds.map(id => new Types.ObjectId(id)) }
-      }).lean();
+    const validObjectIds = missingUserIds.filter(id =>
+        Types.ObjectId.isValid(id)
+    );
 
-      usersFromDB.forEach((user: any) => {
-        const redisUser: RedisUser = {
-          _id: user._id.toString(),
-          name: user.name,
-          picture: user.picture,
-        };
+    if (validObjectIds.length > 0) {
+        const usersFromDB = await User.find({
+            _id: { $in: validObjectIds }
+        }).lean();
 
-        userMap[redisUser._id] = redisUser;
+        usersFromDB.forEach((user: any) => {
+            const redisUser = {
+            _id: user._id.toString(),
+            name: user.name,
+            picture: user.picture,
+            };
 
-        redis.hset(`user:${redisUser._id}`, redisUser);
-        redis.expire(`user:${redisUser._id}`, 60 * 60); // 1 hour
-      });
+            userMap[redisUser._id] = redisUser;
+
+            redis.hset(`user:${redisUser._id}`, redisUser);
+            redis.expire(`user:${redisUser._id}`, 60 * 60);
+        });
     }
 
     /* =======================
