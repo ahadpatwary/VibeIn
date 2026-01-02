@@ -146,7 +146,13 @@ import { Types } from 'mongoose';
 import { getRedisClient } from '../lib/redis';
 import User from '../models/UserLite';
 
-interface messagePropType {
+const router = express.Router();
+
+/* =======================
+   Interfaces
+======================= */
+
+interface Message {
   _id: string;
   senderId: string;
   receiverId: string;
@@ -155,7 +161,7 @@ interface messagePropType {
   messageTime: number;
 }
 
-interface userPropType {
+interface RedisUser {
   _id: string;
   name: string;
   picture: {
@@ -164,18 +170,33 @@ interface userPropType {
   };
 }
 
-const router = express.Router();
+/* =======================
+   Type Guards
+======================= */
 
-/* ---------- TYPE GUARD ---------- */
-function isMessage(value: any): value is messagePropType {
+function isMessage(data: any): data is Message {
   return (
-    value &&
-    typeof value === 'object' &&
-    typeof value.senderId === 'string' &&
-    typeof value.receiverId === 'string' &&
-    typeof value.text === 'string'
+    data &&
+    typeof data === 'object' &&
+    typeof data.senderId === 'string' &&
+    typeof data.receiverId === 'string' &&
+    typeof data.text === 'string'
   );
 }
+
+function isRedisUser(data: any): data is RedisUser {
+  return (
+    data &&
+    typeof data === 'object' &&
+    typeof data._id === 'string' &&
+    typeof data.name === 'string' &&
+    data.picture
+  );
+}
+
+/* =======================
+   Route
+======================= */
 
 router.post('/', async (req: Request, res: Response) => {
   try {
@@ -183,93 +204,107 @@ router.post('/', async (req: Request, res: Response) => {
     const redis = getRedisClient();
 
     if (!groupId || !redis) {
-      return res.status(400).json({ message: 'groupId and redis must be required' });
+      return res.status(400).json({ message: 'groupId and redis are required' });
     }
 
-    /* ---------- 1️⃣ Get message IDs ---------- */
+    /* =======================
+       1️⃣ Get message IDs
+    ======================= */
+
     const messageIds = await redis.zrevrange(
       `conversation:${groupId}:messages`,
       0,
       -1
     );
 
-    const pipeline = redis.pipeline();
+    const messagePipeline = redis.pipeline();
 
     messageIds.forEach((msgId: string) => {
-      pipeline.hgetall(`message:${msgId}`);
+      messagePipeline.hgetall(`message:${msgId}`);
     });
 
-    const results = await pipeline.exec();
+    const messageResults = await messagePipeline.exec();
 
-    /* ---------- 2️⃣ Clean & typed messages ---------- */
-    const messages: messagePropType[] = (results || [])
+    /* =======================
+       2️⃣ Clean messages
+    ======================= */
+
+    const messages: Message[] = (messageResults || [])
       .map(([err, data]) => {
         if (err || !data || Object.keys(data).length === 0) return null;
         return data;
       })
       .filter(isMessage);
 
-    /* ---------- 3️⃣ Collect unique user IDs ---------- */
-    const userIds = new Set<string>();
+    /* =======================
+       3️⃣ Collect user IDs
+    ======================= */
+
+    const userIdSet = new Set<string>();
 
     messages.forEach(msg => {
-      userIds.add(msg.senderId);
-      userIds.add(msg.receiverId);
+      userIdSet.add(msg.senderId);
+      userIdSet.add(msg.receiverId);
     });
 
-    const uniqueUserIds = Array.from(userIds);
+    const userIds = Array.from(userIdSet);
 
-    /* ---------- 4️⃣ Fetch users from Redis ---------- */
+    /* =======================
+       4️⃣ Fetch users from Redis
+    ======================= */
+
     const userPipeline = redis.pipeline();
 
-    uniqueUserIds.forEach(id => {
+    userIds.forEach(id => {
       userPipeline.hgetall(`user:${id}`);
     });
 
     const userResults = await userPipeline.exec();
 
-    const userMap: Record<string, userPropType> = {};
+    const userMap: Record<string, RedisUser> = {};
     const missingUserIds: string[] = [];
 
     userResults?.forEach(([err, data], index) => {
-      const userId = uniqueUserIds[index];
+      const userId = userIds[index];
 
-      if (!err && data && Object.keys(data).length > 0) {
-        userMap[userId] = {
-          _id: data._id,
-          name: data.name,
-          picture: data.picture,
-        };
+      if (!err && isRedisUser(data)) {
+        userMap[userId] = data;
       } else {
         missingUserIds.push(userId);
       }
     });
 
-    /* ---------- 5️⃣ Fallback: DB → Redis cache ---------- */
+    /* =======================
+       5️⃣ DB fallback + cache
+    ======================= */
+
     if (missingUserIds.length > 0) {
       const usersFromDB = await User.find({
         _id: { $in: missingUserIds.map(id => new Types.ObjectId(id)) }
       }).lean();
 
       usersFromDB.forEach((user: any) => {
-        const formattedUser: userPropType = {
+        const redisUser: RedisUser = {
           _id: user._id.toString(),
           name: user.name,
           picture: user.picture,
         };
 
-        userMap[formattedUser._id] = formattedUser;
+        userMap[redisUser._id] = redisUser;
 
-        redis.hset(`user:${formattedUser._id}`, formattedUser);
-        redis.expire(`user:${formattedUser._id}`, 60 * 60); // 1 hour
+        redis.hset(`user:${redisUser._id}`, redisUser);
+        redis.expire(`user:${redisUser._id}`, 60 * 60); // 1 hour
       });
     }
 
-    /* ---------- 6️⃣ Populate messages ---------- */
+    /* =======================
+       6️⃣ Populate messages
+    ======================= */
+
     const populatedMessages = messages.map(msg => ({
       ...msg,
-      senderId: userMap[msg.senderId] ?? null,
-      receiverId: userMap[msg.receiverId] ?? null,
+      sender: userMap[msg.senderId] ?? null,
+      receiver: userMap[msg.receiverId] ?? null,
     }));
 
     return res.status(200).json({ messages: populatedMessages });
