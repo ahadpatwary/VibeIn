@@ -102,7 +102,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const results = await pipeline.exec();
 
-    const conversations = results
+    const conversations = results && results
       .map(([err, data]: [Error, dataType], index: number) => {
         if (err || !data || Object.keys(data).length === 0) return null;
 
