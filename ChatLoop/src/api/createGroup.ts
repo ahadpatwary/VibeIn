@@ -46,23 +46,27 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
             }
         });
 
-        const conversation = {
-            type: 'group',
-            participants: [userId],
-            extraFields: {
-                groupName,
-                groupPicture: picture,
-                groupAdmin: userId,
-                groupBio
-            }
-        }
+            await Redis.zadd(
+                `user:${userId}:conversations`,
+                Date.now(),
+                group._id as string
+            );
 
+            // await Redis.zadd(
+            //     `user:${receiverId}:conversations`,
+            //     Date.now(),
+            //     joinId as string,
+            // );
 
-        await Redis.zadd(
-            `user:${userId}:conversations`,
-            Date.now(),
-            JSON.stringify(conversation)
-        );
+            await Redis.hset(
+                `conversation:${group._id}`,
+                {
+                    'group',
+                    participants: JSON.stringify([userId]),
+                    conversationName: groupName || "",
+                    conversationPicture: picture.url || ""
+                }
+            );
         
         if(!group)
             return res.status(400).json({ message: 'user not created successfully' })

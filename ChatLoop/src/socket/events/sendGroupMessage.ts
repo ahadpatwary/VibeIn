@@ -102,7 +102,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             await Redis.hset(
                 `conversation:${joinId}`,
                 {
-                    type: 'oneToOne',
+                    type,
                     participants: JSON.stringify([senderId, receiverId]),
                     conversationName: conversationName || "",
                     conversationPicture: conversationPicture || ""
