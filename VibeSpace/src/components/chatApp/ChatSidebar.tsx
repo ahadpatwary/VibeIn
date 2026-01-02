@@ -11,6 +11,15 @@ import Image from "next/image";
 import { userIdClient } from "@/lib/userId";
 import { useSocketConnection } from "@/hooks/useSocketConnection";
 
+interface dataType{
+  conversationId: string,
+  type: 'oneToOne' | 'group',
+  participants: string[],
+
+  conversationName: string,
+  conversationPicture: string,
+  
+}
 
 interface Conversation {
   _id: string;
@@ -40,7 +49,8 @@ interface ChatSidebarProps {
   setConversationPicture?: (value: string) => void;
   joinId?: string;
   setJoinId?: (value: string) => void;
-  conversations?: Conversation[];
+  // conversations?: Conversation[];
+  conversations?: dataType[];
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
@@ -99,34 +109,41 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
         <ScrollArea className = "w-full overflow-y-auto h-[100%] p-2">
           {conversations?.length! > 0 && conversations?.map((conv)=> (
               <div
-                key={conv._id}
-                className={`w-full ${conv._id === selected ? "bg-zinc-600" : "bg-zinc-700"} mb-2 rounded transition`}
+                // key={conv._id}
+                key={conv.conversationId}
+                className={`w-full ${conv.conversationId === selected ? "bg-zinc-600" : "bg-zinc-700"} mb-2 rounded transition`}
 
                 onClick={() => {
                   if(window.innerWidth <= 768){
                       handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
                     // console.log("name", conv.info.name);
-                      handleDesktopClick(conv._id,conv.type, conv.info.name, conv.info.picture.url);
-                      setSelected(conv._id);
+                      // handleDesktopClick(conv._id,conv.type, conv.info.name, conv.info.picture.url);
+                      handleDesktopClick(conv.conversationId, conv.type, conv.conversationName,conv.conversationPicture)
+                      setSelected(conv.conversationId);
                   }
                 }}
               >
                 <div className="flex w-full p-2">
                   <AvatarDemo
-                    src={conv.info.picture.url}
+                    // src={conv.info.picture.url}
+                    src={conv.conversationPicture}
                     size="size-15" 
                   />
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
-                        {conv.info.name}
+                        {/* {conv.info.name} */}
+                        {conv.conversationName}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
-                        {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {/* {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} */}
+                        22:22 px
                       </p>
                     </div>
-                    <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p>
+                    {/* <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p> */}
+                    <p className="text-gray-900 text-sm truncate">ahad is the best </p>
+
                   </div>
                 </div>
               </div> 
