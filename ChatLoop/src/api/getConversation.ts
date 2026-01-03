@@ -41,8 +41,9 @@ function isConversation(data: any): data is convType {
     data &&
     typeof data === 'object' &&
     typeof data.conversationId === 'string' &&
-    typeof data.name === 'string' &&
-    typeof data.picture === 'string'
+    typeof data.type === 'string' &&
+    typeof data.text === 'string' && 
+    typeof data.messageTime === 'string' 
   );
 }
 
@@ -90,6 +91,8 @@ router.post("/", async (req: Request, res: Response) => {
         };
       })
       .filter(isConversation);
+
+      console.log("conversation", conversations);
 
 
       const conversationIdSet = new Set<string>();
