@@ -26,10 +26,10 @@ interface PropType {
 }
 
 interface ReceiveMessage {
-  type: 'oneToOne' | 'group';
   _id: string;
+  type: 'oneToOne' | 'group';
   senderId: string;
-  receiverId: string | null;
+  receiverId: string | null,
   name: string;
   picture: string;
   joinId: string | null;
@@ -119,8 +119,6 @@ export default function GroupCard({
       text: newMessage,
       referenceMessage: refMessageId,
       messageTime,
-      conversationName,
-      conversationPicture,
     };
 
     socket.emit('sendGroupMessage', messageData);
@@ -134,8 +132,6 @@ export default function GroupCard({
       text: newMessage,
       referenceMessage: refMessageId,
       messageTime,
-      conversationName,
-      conversationPicture,
     }]);
 
     setNewMessage('');

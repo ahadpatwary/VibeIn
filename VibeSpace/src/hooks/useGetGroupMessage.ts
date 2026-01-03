@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react'
 
 interface receiveMessagePropType {
-    _id: string,
-    type: 'oneToOne'| 'group',
-    senderId: string,
-    name: string,
-    picture: string,
-    text: string,
-    referenceMessage: string | null,
-    messageTime: number,
-    conversationName: string,
-    conversationPicture: string,
+  _id: string,
+  type: 'oneToOne'| 'group',
+  senderId: string,
+  name: string,
+  picture: string,
+  text: string,
+  referenceMessage: string | null,
+  messageTime: number,
 }
 
 export const useGetGroupMessage = (groupId: string) => {
