@@ -105,7 +105,7 @@ export default function GroupCard({
     if (!newMessage.trim() || !socket) return;
 
     const id = uuidv4();
-    const conversationType = type === 'OneToOne' ? 'oneToOne' : 'group';
+    const conversationType = type === 'oneToOne' ? 'oneToOne' : 'group';
     const messageTime = Date.now();
 
     const messageData: ReceiveMessage = {
