@@ -100,6 +100,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const convIds = Array.from(conversationIdSet);
 
+    console.log("convId", convIds);
 
     const conversationPipeline = redis.pipeline();
 
