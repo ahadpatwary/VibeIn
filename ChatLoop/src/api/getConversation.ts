@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { Types } from "mongoose";
 import { Document } from 'mongoose';
 import { getRedisClient } from "../lib/redis";
+import Conversation from "../models/Conversations";
 
 export interface IConversation extends Document {
   type: 'oneToOne' | 'group';
@@ -23,7 +24,25 @@ export interface IConversation extends Document {
     groupAdmin?: Types.ObjectId;
   };
 }
+interface RedisUser {
+  _id: string;
+  name: string;
+  picture: {
+    url: string;
+    public_id: string;
+  };
+}
 
+
+function isRedisUser(data: any): data is RedisUser {
+  return (
+    data &&
+    typeof data === 'object' &&
+    typeof data._id === 'string' &&
+    typeof data.name === 'string' &&
+    data.picture
+  );
+}
 
 
 const router = express.Router();
@@ -61,7 +80,81 @@ router.post("/", async (req: Request, res: Response) => {
       .filter(Boolean);
 
 
-    return res.status(200).json({ conversations });
+      const conversationIdSet = new Set<string>();
+
+    conversations?.forEach(msg => {
+      conversationIdSet?.add(msg?.conversationId!);
+    });
+
+    const convIds = Array.from(conversationIdSet);
+
+
+    const conversationPipeline = redis.pipeline();
+
+    convIds.forEach(id => {
+      conversationPipeline.hgetall(`conversation:${id}:info`);
+    });
+
+    const userResults = await conversationPipeline.exec();
+
+    const userMap: Record<string, RedisUser> = {};
+    const missingUserIds: string[] = [];
+
+    userResults?.forEach(([err, data], index) => {
+      const convId = convIds[index];
+
+      if (!err && isRedisUser(convId)) {
+        userMap[convId] = data;
+      } else {
+        missingUserIds.push(convId);
+      }
+    });
+
+
+
+    const validObjectIds = missingUserIds.filter(id =>
+        Types.ObjectId.isValid(id)
+    );
+
+    if (validObjectIds.length > 0) {
+        const conversationsFromDB = await Conversation.find({
+            _id: { $in: validObjectIds }
+        })
+        .populate('participants', '_id type name picture')
+        .lean()
+
+        let redisConversation;
+
+        conversationsFromDB.forEach((conversation: any) => {
+
+          conversation?.type === 'oneToOne' ? (
+            redisConversation = {
+              _id: conversation._id,
+              name : userID == conversation.participants[0]._id ? conversation.participants[1].name : conversation.participants[1].name,
+              picture: userID == conversation.participants[1]._id ? conversation.participants[0].picture.url : conversation.participants[1].picture.url,
+            }
+          ) : (
+            redisConversation = {
+              _id: conversation._id,
+              name : conversation.extraFields.groupName,
+              picture: conversation.extraFields.groupPicture.url,
+            }
+          );
+
+            userMap[redisConversation._id] = redisConversation;
+
+            redis.hset(`conversation:${redisConversation._id}:info`, redisConversation);
+            redis.expire(`conversation:${redisConversation._id}`, 60 * 60);
+        });
+    }
+
+
+    const populatedConversations = conversations?.map(message => ({
+      ...message,
+    }));
+
+
+    return res.status(200).json({ conversations: populatedConversations });
 
   } catch (error) {
     console.error(error);

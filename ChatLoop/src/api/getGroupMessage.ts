@@ -69,8 +69,6 @@ router.post('/', async (req: Request, res: Response) => {
     const messageResults = await messagePipeline.exec();
 
 
-    console.log("messRes", messageResults);
-
     const messages: Message[] = (messageResults || [])
       .map(([err, data]) => {
         if (err || !data || Object.keys(data).length === 0) return null;
