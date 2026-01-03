@@ -165,6 +165,8 @@ router.post('/', async (req: Request, res: Response) => {
       picture: userMap[msg.senderId].picture ?? null,
     }));
 
+    console.log("message", populatedMessages);
+
     return res.status(200).json({ messages: populatedMessages });
 
   } catch (error) {
