@@ -54,11 +54,17 @@ router.post('/', upload.single('image'), async (req: Request, res: Response) => 
 
             await Redis.hset(
                 `conversation:${group._id}`,
+                // {
+                //     type: 'group',
+                //     participants: JSON.stringify([userId]),
+                //     conversationName: groupName || "",
+                //     conversationPicture: picture.url || ""
+                // }
+
                 {
                     type: 'group',
-                    participants: JSON.stringify([userId]),
-                    conversationName: groupName || "",
-                    conversationPicture: picture.url || ""
+                    text:"",
+                    messageTime: Date.now(),
                 }
             );
         
