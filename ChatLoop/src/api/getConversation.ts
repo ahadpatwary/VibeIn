@@ -148,8 +148,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     const populatedConversations = conversations?.map(conversation => ({
       ...conversation,
-      name: conversationMap[conversation.conversationId].name,
-      picture: conversationMap[conversation.conversationId].picture,
+      name: conversationMap[conversation?.conversationId].name,
+      picture: conversationMap[conversation?.conversationId].picture,
     }));
 
 
