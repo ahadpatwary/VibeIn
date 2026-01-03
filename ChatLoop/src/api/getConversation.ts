@@ -132,9 +132,10 @@ router.post("/", async (req: Request, res: Response) => {
         const conversationsFromDB = await Conversation.find({
             _id: { $in: validObjectIds }
         })
-        .populate('participants', '_id type name picture')
+        .populate('participants', '_id name picture')
         .lean()
 
+        console.log("hidksfj", conversationsFromDB);
         let redisConversation;
 
         conversationsFromDB.forEach((conversation: any) => {
