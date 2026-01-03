@@ -148,7 +148,7 @@ router.post("/", async (req: Request, res: Response) => {
             redisConversation = {
               _id: conversation._id,
               name : userID == conversation.participants[0]._id ? conversation.participants[1].name : conversation.participants[1].name,
-              picture: userID == conversation.participants[1]._id ? conversation.participants[0].picture.url : conversation.participants[1].picture.url,
+              picture: userID == conversation.participants[0]._id ? conversation.participants[0].picture.url : conversation.participants[1].picture.url,
             }
           ) : (
             redisConversation = {
