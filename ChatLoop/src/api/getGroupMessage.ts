@@ -12,7 +12,6 @@ const router = express.Router();
 interface Message {
   _id: string;
   senderId: string;
-  receiverId: string;
   text: string;
   referenceMessage: string | null;
   messageTime: number;
@@ -101,7 +100,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     messages.forEach(msg => {
       userIdSet.add(msg.senderId);
-      userIdSet.add(msg.receiverId);
     });
 
     const userIds = Array.from(userIdSet);
@@ -146,9 +144,9 @@ router.post('/', async (req: Request, res: Response) => {
 
         usersFromDB.forEach((user: any) => {
             const redisUser = {
-            _id: user._id.toString(),
-            name: user.name,
-            picture: user.picture,
+                _id: user._id.toString(),
+                name: user.name,
+                picture: user.picture.url,
             };
 
             userMap[redisUser._id] = redisUser;
@@ -164,8 +162,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const populatedMessages = messages.map(msg => ({
       ...msg,
-      sender: userMap[msg.senderId] ?? null,
-      receiver: userMap[msg.receiverId] ?? null,
+      picture: userMap[msg.senderId].picture ?? null,
     }));
 
     return res.status(200).json({ messages: populatedMessages });

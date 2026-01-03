@@ -127,24 +127,33 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 {
                     _id,
                     senderId,
-                    receiverId,
                     text,
                     referenceMessage,
                     messageTime,
                 }
             );
 
-            await Redis.zadd(
-                `user:${senderId}:conversations`,
-                messageTime || Date.now(),
-                joinId as string
-            );
+            const participants = await Redis.lrange(`conversation:${joinId}:participants`, 0, -1);
 
-            await Redis.zadd(
-                `user:${receiverId}:conversations`,
-                messageTime || Date.now(),
-                joinId as string,
-            );
+            participants.forEach((id: string) => {
+                if(id){
+                    (async() => {
+                        await Redis.zadd(
+                            `user:${senderId}:conversations`,
+                            messageTime || Date.now(),
+                            joinId as string
+                        );
+                    })();
+                }
+            });
+
+
+
+            // await Redis.zadd(
+            //     `user:${receiverId}:conversations`,
+            //     messageTime || Date.now(),
+            //     joinId as string,
+            // );
 
 
             if(!socket.rooms.has(`conversation:${joinId}:active`)){
@@ -155,7 +164,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
 
 
             // const participants = [senderId, receiverId];
-            const participants = await Redis.lrange(`conversation:${joinId}:participants`, 0, -1);
 
             const participantRooms = participants.map((id: string) => `user:${id}`);
 
