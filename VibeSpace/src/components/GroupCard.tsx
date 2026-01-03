@@ -189,7 +189,7 @@ export default function GroupCard({
                 className={`mb-3 flex items-start gap-2 ${isSender ? "flex-row-reverse" : "flex-row"}`}
               >
                 <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                  <AvatarDemo src={isSender ? message.picture : message.conversationPicture} size="size-10 " />
+                  <AvatarDemo src={message.picture } size="size-10 " />
                 </div>
 
                 <div
