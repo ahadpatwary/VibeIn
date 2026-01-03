@@ -24,12 +24,27 @@ export interface IConversation extends Document {
     groupAdmin?: Types.ObjectId;
   };
 }
+
+interface convType {
+  conversationId: string,
+  name: string,
+  picture: string,
+}
 interface RedisUser {
   _id: string;
   name: string;
   picture: string,
 }
 
+function isConversation(data: any): data is convType {
+  return (
+    data &&
+    typeof data === 'object' &&
+    typeof data.conversationId === 'string' &&
+    typeof data.name === 'string' &&
+    typeof data.picture === 'string'
+  );
+}
 
 function isRedisUser(data: any): data is RedisUser {
   return (
@@ -65,8 +80,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     const results = await pipeline.exec();
 
-    const conversations = results && results
-      .map(([err, data], index) => {
+    const conversations: convType[]  = (results || [])
+      ?.map(([err, data], index) => {
         if (err || !data || Object.keys(data).length === 0) return null;
 
         return {
@@ -74,7 +89,7 @@ router.post("/", async (req: Request, res: Response) => {
           ...data
         };
       })
-      .filter(Boolean);
+      .filter(isConversation);
 
 
       const conversationIdSet = new Set<string>();
@@ -146,10 +161,10 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
 
-    const populatedConversations = conversations?.map(conversation => ({
+    const populatedConversations = conversations.map(conversation => ({
       ...conversation,
-      name: conversationMap[conversation?.conversationId]?.name as string,
-      picture: conversationMap[conversation?.conversationId]?.picture as string,
+      name: conversationMap[conversation.conversationId!]?.name as string,
+      picture: conversationMap[conversation.conversationId!]?.picture as string,
     }));
 
 
