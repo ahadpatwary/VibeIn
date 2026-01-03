@@ -101,7 +101,7 @@ router.post("/", async (req: Request, res: Response) => {
       const convId = convIds[index];
 
       if (!err && isRedisUser(convId)) {
-        conversationMap[convId] = data;
+        conversationMap[convId] = data as {_id: string, name: string, picture: string};
       } else {
         missingConversationIds.push(convId);
       }
@@ -148,8 +148,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     const populatedConversations = conversations?.map(conversation => ({
       ...conversation,
-      name: conversationMap[conversation.conversationId].name ?? null,
-      picture: conversationMap[conversation.conversationId].picture ?? null,
+      name: conversationMap[conversation.conversationId].name,
+      picture: conversationMap[conversation.conversationId].picture,
     }));
 
 
