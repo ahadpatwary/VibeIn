@@ -139,7 +139,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 if(id){
                     (async() => {
                         await Redis.zadd(
-                            `user:${senderId}:conversations`,
+                            `user:${id}:conversations`,
                             messageTime || Date.now(),
                             joinId as string
                         );
