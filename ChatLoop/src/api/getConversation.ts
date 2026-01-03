@@ -25,6 +25,33 @@ export interface IConversation extends Document {
   };
 }
 
+interface IBaseRedisConversation {
+  _id: string;
+}
+
+// oneToOne conversation
+export interface IRedisOneToOneConversation extends IBaseRedisConversation {
+  user_one: {
+    name: string;
+    picture: string;
+  };
+  user_two: {
+    name: string;
+    picture: string;
+  };
+}
+
+// group conversation
+export interface IRedisGroupConversation extends IBaseRedisConversation {
+  name: string;
+  picture: string;
+}
+
+// union type
+export type RedisConversation =
+  | IRedisOneToOneConversation
+  | IRedisGroupConversation;
+
 interface convType {
   conversationId: string,
   name: string,
@@ -113,7 +140,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const userResults = await conversationPipeline.exec();
 
-    const conversationMap: Record<string, {_id: string, name: string, picture: string}> = {};
+    const conversationMap: Record<string, RedisConversation> = {};
     const missingConversationIds: string[] = [];
 
     userResults?.forEach(([err, data], index) => {
@@ -147,8 +174,14 @@ router.post("/", async (req: Request, res: Response) => {
           conversation?.type === 'oneToOne' ? (
             redisConversation = {
               _id: conversation._id,
-              name : userID == conversation.participants[0]._id ? conversation.participants[1].name : conversation.participants[1].name,
-              picture: userID == conversation.participants[0]._id ? conversation.participants[0].picture.url : conversation.participants[1].picture.url,
+              user_one: {
+                name: conversation.participants[0].name,
+                picture: conversation.participants[0].picture.url,
+              },
+              user_two: {
+                name: conversation.participants[1].name,
+                picture: conversation.participants[1].picture.url,
+              }
             }
           ) : (
             redisConversation = {
@@ -168,8 +201,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const populatedConversations = conversations.map(conversation => ({
       ...conversation,
-      name: conversationMap[conversation.conversationId!]?.name as string,
-      picture: conversationMap[conversation.conversationId!]?.picture as string,
+      info: conversationMap[conversation.conversationId!]
     }));
 
 
