@@ -5,9 +5,6 @@ import User from '../models/UserLite';
 
 const router = express.Router();
 
-/* =======================
-   Interfaces
-======================= */
 
 interface Message {
   _id: string;
@@ -35,7 +32,6 @@ function isMessage(data: any): data is Message {
     data &&
     typeof data === 'object' &&
     typeof data.senderId === 'string' &&
-    typeof data.receiverId === 'string' &&
     typeof data.text === 'string'
   );
 }
@@ -81,9 +77,8 @@ router.post('/', async (req: Request, res: Response) => {
 
     const messageResults = await messagePipeline.exec();
 
-    /* =======================
-       2️⃣ Clean messages
-    ======================= */
+
+    console.log("messRes", messageResults);
 
     const messages: Message[] = (messageResults || [])
       .map(([err, data]) => {
