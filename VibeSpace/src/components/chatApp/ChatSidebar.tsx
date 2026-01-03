@@ -16,8 +16,8 @@ interface dataType{
   messageTime: number,
   text: string,
   type: string
-  conversationName: string,
-  conversationPicture: string,
+  name: string,
+  picture: string,
 }
 
 
@@ -93,23 +93,23 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
                   if(window.innerWidth <= 768){
                       // handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
-                    handleDesktopClick(conv.conversationId, conv.type, conv?.conversationName,conv?.conversationPicture)
+                    handleDesktopClick(conv.conversationId, conv.type, conv?.name,conv?.picture)
                     setSelected(conv.conversationId);
                   }
                 }}
               >
                 <div className="flex w-full p-2">
                   <AvatarDemo
-                    src={conv?.conversationPicture}
+                    src={conv?.picture}
                     size="size-15" 
                   />
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
-                        {conv?.conversationName}
+                        {conv?.picture}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
-                        {new Date(conv.messageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(Number(conv.messageTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     <p className="text-gray-900 text-sm truncate">{conv.text} </p>
