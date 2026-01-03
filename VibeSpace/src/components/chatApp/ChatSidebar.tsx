@@ -13,7 +13,7 @@ import { useSocketConnection } from "@/hooks/useSocketConnection";
 
 interface dataType{
   conversationId: string,
-  messageTime: string,
+  messageTime: number,
   text: string,
   type: string
   conversationName: string,

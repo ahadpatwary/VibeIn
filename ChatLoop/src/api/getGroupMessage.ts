@@ -54,7 +54,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
 
-    const messageIds = await redis.zrevrange(
+    const messageIds = await redis.zrange(
       `conversation:${groupId}:messages`,
       0,
       -1
