@@ -103,6 +103,7 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             // await Redis.rpush(key, JSON.stringify(message));
 
             await Redis.hset(`conversation:${joinId}`, { 
+                // _id: joinId,
                 type,
                 text,
                 messageTime,

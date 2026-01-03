@@ -27,10 +27,7 @@ export interface IConversation extends Document {
 interface RedisUser {
   _id: string;
   name: string;
-  picture: {
-    url: string;
-    public_id: string;
-  };
+  picture: string,
 }
 
 
@@ -97,23 +94,23 @@ router.post("/", async (req: Request, res: Response) => {
 
     const userResults = await conversationPipeline.exec();
 
-    const userMap: Record<string, RedisUser> = {};
-    const missingUserIds: string[] = [];
+    const conversationMap: Record<string, {_id: string, name: string, picture: string}> = {};
+    const missingConversationIds: string[] = [];
 
     userResults?.forEach(([err, data], index) => {
       const convId = convIds[index];
 
       if (!err && isRedisUser(convId)) {
-        userMap[convId] = data;
+        conversationMap[convId] = data;
       } else {
-        missingUserIds.push(convId);
+        missingConversationIds.push(convId);
       }
     });
 
 
 
-    const validObjectIds = missingUserIds.filter(id =>
-        Types.ObjectId.isValid(id)
+    const validObjectIds = missingConversationIds.filter(id =>
+      Types.ObjectId.isValid(id)
     );
 
     if (validObjectIds.length > 0) {
@@ -141,7 +138,7 @@ router.post("/", async (req: Request, res: Response) => {
             }
           );
 
-            userMap[redisConversation._id] = redisConversation;
+            conversationMap[redisConversation._id] = redisConversation;
 
             redis.hset(`conversation:${redisConversation._id}:info`, redisConversation);
             redis.expire(`conversation:${redisConversation._id}`, 60 * 60);
@@ -149,8 +146,10 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
 
-    const populatedConversations = conversations?.map(message => ({
-      ...message,
+    const populatedConversations = conversations?.map(conversation => ({
+      ...conversation,
+      name: conversationMap[conversation.conversationId].name ?? null,
+      picture: conversationMap[conversation.conversationId].picture ?? null,
     }));
 
 
