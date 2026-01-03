@@ -92,6 +92,8 @@ router.post('/', async (req: Request, res: Response) => {
       })
       .filter(isMessage);
 
+      console.log("messages", messages);
+
     /* =======================
        3️⃣ Collect user IDs
     ======================= */
