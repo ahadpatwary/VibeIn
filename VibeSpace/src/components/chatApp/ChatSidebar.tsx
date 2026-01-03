@@ -21,28 +21,6 @@ interface dataType{
   
 }
 
-interface Conversation {
-  _id: string;
-  type: 'oneToOne' | 'group';
-
-  participants: string[];
-  deletedBy: string[];
-  blockedUser: string[];
-  requestUser: string[];
-
-  lastMessage: string;
-  lastMessageTime: Date;
-
-  info: {
-    name: string;
-    picture: {
-      public_id: string;
-      url: string;
-    };
-    bio?: string;
-    admin?: string;
-  };
-}
 
 interface ChatSidebarProps {
   setConversationName?: (value: string) => void;
@@ -137,12 +115,12 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
                         {conv.conversationName}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
-                        {/* {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} */}
+                        {new Date(conv.messageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         22:22 px
                       </p>
                     </div>
                     {/* <p className="text-gray-900 text-sm truncate">{conv.lastMessage}</p> */}
-                    <p className="text-gray-900 text-sm truncate">ahad is the best </p>
+                    <p className="text-gray-900 text-sm truncate">{conv.text} </p>
 
                   </div>
                 </div>
