@@ -199,7 +199,7 @@ export default function GroupCard({
                   }
                     {message.text}
                   <div className="text-[10px] sm:text-xs mt-1 text-gray-700 text-right">
-                    {new Date(message.messageTime).toLocaleTimeString([], {
+                    {new Date(Number(message.messageTime)).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}

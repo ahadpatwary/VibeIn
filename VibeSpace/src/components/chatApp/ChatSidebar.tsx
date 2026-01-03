@@ -106,7 +106,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
-                        {conv?.picture}
+                        {conv?.name}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
                         {new Date(Number(conv.messageTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
