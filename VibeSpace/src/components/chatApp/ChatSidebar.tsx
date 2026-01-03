@@ -13,12 +13,9 @@ import { useSocketConnection } from "@/hooks/useSocketConnection";
 
 interface dataType{
   conversationId: string,
-  type: 'oneToOne' | 'group',
-  participants: string[],
-
-  conversationName: string,
-  conversationPicture: string,
-  
+  messageTime: string,
+  text: string,
+  type: string
 }
 
 

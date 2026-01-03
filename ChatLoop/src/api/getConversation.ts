@@ -35,50 +35,6 @@ router.post("/", async (req: Request, res: Response) => {
 
     if (!userID || !redis) return res.status(400).json({ message: "userID missing" });
 
-    // await User.findById(userID);
-
-    // const result = await Conversation.find({
-    //   participants: { $in: [new Types.ObjectId(userID)] },
-    // })
-    // .sort({ lastMessage: -1 })
-    // .lean();
-
-    
-    // const conversations = await Promise.all(
-    //   result.map(async (conv) => {
-
-    //     if (conv.type === "group") {
-    //       return {
-    //         ...conv,
-
-    //         info: {
-    //           name: conv.extraFields?.groupName,
-    //           picture: conv.extraFields?.groupPicture,
-    //           bio: conv.extraFields?.groupBio,
-    //           admin: conv.extraFields?.groupAdmin,
-    //         },
-    //       };
-    //     }
-
-    //     // oneToOne
-    //     const otherPersonId = conv.participants.find(
-    //       (id: any) => id.toString() !== userID
-    //     );
-
-    //     const otherUser = await User.findById(otherPersonId)
-    //       .select("name picture")
-    //       .lean();
-
-    //     return {
-    //       ...conv,
-
-    //       info: otherUser,
-    //     };
-    //   })
-    // );
-
-  
-
     const conversationIds = await redis.zrevrange(
       `user:${userID}:conversations`,
       0,

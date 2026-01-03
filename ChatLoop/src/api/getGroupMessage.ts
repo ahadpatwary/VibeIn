@@ -23,9 +23,6 @@ interface RedisUser {
   };
 }
 
-/* =======================
-   Type Guards
-======================= */
 
 function isMessage(data: any): data is Message {
   return (
@@ -46,9 +43,6 @@ function isRedisUser(data: any): data is RedisUser {
   );
 }
 
-/* =======================
-   Route
-======================= */
 
 router.post('/', async (req: Request, res: Response) => {
   try {
@@ -59,9 +53,6 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'groupId and redis are required' });
     }
 
-    /* =======================
-       1️⃣ Get message IDs
-    ======================= */
 
     const messageIds = await redis.zrevrange(
       `conversation:${groupId}:messages`,
@@ -87,11 +78,7 @@ router.post('/', async (req: Request, res: Response) => {
       })
       .filter(isMessage);
 
-      console.log("messages", messages);
 
-    /* =======================
-       3️⃣ Collect user IDs
-    ======================= */
 
     const userIdSet = new Set<string>();
 
@@ -101,9 +88,6 @@ router.post('/', async (req: Request, res: Response) => {
 
     const userIds = Array.from(userIdSet);
 
-    /* =======================
-       4️⃣ Fetch users from Redis
-    ======================= */
 
     const userPipeline = redis.pipeline();
 
@@ -126,9 +110,7 @@ router.post('/', async (req: Request, res: Response) => {
       }
     });
 
-    /* =======================
-       5️⃣ DB fallback + cache
-    ======================= */
+
 
     const validObjectIds = missingUserIds.filter(id =>
         Types.ObjectId.isValid(id)
@@ -153,16 +135,11 @@ router.post('/', async (req: Request, res: Response) => {
         });
     }
 
-    /* =======================
-       6️⃣ Populate messages
-    ======================= */
 
     const populatedMessages = messages.map(msg => ({
       ...msg,
       picture: userMap[msg.senderId].picture ?? null,
     }));
-
-    console.log("message", populatedMessages);
 
     return res.status(200).json({ messages: populatedMessages });
 

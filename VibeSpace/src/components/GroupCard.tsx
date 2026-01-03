@@ -36,8 +36,6 @@ interface ReceiveMessage {
   text: string;
   referenceMessage: string | null;
   messageTime: number;
-  conversationName: string;
-  conversationPicture: string;
 }
 
 export default function GroupCard({

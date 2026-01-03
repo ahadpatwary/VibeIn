@@ -15,8 +15,6 @@ interface dataType {
     text: string,
     referenceMessage: string | null,
     messageTime: number,
-    conversationName: string,
-    conversationPicture: string,
 }
 
 interface receiveMessagePropType {
@@ -28,8 +26,6 @@ interface receiveMessagePropType {
     text: string,
     referenceMessage: string | null,
     messageTime: number,
-    conversationName: string,
-    conversationPicture: string,
 }
 
 
@@ -49,8 +45,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 text,
                 referenceMessage,
                 messageTime,
-                conversationName,
-                conversationPicture
             }: dataType = data;
 
             if(!type || !text || !messageTime) return;
@@ -102,8 +96,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
                 text,
                 referenceMessage,
                 messageTime,
-                conversationName,
-                conversationPicture
             };
 
 
