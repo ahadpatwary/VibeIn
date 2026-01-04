@@ -42,28 +42,6 @@ interface GroupConversation {
 }
 export type Conversation = OneToOneConversation | GroupConversation;
 
-// // oneToOne conversation
-// export interface IRedisOneToOneConversation extends IBaseRedisConversation {
-//   user_one: {
-//     name: string;
-//     picture: string;
-//   };
-//   user_two: {
-//     name: string;
-//     picture: string;
-//   };
-// }
-
-// // group conversation
-// export interface IRedisGroupConversation extends IBaseRedisConversation {
-//   name: string;
-//   picture: string;
-// }
-
-// // union type
-// export type RedisConversation =
-//   | IRedisOneToOneConversation
-//   | IRedisGroupConversation;
 
 
 interface ChatSidebarProps {
