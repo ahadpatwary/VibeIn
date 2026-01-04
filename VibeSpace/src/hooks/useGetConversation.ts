@@ -2,8 +2,41 @@ import { userIdClient } from "@/lib/userId";
 import { useState, useEffect } from "react";
 
 
+interface OneToOneConversation {
+  conversationId: string;
+  type: 'oneToOne';
+  text: string;
+  messageTime: string;
+  info: {
+    user_one: {
+      _id: string;
+      name: string;
+      picture: string;
+    };
+    user_two: {
+      _id: string;
+      name: string;
+      picture: string;
+    };
+  };
+}
+
+interface GroupConversation {
+  conversationId: string;
+  type: 'group';
+  text: string;
+  messageTime: string;
+  info: {
+    name: string;
+    picture: string;
+  };
+}
+export type Conversation = OneToOneConversation | GroupConversation;
+
+
 const useGetConversation = () => {
     const [conversations, setConversations] = useState([]);
+    const [convObj, setConvObj] = useState();
     
     useEffect(() => {
         ;( async () => {
@@ -23,10 +56,27 @@ const useGetConversation = () => {
         
             const data = await res.json();
             console.log("data", data.conversations);
-            setConversations(data.conversations || []);
+            // setConversations(data.conversations || []);
+
+            const idList = [];
+            const convObjData = {};
+
+            const conversations: Conversation[] = data.conversations;
+
+            for(const conv of conversations){
+                convObjData[conv.conversationId] = conv;
+                idList.push(conv.conversationId);
+            }
+
+            console.log("convObjData", convObjData);
+
+            setConversations(idList);
+            setConvObj(convObjData);
 
         })();
     }, []);
-    return conversations;
+
+    return { conversations, setConversations, convObj, setConvObj };
 }
+
 export default useGetConversation;

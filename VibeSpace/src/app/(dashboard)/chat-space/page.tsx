@@ -11,7 +11,7 @@ import GroupCard from "@/components/GroupCard";
 
 const ChatSpacePage = () => {
   const isMobile = useIsMobile();
-  const conversations = useGetConversation();
+  const { conversations, setConversations, convObj, setConvObj } = useGetConversation();
 
 
   const [state, setState] = useState<"empty" | "group" | "oneToOne">("empty");
@@ -34,7 +34,10 @@ const ChatSpacePage = () => {
                   setConversationPicture={setConversationPicture}
                   joinId={joinId}
                   setJoinId={setJoinId} 
-                  conversations = {conversations}
+                  conversations={conversations}
+                  setConversations={setConversations}
+                  convObj={convObj}
+                  setConvObj={setConvObj}
                   setState ={setState}
                 />
               </ResizablePanel>

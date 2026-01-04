@@ -49,12 +49,28 @@ interface ChatSidebarProps {
   setConversationPicture?: (value: string) => void;
   joinId?: string;
   setJoinId?: (value: string) => void;
-  // conversations?: Conversation[];
   conversations?: Conversation[];
+  setConversations: (value: string) => void;
+  convObj: {
+
+  };
+  setConObj: (value: ) => void
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
-const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJoinId, conversations, setState }: ChatSidebarProps) => {
+const ChatSidebar = (
+  {
+    setConversationName,
+    setConversationPicture,
+    joinId,
+    setJoinId,
+    conversations, 
+    setConversations,
+    convObj,
+    setConObj,
+    setState 
+  }: ChatSidebarProps
+) => {
 
   const [ selected, setSelected ] = useState<string | null>(null);
   const router = useRouter();
