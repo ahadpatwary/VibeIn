@@ -151,7 +151,7 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
               >
                 <div className="flex w-full p-2">
                   <AvatarDemo
-                    src={conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id != userId) ? conv?.info?.user_two?.picture : conv?.info.user_one.picture): (
+                    src={conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.picture : conv?.info.user_one.picture): (
                       conv.info.picture
                     )}
                     size="size-15" 
