@@ -11,14 +11,59 @@ import Image from "next/image";
 import { userIdClient } from "@/lib/userId";
 import { useSocketConnection } from "@/hooks/useSocketConnection";
 
-interface dataType{
-  conversationId: string,
-  messageTime: number,
-  text: string,
-  type: string
-  name: string,
-  picture: string,
+interface OneToOneConversation {
+  conversationId: string;
+  type: 'oneToOne';
+  text: string;
+  messageTime: string;
+  info: {
+    user_one: {
+      _id: string;
+      name: string;
+      picture: string;
+    };
+    user_two: {
+      _id: string;
+      name: string;
+      picture: string;
+    };
+  };
 }
+
+interface GroupConversation {
+  conversationId: string;
+  type: 'group';
+  text: string;
+  messageTime: string;
+  info: {
+    name: string;
+    picture: string;
+  };
+}
+export type Conversation = OneToOneConversation | GroupConversation;
+
+// // oneToOne conversation
+// export interface IRedisOneToOneConversation extends IBaseRedisConversation {
+//   user_one: {
+//     name: string;
+//     picture: string;
+//   };
+//   user_two: {
+//     name: string;
+//     picture: string;
+//   };
+// }
+
+// // group conversation
+// export interface IRedisGroupConversation extends IBaseRedisConversation {
+//   name: string;
+//   picture: string;
+// }
+
+// // union type
+// export type RedisConversation =
+//   | IRedisOneToOneConversation
+//   | IRedisGroupConversation;
 
 
 interface ChatSidebarProps {
@@ -27,7 +72,7 @@ interface ChatSidebarProps {
   joinId?: string;
   setJoinId?: (value: string) => void;
   // conversations?: Conversation[];
-  conversations?: dataType[];
+  conversations?: Conversation[];
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
@@ -54,11 +99,17 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
   };
    
 
-  const handleDesktopClick = (newJoinId: string, type: string, conversationName: string, conversationPicture: string) => {
+  const handleDesktopClick = (newJoinId: string, conv: Conversation) => {
+    const conversationName = conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.name : conv?.info.user_one.name): (
+                      conv.info.name
+                    );
     if(!!setConversationName) setConversationName(conversationName);
+    const conversationPicture = conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.picture : conv?.info.user_one.picture): (
+                      conv.info.picture
+                    )
     if(!!setConversationPicture) setConversationPicture(conversationPicture);
-    if(!!setState && type === "oneToOne") setState("oneToOne");
-    if(!!setState && type === "group") setState("group");
+    if(!!setState && conv.type === "oneToOne") setState("oneToOne");
+    if(!!setState && conv.type === "group") setState("group");
 
     socket?.emit("join-group", { userId, joinId, newJoinId });
   
@@ -93,20 +144,24 @@ const ChatSidebar = ({setConversationName, setConversationPicture, joinId, setJo
                   if(window.innerWidth <= 768){
                       // handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
-                    handleDesktopClick(conv.conversationId, conv.type, conv?.name,conv?.picture)
+                    handleDesktopClick(conv.conversationId, conv)
                     setSelected(conv.conversationId);
                   }
                 }}
               >
                 <div className="flex w-full p-2">
                   <AvatarDemo
-                    src={conv?.picture}
+                    src={conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id != userId) ? conv?.info?.user_two?.picture : conv?.info.user_one.picture): (
+                      conv.info.picture
+                    )}
                     size="size-15" 
                   />
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
-                        {conv?.name}
+                        {conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.name : conv?.info.user_one.name): (
+                      conv.info?.name
+                    )}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
                         {new Date(Number(conv.messageTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

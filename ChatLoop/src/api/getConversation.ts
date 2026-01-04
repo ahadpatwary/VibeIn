@@ -32,10 +32,12 @@ interface IBaseRedisConversation {
 // oneToOne conversation
 export interface IRedisOneToOneConversation extends IBaseRedisConversation {
   user_one: {
+    _id: string,
     name: string;
     picture: string;
   };
   user_two: {
+    _id: string,
     name: string;
     picture: string;
   };
@@ -175,10 +177,12 @@ router.post("/", async (req: Request, res: Response) => {
             redisConversation = {
               _id: conversation._id,
               user_one: {
+                _id: conversation.participants[0]._id,
                 name: conversation.participants[0].name,
                 picture: conversation.participants[0].picture.url,
               },
               user_two: {
+                _id: conversation.participants[1]._id,
                 name: conversation.participants[1].name,
                 picture: conversation.participants[1].picture.url,
               }
