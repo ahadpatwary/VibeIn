@@ -12,6 +12,7 @@ export const initPresenceBatch = async (io: Server) => {
   const lock = await Redis.set(
     LOCK_KEY,
     "value",
+    "NX",
     "EX",
     600 // 10 min
   );
