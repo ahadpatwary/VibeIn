@@ -9,13 +9,15 @@ export const initPresenceBatch = async (io: Server) => {
 
   const LOCK_KEY = "presence:batch:lock";
 
-  const lock = await Redis.set(
-    LOCK_KEY,
-    "value",
-    "NX",
-    "EX",
-    600 // 10 min
-  );
+    const lock = await Redis.set(
+        LOCK_KEY,
+        "value",
+        {
+            NX: true,
+            EX: 600,
+        }
+    );
+
 
   if (!lock) {
     console.log("Another server is running batch job");
