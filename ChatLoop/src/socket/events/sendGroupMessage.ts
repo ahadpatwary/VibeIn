@@ -141,14 +141,6 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             });
 
 
-
-            // await Redis.zadd(
-            //     `user:${receiverId}:conversations`,
-            //     messageTime || Date.now(),
-            //     joinId as string,
-            // );
-
-
             if(!socket.rooms.has(`conversation:${joinId}:active`)){
                 socket?.join(`conversation:${joinId}:active`);
             }

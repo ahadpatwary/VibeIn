@@ -95,6 +95,24 @@ const ChatSidebar = (
     const sendId = userId === senderId ? receiverId : senderId;
     router.push(`/chatloop?userId=${userId}&chatWith=${sendId}`);
   };
+
+  socket?.on('conversation_update', (data) => {
+    const {text, messageTime, joinId} = data;
+
+    setConvObj?.(prev => {
+      const existing = prev[joinId!];
+      if (!existing) return prev;
+
+      return {
+        ...prev,
+        [joinId!]: {
+          ...existing,
+          text,
+          messageTime: messageTime,
+        },
+      };
+    });
+  })
    
 
   const handleDesktopClick = (newJoinId: string, conv: string) => {
