@@ -19,6 +19,8 @@ const ChatSpacePage = () => {
   const [conversationName , setConversationName] = useState('');
   const [conversationPicture, setConversationPicture] = useState('');
 
+  console.log("ahadksdjf convObj", convObj);
+
 
   return (
     <>
@@ -50,6 +52,7 @@ const ChatSpacePage = () => {
                         <GroupCard 
                           type= "oneToOne"
                           joinId={joinId} 
+                          setConvObj={setConvObj}
                           conversationName={conversationName}
                           conversationPicture={conversationPicture}
                         />
@@ -60,6 +63,7 @@ const ChatSpacePage = () => {
                         <GroupCard 
                             type="group"
                             joinId={joinId}
+                            setConvObj={setConvObj}
                             conversationName={conversationName}
                             conversationPicture={conversationPicture}
                         />

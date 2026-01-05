@@ -15,12 +15,48 @@ import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
 import { userIdClient } from '@/lib/userId';
 import { AiFillSetting } from "react-icons/ai";
+interface OneToOneConversation {
+  conversationId: string;
+  type: 'oneToOne';
+  text: string;
+  messageTime: string;
+  info: {
+    user_one: {
+      _id: string;
+      name: string;
+      picture: string;
+    };
+    user_two: {
+      _id: string;
+      name: string;
+      picture: string;
+    };
+  };
+}
+
+interface GroupConversation {
+  conversationId: string;
+  type: 'group';
+  text: string;
+  messageTime: string;
+  info: {
+    name: string;
+    picture: string;
+  };
+}
+export type Conversation = OneToOneConversation | GroupConversation;
+
+
+interface ConversationsMap {
+  [conversationId: string]: Conversation;
+}
 
 interface PropType {
   type: string;
   chatWith?: string;
   joinId: string | null;
   setJoinId?: (value: string) => void;
+  setConvObj: React.Dispatch<React.SetStateAction<ConversationsMap>>;
   conversationName: string;
   conversationPicture: string;
 }
@@ -43,6 +79,7 @@ export default function GroupCard({
   chatWith,
   joinId,
   setJoinId,
+  setConvObj,
   conversationName,
   conversationPicture
 }: PropType) {
@@ -103,6 +140,22 @@ export default function GroupCard({
 
   const handleSend = () => {
     if (!newMessage.trim() || !socket) return;
+
+ 
+setConvObj((prev) => {
+  const existing = prev[joinId!];
+  if (!existing) return prev;
+
+  return {
+    ...prev,
+    [joinId!]: {
+      ...existing,
+      text: newMessage,
+      messageTime: Date.now(),
+    },
+  };
+});
+
 
     const id = uuidv4();
     const conversationType = type === 'oneToOne' ? 'oneToOne' : 'group';
