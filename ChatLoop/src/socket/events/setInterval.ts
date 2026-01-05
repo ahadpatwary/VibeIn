@@ -9,14 +9,13 @@ export const initPresenceBatch = async (io: Server) => {
 
   const LOCK_KEY = "presence:batch:lock";
 
-    const lock = await Redis.set(
-        LOCK_KEY,
-        "value",
-        {
-            NX: true,
-            EX: 600,
-        }
-    );
+  const lock = await Redis.set(
+    "presence:batch:lock",
+    "value",
+    "EX",
+    600,
+    "NX"
+ );
 
 
   if (!lock) {
