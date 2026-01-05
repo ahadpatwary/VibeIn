@@ -160,6 +160,11 @@ const ChatSidebar = (
       });
     })
 
+    socket.on("allUserOnlineStatues", (activeUserIds: string[]) => {
+      // onlineUserSet.current = new Set(activeUserIds);
+      console.log("activeUserIds", activeUserIds);
+    });
+
     return () => {
       socket.off('allConversation_update');
       socket.off('userTyping');
@@ -244,7 +249,7 @@ const ChatSidebar = (
                       </p>
                     </div>
                     <>
-                      { convObj[conv].typing ? <p className="text-md pt-2 truncate text-green-200">typing ...</p> : <p className="text-gray-900 pt-1 text-md truncate">{convObj[conv].text} </p>
+                      { convObj[conv].typing ? <p className="text-md pt-1 truncate text-green-200">typing ...</p> : <p className="text-gray-900 pt-1 text-md truncate">{convObj[conv].text} </p>
                       }
                     </>
          
