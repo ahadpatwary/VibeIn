@@ -48,7 +48,7 @@ export type Conversation = OneToOneConversation | GroupConversation;
 
 
 interface ConversationsMap {
-  [conversationId: string]: Conversation;
+  [joinId: string]: Conversation;
 }
 
 interface PropType {
@@ -56,7 +56,7 @@ interface PropType {
   chatWith?: string;
   joinId: string | null;
   setJoinId?: (value: string) => void;
-  setConvObj: React.Dispatch<React.SetStateAction<ConversationsMap>>;
+  setConvObj: (value: ConversationsMap) => void;
   conversationName: string;
   conversationPicture: string;
 }
@@ -142,7 +142,8 @@ export default function GroupCard({
     if (!newMessage.trim() || !socket) return;
 
  
-setConvObj((prev) => {
+setConvObj(prev => {
+
   const existing = prev[joinId!];
   if (!existing) return prev;
 
