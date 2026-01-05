@@ -1,7 +1,7 @@
 'use client'
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { AvatarDemo } from "../AvaterDemo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { Button } from "../ui/button";
 import { MdGroup } from "react-icons/md";
@@ -10,6 +10,8 @@ import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
 import { userIdClient } from "@/lib/userId";
 import { useSocketConnection } from "@/hooks/useSocketConnection";
+
+
 
 interface OneToOneConversation {
   conversationId: string;
@@ -57,8 +59,14 @@ interface ChatSidebarProps {
   setJoinId?: (value: string) => void;
   conversations?: string[];
   setConversations?: (value: string[]) => void;
+
   convObj?: ConversationsMap;
-  setConvObj?: (value: ConversationsMap ) => void;
+
+  // ✅ THIS IS THE FIX
+  setConvObj?: React.Dispatch<
+    React.SetStateAction<ConversationsMap>
+  >;
+
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
 
@@ -98,56 +106,72 @@ const ChatSidebar = (
     router.push(`/chatloop?userId=${userId}&chatWith=${sendId}`);
   };
 
-  socket?.on('allConversation_update', (data) => {
-    const {text, messageTime, joinId} = data;
+  useEffect(() => {
 
-    console.log("hi bro", data);
-    setConvObj?.(prev => {
-      const existing = prev[joinId!];
-      if (!existing) return prev;
+    if(!socket) return;
+      
+    
+    socket?.on('allConversation_update', (data) => {
+      const {text, messageTime, joinId} = data;
 
-      return {
-        ...prev,
-        [joinId!]: {
-          ...existing,
-          text,
-          messageTime: messageTime,
-        },
-      };
-    });
-  })
+      setConvObj?.((prev) => {
+        const existing: Conversation = prev[joinId!];
+        if (!existing) return prev;
 
-  socket?.on('userTyping', (groupId) => {
-        setConvObj?.(prev => {
-      const existing = prev[groupId!];
-      if (!existing) return prev;
+        return {
+          ...prev,
+          [joinId!]: {
+            ...existing,
+            text,
+            messageTime: messageTime,
+          },
+        };
+      });
+    })
 
-      return {
-        ...prev,
-        [groupId!]: {
-          ...existing,
-          typing: true,
-        },
-      };
-    });
-  })
+    socket?.on('userTyping', (groupId) => {
+      setConvObj?.(prev => {
+        const existing = prev[groupId!];
+        if (!existing) return prev;
+
+        return {
+          ...prev,
+          [groupId!]: {
+            ...existing,
+            typing: true,
+          },
+        };
+      });
+    })
 
   
-  socket?.on('userStopTyping', (groupId) => {
-        setConvObj?.(prev => {
-      const existing = prev[groupId!];
-      if (!existing) return prev;
+    socket?.on('userStopTyping', (groupId) => {
+      setConvObj?.(prev => {
+        const existing = prev[groupId!];
+        if (!existing) return prev;
 
-      return {
-        ...prev,
-        [groupId!]: {
-          ...existing,
-          typing: true,
-        },
-      };
-    });
-  })
-   
+        return {
+          ...prev,
+          [groupId!]: {
+            ...existing,
+            typing: false,
+          },
+        };
+      });
+    })
+
+    return () => {
+      socket.off('allConversation_update');
+      socket.off('userTyping');
+      socket.off('userStopTyping');
+    }
+    
+
+  }, [socket])
+
+
+
+
 
   const handleDesktopClick = (newJoinId: string, conv: string) => {
     if(convObj == undefined) return;

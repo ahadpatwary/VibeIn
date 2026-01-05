@@ -71,7 +71,7 @@ const useGetConversation = () => {
             for(const conv of conversations){
                 convObjData[conv.conversationId] = {
                   ...conv,
-                  typing: true,
+                  typing: false,
                 };
                 idList.push(conv.conversationId);
             }
