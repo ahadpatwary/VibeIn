@@ -1,6 +1,9 @@
 import { userIdClient } from "@/lib/userId";
 import { useState, useEffect } from "react";
 
+interface ConversationsMap {
+  [conversationId: string]: Conversation;
+}
 
 interface OneToOneConversation {
   conversationId: string;
@@ -35,8 +38,8 @@ export type Conversation = OneToOneConversation | GroupConversation;
 
 
 const useGetConversation = () => {
-    const [conversations, setConversations] = useState([]);
-    const [convObj, setConvObj] = useState();
+    const [conversations, setConversations] = useState<string[]>([]);
+    const [convObj, setConvObj] = useState<ConversationsMap>({});
     
     useEffect(() => {
         ;( async () => {
@@ -59,7 +62,7 @@ const useGetConversation = () => {
             // setConversations(data.conversations || []);
 
             const idList = [];
-            const convObjData = {};
+            const convObjData: ConversationsMap = {};
 
             const conversations: Conversation[] = data.conversations;
 
@@ -69,6 +72,7 @@ const useGetConversation = () => {
             }
 
             console.log("convObjData", convObjData);
+            console.log("convList", idList);
 
             setConversations(idList);
             setConvObj(convObjData);

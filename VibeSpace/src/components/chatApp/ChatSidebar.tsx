@@ -43,20 +43,24 @@ interface GroupConversation {
 export type Conversation = OneToOneConversation | GroupConversation;
 
 
+interface ConversationsMap {
+  [conversationId: string]: Conversation;
+}
+
 
 interface ChatSidebarProps {
   setConversationName?: (value: string) => void;
   setConversationPicture?: (value: string) => void;
   joinId?: string;
   setJoinId?: (value: string) => void;
-  conversations?: Conversation[];
-  setConversations: (value: string) => void;
-  convObj: {
-
-  };
-  setConObj: (value: ) => void
+  conversations?: string[];
+  setConversations?: (value: string[]) => void;
+  convObj?: ConversationsMap;
+  setConvObj?: (value: ConversationsMap ) => void;
   setState?: (value: "empty" | "group" | "oneToOne") => void;
 }
+
+
 
 const ChatSidebar = (
   {
@@ -67,7 +71,7 @@ const ChatSidebar = (
     conversations, 
     setConversations,
     convObj,
-    setConObj,
+    setConvObj,
     setState 
   }: ChatSidebarProps
 ) => {
@@ -93,17 +97,18 @@ const ChatSidebar = (
   };
    
 
-  const handleDesktopClick = (newJoinId: string, conv: Conversation) => {
-    const conversationName = conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.name : conv?.info.user_one.name): (
-                      conv.info.name
+  const handleDesktopClick = (newJoinId: string, conv: string) => {
+    if(convObj == undefined) return;
+    const conversationName = convObj[conv].type === 'oneToOne' ? ( (convObj[conv].info?.user_one?._id == userId) ? convObj[conv]?.info?.user_two?.name : convObj[conv]?.info.user_one.name): (
+                      convObj[conv].info.name
                     );
     if(!!setConversationName) setConversationName(conversationName);
-    const conversationPicture = conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.picture : conv?.info.user_one.picture): (
-                      conv.info.picture
+    const conversationPicture = convObj[conv].type === 'oneToOne' ? ( (convObj[conv].info?.user_one?._id == userId) ? convObj[conv]?.info?.user_two?.picture : convObj[conv]?.info.user_one.picture): (
+                      convObj[conv].info.picture
                     )
     if(!!setConversationPicture) setConversationPicture(conversationPicture);
-    if(!!setState && conv.type === "oneToOne") setState("oneToOne");
-    if(!!setState && conv.type === "group") setState("group");
+    if(!!setState && convObj[conv].type === "oneToOne") setState("oneToOne");
+    if(!!setState && convObj[conv].type === "group") setState("group");
 
     socket?.emit("join-group", { userId, joinId, newJoinId });
   
@@ -129,39 +134,39 @@ const ChatSidebar = (
         </header>
 
         <ScrollArea className = "w-full overflow-y-auto h-[100%] p-2">
-          {conversations?.length! > 0 && conversations?.map((conv)=> (
+          {conversations?.length! > 0 && convObj && conversations?.map((conv)=> (
               <div
-                key={conv.conversationId}
-                className={`w-full ${conv.conversationId === selected ? "bg-zinc-600" : "bg-zinc-700"} mb-2 rounded transition`}
+                key={conv}
+                className={`w-full ${conv === selected ? "bg-zinc-600" : "bg-zinc-700"} mb-2 rounded transition`}
 
                 onClick={() => {
                   if(window.innerWidth <= 768){
                       // handleMobileClick(conv.participants[0], conv.participants[1])
                   }else{
-                    handleDesktopClick(conv.conversationId, conv)
-                    setSelected(conv.conversationId);
+                    handleDesktopClick(conv, conv)
+                    setSelected(conv);
                   }
                 }}
               >
                 <div className="flex w-full p-2">
                   <AvatarDemo
-                    src={conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.picture : conv?.info.user_one.picture): (
-                      conv.info.picture
+                    src={convObj[conv]?.type === 'oneToOne' ? ( (convObj[conv]?.info?.user_one?._id == userId) ? convObj[conv]?.info?.user_two?.picture : convObj[conv]?.info?.user_one.picture): (
+                      convObj[conv]?.info?.picture
                     )}
                     size="size-15" 
                   />
                   <div className="flex flex-col flex-1 min-w-0 px-2">
                     <div className="flex justify-between items-center w-full">
                       <h2 className="text-lg font-semibold text-gray-200 truncate">
-                        {conv.type === 'oneToOne' ? ( (conv.info?.user_one?._id == userId) ? conv?.info?.user_two?.name : conv?.info.user_one.name): (
-                      conv.info?.name
+                        {convObj[conv].type === 'oneToOne' ? ( (convObj[conv].info?.user_one?._id == userId) ? convObj[conv]?.info?.user_two?.name : convObj[conv]?.info.user_one.name): (
+                      convObj[conv].info?.name
                     )}
                       </h2>
                       <p className="text-sm text-gray-400 ml-auto">
-                        {new Date(Number(conv.messageTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(Number(convObj[conv].messageTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
-                    <p className="text-gray-900 text-sm truncate">{conv.text} </p>
+                    <p className="text-gray-900 text-sm truncate">{convObj[conv].text} </p>
 
                   </div>
                 </div>
