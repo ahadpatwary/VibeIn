@@ -2,9 +2,12 @@ import { Server, Socket } from "socket.io";
 import { activeUsers } from "../activeUsers";
 import { getRedisClient } from "../../lib/redis";
 
+import { initPresenceBatch } from '../events/setInterval'
 
 
 export const addUserHandler = (io: Server, socket: Socket) => {
+
+    initPresenceBatch(io); // একবারই call, server start-up এ
     
     socket.on('addUser', async (userId: string) => {
 
