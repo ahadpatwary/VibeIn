@@ -31,8 +31,12 @@ export const useGroupChatTyping = (socket: Socket | null, groupId: string) => {
     const onTyping = () => setsomeOneGroupTyping(true);
     const onStopTyping = () => setsomeOneGroupTyping(false);
 
-    socket?.on("someoneGroupTyping", onTyping);
-    socket?.on("someOneStopGroupTyping", onStopTyping);
+    socket?.on("someoneGroupTyping", (data) => {
+      setsomeOneGroupTyping(true);
+    });
+    socket?.on("someOneStopGroupTyping", (data) => {
+      setsomeOneGroupTyping(false);
+    });
 
     return () => {
       socket?.off("someoneGroupTyping", onTyping);

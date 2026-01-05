@@ -16,6 +16,7 @@ interface OneToOneConversation {
   type: 'oneToOne';
   text: string;
   messageTime: string;
+  typing: boolean;
   info: {
     user_one: {
       _id: string;
@@ -35,6 +36,7 @@ interface GroupConversation {
   type: 'group';
   text: string;
   messageTime: string;
+  typing: boolean;
   info: {
     name: string;
     picture: string;
@@ -114,6 +116,37 @@ const ChatSidebar = (
       };
     });
   })
+
+  socket?.on('userTyping', (groupId) => {
+        setConvObj?.(prev => {
+      const existing = prev[groupId!];
+      if (!existing) return prev;
+
+      return {
+        ...prev,
+        [groupId!]: {
+          ...existing,
+          typing: true,
+        },
+      };
+    });
+  })
+
+  
+  socket?.on('userStopTyping', (groupId) => {
+        setConvObj?.(prev => {
+      const existing = prev[groupId!];
+      if (!existing) return prev;
+
+      return {
+        ...prev,
+        [groupId!]: {
+          ...existing,
+          typing: true,
+        },
+      };
+    });
+  })
    
 
   const handleDesktopClick = (newJoinId: string, conv: string) => {
@@ -186,7 +219,11 @@ const ChatSidebar = (
                         {new Date(Number(convObj[conv].messageTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
-                    <p className="text-gray-900 text-sm truncate">{convObj[conv].text} </p>
+                    <>
+                      { convObj[conv].typing ? <p>user typing</p> : <p className="text-gray-900 text-sm truncate">{convObj[conv].text} </p>
+                      }
+                    </>
+         
 
                   </div>
                 </div>

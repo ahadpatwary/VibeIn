@@ -10,6 +10,7 @@ interface OneToOneConversation {
   type: 'oneToOne';
   text: string;
   messageTime: string;
+  typing: boolean; // pore thik korbo
   info: {
     user_one: {
       _id: string;
@@ -29,6 +30,7 @@ interface GroupConversation {
   type: 'group';
   text: string;
   messageTime: string;
+  typing: boolean;
   info: {
     name: string;
     picture: string;
@@ -67,7 +69,10 @@ const useGetConversation = () => {
             const conversations: Conversation[] = data.conversations;
 
             for(const conv of conversations){
-                convObjData[conv.conversationId] = conv;
+                convObjData[conv.conversationId] = {
+                  ...conv,
+                  typing: true,
+                };
                 idList.push(conv.conversationId);
             }
 
