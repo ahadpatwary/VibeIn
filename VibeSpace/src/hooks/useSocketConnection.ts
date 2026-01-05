@@ -14,10 +14,10 @@ export const useSocketConnection = (userId?: string) => {
     });
   }
 
-  if (userId) {
+  // if (userId) {
     socket?.emit("universalGroup", { userId });
     socket.emit("addUser", userId);
-  }
+  // }
 
   return socket;
 };
