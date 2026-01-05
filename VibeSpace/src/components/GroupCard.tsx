@@ -56,7 +56,6 @@ interface PropType {
   chatWith?: string;
   joinId: string | null;
   setJoinId?: (value: string) => void;
-  setConvObj: (value: ConversationsMap) => void;
   conversationName: string;
   conversationPicture: string;
 }
@@ -79,7 +78,6 @@ export default function GroupCard({
   chatWith,
   joinId,
   setJoinId,
-  setConvObj,
   conversationName,
   conversationPicture
 }: PropType) {
