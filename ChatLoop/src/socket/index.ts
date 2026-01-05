@@ -5,6 +5,8 @@ import { typingStateHandler } from "./events/typingState";
 import { joinGroupHandler } from "./events/jointGroup";
 import { sendGroupMessageHandler } from "./events/sendGroupMessage";
 import { groupTypingStateHandler } from "./events/groupTypingState";
+import { initPresenceBatch } from "./events/setInterval";
+
 
 export const setupSocket = (io: Server) => {
 
@@ -16,6 +18,7 @@ export const setupSocket = (io: Server) => {
     joinGroupHandler(io, socket);
     sendGroupMessageHandler(io, socket);
     disConnectUserHandler(io, socket);
+    initPresenceBatch(io);
 
   });
 };
