@@ -168,7 +168,6 @@ router.post("/", async (req: Request, res: Response) => {
         .populate('participants', '_id name picture')
         .lean()
 
-        console.log("hidksfj", conversationsFromDB);
         let redisConversation;
 
         conversationsFromDB.forEach((conversation: any) => {
@@ -198,7 +197,7 @@ router.post("/", async (req: Request, res: Response) => {
             conversationMap[redisConversation._id] = redisConversation;
 
             redis.hset(`conversation:${redisConversation._id}:info`, redisConversation);
-            redis.expire(`conversation:${redisConversation._id}`, 60 * 60);
+            redis.expire(`conversation:${redisConversation._id}:info`, 60 * 60);
         });
     }
 
