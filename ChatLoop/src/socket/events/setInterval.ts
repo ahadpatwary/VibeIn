@@ -23,7 +23,7 @@ export const initPresenceBatch = async (io: Server) => {
     return;
   }
 
-  console.log("This server is batch leader");
+  console.log("This server is batch leader yes");
 
   batchInterval = setInterval(async () => {
     const userIds = await Redis.smembers("online:users");
