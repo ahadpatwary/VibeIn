@@ -244,7 +244,7 @@ const ChatSidebar = (
                       </p>
                     </div>
                     <>
-                      { convObj[conv].typing ? <p>user typing</p> : <p className="text-gray-900 text-sm truncate">{convObj[conv].text} </p>
+                      { convObj[conv].typing ? <p className="text-md pt-2 truncate text-green-200">typing ...</p> : <p className="text-gray-900 pt-1 text-md truncate">{convObj[conv].text} </p>
                       }
                     </>
          
