@@ -24,7 +24,7 @@ export const addUserHandler = (io: Server, socket: Socket) => {
 
             const results = await pipeline.exec();
 
-            const activeUsers = userIds.filter(
+            const activeUsers = results && userIds.filter(
                 (_, i) => results[i][1] === 1
             );
 
