@@ -28,7 +28,7 @@ export const addUserHandler = (io: Server, socket: Socket) => {
                 (_, i) => results[i][1] === 1
             );
 
-            io.emit("allUserOnlineStatues", activeUsers);
+            io.to("allUserOnlineStatues").emit("onlineUser", activeUsers);
 
         }, 5 * 60 * 1000);
 

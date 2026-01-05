@@ -160,7 +160,7 @@ const ChatSidebar = (
       });
     })
 
-    socket.on("allUserOnlineStatues", (activeUserIds: string[]) => {
+    socket.on("onlineUser", (activeUserIds: string[]) => {
       // onlineUserSet.current = new Set(activeUserIds);
       console.log("activeUserIds", activeUserIds);
     });
