@@ -1,7 +1,8 @@
 import { Server } from "socket.io";
 import { getRedisClient } from "../../lib/redis";
 
-let batchInterval: number | null = null; // keep reference
+let batchInterval: ReturnType<typeof setInterval> | null = null;
+
 
 export const initPresenceBatch = (io: Server) => {
     const Redis = getRedisClient();
@@ -20,7 +21,7 @@ export const initPresenceBatch = (io: Server) => {
 
             const results = await pipeline.exec();
 
-            const activeUsersList = userIds.filter(
+            const activeUsersList = results && userIds.filter(
                 (_, i) => results[i][1] === 1
             );
 
