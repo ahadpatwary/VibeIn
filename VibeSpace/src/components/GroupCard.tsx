@@ -142,7 +142,7 @@ export default function GroupCard({
     if (!newMessage.trim() || !socket) return;
 
  
-setConvObj(prev => {
+setConvObj?.(prev => {
 
   const existing = prev[joinId!];
   if (!existing) return prev;
