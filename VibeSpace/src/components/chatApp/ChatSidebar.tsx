@@ -96,9 +96,10 @@ const ChatSidebar = (
     router.push(`/chatloop?userId=${userId}&chatWith=${sendId}`);
   };
 
-  socket?.on('conversation_update', (data) => {
+  socket?.on('allConversation_update', (data) => {
     const {text, messageTime, joinId} = data;
 
+    console.log("hi bro", data);
     setConvObj?.(prev => {
       const existing = prev[joinId!];
       if (!existing) return prev;
@@ -129,6 +130,7 @@ const ChatSidebar = (
     if(!!setState && convObj[conv].type === "group") setState("group");
 
     socket?.emit("join-group", { userId, joinId, newJoinId });
+    socket?.emit('universalGroup', { userId });
   
     if(!!setJoinId) setJoinId(newJoinId);
   };

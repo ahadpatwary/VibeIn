@@ -142,20 +142,20 @@ export default function GroupCard({
     if (!newMessage.trim() || !socket) return;
 
  
-setConvObj?.(prev => {
+// setConvObj?.(prev => {
 
-  const existing = prev[joinId!];
-  if (!existing) return prev;
+//   const existing = prev[joinId!];
+//   if (!existing) return prev;
 
-  return {
-    ...prev,
-    [joinId!]: {
-      ...existing,
-      text: newMessage,
-      messageTime: Date.now(),
-    },
-  };
-});
+//   return {
+//     ...prev,
+//     [joinId!]: {
+//       ...existing,
+//       text: newMessage,
+//       messageTime: Date.now(),
+//     },
+//   };
+// });
 
 
     const id = uuidv4();

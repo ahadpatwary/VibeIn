@@ -153,6 +153,15 @@ export const sendGroupMessageHandler = (io: Server, socket: Socket) => {
             const participantRooms = participants.map((id: string) => `user:${id}`);
 
             io.to( participantRooms )
+                .emit('allConversation_update', {
+                    joinId,
+                    text,
+                    messageTime
+            
+                }
+            );
+
+            io.to( participantRooms )
                 .except(`conversation:${joinId}:active`)
                 .emit('conversation_update', {
                     joinId,

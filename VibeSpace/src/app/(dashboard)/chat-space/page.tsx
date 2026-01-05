@@ -19,8 +19,6 @@ const ChatSpacePage = () => {
   const [conversationName , setConversationName] = useState('');
   const [conversationPicture, setConversationPicture] = useState('');
 
-  console.log("ahadksdjf convObj", convObj);
-
 
   return (
     <>
