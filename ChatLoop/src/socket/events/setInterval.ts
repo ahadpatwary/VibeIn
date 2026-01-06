@@ -7,7 +7,6 @@ export const initPresenceBatch = async (io: Server) => {
   const Redis = getRedisClient();
   if (!Redis) return;
 
-  const LOCK_KEY = "presence:batch:lock";
 
   const lock = await Redis.set(
     "presence:batch:lock",
@@ -16,6 +15,8 @@ export const initPresenceBatch = async (io: Server) => {
     600,
     "NX"
  );
+
+ console.log("lock", lock);
 
 
   if (!lock) {
