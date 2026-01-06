@@ -32,14 +32,6 @@ export const joinGroupHandler = (io: Server, socket: Socket) => {
             //     socket.emit('error', 'You are not a member of this group');
             // }
         })
-
-        socket.on('universalGroup', async (data) => {
-            socket.join(`user:${data.userId}`);
-
-            socket.join('allUserOnlineStatues');
-        })
-
-        
         
     } catch (error) {
         if(error instanceof Error)

@@ -6,7 +6,7 @@ import { joinGroupHandler } from "./events/jointGroup";
 import { sendGroupMessageHandler } from "./events/sendGroupMessage";
 import { groupTypingStateHandler } from "./events/groupTypingState";
 import { initPresenceBatch } from "./events/setInterval";
-
+import { heartbeatHandler } from "./events/heartbeat";
 
 export const setupSocket = (io: Server) => {
 
@@ -19,6 +19,7 @@ export const setupSocket = (io: Server) => {
     sendGroupMessageHandler(io, socket);
     disConnectUserHandler(io, socket);
     initPresenceBatch(io);
+    heartbeatHandler(io, socket);
 
   });
 };

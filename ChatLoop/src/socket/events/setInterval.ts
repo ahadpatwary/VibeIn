@@ -8,22 +8,6 @@ export const initPresenceBatch = async (io: Server) => {
   if (!Redis) return;
 
 
-  const lock = await Redis.set(
-    "presence:batch:lock",
-    "value",
-    "EX",
-    600,
-    "NX"
- );
-
- console.log("lock", lock);
-
-
-  if (!lock) {
-    console.log("Another server is running batch job");
-    return;
-  }
-
   console.log("This server is batch leader yes");
 
   batchInterval = setInterval(async () => {

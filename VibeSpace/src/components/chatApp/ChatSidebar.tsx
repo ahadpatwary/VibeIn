@@ -165,6 +165,10 @@ const ChatSidebar = (
       console.log("activeUserIds", activeUserIds);
     });
 
+    socket.on('getCurrentNewOnlineUser', (userId: string) => {
+      // one user added
+    })
+
     return () => {
       socket.off('allConversation_update');
       socket.off('userTyping');
