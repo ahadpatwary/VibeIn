@@ -1,13 +1,13 @@
 'use client';
 
-import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
-import GroupCard from '@/components/GroupCard';
+import GroupCard from '@/components/chatApp/GroupCard';
 import { useCheckConversationExistence } from '@/hooks/useCheckConversationExistences';
 import { useSocketConnection } from '@/hooks/useSocketConnection';
+import { useSession } from 'next-auth/react';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
@@ -28,14 +28,11 @@ function ChatPageContent() {
   
 
   useEffect(() => {
-    (async () => {
-      try {
-        const fetchedUserId = await userIdClient();
-        setStoredUserId(fetchedUserId);
-      } catch (error) {
-        console.error('Error fetching user ID:', error);
-      }
-    })();
+
+    const { data: session } = useSession();
+      const fetchedUserId = session?.user.id!;
+      setStoredUserId(fetchedUserId);
+
 
     const updateHeight = () => {
       const height = window.visualViewport

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import useGetConversation from "@/hooks/useGetConversation";
-import GroupCard from "@/components/GroupCard";
+import GroupCard from "@/components/chatApp/GroupCard";
 
 
 const ChatSpacePage = () => {

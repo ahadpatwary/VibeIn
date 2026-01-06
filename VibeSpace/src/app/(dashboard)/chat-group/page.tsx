@@ -1,9 +1,9 @@
 'use client';
 
-import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
+import { useSession } from 'next-auth/react';
 
 function ChatPageContent() {
   const searchParams = useSearchParams();
@@ -16,7 +16,8 @@ function ChatPageContent() {
   useEffect(() => {
     (async () => {
       try {
-        const fetchedUserId = await userIdClient();
+        const { data: session } = useSession();
+        const fetchedUserId = session?.user.id!;
         setStoredUserId(fetchedUserId);
       } catch (error) {
         console.error('Error fetching user ID:', error);

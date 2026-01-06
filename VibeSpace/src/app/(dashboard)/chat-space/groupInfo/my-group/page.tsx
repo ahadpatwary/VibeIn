@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { AvatarDemo } from "@/components/AvaterDemo";
 import { useGetGroups } from "@/hooks/useGetGroups";
-import { userIdClient } from "@/lib/userId";
-import GroupCard from "@/components/GroupCard";
+import GroupCard from "@/components/chatApp/GroupCard";
+import { useSession } from "next-auth/react";
 
 interface PropType {
   _id: string;
@@ -20,16 +20,11 @@ export default function MyGroup() {
   const [isGroupList, setIsGroupList] = useState<boolean>(true);
   const [groupName, setGroupName] = useState('U');
   const [groupPicture, setGroupPicture] = useState("");
-  const [userId, setUserId] = useState('');
   const [groupId, setGroupId] = useState('');
   
   
-  useEffect(() => {
-    ;(async() => {
-      const id = await userIdClient();
-      setUserId(id!);
-    })();
-  })
+  const { data: session } = useSession();
+  const userId = session?.user.id;
 
   const handleClick = (req:PropType) => {
     setGroupId(req._id);
