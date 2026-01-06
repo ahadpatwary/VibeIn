@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getData } from "@/lib/getData";
-import { userIdClient } from "@/lib/userId";
+import { useSession } from "next-auth/react";
 
 
 // User model থেকে যে data আসবে
@@ -14,13 +14,12 @@ interface UserData {
 
 export default function useFeed(property: keyof UserData, owner: boolean = true, userId?: string) {
   const [data, setData] = useState<ICard[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const id = owner ? await userIdClient() : userId ;
+        const { data: session } = useSession();
+        const id = owner ? session?.user.id : userId ;
         if (!id) throw new Error("User ID missing");
 
         // এখানে generic টাইপ পাস করা হলো ✅
@@ -42,13 +41,11 @@ export default function useFeed(property: keyof UserData, owner: boolean = true,
       } catch (err) {
         console.error("useFeed error:", err);
         if (err instanceof Error) {
-          setError(err.message || "Failed to fetch feed");
+          throw new Error(err.message);
         }
-      } finally {
-        setLoading(false);
-      }
+      } 
     })();
-  }, [property]);
+  }, [property, owner, userId]);
 
-  return { data, loading, error };
+  return { data };
 }

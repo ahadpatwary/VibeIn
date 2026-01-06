@@ -1,5 +1,5 @@
 import { getData } from "@/lib/getData";
-import { userIdClient } from "@/lib/userId";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from 'react'
 
 interface dataType {
@@ -23,7 +23,8 @@ export const useProfileInformation = (chatWith?: string) => {
         ( async ()=>{
             try {
 
-                const userId = chatWith || await userIdClient();
+                const {data: session} = useSession();
+                const userId = chatWith || session?.user.id;
                 if(!userId){
                     setError("user Id not find");
                     return;

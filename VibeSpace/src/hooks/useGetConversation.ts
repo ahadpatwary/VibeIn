@@ -1,4 +1,4 @@
-import { userIdClient } from "@/lib/userId";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 interface ConversationsMap {
@@ -46,7 +46,9 @@ const useGetConversation = () => {
     useEffect(() => {
         ;( async () => {
 
-            const userID = await userIdClient()!;
+            const { data: session } = useSession(); 
+
+            const userID = session?.user.id;
         
             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation', {
                 method: 'POST',

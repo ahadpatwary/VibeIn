@@ -10,7 +10,7 @@ import { RiUnpinLine } from "react-icons/ri";
 
 export const SaveButton = ({ cardId }: { cardId?: string }) => {
   const [saved, setSaved] = useState(false);
-  const { toggleArray, loading } = useToggleArray();
+  const { toggleArray } = useToggleArray();
 
   // ✅ Hook টা টপ লেভেলে কল করতে হবে (useEffect এর ভিতরে না)
   const exists = useCheckArray(cardId, "savedCards");
@@ -45,7 +45,6 @@ export const SaveButton = ({ cardId }: { cardId?: string }) => {
         });
         handleToggle(); // এখানে toggle call করা হলো
       }}
-      disabled={loading}
     >
       {saved ? <RiUnpinLine /> : <AiTwotonePushpin />}
     </Button>

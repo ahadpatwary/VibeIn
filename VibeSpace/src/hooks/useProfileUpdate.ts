@@ -2,8 +2,8 @@
 import { getData } from "@/lib/getData";
 import { urlToFile } from "@/lib/urlToFile";
 import { IUser } from "@/models/User";
+import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
-import { userIdClient } from "@/lib/userId";
 
 
 
@@ -23,8 +23,10 @@ export const useProfileUpdate = (userID: string = "") => {
     (async () => {
       setLoading(true);
       try {
-        console.log("ahad start");
-        userId.current = userID === "" ?  await userIdClient() : userID;
+        const {data: session} = useSession();
+        const userId1 = session?.user.id;
+        
+        userId.current = userID === "" ?  userId1! : userID;
         const id = userId.current;
         const data: IUser = await getData(id as string, "User", ["name", "email", "phoneNumber", "picture", "dob"]);
         if (!data) {

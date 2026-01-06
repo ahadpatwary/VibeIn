@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { toggleArrayApi } from "@/lib/toggleArrayApi";
-import { userIdClient } from "@/lib/userId";
+import { useSession } from "next-auth/react";
 
 
 export const useToggleArray = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const toggleArray = async (cardId: string | undefined, property: string) => {
-    setLoading(true);
-    setError(null);
-    const userId = await userIdClient();
+
+    const {data: session } = useSession();
+    const userId = session?.user.id;
+
     if (!cardId || !userId) return;
 
     try {
@@ -18,11 +17,8 @@ export const useToggleArray = () => {
       return result; // e.g. { liked: true }
     } catch (err) {
       console.error(err);
-      setError("Failed to toggle array item");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
-  return { toggleArray, loading, error };
+  return { toggleArray };
 };

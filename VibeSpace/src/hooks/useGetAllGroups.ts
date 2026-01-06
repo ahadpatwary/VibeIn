@@ -1,4 +1,3 @@
-import { userIdClient } from '@/lib/userId';
 import { useState, useEffect } from 'react'
 
 

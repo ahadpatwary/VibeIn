@@ -1,14 +1,13 @@
-import { userIdClient } from "@/lib/userId";
-
-
+import { useSession } from "next-auth/react";
 
 export const useRemoveGroupRequest = () => {
     
     const removeGroupRequest = async(groupId: string) => {
         try {
             
-            const userId = await userIdClient();
-
+            const { data: session } = useSession();
+            const userId = session?.user.id;
+            
             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/cancleRequest', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

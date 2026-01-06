@@ -1,4 +1,4 @@
-import { userIdClient } from '@/lib/userId';
+import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react'
 
 
@@ -10,8 +10,10 @@ export const useGetGroups = () => {
     useEffect(() => {
         try {
             ;(async() => {
+
+                const { data: session} = useSession();
             
-                const userId = await userIdClient();
+                const userId = session?.user.id;
 
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getGroups', {
                     method: "POST",

@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/TthemeProvider";
 import { Toaster } from "@/components/ui/sonner"
 import StoreProvider from './StoreProvider';
-import SessionProvider from './SessionProvider'
+import AuthProvider from './SessionProvider'
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <SessionProvider>
+        <AuthProvider>
           <StoreProvider>
             <ThemeProvider
               attribute="class"
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             < Toaster />
             </ThemeProvider>
           </StoreProvider>
-        </SessionProvider>
+        </AuthProvider>
 
       </body>
     </html>

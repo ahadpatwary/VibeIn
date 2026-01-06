@@ -12,9 +12,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useProfileUpdate } from '@/hooks/useProfileUpdate'
 import { useSignOut } from '@/hooks/useSignOut'
 import { useUserDelete } from '@/hooks/useUserDelete'
-import { userIdClient } from '@/lib/userId'
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSession } from 'next-auth/react'
 
 interface UserProps{
     name?: string;
@@ -37,8 +37,6 @@ function UserProfile({ dot, userId } : UserProps){
         setPhoneNumber, 
         picture, 
         setPicture, 
-        // loading, 
-        // error, 
         handleUpdate
     } = useProfileUpdate(userId);
     const { handleSignOut } = useSignOut();
@@ -46,7 +44,8 @@ function UserProfile({ dot, userId } : UserProps){
     const { handleDelete } = useUserDelete();
 
     const handleRoute = async () => {
-        const user = await userIdClient();
+        const {data: session} = useSession();
+        const user =  session?.user.id;
         router.push(`/chatloop?userId=${user}&chatWith=${userId}`);
     }
 

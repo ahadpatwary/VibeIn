@@ -8,8 +8,8 @@ import { MdGroup } from "react-icons/md";
 import { MdGroups2 } from "react-icons/md";
 import { HiDotsVertical } from "react-icons/hi";
 import Image from "next/image";
-import { userIdClient } from "@/lib/userId";
 import { useSocketConnection } from "@/hooks/useSocketConnection";
+import { useSession } from "next-auth/react";
 
 
 
@@ -88,13 +88,9 @@ const ChatSidebar = (
 
   const [ selected, setSelected ] = useState<string | null>(null);
   const router = useRouter();
-  const [userId, setUserId] = useState('');
+  const {data: session} = useSession();
 
-  ;(async() => {
-    const id = await userIdClient();
-    if(!id) return;
-    setUserId(id);
-  })()
+  const userId = session?.user.id;
 
 
   const socket = useSocketConnection(userId);

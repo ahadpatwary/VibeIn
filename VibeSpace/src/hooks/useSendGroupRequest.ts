@@ -1,4 +1,4 @@
-import { userIdClient } from "@/lib/userId";
+import { useSession } from "next-auth/react";
 
 
 
@@ -9,7 +9,9 @@ export const useSendGroupRequest = () => {
         ;(async() => {
             try {
                 
-                const userId = await userIdClient();
+                const { data: session } = useSession();
+                const userId = session?.user.id;
+                
                 const res = await fetch('https://vibein-production-d87a.up.railway.app/api/sendGroupRequest', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

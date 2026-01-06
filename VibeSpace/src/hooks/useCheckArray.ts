@@ -1,13 +1,14 @@
 'use client'
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { userIdClient } from "@/lib/userId";
 
 export const useCheckArray = ( cardId: string | undefined, property: string) => {
   const [exists, setExists] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const userId = await userIdClient();
+      const {data: session} = useSession();
+      const userId = session?.user.id;
       if (!cardId || !userId) return;
 
       const res = await fetch("/api/findId", {
@@ -16,7 +17,7 @@ export const useCheckArray = ( cardId: string | undefined, property: string) => 
         body: JSON.stringify({ userId, cardId, property }),
       });
       const data = await res.json();
-      setExists(data.exists);
+      setExists(data?.exists);
     })();
   }, [cardId, property]);
 

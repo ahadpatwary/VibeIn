@@ -7,7 +7,7 @@ import { AiFillLike } from "react-icons/ai";
 
 export const LikeButton = ({ cardId }: { cardId?: string }) => {
   const [liked, setLiked] = useState(false);
-  const { toggleArray, loading } = useToggleArray();
+  const { toggleArray } = useToggleArray();
 
   // ✅ Hook টা টপ লেভেলে কল করতে হবে (useEffect এর ভিতরে না)
   const exists = useCheckArray(cardId, "likedCards");
@@ -31,7 +31,6 @@ export const LikeButton = ({ cardId }: { cardId?: string }) => {
   return (
     <button
       onClick={handleToggle}
-      disabled={loading}
       className={`px-4 py-2 ${
         liked ? " text-blue " : "text-black "
       }`}

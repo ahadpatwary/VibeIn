@@ -13,8 +13,8 @@ import { BsArrow90DegRight, BsArrow90DegLeft } from "react-icons/bs";
 import { Setting } from './Setting';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
-import { userIdClient } from '@/lib/userId';
 import { AiFillSetting } from "react-icons/ai";
+import { useSession } from 'next-auth/react';
 interface OneToOneConversation {
   conversationId: string;
   type: 'oneToOne';
@@ -82,7 +82,7 @@ export default function GroupCard({
   conversationPicture
 }: PropType) {
 
-  const [userId, setUserId] = useState('');
+  // const [userId, setUserId] = useState('');
   const [replyMessage, setReplyMessage] = useState<string | null>(null);
   const [refMessageId, setRefMessageId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -90,12 +90,8 @@ export default function GroupCard({
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const id = await userIdClient();
-      if (id) setUserId(id);
-    })();
-  }, []);
+  const { data: session } = useSession();
+  const userId = session?.user.id!;
 
   const socket = useSocketConnection(userId);
 

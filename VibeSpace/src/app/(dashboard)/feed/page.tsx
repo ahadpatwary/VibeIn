@@ -7,9 +7,8 @@ import { useSession, signIn, signOut } from "next-auth/react"
 import { useCards }  from '@/hooks/useFetchCards';
 
 function Home() {
-  const {session ,activeCards} = useCards();
-    const { data: session } = useSession()
-    console.log(data);
+  const { activeCards } = useCards();
+  const { data: session } = useSession()
   return (
     <div className="w-full h-dvh flex flex-col">
     
@@ -25,7 +24,7 @@ function Home() {
               title = {card.title} 
               image = {card.image?.url} 
               description = {card.description} 
-              dot = { (session == card.user) } 
+              dot = { (session?.user.id == card.user) } 
             />
           )
         )} 

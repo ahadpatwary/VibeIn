@@ -1,5 +1,5 @@
 'use client'
-import { userIdClient } from "@/lib/userId";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 
 
@@ -16,8 +16,10 @@ export const useCreateGroup = () => {
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
     
-        const userId = await userIdClient();
-            if (!groupName || !groupBio || !groupPicture || !userId) {
+        const {data: session} = useSession();
+        const userId = session?.user.id;
+
+        if (!groupName || !groupBio || !groupPicture || !userId) {
             return alert("সব ফিল্ড পূরণ করুন!");
         }
         
