@@ -79,7 +79,6 @@ export const authOptions: NextAuthOptions = {
 
     async session(obj){
 
-      // console.log("session:",obj);
       if (obj.token) {
         obj.session.user = {
           id: obj.token.id as string,
@@ -91,8 +90,6 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt(obj) {
-
-      // console.log("jwt:",obj);
 
       if (obj.user) {
         obj.token = {

@@ -1,4 +1,5 @@
 import { connectToDb } from '@/lib/db'
+import { getRedisClient } from '@/lib/redis'
 import User from '@/models/User'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -24,19 +25,30 @@ export async function POST(request : NextRequest){
             )
         }
 
-        await User.create(
-            {
-                name: "",
-                email,
-                dob: Date.now(),
-                picture:{
-                    url:"",
-                    public_id:"",
-                },
-                phoneNumber:"",
-                password
-            }
+        const Redis = getRedisClient();
+
+        if(!Redis) return NextResponse.json(
+            { error: 'redis not connected' },
+            { status: 202}
         )
+
+        Redis.set(`user:${email}`, '123456', "EX": 300);
+
+        // send a email to user email 
+
+        // await User.create(
+        //     {
+        //         name: "",
+        //         email,
+        //         dob: Date.now(),
+        //         picture:{
+        //             url:"",
+        //             public_id:"",
+        //         },
+        //         phoneNumber:"",
+        //         password
+        //     }
+        // )
 
         return NextResponse.json(
             { error: "User register successfully"},
