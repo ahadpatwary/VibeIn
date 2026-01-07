@@ -43,12 +43,11 @@ const useGetConversation = () => {
     const [conversations, setConversations] = useState<string[]>([]);
     const [convObj, setConvObj] = useState<ConversationsMap>({});
     
+    const { data: session } = useSession(); 
+    const userID = session?.user.id;
+
     useEffect(() => {
         ;( async () => {
-
-            const { data: session } = useSession(); 
-
-            const userID = session?.user.id;
         
             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation', {
                 method: 'POST',

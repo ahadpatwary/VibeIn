@@ -14,12 +14,12 @@ interface UserData {
 
 export default function useFeed(property: keyof UserData, owner: boolean = true, userId?: string) {
   const [data, setData] = useState<ICard[]>([]);
-
+  const { data: session } = useSession();
+  const id = owner ? session?.user.id : userId ;
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
-        const { data: session } = useSession();
-        const id = owner ? session?.user.id : userId ;
+
         if (!id) throw new Error("User ID missing");
 
         // এখানে generic টাইপ পাস করা হলো ✅

@@ -2,6 +2,7 @@
 import { getData } from "@/lib/getData";
 import { urlToFile } from "@/lib/urlToFile";
 import { IUser } from "@/models/User";
+import { error } from "console";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -14,23 +15,21 @@ export const useProfileUpdate = (userID: string = "") => {
   const [dob, setDob] = useState<string>("");
   const [profile, setProfile] = useState<string> ("");
   const [picture, setPicture] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const oldPublicId = useRef<string>("");
   const userId = useRef<string | null>(userID);
 
+  const {data: session} = useSession();
+  const userId1 = session?.user.id;
+
   useEffect(() => {
     (async () => {
-      setLoading(true);
       try {
-        const {data: session} = useSession();
-        const userId1 = session?.user.id;
+
         
         userId.current = userID === "" ?  userId1! : userID;
         const id = userId.current;
         const data: IUser = await getData(id as string, "User", ["name", "email", "phoneNumber", "picture", "dob"]);
         if (!data) {
-          setError("Data not present");
           return;
         }
 
@@ -49,20 +48,15 @@ export const useProfileUpdate = (userID: string = "") => {
 
       } catch (err) {
         if(err instanceof Error){
-          setError(err.message || "Failed to fetch data");
-
+          throw new Error('error');
         }
-      } finally {
-        setLoading(false);
-      }
+      } 
     })();
   }, []);
 
   const handleUpdate = async () => {
     try {
-      console.log("yse handle call");
-      setLoading(true);
-
+   
       const formData = new FormData();
       formData.append("id", userId.current as string);
       formData.append("name", name);
@@ -86,12 +80,10 @@ export const useProfileUpdate = (userID: string = "") => {
 
     } catch (err) {
       if(err instanceof Error){
-        setError(err.message || "Update failed");
+        throw new Error("err");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
-  return { name, setName, profile, email, dob, setDob, phoneNumber, setPhoneNumber, picture, setPicture, loading, error, handleUpdate };
+  return { name, setName, profile, email, dob, setDob, phoneNumber, setPhoneNumber, picture, setPicture, handleUpdate };
 };

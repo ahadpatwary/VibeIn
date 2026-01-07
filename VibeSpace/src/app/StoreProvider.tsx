@@ -1,34 +1,43 @@
-'use client'
-import { useRef, useEffect } from 'react'
-import { Provider } from 'react-redux'
-import { makeStore, AppStore } from '../lib/store/store'
-import { useSocketConnection } from '@/hooks/useSocketConnection'
-import { useSession } from "next-auth/react";
+'use client';
 
+import { useRef, useEffect } from 'react';
+import { Provider } from 'react-redux';
+import { makeStore, AppStore } from '../lib/store/store';
+import { useSocketConnection } from '@/hooks/useSocketConnection';
+import { useSession } from 'next-auth/react';
 
-export default function StoreProvider({ children,}: {children: React.ReactNode}) {
+export default function StoreProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // ✅ 1. ALL hooks at top-level (NO early return before this)
+  const storeRef = useRef<AppStore | null>(null);
+  const { data: session, status } = useSession();
+  const socket = useSocketConnection();
 
-  console.log("yes, all are connect successfully!");
-  
-  const storeRef = useRef<AppStore>(undefined)
+  // ✅ 2. create store once
   if (!storeRef.current) {
-    // Create the store instance the first time this renders
-    storeRef.current = makeStore()
+    storeRef.current = makeStore();
   }
 
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  // derived values
+  const userId = session?.user?.id;
 
-  if(!userId) throw new Error("userId not found");
+  console.log(userId);
 
+  // ✅ 3. side-effect safely
   useEffect(() => {
+    if (status !== 'authenticated') return;
+    if (!socket || !userId) return;
 
-    const socket = useSocketConnection();
-    
-    // socket?.emit("universalGroup", { userId });
-    socket?.emit("addUser", userId);
+    socket.emit('addUser', userId);
+  }, [status, socket, userId]);
 
-  }, [userId])
+  // ✅ 4. conditional rendering AFTER hooks
+  if (status === 'loading') {
+    return null; // loader
+  }
 
-  return <Provider store={storeRef.current}>{children}</Provider>
+  return <Provider store={storeRef.current}>{children}</Provider>;
 }

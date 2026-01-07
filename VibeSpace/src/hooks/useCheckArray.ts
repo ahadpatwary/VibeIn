@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 export const useCheckArray = ( cardId: string | undefined, property: string) => {
   const [exists, setExists] = useState(false);
-
+  const {data: session} = useSession();
+  const userId = session?.user.id;
+  
   useEffect(() => {
-    (async () => {
-      const {data: session} = useSession();
-      const userId = session?.user.id;
+    ;(async () => {
+
       if (!cardId || !userId) return;
 
       const res = await fetch("/api/findId", {
@@ -19,6 +20,7 @@ export const useCheckArray = ( cardId: string | undefined, property: string) => 
       const data = await res.json();
       setExists(data?.exists);
     })();
+
   }, [cardId, property]);
 
   return exists;
