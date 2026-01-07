@@ -32,7 +32,7 @@ export async function POST(request : NextRequest){
             { status: 202}
         )
 
-        Redis.set(`user:${email}`, '123456', "EX": 300);
+        // Redis.set(`user:${email}`, '123456', "EX": 300);
 
         // send a email to user email 
 
