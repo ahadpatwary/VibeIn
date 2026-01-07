@@ -93,8 +93,7 @@ const ChatSidebar = (
   const userId = session?.user.id;
 
 
-  const socket = useSocketConnection(userId);
-
+  const socket = useSocketConnection();
   
 
   const handleMobileClick = async (senderId: string, receiverId: string) => {

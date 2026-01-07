@@ -3,21 +3,17 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
-export const useSocketConnection = (userId?: string) => {
-  if (!socket) {
-    socket = io("https://vibein-production-d87a.up.railway.app", {
-      transports: ["websocket"],
-      secure: true,
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-    });
-  }
+export const useSocketConnection = () => {
 
-  // if (userId) {
-    socket?.emit("universalGroup", { userId });
-    socket.emit("addUser", userId);
-  // }
+  if (socket) return socket;
+
+  socket = io("https://vibein-production-d87a.up.railway.app", {
+    transports: ["websocket"],
+    secure: true,
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+  });
 
   return socket;
 };
