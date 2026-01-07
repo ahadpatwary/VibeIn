@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AvatarDemo } from "@/components/AvaterDemo";
 import { useGetGroups } from "@/hooks/useGetGroups";
-import GroupCard from "./GroupCard";
+import GroupCard from "../components/chatApp/GroupCard";
 import { useSession } from "next-auth/react";
 
 interface PropType {
