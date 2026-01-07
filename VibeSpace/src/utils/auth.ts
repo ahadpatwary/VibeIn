@@ -11,12 +11,12 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: process.env.EX_GITHUB_CLIENT_ID!,
       clientSecret: process.env.EX_GITHUB_CLIENT_SECRET!,
-      // authorization: {
-      //   // params: {
-      //   //   // scope: "openid email profile",
-      //   //   // prompt: "select_account", // 🔥 chooser force
-      //   // },
-      // },
+      authorization: {
+        params: {
+          scope: "openid email profile",
+          prompt: "select_account",
+        },
+      },
     }),
 
     GoogleProvider({
@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope: "openid email profile",
-          prompt: "select_account", // 🔥 chooser force
+          prompt: "select_account",
         },
       },
     }),
