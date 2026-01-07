@@ -43,9 +43,11 @@ function UserProfile({ dot, userId } : UserProps){
 
     const { handleDelete } = useUserDelete();
 
-    const handleRoute = async () => {
         const {data: session} = useSession();
         const user =  session?.user.id;
+                                                                
+    const handleRoute = async () => {
+
         router.push(`/chatloop?userId=${user}&chatWith=${userId}`);
     }
 

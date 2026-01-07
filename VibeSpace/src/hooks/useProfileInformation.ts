@@ -1,3 +1,4 @@
+'use client'
 import { getData } from "@/lib/getData";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from 'react'
@@ -12,19 +13,19 @@ interface dataType {
 }
 
 export const useProfileInformation = (chatWith?: string) => {
-    const [userName, setUserName] = useState<string>("");
+    const [userName, setUserName] = useState<string>("ahad");
     const [profilePicture, setProfilePicture] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [error, setError] = useState<string> ("");
 
 
-    useEffect(() =>{
+    const {data: session} = useSession();
+    const userId = chatWith || session?.user.id;
 
+    useEffect(() =>{
         ( async ()=>{
             try {
 
-                const {data: session} = useSession();
-                const userId = chatWith || session?.user.id;
                 if(!userId){
                     setError("user Id not find");
                     return;
@@ -32,10 +33,10 @@ export const useProfileInformation = (chatWith?: string) => {
 
                 const data: dataType = await getData(userId, "User", ["name", "email", "picture"]);
 
-                if(!data.name || !data.email || !data.picture?.url){
-                    setError("data not comint from server");
+                if(!data.name || !data.email || !data.picture?.url){;
                     return;
                 }
+
                 setUserName(data.name);
                 setEmail(data.email);
                 setProfilePicture(data.picture.url);

@@ -23,16 +23,16 @@ function ChatPageContent() {
   const [viewportHeight, setViewportHeight] = useState<number>(0);
   const socket = useSocketConnection();
 
+  const { data: session } = useSession();
+      const fetchedUserId = session?.user.id!;
 
+  useEffect(() => {
+      setStoredUserId(fetchedUserId);
 
+  })
   
 
   useEffect(() => {
-
-    const { data: session } = useSession();
-      const fetchedUserId = session?.user.id!;
-      setStoredUserId(fetchedUserId);
-
 
     const updateHeight = () => {
       const height = window.visualViewport
@@ -70,6 +70,7 @@ function ChatPageContent() {
   );
 }
 
+// ✅ Suspense wrapper এখন top-level এ
 export default function MyChatPage() {
   return (
     <Suspense fallback={<div>Loading chat...</div>}>
