@@ -21,7 +21,7 @@ function ChatPageContent() {
   const { userName,  profilePicture } = useProfileInformation(chatWith);
   const [storedUserId, setStoredUserId] = useState<string | null>(null);
   const [viewportHeight, setViewportHeight] = useState<number>(0);
-  const socket = useSocketConnection(userId);
+  const socket = useSocketConnection();
 
 
 
@@ -70,7 +70,6 @@ function ChatPageContent() {
   );
 }
 
-// ✅ Suspense wrapper এখন top-level এ
 export default function MyChatPage() {
   return (
     <Suspense fallback={<div>Loading chat...</div>}>

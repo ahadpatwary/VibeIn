@@ -62,7 +62,6 @@ interface ChatSidebarProps {
 
   convObj?: ConversationsMap;
 
-  // ✅ THIS IS THE FIX
   setConvObj?: React.Dispatch<
     React.SetStateAction<ConversationsMap>
   >;

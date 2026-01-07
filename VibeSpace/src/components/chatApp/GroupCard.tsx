@@ -4,13 +4,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { AvatarDemo } from "@/components/AvaterDemo";
 import TypingIndicator from '@/components/TypingIndicator';
 import { useSocketConnection } from '@/hooks/useSocketConnection';
-import { ScrollArea } from './ui/scroll-area';
+import { ScrollArea } from '../ui/scroll-area';
 import { useGetGroupMessage } from '@/hooks/useGetGroupMessage';
 import { useGroupChatTyping } from '@/hooks/useGroupChatTyping';
-import { LinkPreview } from './LinkPreview';
-import { ReplyMessage } from './ReplyMessage';
+import { LinkPreview } from '../LinkPreview';
+import { ReplyMessage } from '../ReplyMessage';
 import { BsArrow90DegRight, BsArrow90DegLeft } from "react-icons/bs";
-import { Setting } from './Setting';
+import { Setting } from '../Setting';
 import { useProfileInformation } from '@/hooks/useProfileInformation';
 import { v4 as uuidv4 } from 'uuid';
 import { AiFillSetting } from "react-icons/ai";
@@ -93,7 +93,7 @@ export default function GroupCard({
   const { data: session } = useSession();
   const userId = session?.user.id!;
 
-  const socket = useSocketConnection(userId);
+  const socket = useSocketConnection();
 
   const { userName, profilePicture } = useProfileInformation();
   const { groupMessage, setGroupMessage } = useGetGroupMessage(joinId!);
