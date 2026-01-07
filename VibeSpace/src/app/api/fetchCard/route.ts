@@ -1,23 +1,10 @@
 import { NextResponse } from "next/server";
 import { connectToDb } from "@/lib/db";
 import Card from "@/models/Card";
-import { redis } from "@/lib/redis";
 
 export async function GET() {
   try {
     await connectToDb();
-
-    // Redis test values
-    await redis.set("foo", "bar");
-    await redis.set(
-      "obj",
-      JSON.stringify({
-        id: "12345",
-        name: "Abdul Ahad",
-        role: "Admin"
-      })
-    );
-
 
     const allActiveCards = await Card.find({
       videoPrivacy: { $ne: "private" },  // NOT EQUAL properly
