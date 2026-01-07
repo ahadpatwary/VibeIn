@@ -14,6 +14,7 @@ import { signIn } from "next-auth/react"
 import { useState } from "react"
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
+import { getGitHubOAuthUrl } from "@/lib/githubAuthUrl";
 
 export function LoginForm({
   className,
@@ -59,13 +60,19 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                // onClick={() => signIn("github", { callbackUrl: "/register/user_details" })}
+                onClick={async () => {
+                  // const url = await signIn("github", { redirect: false });
+                  // console.log("Captured URL:", url);
+
+                  const url = getGitHubOAuthUrl();
+                  window.open(url, "_blank", "width=600,height=700");
+                }}
                 // onClick={() => {
                 //   window.open(
                 //     "/api/auth/signin/github?callbackUrl=/register/user_details",
                 //     "_blank",
-                //     "width=500,height=600"
-                //   );
+                //     "width=500,height=650"
+                //   )
                 // }}
               >
                 <FaGithub />
