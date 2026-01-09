@@ -62,6 +62,14 @@ export function LoginForm({
   //   setLoading(false)
   // }
 
+  const handleGoogleClick = async () => {
+    try {
+      await fetch('app/login/google');
+    } catch (error) {
+      if(error instanceof Error)
+        throw new Error(error.message);
+    }
+  }
   const handleSend = async () => {
 
     try {
@@ -145,7 +153,7 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={ () => handleCreate('google')}
+                onClick={ handleGoogleClick }
               >
                 <FaGoogle />
                 Create with Google
