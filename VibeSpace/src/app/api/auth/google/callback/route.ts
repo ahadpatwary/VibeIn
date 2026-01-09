@@ -145,7 +145,6 @@ export async function GET(req: NextRequest) {
           console.log("Parent window not found!");
         }
       </script>
-      <p>Logging you in...</p>
     </body>
   </html>
   `;
