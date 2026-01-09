@@ -15,6 +15,7 @@ import { useState } from "react"
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
 import openOAuthWindow from "@/lib/authWindow"
+import { useEffect } from 'react'
 
 import {
   InputOTP,
@@ -62,6 +63,21 @@ export function LoginForm({
   //   }
   //   setLoading(false)
   // }
+
+    useEffect(() => { 
+    const handler = (event: MessageEvent) => {
+      if (
+        event.origin === "https://vibe-in-teal.vercel.app" &&
+        event.data.type === "GOOGLE_LOGIN_SUCCESS"
+      ) {
+        // authorize(event.data.user);
+        console.log("user", event.data.user);
+      }
+    };
+
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
   const handleGoogleClick = () => {
     const state = crypto.randomUUID(); // import crypto from "crypto"
