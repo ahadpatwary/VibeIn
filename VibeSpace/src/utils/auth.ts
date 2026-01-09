@@ -36,72 +36,80 @@ export const authOptions: NextAuthOptions = {
     //   },
     // }),
 
-    // CredentialsProvider({
+    CredentialsProvider({
 
-      // name: "Credentials",
-      // async authorize(credentials: credintialType) {
-      //   try {
+      name: "Credentials",
+      async authorize(credentials: credintialType) {
+        try {
 
-      //     if (!credentials?.email || !credentials?.password) {
-      //       throw new Error("Email or password missing");
-      //     }
+          if(!credentials?.password){
+            return {
+              id: undefined,
+              name: credentials?.name,
+              email: credentials?.email,
+              image: credentials?.picture,
 
-      //     await connectToDb();
+            }
+          }
 
-      //     const user = credentials._id && await User.create({
-      //       email: credentials.email,
-      //       picture: {
-      //         url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
-      //         public_id: "12345678"
-      //       },
-      //       password: credentials.password,
-      //     })
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email or password missing");
+          }
 
-      //     // const isValid = await bcrypt.compare(credentials.password, user.password);
+          await connectToDb();
+
+          const user = !credentials._id && await User.create({
+            email: credentials.email,
+            picture: {
+              url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
+              public_id: "12345678"
+            },
+            password: credentials.password,
+          })
+
+          // const isValid = await bcrypt.compare(credentials.password, user.password);
 
 
-      //     return {
-      //       id: user._id.toString() || credentials._id,
-      //       email: user.email || credentials.email,
-      //     };
+          return {
+            id: user._id.toString() || credentials._id,
+            email: user.email || credentials.email,
+          };
 
-      //   } catch (error: unknown) {
-      //     if (error instanceof Error) {
-      //       throw new Error(error.message);
-      //     }
-      //     throw new Error("Login failed");
-      //   }
-      // },
-    // }),
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw new Error(error.message);
+          }
+          throw new Error("Login failed");
+        }
+      },
+    }),
   ],
 
   callbacks: {
 
-    async signIn(obj ) {
+    async signIn({user}) {
       try {
 
-        console.log("user", obj);
+        if(user.id) return true;
+        if (!user.email) return false;
 
-        // if(user.id) return true;
-        // if (!user.email) return false;
-
-        // await connectToDb();
+        await connectToDb();
         
-        // let dbUser = await User.findOne({ email: user.email });
+        let dbUser = await User.findOne({ email: user.email });
 
-        // if (!dbUser) {
-        //   dbUser = await User.create({
-        //     name: user.name,
-        //     email: user.email,
-        //     password: "1234567",
-        //     picture: {
-        //       url: user?.image,
-        //       public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
-        //     }
-        //   });
-        // }
+        if (!dbUser) {
+          dbUser = await User.create({
+            name: user.name,
+            email: user.email,
+            password: "1234567",
+            picture: {
+              url: user?.image,
+              public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
+            }
+          });
+        }
 
-        // user.id = dbUser._id.toString(); 
+        user.id = dbUser._id.toString(); 
         return true;
     
       } catch (error) {

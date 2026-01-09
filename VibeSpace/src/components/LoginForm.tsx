@@ -41,10 +41,18 @@ export function LoginForm({
   const [status, setStatus] = useState<"send" | "verify" | "create"> ("send");
 
   useEffect(() => {
-  const handleMessage = (event: MessageEvent) => {
+  const handleMessage = async (event: MessageEvent) => {
     if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
     console.log("Google user info:", event.data);
     // eikhane user state update korte parba
+    await signIn('credentials', {
+      // id: event?.data?.id,
+      name: event?.data?.name,
+      email: event?.data?.email,
+      picture: event?.data?.picture,
+      redirect: false
+    });
+    
     router.push('/register/user_details');
   };
 
