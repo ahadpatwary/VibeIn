@@ -6,11 +6,6 @@ import { connectToDb } from "@/lib/db";
 import User from "@/models/User";
 // import bcrypt from "bcryptjs";
 
-interface credintialType {
-  _id: string | null,
-  email: string,
-  password: string,
-}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -39,7 +34,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
 
       name: "Credentials",
-      async authorize(credentials: credintialType) {
+      async authorize(credentials) {
         try {
 
           if(!credentials?.password){
