@@ -139,9 +139,10 @@ export function LoginForm({
                 // onClick={ handleCreate('github') }
                 onClick={ async () => {
                   const csrfToken = await getCsrfToken(); 
-                  const googleUrl = `/api/auth/signin/google?csrfToken=${csrfToken}`;
-                  openOAuthWindow( 
-                  `https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&scope=user&state=${csrfToken}`);
+
+                  const githubUrl = `https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&redirect_uri=${encodeURIComponent("https://vibe-in-teal.vercel.app/api/auth/callback/github")}&scope=user%20email&state=${csrfToken}`;
+
+                  openOAuthWindow(githubUrl);
                 }}
               >
                 <FaGithub />
