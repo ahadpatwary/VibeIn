@@ -21,6 +21,7 @@ export const authOptions: NextAuthOptions = {
         params: {
           scope: "openid name email profile",
           prompt: "select_account",
+          redirect_uri: '/register/user_details'
         },
       },
     }),
