@@ -40,6 +40,18 @@ export function LoginForm({
 
   const [status, setStatus] = useState<"send" | "verify" | "create"> ("send");
 
+  useEffect(() => {
+  const handleMessage = (event: MessageEvent) => {
+    if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
+    console.log("Google user info:", event.data);
+    // eikhane user state update korte parba
+  };
+
+  window.addEventListener("message", handleMessage);
+
+  return () => window.removeEventListener("message", handleMessage);
+}, []);
+
   // const handleSubmit = async (e: React.FormEvent) => {
   //   e.preventDefault()
   //   setLoading(true)
@@ -64,20 +76,7 @@ export function LoginForm({
   //   setLoading(false)
   // }
 
-    useEffect(() => { 
-    const handler = (event: MessageEvent) => {
-      if (
-        event.origin === "https://vibe-in-teal.vercel.app" &&
-        event.data.type === "GOOGLE_LOGIN_SUCCESS"
-      ) {
-        // authorize(event.data.user);
-        console.log("user", event.data.user);
-      }
-    };
 
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
-  }, []);
 
   const handleGoogleClick = () => {
     const state = crypto.randomUUID(); // import crypto from "crypto"

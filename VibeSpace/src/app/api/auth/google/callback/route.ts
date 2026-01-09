@@ -114,27 +114,36 @@ export async function GET(req: NextRequest) {
 
 
   console.log("user", user);
-  // 3️⃣ Set session cookie
+  
+  // // 3️⃣ Set session cookie
   // const res = NextResponse.redirect("https://vibe-in-teal.vercel.app"); // final page
   // res.cookies.set("session", JSON.stringify({
   //   id: user.sub,
   //   name: user.name,
   //   email: user.email,
   //   picture: user.picture
-  // }), { httpOnly: true, sameSite: "lax", path: "/" });
+  // }), { httpOnly: false, sameSite: "lax", path: "/" });
 
   // return res;
 
-  return new Response(`
-  <script>
-    window.opener.postMessage(
-      {
-        type: "GOOGLE_LOGIN_SUCCESS",
-        user: ${JSON.stringify(user)}
-      },
-      "https://vibe-in-teal.vercel.app"
-    );
-    window.close();
-  </script>
-`);
+  
+  // 3️⃣ Return HTML that sends user info to parent window and closes popup
+  const html = `
+    <html>
+      <body>
+        <script>
+          // Send user info to parent window
+          const user = ${JSON.stringify(user)};
+          window.opener.postMessage(user, "https://vibe-in-teal.vercel.app");
+          // Close popup
+          window.close();
+        </script>
+        <p>Logging you in...</p>
+      </body>
+    </html>
+  `;
+
+  return new Response(html, {
+    headers: { "Content-Type": "text/html" },
+  });
 }
