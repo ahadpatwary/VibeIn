@@ -65,7 +65,7 @@ export function LoginForm({
 
   const handleGoogleClick = async () => {
     try {
-      await fetch('app/login/google');
+      await fetch('/app/login/google');
     } catch (error) {
       if(error instanceof Error)
         throw new Error(error.message);
