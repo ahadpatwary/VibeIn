@@ -63,13 +63,10 @@ export function LoginForm({
   //   setLoading(false)
   // }
 
-  const handleGoogleClick = async () => {
-    try {
-      await fetch('/app/login/google');
-    } catch (error) {
-      if(error instanceof Error)
-        throw new Error(error.message);
-    }
+  const handleGoogleClick =  () => {
+   
+      window.location.href = '/app/login/google';
+
   }
   const handleSend = async () => {
 
