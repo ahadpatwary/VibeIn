@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
 
           if(!credentials?.password){
             return {
-              id: undefined,
+              id: "12345",
               name: credentials?.name,
               email: credentials?.email,
               image: credentials?.picture,
