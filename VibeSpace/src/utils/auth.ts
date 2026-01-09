@@ -36,43 +36,43 @@ export const authOptions: NextAuthOptions = {
       },
     }),
 
-    CredentialsProvider({
+    // CredentialsProvider({
 
-      name: "Credentials",
-      async authorize(credentials: credintialType) {
-        try {
+      // name: "Credentials",
+      // async authorize(credentials: credintialType) {
+      //   try {
 
-          if (!credentials?.email || !credentials?.password) {
-            throw new Error("Email or password missing");
-          }
+      //     if (!credentials?.email || !credentials?.password) {
+      //       throw new Error("Email or password missing");
+      //     }
 
-          await connectToDb();
+      //     await connectToDb();
 
-          const user = credentials._id && await User.create({
-            email: credentials.email,
-            picture: {
-              url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
-              public_id: "12345678"
-            },
-            password: credentials.password,
-          })
+      //     const user = credentials._id && await User.create({
+      //       email: credentials.email,
+      //       picture: {
+      //         url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
+      //         public_id: "12345678"
+      //       },
+      //       password: credentials.password,
+      //     })
 
-          // const isValid = await bcrypt.compare(credentials.password, user.password);
+      //     // const isValid = await bcrypt.compare(credentials.password, user.password);
 
 
-          return {
-            id: user._id.toString() || credentials._id,
-            email: user.email || credentials.email,
-          };
+      //     return {
+      //       id: user._id.toString() || credentials._id,
+      //       email: user.email || credentials.email,
+      //     };
 
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            throw new Error(error.message);
-          }
-          throw new Error("Login failed");
-        }
-      },
-    }),
+      //   } catch (error: unknown) {
+      //     if (error instanceof Error) {
+      //       throw new Error(error.message);
+      //     }
+      //     throw new Error("Login failed");
+      //   }
+      // },
+    // }),
   ],
 
   callbacks: {
@@ -93,7 +93,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             password: "1234567",
             picture: {
-              url: user.profile,
+              url: user?.image,
               public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
             }
           });
