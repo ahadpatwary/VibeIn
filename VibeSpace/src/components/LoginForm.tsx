@@ -141,11 +141,11 @@ export function LoginForm({
                   // const csrfToken = await getCsrfToken(); 
 
                   // console.log("csrf", csrfToken);
-//                   signIn("github", {
-//   callbackUrl: "/register/user_details"
-// });
+                  signIn("github", {
+                    callbackUrl: "/register/user_details"
+                  });
 
-                       window.location.href = "/api/auth/github/login"
+                      //  window.location.href = "/api/auth/github/login"
 
            
 // const githubUrl = `https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&redirect_uri=${encodeURIComponent("https://vibe-in-teal.vercel.app/api/auth/callback/github")}&scope=user%20email&state=${csrfToken}`;

@@ -14,16 +14,16 @@ interface credintialType {
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    // GithubProvider({
-    //   clientId: process.env.EX_GITHUB_CLIENT_ID!,
-    //   clientSecret: process.env.EX_GITHUB_CLIENT_SECRET!,
-      // authorization: {
-      //   params: {
-      //     scope: "openid name email profile",
-      //     prompt: "select_account",
-      //   },
-      // },
-    // }),
+    GithubProvider({
+      clientId: process.env.EX_GITHUB_CLIENT_ID!,
+      clientSecret: process.env.EX_GITHUB_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: "openid name email profile",
+          prompt: "select_account",
+        },
+      },
+    }),
 
     // GoogleProvider({
     //   clientId: process.env.GOOGLE_CLIENT_ID!,
