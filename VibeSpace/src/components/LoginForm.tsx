@@ -140,7 +140,9 @@ export function LoginForm({
                 onClick={ async () => {
                   const csrfToken = await getCsrfToken(); 
 
-                  const githubUrl = `https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&redirect_uri=${encodeURIComponent("https://vibe-in-teal.vercel.app/api/auth/callback/github")}&scope=user%20email&state=${csrfToken}`;
+                 const githubUrl = `
+https://github.com/login/oauth/select_account?client_id=Ov23lip2WBbOnw8jhSAb&prompt=select_account&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&response_type=code&scope=openid+name+email+profile&state=${csrfToken}`;
+;
 
                   openOAuthWindow(githubUrl);
                 }}
@@ -255,3 +257,8 @@ export function LoginForm({
     </div>
   )
 }
+
+
+// https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&scope=user%20email&state=7561775d172910c8c36987fd8543e69658c13daf3e1ee13f1e25956b6b822fd6
+
+// https://github.com/login/oauth/select_account?client_id=Ov23lip2WBbOnw8jhSAb&prompt=select_account&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&response_type=code&scope=openid+name+email+profile&state=-8v5rcTxxYf4suTWf2XuJJ2okQ8vCBEO_xA8BFBNjB0
