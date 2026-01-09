@@ -4,7 +4,13 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDb } from "@/lib/db";
 import User from "@/models/User";
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs";
+
+interface credintialType {
+  _id: string | null,
+  email: string,
+  password: string,
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,7 +19,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.EX_GITHUB_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "openid email profile",
+          scope: "openid name email profile",
           prompt: "select_account",
         },
       },
@@ -24,38 +30,41 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "openid email profile",
+          scope: "openid name email profile",
           prompt: "select_account",
         },
       },
     }),
 
     CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email or password missing");
-        }
 
+      name: "Credentials",
+      async authorize(credentials: credintialType) {
         try {
+
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email or password missing");
+          }
+
           await connectToDb();
 
-          const user = await User.findOne({ email: credentials.email }).select("+password");
-          if (!user) throw new Error("User not found");
+          const user = credentials._id && await User.create({
+            email: credentials.email,
+            picture: {
+              url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
+              public_id: "12345678"
+            },
+            password: credentials.password,
+          })
 
-          const isValid = await bcrypt.compare(credentials.password, user.password);
-          if (!isValid) throw new Error("Invalid password");
+          // const isValid = await bcrypt.compare(credentials.password, user.password);
+
 
           return {
-            id: user._id.toString(),
-            email: user.email,
-            picture: user.picture.url, 
-            name: user.name,
+            id: user._id.toString() || credentials._id,
+            email: user.email || credentials.email,
           };
+
         } catch (error: unknown) {
           if (error instanceof Error) {
             throw new Error(error.message);
@@ -67,25 +76,33 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn({user}) {
-      if (!user.email) return false;
+
+    async signIn({user} ) {
       try {
+
+        if(user.id) return true;
+        if (!user.email) return false;
+
         await connectToDb();
+        
         let dbUser = await User.findOne({ email: user.email });
 
         if (!dbUser) {
           dbUser = await User.create({
+            name: user.name,
             email: user.email,
             password: "1234567",
+            picture: {
+              url: user.profile,
+              public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
+            }
           });
         }
 
-        // Assign MongoDB _id to session
         user.id = dbUser._id.toString(); 
         return true;
     
       } catch (error) {
-        // console.log(error);
         return false;
       }
     },
@@ -97,7 +114,6 @@ export const authOptions: NextAuthOptions = {
         obj.session.user = {
           id: obj.token.id as string,
           email: obj.token.email as string,
-          name: 'ahad patwary' as string
         };
       }
       return obj.session;
@@ -117,7 +133,7 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 15 * 60, // 15 minute
   },
 
   secret: process.env.NEXTAUTH_SECRET,

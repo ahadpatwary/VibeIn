@@ -37,8 +37,8 @@ const userSchema = new Schema<IUser>(
       lowercase: true,
     },
     password: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     phoneNumber: {
       type: String,

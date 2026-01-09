@@ -38,48 +38,73 @@ export function LoginForm({
 
   const [status, setStatus] = useState<"send" | "verify" | "create"> ("send");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setLoading(true)
+  //   try {
+  //     const res = await fetch("/api/auth/register", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email, password }),
+  //     })
+
+  //     const data = await res.json()
+  //     if (res.ok) {
+  //       // Registration successful, redirect to login or auto-login
+  //       await signIn("credentials", { email, password, callbackUrl: "/register/user_details" })
+  //     } else {
+  //       alert(data.error || "Registration failed")
+  //     }
+  //   } catch (err) {
+  //     console.error(err)
+  //     alert("Something went wrong")
+  //   }
+  //   setLoading(false)
+  // }
+
+  const handleSend = async () => {
+
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const res = await fetch('url', {
+
       })
 
-      const data = await res.json()
-      if (res.ok) {
-        // Registration successful, redirect to login or auto-login
-        await signIn("credentials", { email, password, callbackUrl: "/register/user_details" })
-      } else {
-        alert(data.error || "Registration failed")
-      }
-    } catch (err) {
-      console.error(err)
-      alert("Something went wrong")
+      //user jodi age login thake tobe user exist lekha asbe
+      //random string create kora hobe and pathano hobe
+      // jei value ke pathano hoyeche,, setake ekhaen store korte hobe
+
+      setStatus("verify");
+
+    } catch (error) {
+      if(error instanceof Error)
+        throw new Error(`error message:${error.message}`)
+      ;
     }
-    setLoading(false)
+     
   }
 
-  const handleSend = () => {
-    // send notification
-    // if response 
-    setTimeout(() => {
-      setStatus("verify");
-    }, 2000)
-  }
   const handleVerify = () => {
-    setTimeout(() => {
-      setStatus("create");
-    }, 2000)
+    try {
+      //store kora value er sateh match korate hobe,,
+      if("match" == "match"){
+        setStatus("create");
+      }else{
+        //message dite hobe je send hoy nai,
+      }
+
+    } catch (error) {
+      if(error instanceof Error)
+        throw new Error(`error message:${error.message}`)
+      ;
+    }
   }
 
   const handleCreate = async() => {
     try {
       await signIn("credentials", { email, password, callbackUrl: "/register/user_details" });
 
-      const userId = "1234567";
+      const {data: session} = await useSession();
+      const userId = session.user.id;
 
       await fetch("/api/auth/refreshTokenIssue", {
         method: "POST",
@@ -110,7 +135,7 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={async () => signIn("google", { callbackUrl : '/register/for' }) }
+                onClick={ handleCreate('github') }
               >
                 <FaGithub />
                 Create with GitHub
@@ -120,13 +145,7 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => {
-                  window.open(
-                    "/api/auth/signin/google?callbackUrl=/register/user_details",
-                    "_blank",
-                    "width=500,height=600"
-                  );
-                }}
+                onClick={ () => handleCreate('google')}
               >
                 <FaGoogle />
                 Create with Google
@@ -215,11 +234,10 @@ export function LoginForm({
                 type="button" 
                 className="w-full" 
                 disabled={loading}
-                onClick={ status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : handleCreate) }
+                onClick={ () => {  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : handleCreate('cread')) }}
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
-                  // status === 'final' && "send" 
                 }
               </Button>
             </form>
