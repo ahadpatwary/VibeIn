@@ -128,20 +128,22 @@ export async function GET(req: NextRequest) {
 
   
   // 3️⃣ Return HTML that sends user info to parent window and closes popup
-  const html = `
-    <html>
-      <body>
-        <script>
-          // Send user info to parent window
-          const user = ${JSON.stringify(user)};
-          window.opener.postMessage(user, "https://vibe-in-teal.vercel.app");
-          // Close popup
-          window.close();
-        </script>
-        <p>Logging you in...</p>
-      </body>
-    </html>
-  `;
+const html = `
+<html>
+  <body>
+    <script>
+      const user = ${JSON.stringify(user)};
+      if (window.opener) {
+        window.opener.postMessage(user, "https://vibe-in-teal.vercel.app");
+        window.close();
+      } else {
+        console.log("Parent window not found!");
+      }
+    </script>
+    <p>Logging you in...</p>
+  </body>
+</html>
+`;
 
   return new Response(html, {
     headers: { "Content-Type": "text/html" },
