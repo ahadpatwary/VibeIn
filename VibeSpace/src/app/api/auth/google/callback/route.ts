@@ -111,9 +111,6 @@ export async function GET(req: NextRequest) {
 
   const user = await userRes.json();
   
-
-
-  console.log("user", user);
   
   // // 3️⃣ Set session cookie
   // const res = NextResponse.redirect("https://vibe-in-teal.vercel.app"); // final page
@@ -128,22 +125,30 @@ export async function GET(req: NextRequest) {
 
   
   // 3️⃣ Return HTML that sends user info to parent window and closes popup
-const html = `
-<html>
-  <body>
-    <script>
-      const user = ${JSON.stringify(user)};
-      if (window.opener) {
-        window.opener.postMessage(user, "https://vibe-in-teal.vercel.app");
-        window.close();
-      } else {
-        console.log("Parent window not found!");
-      }
-    </script>
-    <p>Logging you in...</p>
-  </body>
-</html>
-`;
+
+  const normalizedUser = {
+    id: user?.sub,
+    name: user?.name,
+    email: user?.email,
+    picture: user?.picture
+  };
+
+  const html = `
+  <html>
+    <body>
+      <script>
+        const user = ${JSON.stringify(normalizedUser)};
+        if (window.opener) {
+          window.opener.postMessage(user, "https://vibe-in-teal.vercel.app");
+          window.close();
+        } else {
+          console.log("Parent window not found!");
+        }
+      </script>
+      <p>Logging you in...</p>
+    </body>
+  </html>
+  `;
 
   return new Response(html, {
     headers: { "Content-Type": "text/html" },

@@ -45,6 +45,7 @@ export function LoginForm({
     if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
     console.log("Google user info:", event.data);
     // eikhane user state update korte parba
+    router.push('/register/user_details');
   };
 
   window.addEventListener("message", handleMessage);
