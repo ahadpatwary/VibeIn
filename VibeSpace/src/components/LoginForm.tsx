@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn } from "next-auth/react"
+import { getCsrfToken, signIn, useSession } from "next-auth/react"
 import { useState } from "react"
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
+import openOAuthWindow from "@/lib/authWindow"
 
 import {
   InputOTP,
@@ -112,7 +113,7 @@ export function LoginForm({
       await signIn("credentials", { email, password, callbackUrl: "/register/user_details" });
 
       const {data: session} = await useSession();
-      const userId = session.user.id;
+      const userId = session?.user.id;
 
       await fetch("/api/auth/refreshTokenIssue", {
         method: "POST",
@@ -143,7 +144,7 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={ handleCreate('github') }
+                onClick={() => signIn("github")}
               >
                 <FaGithub />
                 Create with GitHub
@@ -242,7 +243,7 @@ export function LoginForm({
                 type="button" 
                 className="w-full" 
                 disabled={loading}
-                onClick={ () => {  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : handleCreate('cread')) }}
+                onClick={ () => {  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : handleCreate()) }}
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
@@ -255,3 +256,8 @@ export function LoginForm({
     </div>
   )
 }
+
+
+// https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&scope=user%20email&state=7561775d172910c8c36987fd8543e69658c13daf3e1ee13f1e25956b6b822fd6
+
+// https://github.com/login/oauth/select_account?client_id=Ov23lip2WBbOnw8jhSAb&prompt=select_account&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&response_type=code&scope=openid+name+email+profile&state=-8v5rcTxxYf4suTWf2XuJJ2okQ8vCBEO_xA8BFBNjB0
