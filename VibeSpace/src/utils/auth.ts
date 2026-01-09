@@ -53,7 +53,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user._id.toString(),
             email: user.email,
-            image: user.picture.url, 
+            picture: user.picture.url, 
             name: user.name,
           };
         } catch (error: unknown) {
@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn({ user }) {
+    async signIn({user}) {
       if (!user.email) return false;
       try {
         await connectToDb();
@@ -83,6 +83,7 @@ export const authOptions: NextAuthOptions = {
         // Assign MongoDB _id to session
         user.id = dbUser._id.toString(); 
         return true;
+    
       } catch (error) {
         // console.log(error);
         return false;
@@ -90,6 +91,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session(obj){
+      console.log("sess", obj);
 
       if (obj.token) {
         obj.session.user = {
@@ -102,6 +104,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt(obj) {
+      console.log("obj", obj);
 
       if (obj.user) {
         obj.token = {

@@ -75,10 +75,23 @@ export function LoginForm({
     }, 2000)
   }
 
-  const handleCreate = () => {
-    setTimeout(() => {
-      router.push('/login');
-    }, 2000)
+  const handleCreate = async() => {
+    try {
+      await signIn("credentials", { email, password, callbackUrl: "/register/user_details" });
+
+      const userId = "1234567";
+
+      await fetch("/api/auth/refreshTokenIssue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, email }),
+      })
+
+    } catch (error) {
+      if(error instanceof Error)
+        throw new Error(`message: ${error.message}`);
+    }
+
   }
 
   return (
@@ -128,9 +141,6 @@ export function LoginForm({
               )
             }
             </>
-
-
-
 
             {/* Email + Password onSubmit={handleSubmit}*/}
             <form className="grid gap-6">

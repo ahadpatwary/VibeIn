@@ -29,6 +29,7 @@
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
+    "cryptr": "^6.4.0",
     "framer-motion": "^12.23.22",
     "input-otp": "^1.4.2",
     "ioredis": "^5.8.2",
