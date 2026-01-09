@@ -65,7 +65,7 @@ export function LoginForm({
 
   const handleGoogleClick =  () => {
    
-      window.location.href = '/app/login/google';
+      window.location.href = '/login/google';
 
   }
   const handleSend = async () => {
