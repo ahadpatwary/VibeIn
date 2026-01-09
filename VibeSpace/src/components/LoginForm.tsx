@@ -64,8 +64,8 @@ export function LoginForm({
   // }
 
   const handleGoogleClick =  () => {
-   
-      window.location.href = '/login/google';
+   console.log("yes");
+      window.location.href = '/api/login/google';
 
   }
   const handleSend = async () => {
