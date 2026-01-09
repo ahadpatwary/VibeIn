@@ -17,6 +17,17 @@ export const authOptions: NextAuthOptions = {
     // GithubProvider({
     //   clientId: process.env.EX_GITHUB_CLIENT_ID!,
     //   clientSecret: process.env.EX_GITHUB_CLIENT_SECRET!,
+      // authorization: {
+      //   params: {
+      //     scope: "openid name email profile",
+      //     prompt: "select_account",
+      //   },
+      // },
+    // }),
+
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID!,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     //   authorization: {
     //     params: {
     //       scope: "openid name email profile",
@@ -24,17 +35,6 @@ export const authOptions: NextAuthOptions = {
     //     },
     //   },
     // }),
-
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: "openid name email profile",
-          prompt: "select_account",
-        },
-      },
-    }),
 
     // CredentialsProvider({
 
@@ -77,29 +77,31 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
 
-    async signIn({user} ) {
+    async signIn(obj ) {
       try {
 
-        if(user.id) return true;
-        if (!user.email) return false;
+        console.log("user", obj);
 
-        await connectToDb();
+        // if(user.id) return true;
+        // if (!user.email) return false;
+
+        // await connectToDb();
         
-        let dbUser = await User.findOne({ email: user.email });
+        // let dbUser = await User.findOne({ email: user.email });
 
-        if (!dbUser) {
-          dbUser = await User.create({
-            name: user.name,
-            email: user.email,
-            password: "1234567",
-            picture: {
-              url: user?.image,
-              public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
-            }
-          });
-        }
+        // if (!dbUser) {
+        //   dbUser = await User.create({
+        //     name: user.name,
+        //     email: user.email,
+        //     password: "1234567",
+        //     picture: {
+        //       url: user?.image,
+        //       public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
+        //     }
+        //   });
+        // }
 
-        user.id = dbUser._id.toString(); 
+        // user.id = dbUser._id.toString(); 
         return true;
     
       } catch (error) {
