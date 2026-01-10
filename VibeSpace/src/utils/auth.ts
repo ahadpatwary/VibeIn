@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
 
         console.log("crediantial data", credentials);
-        const data = JSON.parse(credentials.payload);
+        const data = JSON.parse(credentials?.payload);
 
         console.log("crediantials", data);
 
