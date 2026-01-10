@@ -48,6 +48,10 @@ export function LoginForm({
         if (event.origin !== "https://vibe-in-teal.vercel.app") return;
         if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
 
+        const email = event.data?.email;
+
+        if(!email) return;
+
         const res = await fetch('/api/checkEmailExistance', {
           method: "POST",
           headers: { "Content-Type": "application/json" },
