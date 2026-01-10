@@ -33,53 +33,31 @@ export const authOptions: NextAuthOptions = {
         image: { label: "Image", type: "text", optional: true },
       },
 
+          // const isValid = await bcrypt.compare(credentials.password, user.password);
 
       async authorize(credentials) {
-        if (!credentials?.type) return null;
 
-        if (credentials.type === "password") {
-          if (!credentials.email || !credentials.password) return null;
-
-          let user = await User.findOne({email: credentials.email});
-
-          if(!user) {
-            user = await User.create({
-              email: credentials.email,
-              password: credentials.password,
-            })
-          }
-
-          const user = await findUser(credentials.email, credentials.password);
-          if (!user) return null;
-
+        if(credentials.id){
           return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-          };
-        }
-
- 
-        if (credentials.type === "provider") {
-          if (!credentials.providerId || !credentials.email) return null;
-
-          // 👉 এখানে provider user create / find
-          const user = await findOrCreateProviderUser({
-            providerId: credentials.providerId,
+            id: credentials.id,
             email: credentials.email,
-            name: credentials.name,
-            image: credentials.image,
-          });
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          };
+          }
         }
 
-        return null;
+        const user = await User.create({
+          email: credentials.email,
+          password: credentials?.password || "123456",
+          name: credentials?.name,
+          picture:{
+            url: credentials?.image,
+            public_id: "123456",
+          }
+        })
+
+        return {
+          id: user._id,
+          email: user.email
+        }
       }
 
     }),
@@ -91,6 +69,7 @@ export const authOptions: NextAuthOptions = {
       try {
 
         if(user.id) return true;
+
         if (!user.email) return false;
 
         await connectToDb();
@@ -104,7 +83,7 @@ export const authOptions: NextAuthOptions = {
             password: "1234567",
             picture: {
               url: user?.image,
-              public_id: "https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg"
+              public_id: "123456"
             }
           });
         }
@@ -117,28 +96,20 @@ export const authOptions: NextAuthOptions = {
       }
     },
 
-    async session(obj){
-      console.log("sess", obj);
+    async session({token}){
 
-      if (obj.token) {
-        obj.session.user = {
-          id: obj.token.id as string,
-          email: obj.token.email as string,
-        };
-      }
-      return obj.session;
+      if(!token) return;
+      return { id: token.id };
+
     },
 
-    async jwt(obj) {
-      console.log("obj", obj);
+    async jwt({ user }) {
+      
+      if(!user) return;
+      return { id: user.id }
 
-      if (obj.user) {
-        obj.token = {
-          ...obj.user
-        }
-      }
-      return obj.token;
     },
+
   },
 
   session: {
@@ -153,3 +124,52 @@ const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
 
 
+
+
+
+      //   if (!credentials?.type) return null;
+
+      //   if (credentials.type === "password") {
+      //     if (!credentials.email || !credentials.password) return null;
+
+      //     let user = await User.findOne({email: credentials.email});
+
+      //     if(!user) {
+      //       user = await User.create({
+      //         email: credentials.email,
+      //         password: credentials.password,
+      //       })
+      //     }
+
+      //     const user = await findUser(credentials.email, credentials.password);
+      //     if (!user) return null;
+
+      //     return {
+      //       id: user.id,
+      //       email: user.email,
+      //       name: user.name,
+      //     };
+      //   }
+
+ 
+      //   if (credentials.type === "provider") {
+      //     if (!credentials.providerId || !credentials.email) return null;
+
+      //     // 👉 এখানে provider user create / find
+      //     const user = await findOrCreateProviderUser({
+      //       providerId: credentials.providerId,
+      //       email: credentials.email,
+      //       name: credentials.name,
+      //       image: credentials.image,
+      //     });
+
+      //     return {
+      //       id: user.id,
+      //       email: user.email,
+      //       name: user.name,
+      //       image: user.image,
+      //     };
+      //   }
+
+      //   return null;
+      // }

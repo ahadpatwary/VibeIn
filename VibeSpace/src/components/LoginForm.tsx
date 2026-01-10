@@ -41,25 +41,25 @@ export function LoginForm({
   const [status, setStatus] = useState<"send" | "verify" | "create"> ("send");
 
   useEffect(() => {
-  const handleMessage = async (event: MessageEvent) => {
-    if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
-    console.log("Google user info:", event.data);
-    // eikhane user state update korte parba
-    await signIn('credentials', {
-      // id: event?.data?.id,
-      name: event?.data?.name,
-      email: event?.data?.email,
-      picture: event?.data?.picture,
-      redirect: false
-    });
-    
-    router.push('/register/user_details');
-  };
 
-  window.addEventListener("message", handleMessage);
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
+      console.log("Google user info:", event.data);
+      // eikhane user state update korte parba
+      await signIn('credentials', {
+        name: event?.data?.name,
+        email: event?.data?.email,
+        picture: event?.data?.picture,
+        redirect: false
+      });
+      
+      router.push('/register/user_details');
+    };
 
-  return () => window.removeEventListener("message", handleMessage);
-}, []);
+    window.addEventListener("message", handleMessage);
+
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   // const handleSubmit = async (e: React.FormEvent) => {
   //   e.preventDefault()
