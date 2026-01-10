@@ -30,36 +30,43 @@ export const authOptions: NextAuthOptions = {
           // const isValid = await bcrypt.compare(credentials.password, user.password);
 
       async authorize(credentials) {
+        try {
+          console.log("crediantial data", credentials);
+          if(!credentials) return null;
+          const data = JSON.parse(credentials.payload);
 
-        console.log("crediantial data", credentials);
-        if(!credentials) return null;
-        const data = JSON.parse(credentials.payload);
+          console.log("crediantials", data);
 
-        console.log("crediantials", data);
+          if (!data || !data.email) return null;
 
-        if (!data || !data.email) return null;
+          if(data.id){
+            return {
+              id: data.id,
+              email: data.email,
+            }
+          }
 
-        if(data.id){
-          return {
-            id: data.id,
+          const user = await User.create({
             email: data.email,
+            password: data?.password || "123456",
+            name: data?.name,
+            picture:{
+              url: data?.image,
+              public_id: "123456",
+            }
+          })
+
+          return {
+            id: user._id,
+            email: user.email
           }
+        } catch (error) {
+          if(error instanceof Error)
+            console.error('error', error.message)
+          ;
+          return null;
         }
 
-        const user = await User.create({
-          email: data.email,
-          password: data?.password || "123456",
-          name: data?.name,
-          picture:{
-            url: data?.image,
-            public_id: "123456",
-          }
-        })
-
-        return {
-          id: user._id,
-          email: user.email
-        }
       }
 
     }),
