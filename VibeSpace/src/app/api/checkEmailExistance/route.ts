@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectToDb } from "@/lib/db";
 import { getRedisClient } from "@/lib/redis";
 import User from "@/models/User";
 
 
-export async function POST (req: Request) {
+export async function POST (req: NextRequest) {
   try {
+    console.log("commitnkjdfsklfj ksdfjskl;fjsdf kljsdfsdklfjskldfjkdlsjf skdf");
     await connectToDb();
 
     const Redis = getRedisClient();
