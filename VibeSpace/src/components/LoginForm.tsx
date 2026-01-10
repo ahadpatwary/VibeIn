@@ -1,5 +1,5 @@
 'use client'
-
+import { getSession } from "next-auth/react";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -76,7 +76,7 @@ export function LoginForm({
           redirect: false
         });
 
-        const { data: session } = await useSession();
+        const session  = await getSession();
         const userId = session?.user.id;
 
         await fetch("/api/auth/refreshTokenIssue", {
@@ -147,7 +147,7 @@ export function LoginForm({
 
       await signIn("github", { callbackUrl: '/register/user_details'});
 
-      const { data: session } = await useSession();
+      const { data: session } = await 
       const userId = session?.user.id;
 
       await fetch("/api/auth/refreshTokenIssue", { // ekhane ekta problme ache,, redirect hoyar por eta kaj korebe na // pore thik korbo,
@@ -222,7 +222,7 @@ export function LoginForm({
         redirect: false
       });
 
-      const { data: session } = await useSession();
+      const session  = await getSession();
       const userId = session?.user.id;
 
       await fetch("/api/auth/refreshTokenIssue", {
