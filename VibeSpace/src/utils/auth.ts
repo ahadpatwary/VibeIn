@@ -37,6 +37,8 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
 
+        if(!!credentials || !credentials?.email) return null;
+
         if(credentials?.id){
           return {
             id: credentials.id,
