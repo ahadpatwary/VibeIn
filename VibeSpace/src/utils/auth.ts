@@ -6,7 +6,16 @@ import { connectToDb } from "@/lib/db";
 import User from "@/models/User";
 // import bcrypt from "bcryptjs";
 
-
+interface crediantialTpe {
+  id?: string,
+  email: string,
+  password?: string,
+  name?: string,
+  image?:{
+    url: string,
+    public_id: string,
+  },
+}
 export const authOptions: NextAuthOptions = {
   providers: [
     GithubProvider({
@@ -25,8 +34,7 @@ export const authOptions: NextAuthOptions = {
 
       name: "Credentials",
       credentials: {
-        type: { label: "Type", type: "text" }, // "password" | "provider"
-        id: { label: "id", type: "text", optional: true },
+        id: { label: "Provider ID", type: "text", optional: true }, // Google sub / provider id
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password", optional: true },
         name: { label: "Name", type: "text", optional: true },
@@ -97,19 +105,20 @@ export const authOptions: NextAuthOptions = {
         return false;
       }
     },
+    
+      async jwt({ token, user }) {
+        if (user?.id) {
+          token.id = user.id;
+        }
+        return token;
+      },
 
-    async session({token}){
-
-      if(!token) return;
-      return { id: token.id };
-
-    },
-
-    async jwt({ user }) {
-      
-      if(!user) return;
-      return { id: user.id }
-
+      async session({ session, token }) {
+        if (token?.id && session.user) {
+          session.user.id = token.id as string;
+        }
+        return session;
+      },
     },
 
   },
