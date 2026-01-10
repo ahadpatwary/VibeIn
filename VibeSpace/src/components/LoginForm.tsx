@@ -147,7 +147,7 @@ export function LoginForm({
 
       await signIn("github", { callbackUrl: '/register/user_details'});
 
-      const { data: session } = await 
+      const session = await getSession();
       const userId = session?.user.id;
 
       await fetch("/api/auth/refreshTokenIssue", { // ekhane ekta problme ache,, redirect hoyar por eta kaj korebe na // pore thik korbo,
