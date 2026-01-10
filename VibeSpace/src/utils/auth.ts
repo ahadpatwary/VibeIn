@@ -35,6 +35,8 @@ export const authOptions: NextAuthOptions = {
           if(!credentials) return null;
           const data = JSON.parse(credentials.payload);
 
+          await connectToDb();
+
           console.log("crediantials", data);
 
           if (!data || !data.email) return null;
