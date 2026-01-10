@@ -45,6 +45,7 @@ export function LoginForm({
     const handleMessage = async (event: MessageEvent) => {
       if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
       console.log("Google user info:", event.data);
+      console.log(event.data.name, event.data.email, event.data.picture);
       // eikhane user state update korte parba
       await signIn('credentials', {
         name: event?.data?.name,
