@@ -3,6 +3,7 @@ import { connectToDb } from "@/lib/db";
 import { getRedisClient } from "@/lib/redis";
 import User from "@/models/User";
 
+
 export const POST = async (req: Request) => {
   try {
     await connectToDb();
