@@ -49,9 +49,11 @@ export function LoginForm({
       await signIn('credentials', {
         name: event?.data?.name,
         email: event?.data?.email,
-        picture: event?.data?.picture,
+        image: event?.data?.picture,
         redirect: false
       });
+
+      console.log("yes,, successful")
       
       router.push('/register/user_details');
     };

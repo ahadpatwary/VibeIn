@@ -32,9 +32,8 @@ export const authOptions: NextAuthOptions = {
 
     CredentialsProvider({
 
-      name: "Credentials",
+      name: "credentials",
       credentials: {
-        id: { label: "Provider ID", type: "text", optional: true }, // Google sub / provider id
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password", optional: true },
         name: { label: "Name", type: "text", optional: true },
