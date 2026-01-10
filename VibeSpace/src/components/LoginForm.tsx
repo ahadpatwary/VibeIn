@@ -355,7 +355,7 @@ export function LoginForm({
                 type="button" 
                 className="w-full" 
                 disabled={loading}
-                onClick={ () => {  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : credentialRegister) }}
+                onClick={  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : credentialRegister) }
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
