@@ -52,8 +52,6 @@ export function LoginForm({
 
         if(!email) return;
 
-
-
         const res = await fetch("/api/checkEmailExistance", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -63,7 +61,7 @@ export function LoginForm({
         if(!res.ok) return;
 
         const data = await res.json();
-        //if email exist user already exist please try to signup
+        
         if(data.user) {
           console.log('user already exist');
           return;
@@ -168,13 +166,24 @@ export function LoginForm({
   const handleSend = async () => {
 
     try {
-      const res = await fetch('url', {
-
-      })
-
       //user jodi age login thake tobe user exist lekha asbe
+      const res = await fetch("/api/checkEmailExistance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if(!res.ok) return;
+
+      const data = await res.json();
+      
+      if(data.user) {
+        console.log('user already exist');
+        return;
+      }
       //random string create kora hobe and pathano hobe
       // jei value ke pathano hoyeche,, setake ekhaen store korte hobe
+
 
       setStatus("verify");
 
@@ -188,11 +197,11 @@ export function LoginForm({
 
   const handleVerify = () => {
     try {
-      //store kora value er sateh match korate hobe,,
-      if("match" == "match"){
+      const ranndomString = "123456";
+
+      if(value == ranndomString){
         setStatus("create");
-      }else{
-        //message dite hobe je send hoy nai,
+        return;
       }
 
     } catch (error) {
@@ -202,18 +211,8 @@ export function LoginForm({
     }
   }
 
-  const credentialRegister = async() => {
+  const credentialRegister = async () => {
     try {
-      const res = await fetch('', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      }); // data thakle redis e save kore nibo,, 3min er jonno,, jate signIn korar time e taratari paoya jay,
-
-      if(!res.ok) return;
-
-      const data = res.json();
-      //if email exist user already exist please try to signup
 
       await signIn('credentials', {
         payload: JSON.stringify({
