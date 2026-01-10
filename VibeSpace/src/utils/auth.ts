@@ -24,23 +24,9 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
 
       name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
 
-      async authorize(credentials) {
+      async authorize(credentials: {email: string, password: string}) {
         try {
-
-          if(!credentials?.password){
-            // return {
-            //   id: "12345",
-            //   name: credentials?.name,
-            //   email: credentials?.email,
-            //   image: credentials?.picture,
-
-            // }
-          }
 
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Email or password missing");
@@ -48,7 +34,9 @@ export const authOptions: NextAuthOptions = {
 
           await connectToDb();
 
-          const user =  await User.create({
+          const isUserExist = await User.findOne({email: credentials.email});
+
+          const user = !!isUserExist && await User.create({
             email: credentials.email,
             picture: {
               url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
