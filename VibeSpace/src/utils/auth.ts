@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      
+
       async authorize(credentials) {
         try {
 
@@ -48,7 +48,7 @@ export const authOptions: NextAuthOptions = {
 
           await connectToDb();
 
-          const user = !credentials._id && await User.create({
+          const user =  await User.create({
             email: credentials.email,
             picture: {
               url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
