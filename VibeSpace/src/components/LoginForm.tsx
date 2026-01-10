@@ -48,11 +48,14 @@ export function LoginForm({
       console.log(event.data.name, event.data.email, event.data.picture);
       // eikhane user state update korte parba
       await signIn('credentials', {
-        name: event?.data?.name,
-        email: event?.data?.email,
-        image: event?.data?.picture,
+        payload: JSON.stringify({
+          name: event?.data?.name,
+          email: event?.data?.email,
+          image: event?.data?.picture,
+        }),
         redirect: false
       });
+
 
       console.log("yes,, successful")
       
