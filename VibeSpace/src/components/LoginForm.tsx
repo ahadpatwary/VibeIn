@@ -44,7 +44,7 @@ export function LoginForm({
 
     const handleMessage = async (event: MessageEvent) => {
       if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
-      if(!event.data) return;
+      if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
 
       console.log("Google user info:", event.data);
       console.log(event.data.name, event.data.email, event.data.picture);

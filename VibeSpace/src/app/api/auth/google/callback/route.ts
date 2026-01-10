@@ -127,6 +127,7 @@ export async function GET(req: NextRequest) {
   // 3️⃣ Return HTML that sends user info to parent window and closes popup
 
   const normalizedUser = {
+    type: "GOOGLE_AUTH_SUCCESS",
     id: user?.sub,
     name: user?.name,
     email: user?.email,
