@@ -6,16 +6,6 @@ import { connectToDb } from "@/lib/db";
 import User from "@/models/User";
 // import bcrypt from "bcryptjs";
 
-interface crediantialTpe {
-  id?: string,
-  email: string,
-  password?: string,
-  name?: string,
-  image?:{
-    url: string,
-    public_id: string,
-  },
-}
 export const authOptions: NextAuthOptions = {
   providers: [
     GithubProvider({
@@ -44,6 +34,8 @@ export const authOptions: NextAuthOptions = {
           // const isValid = await bcrypt.compare(credentials.password, user.password);
 
       async authorize(credentials) {
+
+        console.log("crediantials", credentials);
 
         if (!credentials || !credentials.email) return null;
 
