@@ -43,22 +43,51 @@ export function LoginForm({
   useEffect(() => {
 
     const handleMessage = async (event: MessageEvent) => {
-      if (event.origin !== "https://vibe-in-teal.vercel.app") return; // safety
-      if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
+      try {
 
-      console.log("Google user info:", event.data);
-      console.log(event.data.name, event.data.email, event.data.picture);
-      // eikhane user state update korte parba
-      await signIn('credentials', {
-        payload: JSON.stringify({
-          name: event?.data?.name,
-          email: event?.data?.email,
-          image: event?.data?.picture,
-        }),
-        redirect: false
-      });
-      
-      router.push('/register/user_details');
+        if (event.origin !== "https://vibe-in-teal.vercel.app") return;
+        if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
+
+        const res = await fetch('/api/checkEmailExistance', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+
+        if(!res.ok) return;
+
+        const data = await res.json();
+        //if email exist user already exist please try to signup
+        if(data.user) {
+          console.log('user already exist');
+          return;
+        }
+
+        await signIn('credentials', {
+          payload: JSON.stringify({
+            name: event?.data?.name,
+            email: event?.data?.email,
+            image: event?.data?.picture,
+          }),
+          redirect: false
+        });
+
+        const { data: session } = await useSession();
+        const userId = session?.user.id;
+
+        await fetch("/api/auth/refreshTokenIssue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, email }),
+        })
+
+        router.push('/register/user_details');
+
+      } catch (error) {
+        if(error instanceof Error)
+          throw new Error(`error message${error.message}`)
+        ;
+      }
     };
 
     window.addEventListener("message", handleMessage);
@@ -92,7 +121,7 @@ export function LoginForm({
 
 
 
-  const handleGoogleClick = () => {
+  const googleRegister = () => {
     const state = crypto.randomUUID(); // import crypto from "crypto"
     
     const params = new URLSearchParams({
@@ -106,9 +135,30 @@ export function LoginForm({
 
     const googleUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
 
-    // open in new tab/window
     window.open(googleUrl, "_blank", "width=600,height=700");
   };
+
+  const githubRegister = async () => {
+    try {
+
+      await signIn("github", { callbackUrl: '/register/user_details'});
+
+      const { data: session } = await useSession();
+      const userId = session?.user.id;
+
+      await fetch("/api/auth/refreshTokenIssue", { // ekhane ekta problme ache,, redirect hoyar por eta kaj korebe na // pore thik korbo,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, email }),
+      })
+
+    } catch (error) {
+      if(error instanceof Error)
+        throw new Error(`error message ${error.message}`)
+      ;
+    }
+  }
+
   const handleSend = async () => {
 
     try {
@@ -146,11 +196,28 @@ export function LoginForm({
     }
   }
 
-  const handleCreate = async() => {
+  const credentialRegister = async() => {
     try {
-      await signIn("credentials", { email, password, callbackUrl: "/register/user_details" });
+      const res = await fetch('', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      }); // data thakle redis e save kore nibo,, 3min er jonno,, jate signIn korar time e taratari paoya jay,
 
-      const {data: session} = await useSession();
+      if(!res.ok) return;
+
+      const data = res.json();
+      //if email exist user already exist please try to signup
+
+      await signIn('credentials', {
+        payload: JSON.stringify({
+          email: email,
+          password: password
+        }),
+        redirect: false
+      });
+
+      const { data: session } = await useSession();
       const userId = session?.user.id;
 
       await fetch("/api/auth/refreshTokenIssue", {
@@ -159,11 +226,13 @@ export function LoginForm({
         body: JSON.stringify({ userId, email }),
       })
 
+      router.push('/register/user_details');
+
     } catch (error) {
       if(error instanceof Error)
-        throw new Error(`message: ${error.message}`);
+        throw new Error(`message: ${error.message}`)
+      ;
     }
-
   }
 
   return (
@@ -182,7 +251,7 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => signIn("github")}
+                onClick={ githubRegister }
               >
                 <FaGithub />
                 Create with GitHub
@@ -192,7 +261,7 @@ export function LoginForm({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={ handleGoogleClick }
+                onClick={ googleRegister }
               >
                 <FaGoogle />
                 Create with Google
@@ -281,7 +350,7 @@ export function LoginForm({
                 type="button" 
                 className="w-full" 
                 disabled={loading}
-                onClick={ () => {  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : handleCreate()) }}
+                onClick={ () => {  status === 'send' ? handleSend : ( status === 'verify' ? handleVerify : credentialRegister) }}
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
@@ -294,8 +363,3 @@ export function LoginForm({
     </div>
   )
 }
-
-
-// https://github.com/login/oauth/authorize?client_id=Ov23lip2WBbOnw8jhSAb&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&scope=user%20email&state=7561775d172910c8c36987fd8543e69658c13daf3e1ee13f1e25956b6b822fd6
-
-// https://github.com/login/oauth/select_account?client_id=Ov23lip2WBbOnw8jhSAb&prompt=select_account&redirect_uri=https%3A%2F%2Fvibe-in-teal.vercel.app%2Fapi%2Fauth%2Fcallback%2Fgithub&response_type=code&scope=openid+name+email+profile&state=-8v5rcTxxYf4suTWf2XuJJ2okQ8vCBEO_xA8BFBNjB0
