@@ -52,10 +52,12 @@ export function LoginForm({
 
         if(!email) return;
 
-        const res = await fetch("https://vibe-in-teal.vercel.app/api/checkEmailExistance", {
+
+
+        const res = await fetch("/api/checkEmailExistance", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email }),
         });
 
         if(!res.ok) return;
