@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!credentials || !credentials.email) return null;
 
-        if(credentials?.id){
+        if(credentials?.id && !credentials.password){
           return {
             id: credentials.id,
             email: credentials.email,

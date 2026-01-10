@@ -48,6 +48,7 @@ export function LoginForm({
       console.log(event.data.name, event.data.email, event.data.picture);
       // eikhane user state update korte parba
       await signIn('credentials', {
+        id: event?.data?.id,
         name: event?.data?.name,
         email: event?.data?.email,
         image: event?.data?.picture,
