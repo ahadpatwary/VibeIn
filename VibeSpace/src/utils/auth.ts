@@ -24,43 +24,64 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
 
       name: "Credentials",
+      credentials: {
+        type: { label: "Type", type: "text" }, // "password" | "provider"
+        id: { label: "id", type: "text", optional: true },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password", optional: true },
+        name: { label: "Name", type: "text", optional: true },
+        image: { label: "Image", type: "text", optional: true },
+      },
 
-      async authorize(credentials: {email: string, password: string}) {
-        try {
 
-          if (!credentials?.email || !credentials?.password) {
-            throw new Error("Email or password missing");
+      async authorize(credentials) {
+        if (!credentials?.type) return null;
+
+        if (credentials.type === "password") {
+          if (!credentials.email || !credentials.password) return null;
+
+          let user = await User.findOne({email: credentials.email});
+
+          if(!user) {
+            user = await User.create({
+              email: credentials.email,
+              password: credentials.password,
+            })
           }
 
-          await connectToDb();
-
-          const isUserExist = await User.findOne({email: credentials.email});
-
-          const user = !!isUserExist && await User.create({
-            email: credentials.email,
-            picture: {
-              url: 'https://res.cloudinary.com/dnyr37sgw/image/upload/v1767060823/cards/cnkuyvvvdup2gwk5dfic.jpg',
-              public_id: "12345678"
-            },
-            password: credentials.password,
-          })
-
-          // const isValid = await bcrypt.compare(credentials.password, user.password);
-
+          const user = await findUser(credentials.email, credentials.password);
+          if (!user) return null;
 
           return {
-            // id: user._id.toString() || credentials._id,
-            email: user.email || credentials.email,
-            id: '12345',
+            id: user.id,
+            email: user.email,
+            name: user.name,
           };
-
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            throw new Error(error.message);
-          }
-          throw new Error("Login failed");
         }
-      },
+
+ 
+        if (credentials.type === "provider") {
+          if (!credentials.providerId || !credentials.email) return null;
+
+          // 👉 এখানে provider user create / find
+          const user = await findOrCreateProviderUser({
+            providerId: credentials.providerId,
+            email: credentials.email,
+            name: credentials.name,
+            image: credentials.image,
+          });
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          };
+        }
+
+        return null;
+      }
+
     }),
   ],
 
