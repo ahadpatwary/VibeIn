@@ -26,19 +26,20 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
-        id: { label: "User ID", type: "text" }
+        password: { label: "Password", type: "password" }
       },
+      
       async authorize(credentials) {
         try {
 
           if(!credentials?.password){
-            return {
-              id: "12345",
-              name: credentials?.name,
-              email: credentials?.email,
-              image: credentials?.picture,
+            // return {
+            //   id: "12345",
+            //   name: credentials?.name,
+            //   email: credentials?.email,
+            //   image: credentials?.picture,
 
-            }
+            // }
           }
 
           if (!credentials?.email || !credentials?.password) {
@@ -60,8 +61,9 @@ export const authOptions: NextAuthOptions = {
 
 
           return {
-            id: user._id.toString() || credentials._id,
+            // id: user._id.toString() || credentials._id,
             email: user.email || credentials.email,
+            id: '12345',
           };
 
         } catch (error: unknown) {
