@@ -181,9 +181,6 @@ export function LoginForm({
         console.log('user already exist');
         return;
       }
-      //random string create kora hobe and pathano hobe
-      // jei value ke pathano hoyeche,, setake ekhaen store korte hobe
-
 
       setStatus("verify");
 
@@ -195,14 +192,21 @@ export function LoginForm({
      
   }
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     try {
-      const ranndomString = "123456";
 
-      if(value == ranndomString){
-        setStatus("create");
+      const res = await fetch('/api/verifyOtp', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, value }),
+      })
+
+      if(!res.ok) {
+        console.log("not veriy otp");
         return;
       }
+
+      setStatus("create");
 
     } catch (error) {
       if(error instanceof Error)
