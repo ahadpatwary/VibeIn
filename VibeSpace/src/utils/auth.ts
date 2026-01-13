@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDb } from "@/lib/db";
 import User from "@/models/User";
+import { getRedisClient } from "@/lib/redis";
 // import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
@@ -27,19 +28,26 @@ export const authOptions: NextAuthOptions = {
         payload: { type: "text" },
       },
 
-          // const isValid = await bcrypt.compare(credentials.password, user.password);
-
+      // const isValid = await bcrypt.compare(credentials.password, user.password);
       async authorize(credentials) {
         try {
-          console.log("crediantial data", credentials);
+  
           if(!credentials) return null;
           const data = JSON.parse(credentials.payload);
 
-          await connectToDb();
-
-          console.log("crediantials", data);
-
           if (!data || !data.email) return null;
+
+          const Redis = await getRedisClient();
+
+          if(!Redis) return null;
+
+          const verifyKey = await Redis.get(`otpSuccess:${data.email}`);
+          await Redis.del(`otpSuccess:${data.email}`);
+
+
+          if(!verifyKey) return null;
+
+          await connectToDb();
 
           if(data.id){
             return {
@@ -133,54 +141,3 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
-
-
-
-
-
-      //   if (!credentials?.type) return null;
-
-      //   if (credentials.type === "password") {
-      //     if (!credentials.email || !credentials.password) return null;
-
-      //     let user = await User.findOne({email: credentials.email});
-
-      //     if(!user) {
-      //       user = await User.create({
-      //         email: credentials.email,
-      //         password: credentials.password,
-      //       })
-      //     }
-
-      //     const user = await findUser(credentials.email, credentials.password);
-      //     if (!user) return null;
-
-      //     return {
-      //       id: user.id,
-      //       email: user.email,
-      //       name: user.name,
-      //     };
-      //   }
-
- 
-      //   if (credentials.type === "provider") {
-      //     if (!credentials.providerId || !credentials.email) return null;
-
-      //     // 👉 এখানে provider user create / find
-      //     const user = await findOrCreateProviderUser({
-      //       providerId: credentials.providerId,
-      //       email: credentials.email,
-      //       name: credentials.name,
-      //       image: credentials.image,
-      //     });
-
-      //     return {
-      //       id: user.id,
-      //       email: user.email,
-      //       name: user.name,
-      //       image: user.image,
-      //     };
-      //   }
-
-      //   return null;
-      // }

@@ -99,31 +99,6 @@ export function LoginForm({
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   setLoading(true)
-  //   try {
-  //     const res = await fetch("/api/auth/register", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email, password }),
-  //     })
-
-  //     const data = await res.json()
-  //     if (res.ok) {
-  //       // Registration successful, redirect to login or auto-login
-  //       await signIn("credentials", { email, password, callbackUrl: "/register/user_details" })
-  //     } else {
-  //       alert(data.error || "Registration failed")
-  //     }
-  //   } catch (err) {
-  //     console.error(err)
-  //     alert("Something went wrong")
-  //   }
-  //   setLoading(false)
-  // }
-
-
 
   const googleRegister = () => {
     const state = crypto.randomUUID(); // import crypto from "crypto"
@@ -139,7 +114,7 @@ export function LoginForm({
 
     const googleUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
 
-    window.open(googleUrl, "_blank", "width=600,height=700");
+    window.open(googleUrl, "_blank", "width=600,height=600");
   };
 
   const githubRegister = async () => {

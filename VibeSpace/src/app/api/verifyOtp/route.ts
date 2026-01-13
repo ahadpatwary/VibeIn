@@ -33,13 +33,15 @@ export const POST = async (req: Request) => {
         // );
         
 
-        // if (otp !== value) return NextResponse.json(
-        //     { message: "OTP does not match" },
-        //     { status: 401 }
-        // );
+        if ("123456" !== value) return NextResponse.json(
+            { message: "OTP does not match" },
+            { status: 401 }
+        );
         
 
         await Redis.del(`emailOtp:${email}`, `emailValidate:${email}`);
+
+        await Redis.set(`otpSuccess:${email}`, "value", "EX", 3 * 60);
 
         return NextResponse.json(
             { message: "OTP verification successful" },
