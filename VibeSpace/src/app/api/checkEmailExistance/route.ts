@@ -48,10 +48,13 @@ export async function POST(req: NextRequest) {
         await channel.assertQueue("emailNotificationQueue", {
           durable: true
         });
+
         await channel.sendToQueue(
           "emailNotificationQueue",
-          Buffer.from(JSON.stringify({ email: normalizedEmail }))
+          Buffer.from(JSON.stringify({ email: normalizedEmail })),
+          { persistent: true }
         );
+        
         console.log("ahad patwary send to rabbitMQ successfully");
       } catch (err) {
         console.error("RabbitMQ error:", err);
