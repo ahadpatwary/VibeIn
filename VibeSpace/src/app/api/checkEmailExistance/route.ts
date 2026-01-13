@@ -44,6 +44,10 @@ export async function POST(req: NextRequest) {
 
       try {
         const channel = await getRabbitChannel();
+
+        await channel.assertQueue("emailNotificationQueue", {
+          durable: true
+        });
         await channel.sendToQueue(
           "emailNotificationQueue",
           Buffer.from(JSON.stringify({ email: normalizedEmail }))
