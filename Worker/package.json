@@ -12,6 +12,7 @@
     "@types/ioredis": "^5.0.0",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^25.0.2",
+    "@types/nodemailer": "^7.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
