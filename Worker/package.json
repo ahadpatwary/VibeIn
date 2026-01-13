@@ -19,6 +19,7 @@
     "amqplib": "^0.10.9",
     "dotenv": "^17.2.3",
     "ioredis": "^5.8.2",
-    "mongoose": "^9.0.2"
+    "mongoose": "^9.0.2",
+    "nodemailer": "^7.0.12"
   }
 }
