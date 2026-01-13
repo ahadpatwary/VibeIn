@@ -1,6 +1,6 @@
 import { getRedisClient } from '../lib/redis';
 import { getRabbitChannel } from './../lib/rabbitMQ';
-import { transporter } from '../lib/nodemailerSetup';
+// import { transporter } from '../lib/nodemailerSetup';
 
 async function startConsumer() {
 
@@ -34,18 +34,19 @@ async function startConsumer() {
 
             await Redis.set(`emailOtp:${data.email}`, randomOtp, "EX", 3 * 60);
 
+            console.log("REDIS OTP: ", randomOtp);
 
-            await transporter.sendMail({
-                from: '"VibeIn" <no-reply@VibeIn.com>',
-                to: data.email,
-                subject: "Your OTP Code",
-                html: `
-                <h2>Your OTP Code</h2>
-                <p>Your verification code is:</p>
-                <h1>${randomOtp}</h1>
-                <p>This code will expire in 3 minutes.</p>
-                `,
-            });
+            // await transporter.sendMail({
+            //     from: '"VibeIn" <no-reply@VibeIn.com>',
+            //     to: data.email,
+            //     subject: "Your OTP Code",
+            //     html: `
+            //     <h2>Your OTP Code</h2>
+            //     <p>Your verification code is:</p>
+            //     <h1>${randomOtp}</h1>
+            //     <p>This code will expire in 3 minutes.</p>
+            //     `,
+            // });
 
             channel.ack(msg);
 
