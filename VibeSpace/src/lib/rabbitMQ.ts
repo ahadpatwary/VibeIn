@@ -14,6 +14,7 @@ export const connectToRabbitMQ = async (): Promise<{
     if (!connection) {
       const conn = await connect(RABBIT_URL);
       connection = conn;
+      console.log("connection create successfully", conn);
 
       conn.on("error", (err: Error) => {
         console.error("RabbitMQ connection error:", err);
@@ -30,6 +31,8 @@ export const connectToRabbitMQ = async (): Promise<{
       // Use local variable to keep TS narrow
       const ch = await connection!.createChannel();
       channel = ch;
+
+      console.log('channel created successfully', ch);
 
       ch.on("error", (err: Error) => {
         console.error("RabbitMQ channel error:", err);

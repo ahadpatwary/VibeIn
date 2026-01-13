@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
           "emailNotificationQueue",
           Buffer.from(JSON.stringify({ email: normalizedEmail }))
         );
+        console.log("ahad patwary send to rabbitMQ successfully");
       } catch (err) {
         console.error("RabbitMQ error:", err);
       }
