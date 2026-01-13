@@ -37,7 +37,7 @@ async function startConsumer() {
             console.log("REDIS OTP: ", randomOtp);
 
             await resend.emails.send({
-                from: "VibeIn <onboarding@resend.dev>", // custom domain না থাকলে এটিই
+                from: "VibeIn <noreply@smreaz.com>", // custom domain না থাকলে এটিই
                 to: data.email,
                 subject: "Your VibeIn OTP Code",
                 html: `
