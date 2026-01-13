@@ -27,13 +27,13 @@ export const POST = async (req: Request) => {
         
 
         const otp = await Redis.get(`emailOtp:${email}`);
-        // if (!otp)  return NextResponse.json(
-        //     { message: "OTP expired" },
-        //     { status: 400 }
-        // );
+        if (!otp)  return NextResponse.json(
+            { message: "OTP expired" },
+            { status: 400 }
+        );
         
 
-        if ("123456" !== value) return NextResponse.json(
+        if (otp !== value) return NextResponse.json(
             { message: "OTP does not match" },
             { status: 401 }
         );

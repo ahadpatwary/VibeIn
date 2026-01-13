@@ -1,4 +1,6 @@
-import { connectToRabbitMQ, getRabbitChannel } from './../lib/rabbitMQ';
+import { getRedisClient } from '../lib/redis';
+import { getRabbitChannel } from './../lib/rabbitMQ';
+import { transporter } from '../lib/nodemailerSetup';
 
 async function startConsumer() {
 
@@ -23,23 +25,36 @@ async function startConsumer() {
             const data = JSON.parse(content);
 
             console.log("Received message:", data);
-            // data.email এখানে পাওয়া যাবে
 
-            // 👉 এখানে email send logic লিখবে
-            // await sendEmail(data.email);
+            const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-            // ✅ successful হলে acknowledge
+            const Redis = getRedisClient();
+
+            if(!Redis) return;
+
+            await Redis.set(`emailOtp:${data.email}`, randomOtp, "EX", 3 * 60);
+
+
+            await transporter.sendMail({
+                from: '"VibeIn" <no-reply@VibeIn.com>',
+                to: data.email,
+                subject: "Your OTP Code",
+                html: `
+                <h2>Your OTP Code</h2>
+                <p>Your verification code is:</p>
+                <h1>${randomOtp}</h1>
+                <p>This code will expire in 3 minutes.</p>
+                `,
+            });
+
             channel.ack(msg);
+
         } catch (err) {
             console.error("Error processing message", err);
-
-            // ❌ error হলে requeue false (না হলে infinite loop হবে)
             channel.nack(msg, false, false);
         }
         },
-        {
-            noAck: false, // IMPORTANT
-        }
+        { noAck: false }
     );
 }
 
