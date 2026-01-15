@@ -12,8 +12,6 @@ async function startConsumer() {
         durable: true,
     });
 
-    console.log("Waiting for messages...");
-
     channel.consume(
         QUEUE_NAME,
         async (msg) => {
@@ -33,8 +31,6 @@ async function startConsumer() {
             if(!Redis) return;
 
             await Redis.set(`emailOtp:${data.email}`, randomOtp, "EX", 3 * 60);
-
-            console.log("REDIS OTP: ", randomOtp);
 
             await resend.emails.send({
                 from: "VibeIn <noreply@smreaz.com>", // custom domain না থাকলে এটিই

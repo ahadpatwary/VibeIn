@@ -125,7 +125,7 @@ export function LoginForm({
       const session = await getSession();
       const userId = session?.user.id;
 
-      await fetch("/api/auth/refreshTokenIssue", { // ekhane ekta problme ache,, redirect hoyar por eta kaj korebe na // pore thik korbo,
+      await fetch("/api/auth/refreshTokenIssue", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, email }),
@@ -141,7 +141,7 @@ export function LoginForm({
   const handleSend = async () => {
 
     try {
-      //user jodi age login thake tobe user exist lekha asbe
+
       const res = await fetch("/api/checkEmailExistance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
