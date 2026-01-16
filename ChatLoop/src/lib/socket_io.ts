@@ -7,16 +7,14 @@ import Redis from 'ioredis';
 
 let socketConnection: { io: Server; server: http.Server } | null = null;
 
-/**
- * Initialize Socket.IO with Redis adapter
- * pubClient and subClient must be connected
- */
+
 export const initializeSocketIO = (pubClient: Redis, subClient: Redis) => {
     const server = http.createServer(app);
 
     const io = new Server(server, {
         cors: {
             origin: [
+                'https://smreaz.com',
                 'http://localhost:3000',
                 'https://vibe-in-teal.vercel.app'
             ],
