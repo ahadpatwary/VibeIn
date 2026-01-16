@@ -14,7 +14,6 @@ import { getCsrfToken, signIn, useSession } from "next-auth/react"
 import { useState } from "react"
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
-import openOAuthWindow from "@/lib/authWindow"
 import { useEffect } from 'react'
 
 import {

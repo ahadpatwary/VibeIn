@@ -55,7 +55,6 @@ export async function POST(req: NextRequest) {
           { persistent: true }
         );
         
-        console.log("ahad patwary send to rabbitMQ successfully");
       } catch (err) {
         console.error("RabbitMQ error:", err);
       }

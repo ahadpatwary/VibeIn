@@ -28,7 +28,6 @@ export const authOptions: NextAuthOptions = {
         payload: { type: "text" },
       },
 
-      // const isValid = await bcrypt.compare(credentials.password, user.password);
       async authorize(credentials) {
         try {
   

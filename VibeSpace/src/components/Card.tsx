@@ -15,23 +15,42 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation"
+
 
 export function CardDemo() {
+  const router = useRouter();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Email + Password login (Credentials Provider)
-    const res = await signIn("credentials", {
-      // redirect: true,
-      email,
-      password,
-      // callbackUrl: "/feed", // successful login হলে redirect হবে
+    const res = await fetch('', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     })
 
-    console.log("Login response:", res)
+    if(!res.ok){
+      console.log("some error emist");
+      return;
+    }
+
+    const data = res.json();
+
+
+
+    await signIn("credentials", {
+       payload: JSON.stringify({
+        id: data.message,
+        email,
+      }),
+      redirect: false,
+    })
+
+    router.push('/feed')
+    
   }
 
   return (
