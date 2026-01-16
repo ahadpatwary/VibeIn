@@ -26,7 +26,7 @@ export function CardDemo() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const res = await fetch('', {
+    const res = await fetch('/api/auth/login', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -37,7 +37,7 @@ export function CardDemo() {
       return;
     }
 
-    const data = res.json();
+    const data = await res.json();
 
 
 
