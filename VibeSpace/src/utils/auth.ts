@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
+// import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDb } from "@/lib/db";
 import User from "@/models/User";
@@ -36,9 +36,16 @@ export const authOptions: NextAuthOptions = {
 
           if (!data || !data.email) return null;
 
-          const Redis = await getRedisClient();
+          const Redis = getRedisClient();
 
           if(!Redis) return null;
+
+          if(data.id){
+            return {
+              id: data.id,
+              email: data.email,
+            }
+          }
 
           const verifyKey = await Redis.get(`otpSuccess:${data.email}`);
           await Redis.del(`otpSuccess:${data.email}`);
@@ -48,12 +55,7 @@ export const authOptions: NextAuthOptions = {
 
           await connectToDb();
 
-          if(data.id){
-            return {
-              id: data.id,
-              email: data.email,
-            }
-          }
+
 
           const user = await User.create({
             email: data.email,

@@ -38,11 +38,13 @@ export function CardDemo() {
     }
 
     const data = await res.json();
+    console.log("data", data);
 
 
+    console.log("id", data.message, "email", email);
 
     await signIn("credentials", {
-       payload: JSON.stringify({
+      payload: JSON.stringify({
         id: data.message,
         email,
       }),
