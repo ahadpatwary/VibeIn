@@ -1,5 +1,6 @@
 'use client'
 
+import { getSession } from "next-auth/react";
 import { signIn } from "next-auth/react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -38,10 +39,6 @@ export function CardDemo() {
     }
 
     const data = await res.json();
-    console.log("data", data);
-
-
-    console.log("id", data.message, "email", email);
 
     await signIn("credentials", {
       payload: JSON.stringify({
@@ -52,6 +49,15 @@ export function CardDemo() {
     })
 
     router.push('/feed')
+
+    const session = await getSession();
+    const userId = session?.user.id;
+
+    await fetch("/api/auth/refreshTokenIssue", { 
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, email }),
+    })
     
   }
 
