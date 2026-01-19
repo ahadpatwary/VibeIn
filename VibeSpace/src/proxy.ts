@@ -28,17 +28,27 @@ export async function proxy(req: NextRequest) {
   `.replace(/\s{2,}/g, " ").trim(); // Remove extra spaces & newlines
 
   // 4️⃣ Set Headers
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set("x-nonce", nonce);
-  requestHeaders.set("Content-Security-Policy", cspHeader);
-
+  const contentSecurityPolicyHeaderValue = cspHeader
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+ 
+  const requestHeaders = new Headers(req.headers)
+  requestHeaders.set('x-nonce', nonce)
+ 
+  requestHeaders.set(
+    'Content-Security-Policy',
+    contentSecurityPolicyHeaderValue
+  )
+ 
   const response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
-  });
-
-  response.headers.set("Content-Security-Policy", cspHeader);
+  })
+  response.headers.set(
+    'Content-Security-Policy',
+    contentSecurityPolicyHeaderValue
+  )
 
   // 5️⃣ Auth / Route Logic
   const { pathname } = req.nextUrl;
@@ -66,6 +76,19 @@ export async function proxy(req: NextRequest) {
 // 6️⃣ Matcher Config
 export const config = {
   matcher: [
-    "/((?!api/auth|api/checkEmailExistance|api/verifyOtp|_next/static|_next/image|favicon.ico).*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    {
+      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+      ],
+    },
   ],
-};
+}
