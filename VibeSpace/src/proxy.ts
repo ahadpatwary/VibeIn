@@ -16,10 +16,11 @@ export async function proxy(req: NextRequest) {
   // 3️⃣ Content Security Policy
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com;
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
     style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.google-analytics.com;
     font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' https://www.google-analytics.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
