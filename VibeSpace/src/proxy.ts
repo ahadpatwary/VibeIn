@@ -16,8 +16,8 @@ export async function proxy(req: NextRequest) {
   // 3️⃣ Content Security Policy
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline';
-    style-src 'self' 'unsafe-inline';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic';
+    style-src 'self' 'nonce-${nonce}';
     img-src 'self' blob: data:;
     font-src 'self';
     object-src 'none';
@@ -25,7 +25,7 @@ export async function proxy(req: NextRequest) {
     form-action 'self';
     frame-ancestors 'none';
     upgrade-insecure-requests;
-  `.replace(/\s{2,}/g, " ").trim(); // Remove extra spaces & newlines
+  `
 
   // 4️⃣ Set Headers
   const contentSecurityPolicyHeaderValue = cspHeader
