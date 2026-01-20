@@ -3,12 +3,14 @@
 import { ShowCard } from '@/components/ShowCard';
 import { CustomWrapper } from '@/components/CustomWrapper'
 import { MenubarDemo } from '@/components/Bar';
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { useCards }  from '@/hooks/useFetchCards';
 
-function Home() {
-  const { activeCards } = useCards();
+ function Feed() {
   const { data: session } = useSession()
+
+  const { activeCards } = useCards(session?.user.id!);
+
   return (
     <div className="w-full h-dvh flex flex-col">
     
@@ -20,11 +22,12 @@ function Home() {
             <ShowCard 
               key = {card._id} 
               cardId = {card._id} 
-              userId = {card.user}
-              title = {card.title} 
               image = {card.image?.url} 
+              title = {card.title} 
               description = {card.description} 
-              dot = { (session?.user.id == card.user) } 
+              dot = { (session?.user.id == card?.user._id) } 
+              userName= {card?.user.userName}
+              userProfile= {card?.user.userProfile}
             />
           )
         )} 
@@ -34,4 +37,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Feed;

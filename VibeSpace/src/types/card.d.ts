@@ -2,12 +2,14 @@
 declare global {
     interface ICard{
         _id: Types.ObjectId;
-        user: Types.ObjectId;
-        name: string;
-        proPic:{
-            url: string;
-            public_id: string;
-        };         
+        user: {
+            _id: string,
+            userName: string,
+            userProfile: {
+                url: string,
+                public_id: string
+            }
+        };     
         image?: {
             url: string;
             public_id: string;

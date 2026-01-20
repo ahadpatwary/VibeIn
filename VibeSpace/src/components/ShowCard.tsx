@@ -21,8 +21,13 @@ interface CardProps {
   cardId?: string;
   userId?: string;
   title?: string;
-  description?: string;
   image?: string;
+  description?: string;
+  userName?: string;
+  userProfile?: {
+    url: string,
+    public_id: string,
+  }
   dot?: boolean;
 }
 
@@ -36,33 +41,19 @@ interface dataType {
 
 function ShowCard({
   cardId,
-  image,
   userId,
+  title, 
+  image,
+  description,
+  userName,
+  userProfile,
   dot = false,
 }: CardProps) {
 
   const [state, setState] = useState<string>("");
-  const [profilePic, setProfilePic] = useState<string>("");
-  const [userName, setUserNmae] = useState<string>("");
- 
-
-  useEffect(() => {
-    const fetchState = async () => {
-      try {
-        const result = await currentState(cardId, "videoPrivacy");
-        setState(result);
-        const data: dataType = await getData(userId as string, "User", ["name", "picture"]);
-        setUserNmae(data.name);
-        setProfilePic(data.picture.url);
-      } catch (error) {
-        console.error("Error fetching videoStatus:", error);
-      }
-    };
-    if (cardId) fetchState();
-  }, [cardId]);
 
   const {
-    title,
+    // title,
     setTitle,
     content,
     setContent,
@@ -97,7 +88,6 @@ function ShowCard({
         m-2 sm:m-2 md:m-2 lg:m-3
       "
     >
-      {/* Image */}
       <div
         className="
           relative 
@@ -119,9 +109,15 @@ function ShowCard({
         />
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col justify-between h-[120px] sm:h-[130px] md:h-[140px] lg:h-[150px] w-full">
-        {/* Top Buttons */}
+     
+      <div 
+        className="
+          flex flex-col justify-between 
+          h-[120px] sm:h-[130px] md:h-[140px] lg:h-[150px] 
+          w-full
+        "
+      >
+        
         <div className="flex justify-between items-center gap-2 my-2">
           <LikeButton cardId={cardId} />
           {dot ? (
@@ -148,7 +144,7 @@ function ShowCard({
                     handleUpdate={handleUpdate}
                   >
                     <ContentField
-                      title={title}
+                      title={title!}
                       setTitle={setTitle}
                       content={content}
                       setContent={setContent}
@@ -171,10 +167,9 @@ function ShowCard({
           )}
         </div>
 
-        {/* User Info */}
         <div className="flex h-full w-full items-center gap-4">
           <Button className="h-15 w-15 rounded-full cursor-pointer transfarent">
-            <AvatarDemo src={profilePic} />
+            <AvatarDemo src={userProfile?.url} />
           </Button>
 
           <div className="flex flex-col w-full overflow-hidden">
@@ -186,6 +181,7 @@ function ShowCard({
             </p>
           </div>
         </div>
+
       </div>
     </div>
   );

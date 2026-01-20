@@ -9,8 +9,9 @@ export async function GET() {
     const allActiveCards = await Card.find({
       videoPrivacy: { $ne: "private" },  // NOT EQUAL properly
     })
+      .populate('user', '_id name picture')
       .sort({ createdAt: -1 })           // createAt → createdAt হওয়া উচিত
-      .skip(1)
+      .skip(0)
       .limit(25)
     ;
 
