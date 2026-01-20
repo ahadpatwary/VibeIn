@@ -4,8 +4,8 @@ declare global {
         _id: Types.ObjectId;
         user: {
             _id: string,
-            userName: string,
-            userProfile: {
+            name: string,
+            picture: {
                 url: string,
                 public_id: string
             }

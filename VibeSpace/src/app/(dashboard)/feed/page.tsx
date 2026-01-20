@@ -26,8 +26,8 @@ import { useCards }  from '@/hooks/useFetchCards';
               title = {card.title} 
               description = {card.description} 
               dot = { (session?.user.id == card?.user._id) } 
-              userName= {card?.user.userName}
-              userProfile= {card?.user.userProfile}
+              userName= {card?.user.name}
+              userProfile= {card?.user.picture}
             />
           )
         )} 
