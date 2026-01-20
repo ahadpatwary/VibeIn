@@ -12,7 +12,7 @@ function Home() {
       <MenubarDemo />
 
      
-      <CustomWrapper>
+      {/* <CustomWrapper>
         {data.map((card) => (
           <ShowCard
             key={card._id}
@@ -24,7 +24,7 @@ function Home() {
             dot={false}
           />
         ))}
-      </CustomWrapper>
+      </CustomWrapper> */}
      
     </div>
   );

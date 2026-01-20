@@ -11,7 +11,7 @@ function SavePost() {
     <div className="w-full h-dvh flex flex-col">
      
       <MenubarDemo />
-
+{/* 
       <CustomWrapper>
         {
           data.map((card) => ( 
@@ -26,7 +26,7 @@ function SavePost() {
             />
           )
         )}
-      </CustomWrapper>
+      </CustomWrapper> */}
     </div>
   );
 }

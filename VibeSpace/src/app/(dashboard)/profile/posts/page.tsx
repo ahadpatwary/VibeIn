@@ -12,23 +12,24 @@ function Home() {
 
 
   return (
-    <ScrollArea className = "w-full p-2 overflow-y-auto">
-        <div className=" flex flex-wrap justify-around items-around ">
+    // <ScrollArea className = "w-full p-2 overflow-y-auto">
+    //     <div className=" flex flex-wrap justify-around items-around ">
 
-            {data.map((card) => (
+    //         {data.map((card) => (
                 
-                <ShowCard
-                    key={card._id}
-                    cardId={card._id}
-                    userId={card.user}
-                    title={card.title}
-                    image={card.image?.url}
-                    description={card.description}
-                    dot={true}
-                />
-            ))}
-        </div>
-    </ScrollArea>
+    //             <ShowCard
+    //                 key={card._id}
+    //                 cardId={card._id}
+    //                 userId={card.user}
+    //                 title={card.title}
+    //                 image={card.image?.url}
+    //                 description={card.description}
+    //                 dot={true}
+    //             />
+    //         ))}
+    //     </div>
+    // </ScrollArea>
+    <p>ahad</p>
   );
 }
 
