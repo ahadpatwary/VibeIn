@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner"
 import StoreProvider from './StoreProvider';
 import AuthProvider from './SessionProvider'
 import { headers } from 'next/headers'
+import Script from 'next/script';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,22 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
+          strategy="afterInteractive"
+          nonce={nonce!}
+        />
+        <Script id="gtag-init" strategy="afterInteractive" nonce={nonce!}>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXX');
+          `}
+        </Script>
+      </head>
       <body suppressHydrationWarning>
         <AuthProvider>
           <StoreProvider>
