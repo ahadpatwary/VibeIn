@@ -22,7 +22,8 @@ export async function proxy(req: NextRequest) {
       data: https://www.google-analytics.com
       https://res.cloudinary.com
       https://lh3.googleusercontent.com
-      https://avatars.githubusercontent.com;
+      https://avatars.githubusercontent.com
+    ;
     font-src 'self' https://fonts.gstatic.com;
     connect-src 'self' https://www.google-analytics.com;
     object-src 'none';
@@ -62,7 +63,8 @@ export async function proxy(req: NextRequest) {
   const isPublic =
     pathname === "/" ||
     pathname === "/login" ||
-    pathname === "/register";
+    pathname === "/register"
+  ;
 
   // Logged-in user visiting public page → redirect to feed
   if (token && isPublic) {
