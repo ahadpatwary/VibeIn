@@ -18,7 +18,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
+          src="https://www.googletagmanager.com/gtag/js?iid=G-8DXCNLS6XL"
           strategy="afterInteractive"
           nonce={nonce!}
         />
@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-XXXXXXX');
+            gtag('config', 'G-8DXCNLS6XL');
           `}
         </Script>
       </head>
