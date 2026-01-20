@@ -1,15 +1,22 @@
-'use client';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from "react";
+import debounce from "lodash.debounce";
 
-export const  useIsMobile = (breakpoint = 468) => {
+export const useIsMobile = () =>{
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < breakpoint);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, [breakpoint]);
+    const check = debounce(() => {
+      setIsMobile(window.innerWidth < 768);
+    }, 200);
+
+    check(); // initial check
+    window.addEventListener("resize", check);
+
+    return () => {
+      window.removeEventListener("resize", check);
+      check.cancel(); // cleanup lodash debounce
+    };
+  }, []);
 
   return isMobile;
 }

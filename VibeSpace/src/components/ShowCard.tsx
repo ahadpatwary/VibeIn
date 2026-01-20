@@ -31,13 +31,6 @@ interface CardProps {
   dot?: boolean;
 }
 
-interface dataType {
-  name: string;
-  picture: {
-    url: string;
-    public_id: string;
-  };
-}
 
 function ShowCard({
   cardId,

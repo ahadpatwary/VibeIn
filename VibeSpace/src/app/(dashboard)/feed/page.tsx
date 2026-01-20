@@ -18,7 +18,7 @@ import { useCards }  from '@/hooks/useFetchCards';
      
       <CustomWrapper > 
         {
-          activeCards.map((card) => ( 
+          activeCards?.map((card) => ( 
             <ShowCard 
               key = {card._id} 
               cardId = {card._id} 

@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
 
 interface FetchCardResponse {
-  activeCards?: ICard[];
-}
-
-interface UseCardsReturn {
   activeCards: ICard[];
 }
 
-export const useCards = (userId: string): UseCardsReturn => {
+export const useCards = (userId: string): FetchCardResponse => {
 
   const [activeCards, setActiveCards] = useState<ICard[]>([]);
 
