@@ -3,7 +3,6 @@ import { ThemeProvider } from "@/components/TthemeProvider";
 import { Toaster } from "@/components/ui/sonner"
 import StoreProvider from './StoreProvider';
 import AuthProvider from './SessionProvider'
-import { headers } from "next/headers";
 
 
 interface RootLayoutProps {
@@ -13,9 +12,6 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: "console.log('CSP works')" }} />
-      </head>
       <body suppressHydrationWarning>
         <AuthProvider>
           <StoreProvider>
