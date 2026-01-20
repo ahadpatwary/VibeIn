@@ -38,7 +38,7 @@ export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
           <ResizablePanel defaultSize={70} 
             minSize= {50}
           >
-            <ScrollArea className="w-full h-full overflow-y-auto scroll-smooth"> 
+            {/* <ScrollArea className="w-full h-full overflow-y-auto scroll-smooth"> 
               <CustomWrapper>
                 {post.map((card) => (
                   <ShowCard
@@ -52,7 +52,7 @@ export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
                   />
                 ))}
               </CustomWrapper>
-            </ScrollArea>
+            </ScrollArea> */}
 
           </ResizablePanel>
   
