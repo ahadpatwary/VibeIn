@@ -13,6 +13,18 @@ const nextConfig = {
         port: '', // usually empty
         pathname: '/**', // সব path allow
       },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '', // usually empty
+        pathname: '/**', // সব path allow
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        port: '', // usually empty
+        pathname: '/**', // সব path allow
+      },
     ],
   },
 };
