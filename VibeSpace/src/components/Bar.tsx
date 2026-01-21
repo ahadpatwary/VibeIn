@@ -30,7 +30,7 @@ export function MenubarDemo() {
   }
 
   return (
-    <nav className="w-full bg-background/90 backdrop-blur-sm border sticky top-0 z-10  ">
+    <nav className="w-full bg-background/90 backdrop-blur-sm border sticky top-0 z-30  ">
       <div className='max-w-[1280px] mx-auto py-2 w-full flex justify-between items-center'>
         <div className="flex h-[70%] border-2 w-[23%] border-black round">
           <input type="text " className="border-none outline-none p-1 w-[80%]"/>

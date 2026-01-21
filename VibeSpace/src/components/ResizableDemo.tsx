@@ -7,7 +7,8 @@ import { MenubarDemo } from '@/components/Bar';
 import { UserProfile } from '@/components/UserProfile';
 import { CustomWrapper } from '@/components/CustomWrapper';
 import { ScrollArea } from "./ui/scroll-area";
-
+import { Card } from "./ui/card";
+import CarouselDemo from "./Embla";
 
 interface DotProps {
   post: ICard[];
@@ -18,45 +19,33 @@ interface DotProps {
 export function ResizableDemo({ post, userId = "", Dot }: DotProps) {
 
   return (
+    <div className="flex justify-around"> 
+      <div className="flex flex-col min-w-[310px] max-w-[700px] w-full"> 
+      
 
-      <div className="h-dvh w-full flex flex-col"> 
-        <MenubarDemo />
-
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="flex! flex-1!"
-        >
-
-       
-
-          <ResizablePanel defaultSize={30} minSize={30}>
             <UserProfile dot={Dot}  userId = {userId} />
-          </ResizablePanel>
 
-          <ResizableHandle />
-
-          <ResizablePanel defaultSize={70} 
-            minSize= {50}
-          >
-            {/* <ScrollArea className="w-full h-full overflow-y-auto scroll-smooth"> 
+            <ScrollArea className="w-full h-full overflow-y-auto scroll-smooth"> 
               <CustomWrapper>
                 {post.map((card) => (
-                  <ShowCard
-                    key={card._id}
-                    cardId={card._id}
-                    userId={card.user}
-                    title={card.title}
-                    image={card.image?.url}
-                    description={card.description}
-                    dot={Dot}
+                  <ShowCard 
+                    key = {card._id} 
+                    cardId = {card._id} 
+                    userId= {card?.user._id}
+                    image = {card.image?.url} 
+                    title = {card.title} 
+                    description = {card.description} 
+                    dot = { Dot } 
+                    userName= {card?.user.name}
+                    userProfile= {card?.user.picture}
                   />
                 ))}
               </CustomWrapper>
-            </ScrollArea> */}
-
-          </ResizablePanel>
-  
-        </ResizablePanelGroup>
+            </ScrollArea>
+        </div>
+<Card className='h-[500px] max-w-[350px] m-2 flex-1 '>
+        < CarouselDemo />
+        </Card>
         </div>
     );
 }

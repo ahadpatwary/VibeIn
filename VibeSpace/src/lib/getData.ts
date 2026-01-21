@@ -1,29 +1,20 @@
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  error?: string;
-}
 
-export async function getData<T = unknown>(
-  id: string,
-  model: "User" | "Card",
-  properties: string[]
-): Promise<T> {
+export async function getData(id: string){
   try {
 
     const response = await fetch("/api/getData", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, model, properties }),
+      body: JSON.stringify({ id }),
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      console.error("❌ API Error:", text);
-      throw new Error(`API request failed: ${text}`);
-    }
+    // if (!response.ok) {
+    //   const text = await response.text();
+    //   console.error("❌ API Error:", text);
+    //   throw new Error(`API request failed: ${text}`);
+    // }
 
-    const data: ApiResponse<T> = await response.json();
+    const data = await response.json();
 
     if (!data.success) {
       throw new Error(data.error || "API returned unsuccessful response");

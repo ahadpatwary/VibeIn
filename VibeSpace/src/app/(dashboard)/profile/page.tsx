@@ -9,16 +9,13 @@ import { UserProfile } from '@/components/UserProfile';
 function Profile (){
 
   const isMobile = useIsMobile();
-  const { data } = useFeed("cards");
+  const { data } = useFeed();
 
   return (
     !isMobile ? (
       <ResizableDemo  post = {data} Dot ={true} />
     ) : (
-      <div className="w-full h-dvh flex flex-col">
-        <MenubarDemo />
-        <UserProfile dot={true}  userId = "" />
-      </div>
+      <UserProfile dot={true}  userId = "" />
     )
   )
 }

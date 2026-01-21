@@ -5,8 +5,7 @@ import StoreProvider from './StoreProvider';
 import AuthProvider from './SessionProvider'
 import { headers } from 'next/headers'
 import Script from 'next/script';
-import { MenubarDemo } from '@/components/Bar';
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -33,7 +32,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           `}
         </Script>
       </head>
-      <body suppressHydrationWarning className="flex flex-col min-h-screen max-h-screen min-w-screen">
+      <body suppressHydrationWarning className="min-h-screen min-w-screen m-0 p-0">
         <AuthProvider>
           <StoreProvider>
             <ThemeProvider
@@ -43,13 +42,14 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               disableTransitionOnChange
             >
               
-              <MenubarDemo />
+              {/* <MenubarDemo />
               <ScrollArea className="w-full overflow-y-auto">
               <div className="min-h-0 max-w-[1280px] mx-auto">
                 {children}
               </div>
-              </ScrollArea>
+              </ScrollArea> */}
 
+              {children}
 
             < Toaster />
             </ThemeProvider>

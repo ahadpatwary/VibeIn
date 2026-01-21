@@ -12,10 +12,11 @@ interface UserData {
   savedCards?: ICard[];
 }
 
-export default function useFeed(property: keyof UserData, owner: boolean = true, userId?: string) {
+export default function useFeed() {
   const [data, setData] = useState<ICard[]>([]);
   const { data: session } = useSession();
-  const id = owner ? session?.user.id : userId ;
+  const id = session?.user.id || "12345"
+
   useEffect(() => {
     ;(async () => {
       try {
@@ -23,21 +24,9 @@ export default function useFeed(property: keyof UserData, owner: boolean = true,
         if (!id) throw new Error("User ID missing");
 
         // এখানে generic টাইপ পাস করা হলো ✅
-        const result = await getData<UserData>(id, "User", [property]);
+        const result = await getData(id);
 
-        const cards = Array.isArray(result[property]) ? result[property]! : [];
-
-        if (property === "cards" && owner) {
-          setData(cards);
-          return;
-        }
-
-        // শুধু public post রাখবে
-        const publicPosts = cards.filter(
-          (card) => card.videoPrivacy === "public"
-        );
-
-        setData(publicPosts);
+        setData(result.cards || []);
       } catch (err) {
         console.error("useFeed error:", err);
         if (err instanceof Error) {
@@ -45,7 +34,7 @@ export default function useFeed(property: keyof UserData, owner: boolean = true,
         }
       } 
     })();
-  }, [property, owner, userId]);
+  }, [ id]);
 
   return { data };
 }
