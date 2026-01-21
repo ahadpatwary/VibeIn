@@ -30,25 +30,27 @@ export function MenubarDemo() {
   }
 
   return (
-    <div className="z-10 flex justify-between items-center border-b h-12 px-4 bg-background/90 backdrop-blur-sm flex-none sticky top-0 z-10">
-      <div className="flex h-[70%] border-2 w-[23%] border-black round">
-        <input type="text " className="border-none outline-none p-1 w-[80%]"/>
-        <button className=" w-[20%] bg-blue-300 p-2"><MdPersonSearch /></button>
+    <nav className="w-full bg-background/90 backdrop-blur-sm border sticky top-0 z-10  ">
+      <div className='max-w-[1280px] mx-auto py-2 w-full flex justify-between items-center'>
+        <div className="flex h-[70%] border-2 w-[23%] border-black round">
+          <input type="text " className="border-none outline-none p-1 w-[80%]"/>
+          <button className=" w-[20%] bg-blue-300 p-2"><MdPersonSearch /></button>
+        </div>
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`relative pb-1 ${
+              pathname === link.href
+                ? "underline decoration-blue-500 underline-offset-4 font-semibold"
+                : "hover:underline"
+            }`}
+          >
+            <link.name/>
+          </Link>
+        ))}
+        <ModeToggle />
       </div>
-      {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={`relative pb-1 ${
-            pathname === link.href
-              ? "underline decoration-blue-500 underline-offset-4 font-semibold"
-              : "hover:underline"
-          }`}
-        >
-          <link.name/>
-        </Link>
-      ))}
-      <ModeToggle />
-    </div>
+    </nav>
   );
 }

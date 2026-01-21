@@ -76,7 +76,7 @@ function ShowCard({
         border border-black 
         shadow-md 
         rounded-md 
-        m-2 sm:m-2 md:m-2 lg:m-3
+       mt-2
       "
     >
       <div className="flex h-full m-2 w-full items-center gap-4 p-0 m-0">
