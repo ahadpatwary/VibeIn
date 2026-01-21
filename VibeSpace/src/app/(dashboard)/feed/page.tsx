@@ -8,11 +8,42 @@ import { useCards }  from '@/hooks/useFetchCards';
 import { Card, CardContent } from "@/components/ui/card"
 import { UserProfile } from '@/components/UserProfile';
 import CarouselDemo from '@/components/Embla';
+import { useEffect, useState} from 'react';
 
 function Feed() {
   const { data: session } = useSession()
 
   const { activeCards } = useCards(session?.user.id!);
+  const [hide, setHide] = useState(false);
+  const [profileHide, setProfileHide] = useState(false);
+
+useEffect(() => {
+  const handleResize = () => {
+    if (window.innerWidth < 1050) {
+      setHide(true);
+    } else {
+      setHide(false);
+    }
+
+    if(window.innerWidth < 668){
+      setProfileHide(true);
+    } else {
+      setProfileHide(false);
+    }
+  };
+
+  // প্রথমবার load হওয়ার সময় check
+  handleResize();
+
+  // resize হলে call হবে
+  window.addEventListener("resize", handleResize);
+
+  // cleanup (খুব important)
+  return () => {
+    window.removeEventListener("resize", handleResize);
+  };
+}, []);
+
 
   return (
     <div className="w-full h-dvh flex flex-col">
@@ -20,11 +51,15 @@ function Feed() {
     <MenubarDemo />
     <div className='w-full flex justify-center'>
     <div className='flex max-w-[1600px] w-full ml-2 mr-2 w-auto justify-around'>
-      <Card className='h-[500px] max-w-[350px] flex-1 m-2'>
+      <>
+      {
+        !profileHide &&       <Card className='h-[500px] max-w-[35%] flex-1 m-2'>
         <UserProfile dot={true}  userId = "" />
       </Card>
+      }
+      </>
 
-      <div className='flex-2 max-w[700px]'>
+      <div className='flex-2 max-w[700px] min-w-[400px]'>
               <CustomWrapper > 
         {
           activeCards?.map((card) => ( 
@@ -46,7 +81,7 @@ function Feed() {
 
       <>
       {
-        window.innerWidth > 1000 && <Card className='h-[500px] max-w-[350px] m-2 flex-1 '>
+        !hide && <Card className='h-[500px] max-w-[350px] m-2 flex-1 '>
         < CarouselDemo />
         </Card>
       }

@@ -72,11 +72,9 @@ function ShowCard({
     <div
       className="
         w-auto
-        mx-auto 
         p-2
         border border-black 
         shadow-md 
-        flex-1 
         rounded-md 
         m-2 sm:m-2 md:m-2 lg:m-3
       "
