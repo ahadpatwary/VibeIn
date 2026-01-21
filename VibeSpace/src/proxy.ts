@@ -5,56 +5,56 @@ import crypto from "crypto";
 
 export async function proxy(req: NextRequest) {
   // 1️⃣ Auth Token Check
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // const token = await getToken({
+  //   req,
+  //   secret: process.env.NEXTAUTH_SECRET,
+  // });
 
   // 2️⃣ Generate Nonce for CSP
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  // const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
-  // 3️⃣ Content Security Policy
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
-    style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
-    img-src 'self' blob:
-      data: https://www.google-analytics.com
-      https://res.cloudinary.com
-      https://lh3.googleusercontent.com
-      https://avatars.githubusercontent.com
-    ;
-    font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://www.google-analytics.com;
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-    upgrade-insecure-requests;
-  `
+  // // 3️⃣ Content Security Policy
+  // const cspHeader = `
+  //   default-src 'self';
+  //   script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
+  //   style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
+  //   img-src 'self' blob:
+  //     data: https://www.google-analytics.com
+  //     https://res.cloudinary.com
+  //     https://lh3.googleusercontent.com
+  //     https://avatars.githubusercontent.com
+  //   ;
+  //   font-src 'self' https://fonts.gstatic.com;
+  //   connect-src 'self' https://www.google-analytics.com;
+  //   object-src 'none';
+  //   base-uri 'self';
+  //   form-action 'self';
+  //   frame-ancestors 'none';
+  //   upgrade-insecure-requests;
+  // `
 
-  // 4️⃣ Set Headers
-  const contentSecurityPolicyHeaderValue = cspHeader
-    .replace(/\s{2,}/g, ' ')
-    .trim()
+  // // 4️⃣ Set Headers
+  // const contentSecurityPolicyHeaderValue = cspHeader
+  //   .replace(/\s{2,}/g, ' ')
+  //   .trim()
  
-  const requestHeaders = new Headers(req.headers)
-  requestHeaders.set('x-nonce', nonce)
+  // const requestHeaders = new Headers(req.headers)
+  // requestHeaders.set('x-nonce', nonce)
  
-  requestHeaders.set(
-    'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue
-  )
+  // requestHeaders.set(
+  //   'Content-Security-Policy',
+  //   contentSecurityPolicyHeaderValue
+  // )
  
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  })
-  response.headers.set(
-    'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue
-  )
+  // const response = NextResponse.next({
+  //   request: {
+  //     headers: requestHeaders,
+  //   },
+  // })
+  // response.headers.set(
+  //   'Content-Security-Policy',
+  //   contentSecurityPolicyHeaderValue
+  // )
 
   // 5️⃣ Auth / Route Logic
   const { pathname } = req.nextUrl;
@@ -67,17 +67,17 @@ export async function proxy(req: NextRequest) {
   ;
 
   // Logged-in user visiting public page → redirect to feed
-  if (token && isPublic) {
-    return NextResponse.redirect(new URL("/feed", req.url));
-  }
+  // if (token && isPublic) {
+  //   return NextResponse.redirect(new URL("/feed", req.url));
+  // }
 
-  // Logged-out user visiting protected page → redirect to login
-  if (!token && !isPublic) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  // // Logged-out user visiting protected page → redirect to login
+  // if (!token && !isPublic) {
+  //   return NextResponse.redirect(new URL("/login", req.url));
+  // }
 
-  // Otherwise, allow request
-  return response;
+  // // Otherwise, allow request
+  // return response;
 }
 
 // 6️⃣ Matcher Config

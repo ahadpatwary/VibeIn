@@ -3,6 +3,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ModeToggle from '@/components/Theam';
+import { FaUserFriends } from "react-icons/fa";
+import { IoNotificationsSharp } from "react-icons/io5";
+import { AiTwotoneHome } from "react-icons/ai";
+import { MdPersonSearch } from "react-icons/md";
+import { GiPowerLightning } from "react-icons/gi";
 
 export function MenubarDemo() {
   const pathname = usePathname();
@@ -13,11 +18,10 @@ export function MenubarDemo() {
   }, []);
 
   const links = [
-    { name: "Home", href: "/feed" },
-    { name: "Create", href: "/create-post" },
-    { name: "Like", href: "/like-posts" },
-    { name: "Save", href: "/save-posts" },
-    { name: "Profile", href: "/profile" },
+    { name: AiTwotoneHome, href: "/feed" },
+    { name: GiPowerLightning, href: '/features'},
+    { name: FaUserFriends, href:"/requests" },
+    { name: IoNotificationsSharp, href:"/notifications" },
   ];
 
   if (!mounted) {
@@ -27,6 +31,10 @@ export function MenubarDemo() {
 
   return (
     <div className="z-10 flex justify-between items-center border-b h-12 px-4 bg-background/90 backdrop-blur-sm flex-none sticky top-0 z-10">
+      <div className="flex h-[70%] border-2 w-[23%] border-black round">
+        <input type="text " className="border-none outline-none p-1 w-[80%]"/>
+        <button className=" w-[20%] bg-blue-300 p-2"><MdPersonSearch /></button>
+      </div>
       {links.map((link) => (
         <Link
           key={link.href}
@@ -37,7 +45,7 @@ export function MenubarDemo() {
               : "hover:underline"
           }`}
         >
-          {link.name}
+          <link.name/>
         </Link>
       ))}
       <ModeToggle />

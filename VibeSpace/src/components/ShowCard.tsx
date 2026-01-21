@@ -16,6 +16,8 @@ import { ContentField } from "@/components/contentField";
 import { useEffect, useState } from "react";
 import { useDelete } from "@/hooks/useDelete";
 import { getData } from "@/lib/getData";
+import { FaComments } from "react-icons/fa6";
+import { PiShareFatFill } from "react-icons/pi";
 
 interface CardProps {
   cardId?: string;
@@ -69,11 +71,9 @@ function ShowCard({
   return (
     <div
       className="
-        w-full 
-        max-w-[350px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] 
-        min-w-[340px] 
+        w-auto
         mx-auto 
-        p-4 
+        p-2
         border border-black 
         shadow-md 
         flex-1 
@@ -81,6 +81,20 @@ function ShowCard({
         m-2 sm:m-2 md:m-2 lg:m-3
       "
     >
+      <div className="flex h-full m-2 w-full items-center gap-4 p-0 m-0">
+        <Button className="h-15 w-15 rounded-full m-0 cursor-pointer transfarent">
+          <AvatarDemo src={userProfile?.url} />
+        </Button>
+
+        <div className="flex m-0 flex-col w-full overflow-hidden">
+          <Link href={`${userId}`} className="font-bold">
+            {userName}
+          </Link>
+          <p className="text-white overflow-hidden text-lg text-bold truncate">
+            {title}
+          </p>
+        </div>
+      </div>
       <div
         className="
           relative 
@@ -97,7 +111,7 @@ function ShowCard({
           fill
           alt="image"
           loading="lazy"
-          sizes="(max-width: 640px) 220px, (max-width: 768px) 250px, 300px"
+          sizes="(max-width: full) 220px, (max-width: full) 250px, 300px"
           className="object-contain rounded"
         />
       </div>
@@ -106,13 +120,14 @@ function ShowCard({
       <div 
         className="
           flex flex-col justify-between 
-          h-[120px] sm:h-[130px] md:h-[140px] lg:h-[150px] 
           w-full
         "
       >
         
-        <div className="flex justify-between items-center gap-2 my-2">
+        <div className="flex justify-between items-center gap-2 ">
           <LikeButton cardId={cardId} />
+          <FaComments />
+          <PiShareFatFill />
           {dot ? (
             <Dot>
               {({ setIsOpen }) => (
@@ -158,21 +173,6 @@ function ShowCard({
           ) : (
             <SaveButton cardId={cardId} />
           )}
-        </div>
-
-        <div className="flex h-full w-full items-center gap-4">
-          <Button className="h-15 w-15 rounded-full cursor-pointer transfarent">
-            <AvatarDemo src={userProfile?.url} />
-          </Button>
-
-          <div className="flex flex-col w-full overflow-hidden">
-            <Link href={`${userId}`} className="font-bold">
-              {userName}
-            </Link>
-            <p className="text-white overflow-hidden text-lg text-bold truncate">
-              {title}
-            </p>
-          </div>
         </div>
 
       </div>
