@@ -66,7 +66,7 @@ function Feed() {
         </Card>
 
       </div>
-      <footer className=' block md:hidden'>
+      <footer className=' block md:hidden sticky bottom-0'>
               <MenubarDemo footer={true} />
 
       </footer>
