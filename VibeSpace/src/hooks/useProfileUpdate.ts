@@ -2,7 +2,6 @@
 import { getData } from "@/lib/getData";
 import { urlToFile } from "@/lib/urlToFile";
 import { IUser } from "@/models/User";
-import { error } from "console";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -24,7 +23,6 @@ export const useProfileUpdate = (userID: string = "") => {
   useEffect(() => {
     (async () => {
       try {
-
         
         userId.current = userID === "" ?  userId1! : userID;
         const id = userId.current;

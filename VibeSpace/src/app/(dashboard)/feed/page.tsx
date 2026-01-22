@@ -23,7 +23,7 @@ function Feed() {
 
   return (
 
-    <div className="flex flex-col max-h-screen">
+    <div className="flex flex-col min-h-screen">
 
       <MenubarDemo />
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
