@@ -199,7 +199,7 @@ const ChatSidebar = (
     router.push('/chat-space/groupInfo');
   } 
     return (
-      <div className="w-full h-dvh flex flex-col bg-zinc-800">
+      <div className="h-full flex flex-col bg-zinc-800">
         <header className="p-4 flex justify-between items-center bg-neutral-700 text-white">
           <Image
             src="/ChatSpace_dark.png" 
