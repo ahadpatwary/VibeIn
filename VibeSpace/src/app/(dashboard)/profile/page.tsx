@@ -9,7 +9,7 @@ import { UserProfile } from '@/components/UserProfile';
 function Profile (){
 
   const isMobile = useIsMobile();
-  const { data } = useFeed();
+  const { data } = useFeed("cards");
 
   return (
     !isMobile ? (
