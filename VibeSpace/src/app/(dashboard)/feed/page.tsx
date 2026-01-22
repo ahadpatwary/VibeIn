@@ -32,7 +32,7 @@ function Feed() {
           <UserProfile dot={true}  userId = "" />
         </Card>
 
-        <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col mx-2 sm:mx-3 lg:mx-4 overflow-y-auto'>
+        <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col mx-2 sm:mx-1 md:mx-2 lg:mx-4 overflow-y-auto'>
     
         <div className='m-2'>
           <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
