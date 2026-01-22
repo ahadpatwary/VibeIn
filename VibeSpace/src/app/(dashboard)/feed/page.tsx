@@ -28,7 +28,7 @@ function Feed() {
       <MenubarDemo />
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
 
-        <Card className='h-[500px] flex-1 min-w-0 mt-2 hidden md:block'>
+        <Card className='flex-1 min-w-0 w-full max-h-auto h-full mt-2 hidden md:block'>
           <UserProfile dot={true}  userId = "" />
         </Card>
 
@@ -61,7 +61,7 @@ function Feed() {
         </div>
           </ScrollArea>
 
-        <Card className='h-[500px] flex-1 min-w-0 mt-2 hidden lg:block'>
+        <Card className='flex-1 min-h-auto h-min min-w-0  mt-2 hidden lg:block'>
           < CarouselDemo />
         </Card>
 
