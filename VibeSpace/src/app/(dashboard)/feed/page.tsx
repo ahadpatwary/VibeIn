@@ -66,6 +66,10 @@ function Feed() {
         </Card>
 
       </div>
+      <footer className=' block md:hidden'>
+              <MenubarDemo footer={true} />
+
+      </footer>
     </div>
 
   );
