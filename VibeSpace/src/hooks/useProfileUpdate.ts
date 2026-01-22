@@ -28,8 +28,7 @@ export const useProfileUpdate = (userID: string = "") => {
         
         userId.current = userID === "" ?  userId1! : userID;
         const id = userId.current;
-        const data: IUser = await getData(id );
-        
+        const data: IUser = await getData(id as string, "User", ["name", "email", "phoneNumber", "picture", "dob"]);
         if (!data) {
           return;
         }
