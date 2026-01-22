@@ -23,18 +23,18 @@ function Notification() {
 
   return (
 
-    <div className="flex flex-col max-h-screen">
+    <div className="flex flex-col min-h-dvh max-h-dvh">
 
       <MenubarDemo />
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
 
-        <Card className='h-[500px] flex-1 min-w-0 mt-2 hidden md:block'>
+        <Card className='flex-1 min-w-0 w-full max-h-auto h-full mt-2 hidden md:block'>
           <UserProfile dot={true}  userId = "" />
         </Card>
 
-        <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col mx-2 sm:mx-3 lg:mx-4 overflow-y-auto'>
+        <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
     
-        <div className='m-2'>
+        <div className='md:mx-3'>
           <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
             <Button className="h-13  m-2 w-auto" onClick={handleClick}> Create a post</Button>
             <div className="p-0 m-0 h-8"></div>
@@ -50,7 +50,7 @@ function Notification() {
                   image = {card.image?.url} 
                   title = {card.title} 
                   description = {card.description} 
-                  dot = { (session?.user.id == card?.user._id) } 
+                  dot = { (session?.user.id == card?.user._id) }
                   userName= {card?.user.name}
                   userProfile= {card?.user.picture}
                 />
@@ -67,16 +67,29 @@ function Notification() {
             <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
             <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
             <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
+            <Card className='h-full w-full p-2 my-1 rounded-sm!'>abdul ahad patwary</Card>
           </div>
 
         </div>
           </ScrollArea>
 
-        <Card className='h-[500px] flex-1 min-w-0 mt-2 hidden lg:block'>
+        <Card className='flex-1 min-h-auto h-min min-w-0 mt-2 hidden lg:block'>
           < CarouselDemo />
         </Card>
 
       </div>
+      <footer className=' block md:hidden sticky bottom-0'>
+        <MenubarDemo footer={true} />
+      </footer>
     </div>
 
   );
