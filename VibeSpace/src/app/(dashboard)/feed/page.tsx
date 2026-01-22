@@ -23,7 +23,7 @@ function Feed() {
 
   return (
 
-    <div className="flex flex-col min-h-screen max-h-screen">
+    <div className="flex flex-col max-h-dvh min-h-dvh">
 
       <MenubarDemo />
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
@@ -32,7 +32,7 @@ function Feed() {
           <UserProfile dot={true}  userId = "" />
         </Card>
 
-        <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col mx-2 sm:mx-1 md:mx-2 lg:mx-4 overflow-y-auto'>
+        <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col m-1 sm:mx-2 md:mx-3 lg:mx-4 overflow-y-auto'>
     
         <div className='m-2'>
           <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
