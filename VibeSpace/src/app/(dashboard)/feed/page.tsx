@@ -23,7 +23,7 @@ function Feed() {
 
   return (
 
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen max-h-screen">
 
       <MenubarDemo />
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
@@ -50,7 +50,7 @@ function Feed() {
                   image = {card.image?.url} 
                   title = {card.title} 
                   description = {card.description} 
-                  dot = { (session?.user.id == card?.user._id) } 
+                  dot = { (session?.user.id == card?.user._id) }
                   userName= {card?.user.name}
                   userProfile= {card?.user.picture}
                 />
@@ -61,14 +61,13 @@ function Feed() {
         </div>
           </ScrollArea>
 
-        <Card className='flex-1 min-h-auto h-min min-w-0  mt-2 hidden lg:block'>
+        <Card className='flex-1 min-h-auto h-min min-w-0 mt-2 hidden lg:block'>
           < CarouselDemo />
         </Card>
 
       </div>
       <footer className=' block md:hidden sticky bottom-0'>
-              <MenubarDemo footer={true} />
-
+        <MenubarDemo footer={true} />
       </footer>
     </div>
 
