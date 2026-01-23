@@ -15,6 +15,7 @@ export interface IUser extends Document {
   cards: Types.ObjectId[];
   likedCards: Types.ObjectId[];
   savedCards: Types.ObjectId[];
+  friends: Types.ObjectId[];
 
   isActive: boolean;
 
@@ -38,7 +39,9 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
+      enum: ["crediantial", "provider"],
+      default: "crediantial"
+      required: type === "crediantial" ? true : false,
     },
     phoneNumber: {
       type: String,
@@ -54,15 +57,11 @@ const userSchema = new Schema<IUser>(
     },
 
     // Relations
-    cards: [{ type: Schema.Types.ObjectId, ref: "Card" }],
-    likedCards: [{ type: Schema.Types.ObjectId, ref: "Card" }],
-    savedCards: [{ type: Schema.Types.ObjectId, ref: "Card" }],
+    cards: [{ type: Schema.Types.ObjectId, ref: "Card", default: [] }],
+    likedCards: [{ type: Schema.Types.ObjectId, ref: "Card", default: [] }],
+    savedCards: [{ type: Schema.Types.ObjectId, ref: "Card", default: [] }],
+    friends: [{ type: Schema.Types.ObjectId, ref: "User", default: []}],
 
-    // Status
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
   },
   { timestamps: true }
 );
