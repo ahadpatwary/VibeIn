@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { MenubarDemo } from '@/components/Bar';
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useSearchUser } from '@/hooks/useSearchUser';
 
 function Feed() {
   const { data: session } = useSession()
