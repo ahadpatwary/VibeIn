@@ -4,6 +4,7 @@ export const useSearchUser = () => {
     const [searchUser, setSearchUser] = useState([]);
 
     const handleSearchClick = async (query: string) => {
+        console.log("query", query);
         if(query.length < 3) return;
 
         const res = await fetch('/api/searchName', {

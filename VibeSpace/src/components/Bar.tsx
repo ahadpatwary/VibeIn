@@ -11,7 +11,7 @@ import { GiPowerLightning } from "react-icons/gi";
 import { useSearchUser } from "@/hooks/useSearchUser";
 
 
-export function MenubarDemo({footer = false}: { footer?: boolean}) {
+export function MenubarDemo({footer = false, onSearch}: { footer?: boolean, onSearch?: (query: string) => void }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
@@ -44,7 +44,7 @@ export function MenubarDemo({footer = false}: { footer?: boolean}) {
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
-              handleSearchClick(e.target.value);
+              onSearch(e.target.value);
             }
             }
           />

@@ -17,21 +17,41 @@ function Feed() {
   const { data: session } = useSession()
   const { activeCards } = useCards(session?.user.id!);
   const router = useRouter();
+const { searchUser, handleSearchClick } = useSearchUser();
 
   const handleClick = () => {
     router.push('/create-post');
   }
+  console.log("searchUserssss", searchUser);
 
   return (
 
     <div className="flex flex-col min-h-dvh max-h-dvh">
 
-      <MenubarDemo />
+      <MenubarDemo onSearch={handleSearchClick} />
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
 
         <Card className='flex-1 min-w-0 w-full max-h-auto h-full mt-2 hidden md:block'>
           <UserProfile dot={true}  userId = "" />
         </Card>
+
+        <>
+
+        {searchUser.length > 0 && (
+          <div className="absolute z-40 h-[400px] w-[300px] bg-black overflow-y-auto">
+            {searchUser.map((user) => { 
+              console.log("randerd");
+              return(<div
+                key={user.id}
+                className="w-full h-[60px] bg-red-500 text-white flex items-center px-2"
+              >
+                {user.name}
+              </div>
+             )})}
+          </div>
+        )}
+ 
+        </>
 
         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
     

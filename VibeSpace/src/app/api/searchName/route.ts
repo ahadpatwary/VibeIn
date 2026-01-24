@@ -2,6 +2,7 @@ import { connectToDb } from "@/lib/db";
 import { getRedisClient } from "@/lib/redis";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
+import { Types } from "mongoose";
 
 interface response {
     _id: string,
@@ -38,21 +39,22 @@ async function computeMutualFriends(userId: string, candidates: response[]) {
 
 export const POST = async (req: Request) => {
     try {
-        
+        console.log("Yes comming");
         const body = await req.json();
         let { userId, query } = body;
 
         userId = "6966deb5fb002239ebb26801";
+        console.log("userId", userId);
  
         if(!userId || !query) return NextResponse.json(
             { message: "userId must be required" },
             { status: 401 }
         )
 
-        const page = parseInt(body.page || "1");
-        const limit = parseInt(body.limit || "20");
+        const page = parseInt(body?.page || "1");
+        const limit = parseInt(body?.limit || "20");
         
-        const cacheKey = `search:${userId}:${query.toLowerCase().trim()}:${page}:${limit}`;
+        // const cacheKey = `search:${userId}:${query.toLowerCase().trim()}:${page}:${limit}`;
 
         const Redis = getRedisClient();
         await connectToDb();
@@ -63,12 +65,12 @@ export const POST = async (req: Request) => {
         )
 
         //................................. redis cached search .......................
-        const cachedUser = await Redis.get(cacheKey);
+        // // const cachedUser = await Redis.get(cacheKey);
 
-        if(cacheKey) return NextResponse.json(
-            { users: JSON.parse(cacheKey) },
-            { status: 200 }
-        )
+        // if(cachedUser) return NextResponse.json(
+        //     { users: JSON.parse(cachedUser) },
+        //     { status: 200 }
+        // )
 
         const currentUser = await User.findById(userId).select("friends");
 
@@ -84,7 +86,7 @@ export const POST = async (req: Request) => {
 
         if(friendsSearch.length > 0) {
             const resultWithMutual = await computeMutualFriends(userId, friendsSearch);
-            await Redis.set(cacheKey, 900, JSON.stringify(resultWithMutual));
+            // await Redis.set(cacheKey, 900, JSON.stringify(resultWithMutual));
             return NextResponse.json(
                 { users: resultWithMutual },
                 { status: 200 }
@@ -101,21 +103,22 @@ export const POST = async (req: Request) => {
                         path: "name",
                         fuzzy: {
                             maxEdits: 2,
-                            prefixLength: 0,
-                            maxExpanstions: 50
+                            // prefixLength: 0,
+                            // maxExpanstions: 50
                         }
                     }
                 }
             },
-            { $match: {_id: { $ne: mongoose.Types.ObjectId(userId) } } },
+            { $match: {_id: { $ne: userId } } },
             { $project: { _id: 1, name: 1, friends: 1} },
             { $skip: (page - 1) * limit },
             { $limit: limit }
         ])
+        console.log("globalS", globalSearch);
 
         const resultWithMutualGlobal = await computeMutualFriends(userId, globalSearch);
         
-        await Redis.set(cacheKey, 900, JSON.stringify(resultWithMutualGlobal));
+        // await Redis.set(cacheKey, 900, JSON.stringify(resultWithMutualGlobal));
 
         return NextResponse.json(
             { users: resultWithMutualGlobal },
@@ -124,7 +127,7 @@ export const POST = async (req: Request) => {
 
     } catch (error) {
         NextResponse.json(
-            { message: "internal server error"}, 
+            { message: "internal server errordfd"}, 
             { status: 500 }
         )
 

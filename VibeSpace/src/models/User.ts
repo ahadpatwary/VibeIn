@@ -41,7 +41,6 @@ const userSchema = new Schema<IUser>(
       type: String,
       enum: ["crediantial", "provider"],
       default: "crediantial"
-      required: type === "crediantial" ? true : false,
     },
     phoneNumber: {
       type: String,
