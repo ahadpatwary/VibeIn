@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           `}
         </Script>
       </head>
-      <body suppressHydrationWarning className="min-h-dvh max-h-dvh m-0 p-0">
+      <body suppressHydrationWarning className="min-h-dvh max-h-dvh min-w-[310px] m-0 p-0 overflow-x-auto">
         <AuthProvider>
           <StoreProvider>
             <ThemeProvider

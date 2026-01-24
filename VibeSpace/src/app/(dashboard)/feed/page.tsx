@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import { MenubarDemo } from '@/components/Bar';
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useSearchUser } from '@/hooks/useSearchUser';
+import { AvatarDemo } from "@/components/AvaterDemo";
+
 
 function Feed() {
   const { data: session } = useSession()
@@ -38,14 +40,17 @@ const { searchUser, handleSearchClick } = useSearchUser();
         <>
 
         {searchUser.length > 0 && (
-          <div className="absolute z-40 h-[400px] w-[300px] bg-black overflow-y-auto">
+          <div className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto bg-black h-min rounded-lg p-2">
             {searchUser.map((user) => { 
               console.log("randerd");
               return(<div
                 key={user.id}
-                className="w-full h-[60px] bg-red-500 text-white flex items-center px-2"
+                className="w-full h-[60px] text-white flex items-center px-2"
               >
-                {user.name}
+                <div className='flex'>
+                  <AvatarDemo src={user.picture} />
+                  <p className='ml-2'>{user.name}</p>
+                </div>
               </div>
              )})}
           </div>

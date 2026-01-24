@@ -7,7 +7,10 @@ export const useSearchUser = () => {
 
     const searchFn = async (query: string) => {
         console.log("query", query);
-        if(query.length < 3) return;
+        if(query.length < 3) {
+            setSearchUser([]);
+            return;
+        }
 
         const res = await fetch('/api/searchName', {
             method: "POST",

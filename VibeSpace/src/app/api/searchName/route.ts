@@ -7,6 +7,10 @@ import { Types } from "mongoose";
 interface response {
     _id: string,
     name: string,
+    picture: {
+        url: string,
+        public_id: string,
+    }
     friends: [
         {
             _id: string, 
@@ -33,7 +37,7 @@ async function computeMutualFriends(userId: string, candidates: response[]) {
     const theirFriends = user.friends.map((id) => id.toString());
     const mutualCount =
       theirFriends.filter((fid) => friendIds.includes(fid)).length || 0;
-    return { _id: user?._id as string, name: user?.name as string, mutualCount };
+    return { _id: user?._id as string, name: user?.name as string, picture: user?.picture?.url, mutualCount };
   });
 }
 
@@ -81,7 +85,7 @@ export const POST = async (req: Request) => {
         ...buildRegexQuery(query),
         })
         .limit(limit)
-        .select("_id name friends");
+        .select("_id name picture friends");
 
 
         if(friendsSearch.length > 0) {
@@ -110,7 +114,7 @@ export const POST = async (req: Request) => {
                 }
             },
             { $match: {_id: { $ne: userId } } },
-            { $project: { _id: 1, name: 1, friends: 1} },
+            { $project: { _id: 1, name: 1, picture: 1, friends: 1} },
             { $skip: (page - 1) * limit },
             { $limit: limit }
         ])
