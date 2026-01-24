@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import debounce from "lodash.debounce";
 
 export const useSearchUser = () => {
     const [searchUser, setSearchUser] = useState([]);
 
-    const handleSearchClick = async (query: string) => {
+
+    const searchFn = async (query: string) => {
         console.log("query", query);
         if(query.length < 3) return;
 
@@ -23,6 +25,11 @@ export const useSearchUser = () => {
 
         setSearchUser(users || []);
     }
+
+        const handleSearchClick = useMemo(
+            () => debounce(searchFn, 500),
+            []
+        );
 
     return { searchUser, handleSearchClick };
 }
