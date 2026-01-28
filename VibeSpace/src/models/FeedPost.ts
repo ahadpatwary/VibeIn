@@ -64,27 +64,5 @@ const feedSchema = new Schema<IFeedSchema>(
   { timestamps: true }
 );
 
-
-// cardSchema.post("findOneAndDelete", async function (doc, next) {
-//   try {
-//     if (doc) {
-//       const cardId = doc._id;
-
-//       // একসাথে তিনটা relation থেকে card ID remove করা
-//       await Promise.all([
-//         User.updateMany({ cards: cardId }, { $pull: { cards: cardId } }),
-//         User.updateMany({ likedCards: cardId }, { $pull: { likedCards: cardId } }),
-//         User.updateMany({ savedCards: cardId }, { $pull: { savedCards: cardId } }),
-//       ]);
-//     }
-
-//     next();
-//   } catch (error) {
-//     console.error("❌ Error cleaning up card references:", error);
-//     next(error as CallbackError);
-//   }
-// });
-
-
 const FeedPost = mongoose.models.FeedPost || mongoose.model<IFeedSchema>("FeedPost", feedSchema);
 export default FeedPost;

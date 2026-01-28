@@ -13,7 +13,6 @@ import FeedPost from '@/models/FeedPost';
 import Friend from '@/models/Friend';
 import LikePost from '@/models/Like';
 import User from '@/models/User';
-import { Scan } from 'lucide-react';
 import { NextResponse } from "next/server";
 
 
