@@ -4,26 +4,17 @@ import bcrypt from "bcryptjs";
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  provider: "credentials" | "google" | "github";
+  password: string | null;
   phoneNumber: string;
-  picture:{
+  profilePicture:{
     url: string ;
     public_id: string; 
   };
-  dob: Date;
-
-  cards: Types.ObjectId[];
-  likedCards: Types.ObjectId[];
-  savedCards: Types.ObjectId[];
-  friends: Types.ObjectId[];
-
-  isActive: boolean;
-
-  createdAt: Date;
-  updatedAt: Date;
+  dateOfBirth: Date;
+  friendsCount: number,
 }
 
-// Mongoose schema
 const userSchema = new Schema<IUser>(
   {
     name: {
@@ -31,35 +22,53 @@ const userSchema = new Schema<IUser>(
       trim: true,
       default:""
     },
+
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
     },
-    password: {
+
+    provider: {
       type: String,
-      enum: ["crediantial", "provider"],
-      default: "crediantial"
+      enum: ["credentials", "google", "github"],
+      required: true,
     },
+
+    password: {
+      type: String, 
+      required: function(this: IUser) {
+        return this.provider === 'credentials'
+      },
+      default: null
+    },
+
     phoneNumber: {
       type: String,
       default:""
     },
-    picture: {
-      url: { type: String, default:""},
-      public_id: { type: String, default:""}
+
+    profilePicture: {
+      url: { 
+        type: String,
+        default:""
+      },
+      public_id: { 
+        type: String, 
+        default:""
+      }
     },
-    dob: {
+
+    dateOfBirth: {
       type: Date,
       default: Date.now()
     },
 
-    // Relations
-    cards: [{ type: Schema.Types.ObjectId, ref: "Card", default: [] }],
-    likedCards: [{ type: Schema.Types.ObjectId, ref: "Card", default: [] }],
-    savedCards: [{ type: Schema.Types.ObjectId, ref: "Card", default: [] }],
-    friends: [{ type: Schema.Types.ObjectId, ref: "User", default: []}],
+    friendsCount: {
+      type: Number,
+      default: 0
+    }
 
   },
   { timestamps: true }
@@ -67,7 +76,7 @@ const userSchema = new Schema<IUser>(
 
 
 userSchema.pre<IUser>("save", async function (next) {
-  if (this.isModified("password")) {
+  if (this.isModified("password") && this.password) {
     try {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(this.password, salt);
@@ -79,6 +88,13 @@ userSchema.pre<IUser>("save", async function (next) {
   }
   next();
 });
+
+userSchema.methods.comparePassword = 
+  async function ( candidatePassword: string ) {
+    if (!this.password) return false;
+    return bcrypt.compare(candidatePassword, this.password);
+  }
+;
 
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
 

@@ -1,13 +1,8 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface IConversation extends Document {
   type: 'oneToOne' | 'group';
-
-  participants: Types.ObjectId[];
   deletedBy: Types.ObjectId[];
-  blockedUser: Types.ObjectId[];
-  requestUser: Types.ObjectId[];
-
   lastMessage?: Types.ObjectId;
   lastMessageTime?: Date;
 
@@ -43,31 +38,20 @@ const conversationSchema = new Schema<IConversation>(
       default: 'oneToOne',
     },
 
-    participants: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-      default: [],
-    },
-
-    deletedBy: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-      default: [],
-    },
-
-    blockedUser: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-      default: [],
-    },
-
-    requestUser: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-      default: [],
-    },
+    // deletedBy: {
+    //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    //   default: [],
+    // },
 
     lastMessage: {
-      type: String, default: null,
+      type: String, 
+      default: "",
     },
 
-    lastMessageTime: { type: Date, default: null },
+    lastMessageTime: {
+      type: Date,
+      default: null 
+    },
 
     extraFields: {
       type: extraFieldsSchema,

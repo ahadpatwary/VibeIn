@@ -2,7 +2,6 @@ import { connectToDb } from "@/lib/db";
 import { getRedisClient } from "@/lib/redis";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
-import { Types } from "mongoose";
 
 interface response {
     _id: string,

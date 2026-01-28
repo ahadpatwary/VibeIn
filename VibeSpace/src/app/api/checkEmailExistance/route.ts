@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
           durable: true
         });
 
-        await channel.sendToQueue(
+        channel.sendToQueue(
           "emailNotificationQueue",
           Buffer.from(JSON.stringify({ email: normalizedEmail })),
           { persistent: true }

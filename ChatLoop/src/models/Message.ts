@@ -1,20 +1,68 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Types, Schema, Document } from 'mongoose'
 
 export interface IMessage extends Document {
-  sender: string;
-  receiver: string;
-  text: string;
-  createdAt: Date;
+    groupId: Types.ObjectId,
+    senderId: Types.ObjectId,
+    type: 'text' | 'image' | 'video' | 'audio',
+    referenceMessage: Types.ObjectId
+    messageTime: number
 }
 
-const MessageSchema = new Schema<IMessage>(
-  {
-    sender: { type: String, required: true },
-    receiver: { type: String, required: true },
-    text: { type: String, required: true },
-  },
-  { timestamps: true } // ✅ automatically adds createdAt & updatedAt
-);
 
-const Message = mongoose.model<IMessage>("Message", MessageSchema);
-export default Message;
+const groupMessageSchema = new Schema<IMessage>(
+    {
+        conversationId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Conversation',
+            required: true,
+            index: true,
+        },
+
+        senderId: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+
+        type: {
+            type: String,
+            enum: ['text', 'image', 'video', 'audio'],
+            default: 'text'
+        },
+
+        media: {
+            type: String,
+            text: function(this: IMessage) {
+                return this.type === 'text'
+            },
+            content: {
+                url: {
+                    type: String,
+                    required: true,
+                },
+                public_id: {
+                    type: String,
+                    required: true
+                }
+            }
+        },
+
+        referenceMessage: {
+            type: Schema.Types.ObjectId,
+            ref: 'Message',
+            default: null
+        },
+
+        messageTime: {
+            type: Number,
+            required: true
+        }
+
+    },{ timestamps: true }
+)
+
+const groupMessage = 
+  mongoose.models.Message || mongoose.model<IMessage>( 'Message', groupMessageSchema )
+;
+
+export default groupMessage;

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Types, CallbackError } from "mongoose";
 
 export interface IYtCard extends Document {
-    user: Types.ObjectId[],
+    authorId: Types.ObjectId,
     title: string,
     description: string,
     customThumble: string,
@@ -12,53 +12,50 @@ export interface IYtCard extends Document {
 }
 
 
-const YtCardSchema = new Schema<IYtCard> (
-    {
-        user: {
-            Type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true
-        },
+const YtCardSchema = new Schema<IYtCard> ({
+    authorId: {
+        Type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
 
-        title: {
-            Type: String,
-            required: true
-        },
+    title: {
+        Type: String,
+        required: true
+    },
 
-        description: {
-            Type: String,
-            default: ""
-        },
+    description: {
+        Type: String,
+        default: ""
+    },
 
-        customThumble: {
-            type: String,
-            default: ""
-        },
+    customThumble: {
+        type: String,
+        default: ""
+    },
 
-        url: {
-            type: String,
-            required: true
-        },
+    url: {
+        type: String,
+        required: true
+    },
 
-        points: {
-            type: Number,
-            default: 0
-        },
+    points: {
+        type: Number,
+        default: 0
+    },
 
-        pinedByOwner: {
-            type: Boolean,
-            default: false
-        },
+    pinedByOwner: {
+        type: Boolean,
+        default: false
+    },
 
-        duration: {
-            type: Date,
-            default: Date.now()
-        }
+    duration: {
+        type: Date,
+        default: Date.now()
+    }
 
-    }, { timestamps: true }
-)
+}, { timestamps: true })
 
 
-// Prevent model overwrite in Next.js
-const YtCard = mongoose.models.YtCard || mongoose.model<IYtCard>("ytCard", YtCardSchema);
+const YtCard = mongoose.models.YtCard || mongoose.model<IYtCard>("YtCard", YtCardSchema);
 export default YtCard;
