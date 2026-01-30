@@ -12,6 +12,7 @@ export const profilePictureSchema = z.object({
 });
 
 export const userSchema = z.object({
+  id: z.string().trim(),
   name: z.string().trim().default("User"),
   email: z.string().trim().email(),
   provider: providerEnum,

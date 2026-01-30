@@ -19,7 +19,6 @@ export const LikeButton = ({ cardId }: { cardId?: string }) => {
     }
   }, [exists]);
 
-  // ✅ click handler
   const handleToggle = async () => {
     setLiked(prev => !prev); // instant UI update
     const res = await toggleArray(cardId, "likedCards");

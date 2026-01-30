@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     const cachedUser = await Redis.get(userCacheKey);
     if (cachedUser) return NextResponse.json(
-      { user: JSON.parse(cachedUser), fromCache: true },
+      { user: JSON.parse(cachedUser) },
       { status: 200 }
     );
 
@@ -59,7 +59,10 @@ export async function POST(req: NextRequest) {
         console.error("RabbitMQ error:", err);
       }
 
-      return NextResponse.json({ user: false }, { status: 200 });
+      return NextResponse.json(
+        { user: false }, 
+        { status: 200 }
+      );
     }
 
     const safeUser = {
@@ -72,7 +75,7 @@ export async function POST(req: NextRequest) {
     await Redis.set(userCacheKey, JSON.stringify(safeUser), "EX", 10 * 60);
 
     return NextResponse.json(
-      { user: safeUser, fromCache: false },
+      { user: safeUser },
       { status: 200 }
     );
 
