@@ -1,0 +1,10 @@
+//createUser
+//editUser
+//deleteUser
+//getUserProfile
+//blockUser
+//getBlockUser
+//requestUser
+//getRequestUser
+//suscribeUser
+//unsuscribeUser

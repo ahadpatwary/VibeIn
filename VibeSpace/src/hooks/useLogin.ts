@@ -4,8 +4,8 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { useEffect } from 'react'
-import { ProfileType } from "@/schemas/signIn.schema";
-import { checkEmailExistanceApi, otpVerificationApi } from "@/lib/api/auth";
+import { CreateAccountType, EmailType, OtpValidateType, ProfileType } from "@/schemas/signIn.schema";
+import { checkEmailExistanceApi, otpVerificationApi, refreshTokenIssueApi } from "@/lib/api/auth";
 
 
 export const useLoing = () => {
@@ -42,11 +42,7 @@ export const useLoing = () => {
                     redirect: false
                 });
 
-                await fetch("/api/auth/refreshTokenIssue", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email }),
-                })
+                refreshTokenIssueApi(email);
 
                 router.push('/register/user_details');
 
@@ -85,11 +81,7 @@ export const useLoing = () => {
 
             await signIn("github", { callbackUrl: '/register/user_details'});
 
-            await fetch("/api/auth/refreshTokenIssue", { 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
-            })
+            // refreshTokenIssueApi(email);
 
         } catch (error) {
             if(error instanceof Error)
@@ -98,7 +90,7 @@ export const useLoing = () => {
         }
     }
 
-    const checkEmailExistance = async () => {
+    const checkEmailExistance = async (email: EmailType) => { //*
 
         try {
 
@@ -119,10 +111,10 @@ export const useLoing = () => {
 
     }
 
-    const otpVerification = async () => {
+    const otpVerification = async (otpObject: OtpValidateType) => { //*
         try {
 
-            const message = await otpVerificationApi(email, value);
+            const message = await otpVerificationApi(otpObject.email, otpObject.otp);
 
             setStatus("create");
 
@@ -133,8 +125,10 @@ export const useLoing = () => {
         }
     }
 
-    const credentialRegister = async () => {
+    const credentialRegister = async (createAccountObject: CreateAccountType) => {
         try {
+
+            const { email, password } = createAccountObject;
 
             await signIn('credentials', {
                 payload: JSON.stringify({
@@ -144,11 +138,7 @@ export const useLoing = () => {
                 redirect: false
             });
 
-            await fetch("/api/auth/refreshTokenIssue", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
-            })
+            refreshTokenIssueApi(email);
 
             router.push('/register/user_details');
 

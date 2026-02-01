@@ -41,13 +41,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               enableSystem
               disableTransitionOnChange
             >
-              
-              {/* <MenubarDemo />
-              <ScrollArea className="w-full overflow-y-auto">
-              <div className="min-h-0 max-w-[1280px] mx-auto">
-                {children}
-              </div>
-              </ScrollArea> */}
 
               {children}
 

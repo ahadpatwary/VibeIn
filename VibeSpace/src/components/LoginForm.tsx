@@ -127,7 +127,7 @@ export function LoginForm({
                 type="button" 
                 className="w-full" 
                 disabled={loading}
-                onClick={ status === 'send' ? checkEmailExistance : ( status === 'verify' ? otpVerification : credentialRegister) }
+                onClick={() => status === 'send' ? checkEmailExistance(email) : ( status === 'verify' ? otpVerification(otpObject) : credentialRegister(createAccountObject)) }
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
