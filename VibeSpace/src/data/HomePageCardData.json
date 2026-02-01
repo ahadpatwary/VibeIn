@@ -1,14 +1,38 @@
 [
     {
-        id: "1",
-        picture: "",
-        title: "Connect with developer",
-        description: "Build your professional network by connecting with developers, sharing knowledge and finding new oppertunities"
+        "id": 1,
+        "picture": "",
+        "title": "Connect with developer",
+        "description": "Build your professional network by connecting with developers, sharing knowledge and finding new oppertunities"
     },
     {
-        id: "2",
-        picture: "",
-        title: "Top Coding Videos",
-        description: "Learn from the best coding tutorials. Get personalized recommendations of top YouTube videos for coders."
+        "id": 2,
+        "picture": "",
+        "title": "Top Coding Videos",
+        "description": "Learn from the best coding tutorials. Get personalized recommendations of top YouTube videos for coders."
+    },
+        {
+        "id": 3,
+        "picture": "",
+        "title": "Top Coding Videos",
+        "description": "Learn from the best coding tutorials. Get personalized recommendations of top YouTube videos for coders."
+    },
+        {
+        "id": 4,
+        "picture": "",
+        "title": "Top Coding Videos",
+        "description": "Learn from the best coding tutorials. Get personalized recommendations of top YouTube videos for coders."
+    },
+        {
+        "id": 5,
+        "picture": "",
+        "title": "Top Coding Videos",
+        "description": "Learn from the best coding tutorials. Get personalized recommendations of top YouTube videos for coders."
+    },
+        {
+        "id": 6,
+        "picture": "",
+        "title": "Top Coding Videos",
+        "description": "Learn from the best coding tutorials. Get personalized recommendations of top YouTube videos for coders."
     }
 ]

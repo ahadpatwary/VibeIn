@@ -9,11 +9,11 @@ import { DialogDemo } from "@/components/Edit";
 import {InputWithLabel} from '@/components/UserInformation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from "@/components/ui/card"
-import { useProfileUpdate } from '@/hooks/useProfileUpdate'
+// import { useProfileUpdate } from '@/hooks/useProfileUpdate'
 import { useSignOut } from '@/hooks/useSignOut'
 import { useUserDelete } from '@/hooks/useUserDelete'
 import { useRouter } from "next/navigation";
-import { useIsMobile } from "@/hooks/use-mobile";
+// import { useIsMobile } from "@/hooks/use-mobile";
 import { useSession } from 'next-auth/react'
 
 interface UserProps{

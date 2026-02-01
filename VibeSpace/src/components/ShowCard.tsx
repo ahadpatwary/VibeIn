@@ -8,14 +8,14 @@ import Link from "next/link";
 import { AlertDialogDemo } from "@/components/Aleart";
 import { DialogDemo } from "@/components/Edit";
 import { ToggleButton } from '@/components/Toggle';
-import { currentState } from '@/lib/currentState';
+// import { currentState } from '@/lib/currentState';
 import { LikeButton } from '@/components/likeButton';
 import { SaveButton } from "@/components/saveButton";
 import { useUpdateCard } from "@/hooks/useUpdateCard";
 import { ContentField } from "@/components/contentField";
 import { useEffect, useState } from "react";
-import { useDelete } from "@/hooks/useDelete";
-import { getData } from "@/lib/getData";
+// import { useDelete } from "@/hooks/useDelete";
+// import { getData } from "@/lib/getData";
 import { FaComments } from "react-icons/fa6";
 import { PiShareFatFill } from "react-icons/pi";
 
@@ -59,10 +59,10 @@ function ShowCard({
     handleUpdate,
   } = useUpdateCard(cardId as string);
 
-  const { deleteItem } = useDelete();
+  // const { deleteItem } = useDelete();
 
   const handleClick = async () => {
-    await deleteItem("Card", cardId);
+    // await deleteItem("Card", cardId);
   };
 
   const str: string =
