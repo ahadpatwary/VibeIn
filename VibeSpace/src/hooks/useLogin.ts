@@ -1,11 +1,12 @@
 'use client'
-import { getSession } from "next-auth/react";
-import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { useEffect } from 'react'
 import { CreateAccountType, EmailType, OtpValidateType, ProfileType } from "@/schemas/signIn.schema";
-import { checkEmailExistanceApi, otpVerificationApi, refreshTokenIssueApi } from "@/lib/api/auth";
+import { checkAccountExistanceApi } from "@/lib/api/vibeIn/auth/checkEmailExistanceApi";
+import { otpVerificationApi } from "@/lib/api/vibeIn/auth/otpVerificationApi";
+import { createAccountApi } from "@/lib/api/vibeIn/account/createAccount";
+import { tokenIssueApi } from "@/lib/api/vibeIn/auth/tokenIssueApi";
 
 
 export const useLoing = () => {
@@ -22,27 +23,32 @@ export const useLoing = () => {
                 if (event.origin !== "https://vibe-in-teal.vercel.app") return;
                 if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
 
-                const email = event.data?.email;
+                const providerUniqueId = event.data?.id;
 
-                if(!email) return;
+                if(!providerUniqueId) return;
 
-                const user: ProfileType = await checkEmailExistanceApi(email);
+                const accountInfo = {
+                    type: "google" as 'google',
+                    providerId: providerUniqueId,
+                }
+
+                const user: ProfileType = await checkAccountExistanceApi(accountInfo);
 
                 if(user) {
                     console.log('user already exist');
                     return;
                 }
 
-                await signIn('credentials', {
-                    payload: JSON.stringify({
-                        name: event?.data?.name,
-                        email: event?.data?.email,
-                        image: event?.data?.picture,
-                    }),
-                    redirect: false
+                const { userId } = await createAccountApi({
+                    type: 'google',
+                    providerId: event.data.id,
+                    name: event.data?.name,
+                    email: event.data?.email,
+                    profilePicture: event.data?.picture
                 });
 
-                refreshTokenIssueApi(email);
+                await tokenIssueApi(userId);
+
 
                 router.push('/register/user_details');
 
@@ -77,24 +83,32 @@ export const useLoing = () => {
     };
 
     const githubRegister = async () => {
-        try {
+        const state = crypto.randomUUID(); // import crypto from "crypto"
 
-            await signIn("github", { callbackUrl: '/register/user_details'});
+        const params = new URLSearchParams({
+            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+            redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
+            response_type: "code",
+            scope: "openid email profile",
+            state,
+            prompt: "consent",
+        });
 
-            // refreshTokenIssueApi(email);
+        const googleUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
 
-        } catch (error) {
-            if(error instanceof Error)
-                throw new Error(`error message ${error.message}`)
-            ;
-        }
+        window.open(googleUrl, "_blank", "width=600,height=600");
     }
 
     const checkEmailExistance = async (email: EmailType) => { //*
 
         try {
+            
+            const accountInfo = {
+                type: 'crediantials' as 'crediantials',
+                email: email,
+            }
 
-            const user: ProfileType = await checkEmailExistanceApi(email);
+            const user: ProfileType = await checkAccountExistanceApi(accountInfo);
 
             if(user) {
                 console.log('user already exist');
@@ -130,15 +144,15 @@ export const useLoing = () => {
 
             const { email, password } = createAccountObject;
 
-            await signIn('credentials', {
-                payload: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
-                redirect: false
-            });
 
-            refreshTokenIssueApi(email);
+
+            const { userId } = await createAccountApi({
+                type: 'credentials',
+                email,
+                password
+            })
+
+            await tokenIssueApi(userId);
 
             router.push('/register/user_details');
 

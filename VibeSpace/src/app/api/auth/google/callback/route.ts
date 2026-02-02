@@ -1,87 +1,7 @@
-// import { NextRequest, NextResponse } from "next/server";
-
-// export async function GET(req: NextRequest) {
-//   const code = req.nextUrl.searchParams.get("code");
-//   const state = req.nextUrl.searchParams.get("state");
-
-//   const savedState = req.cookies.get("oauth_state")?.value;
-
-//   if (!code || !state || state !== savedState) {
-//     return NextResponse.json(
-//       { error: "Invalid OAuth state" },
-//       { status: 400 }
-//     );
-//   }
-
-//   // Step 1: code -> token
-//   const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/x-www-form-urlencoded",
-//     },
-//     body: new URLSearchParams({
-//       client_id: process.env.GOOGLE_CLIENT_ID!,
-//       client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-//       code,
-//       redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
-//       grant_type: "authorization_code",
-//     }),
-//   });
-
-//   const tokenData = await tokenRes.json();
-
-//   const accessToken = tokenData.access_token;
-
-//   // Step 2: fetch user info
-//   const userRes = await fetch(
-//     "https://openidconnect.googleapis.com/v1/userinfo",
-//     {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//       },
-//     }
-//   );
-
-//   const user = await userRes.json();
-
-//   console.log("user google", user);
-
-//   /**
-//    * user = {
-//    *   sub,
-//    *   email,
-//    *   name,
-//    *   picture
-//    * }
-//    */
-
-//   // Step 3: create session (simple)
-//   const response = NextResponse.redirect("http://localhost:3000/dashboard");
-
-//   response.cookies.set(
-//     "session",
-//     JSON.stringify({
-//       id: user.sub,
-//       email: user.email,
-//       name: user.name,
-//     }),
-//     {
-//       httpOnly: true,
-//       secure: true,
-//       sameSite: "lax",
-//     }
-//   );
-
-//   // cleanup
-//   response.cookies.delete("oauth_state");
-
-//   return response;
-// }
-
-
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+
   const code = req.nextUrl.searchParams.get("code");
   const state = req.nextUrl.searchParams.get("state");
 
@@ -110,26 +30,14 @@ export async function GET(req: NextRequest) {
   });
 
   const user = await userRes.json();
-  
-  
-  // // 3️⃣ Set session cookie
-  // const res = NextResponse.redirect("https://vibe-in-teal.vercel.app"); // final page
-  // res.cookies.set("session", JSON.stringify({
-  //   id: user.sub,
-  //   name: user.name,
-  //   email: user.email,
-  //   picture: user.picture
-  // }), { httpOnly: false, sameSite: "lax", path: "/" });
-
-  // return res;
 
   
   // 3️⃣ Return HTML that sends user info to parent window and closes popup
 
   const normalizedUser = {
     type: "GOOGLE_AUTH_SUCCESS",
-    id: user?.sub,
-    name: user?.name,
+    id: user.sub,   // required
+    name: user?.name ?? "<User>",
     email: user?.email,
     picture: user?.picture
   };

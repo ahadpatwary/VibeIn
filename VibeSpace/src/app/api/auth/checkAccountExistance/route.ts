@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDb } from "@/lib/db";
 import { getRedisClient } from "@/lib/redis";
-import User from "@/models/User";
 import { getRabbitChannel } from "@/lib/rabbitMQ";
+import Account from "@/models/Account";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,34 +15,38 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
     
-
     const body = await req.json();
 
-    const { email } = body;
+    const { type } = body;
 
-    if (!email) return NextResponse.json(
-      { message: "Email is required" },
+    if (!type) return NextResponse.json(
+      { message: "type is required" },
       { status: 400 }
     );
     
 
-    const normalizedEmail = email.toLowerCase().trim();
-    const userCacheKey = `userInfo:${normalizedEmail}`;
-    const emailValidateKey = `emailValidate:${normalizedEmail}`;
+    const accountExistKey = `accountExist:${body?.email ?? body?.providerId}`;
 
 
-    const cachedUser = await Redis.get(userCacheKey);
-    if (cachedUser) return NextResponse.json(
-      { user: JSON.parse(cachedUser) },
+    const accountExist = await Redis.get(accountExistKey);
+    if (accountExist) return NextResponse.json( //.........................
+      { message: "account already exist", account: true },
       { status: 200 }
     );
 
  
-    const userExist = await User.findOne({ email: normalizedEmail });
-    if (!userExist) {
-      await Redis.set(emailValidateKey, "value", "EX", 5 * 60);
+    const account = type === 'crediantials' ? 
+      await Account.findOne({ type: type, email: body.email }) :
+      await Account.findOne({ type: type, providerId: body.providerId })
+    ;
 
+
+    if(!account && type === 'crediantials') {
       try {
+        const emailValidateTimeKey = `emailValidate:${body.email}`;
+
+        await Redis.set(emailValidateTimeKey, "value", "EX", 5 * 60);
+
         const channel = await getRabbitChannel();
 
         await channel.assertQueue("emailNotificationQueue", {
@@ -51,7 +55,7 @@ export async function POST(req: NextRequest) {
 
         channel.sendToQueue(
           "emailNotificationQueue",
-          Buffer.from(JSON.stringify({ email: normalizedEmail })),
+          Buffer.from(JSON.stringify({ email: body.email })),
           { persistent: true }
         );
         
@@ -65,17 +69,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const safeUser = {
-      id: userExist._id,
-      name: userExist.name,
-      picture: userExist.picture?.url,
-    };
-
-
-    await Redis.set(userCacheKey, JSON.stringify(safeUser), "EX", 10 * 60);
 
     return NextResponse.json(
-      { user: safeUser },
+      { message: "account not exist", account: false },
       { status: 200 }
     );
 

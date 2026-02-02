@@ -1,11 +1,17 @@
 import { profileSchema, ProfileType } from "@/schemas/signIn.schema";
 import { http } from "../../http";
 
-export async function checkEmailExistanceApi(email: string) {     
+interface accountInfoType {
+    type: 'crediantials' | 'google' | 'github',
+    email?: string,
+    providerId?: string,
+}
+
+export async function checkAccountExistanceApi(accountInfo: accountInfoType) {     
 
     return http<ProfileType>("/api/checkEmailExistance", {
         method: 'POST',
-        body: email,
+        body: accountInfo,
         schema: profileSchema 
     })
 

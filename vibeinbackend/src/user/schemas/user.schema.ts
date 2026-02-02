@@ -5,7 +5,7 @@ export interface IUser extends Document {
   phoneNumber: string;
   profilePicture:{
     url: string ;
-    public_id: string | null; 
+    public_id: string; 
   };
   dateOfBirth: Date;
   friendsCount: number,
