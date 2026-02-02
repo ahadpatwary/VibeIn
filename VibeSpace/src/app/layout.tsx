@@ -2,7 +2,6 @@ import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/TthemeProvider";
 import { Toaster } from "@/components/ui/sonner"
 import StoreProvider from './StoreProvider';
-import AuthProvider from './SessionProvider'
 import { headers } from 'next/headers'
 import Script from 'next/script';
 
@@ -33,7 +32,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         </Script>
       </head>
       <body suppressHydrationWarning className="min-h-dvh max-h-dvh min-w-[310px] m-0 p-0 overflow-x-auto">
-        <AuthProvider>
           <StoreProvider>
             <ThemeProvider
               attribute="class"
@@ -47,7 +45,6 @@ export default async function RootLayout({ children }: RootLayoutProps) {
             < Toaster />
             </ThemeProvider>
           </StoreProvider>
-        </AuthProvider>
 
       </body>
     </html>

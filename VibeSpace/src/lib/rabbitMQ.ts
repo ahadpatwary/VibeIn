@@ -14,8 +14,6 @@ export const connectToRabbitMQ = async (): Promise<{
     if (!connection) {
       const conn = await connect(RABBIT_URL);
       connection = conn;
-      console.log("connection create successfully", conn);
-
       conn.on("error", (err: Error) => {
         console.error("RabbitMQ connection error:", err);
         connection = null;

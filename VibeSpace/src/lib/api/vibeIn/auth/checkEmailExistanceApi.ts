@@ -9,7 +9,7 @@ interface accountInfoType {
 
 export async function checkAccountExistanceApi(accountInfo: accountInfoType) {     
 
-    return http<ProfileType>("/api/checkEmailExistance", {
+    return http<ProfileType>("/api/auth/checkAccountExistance", {
         method: 'POST',
         body: accountInfo,
         schema: profileSchema 
