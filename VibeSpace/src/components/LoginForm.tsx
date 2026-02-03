@@ -1,18 +1,28 @@
 'use client'
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+
+import { 
+  createAccountSchema, 
+  CreateAccountType, 
+  EmailType, 
+  emailValidateSchema, 
+  otpValidateSchema, 
+  OtpValidateType 
+} from "@/schemas/signIn.schema"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa6";
-import { CreateAccountType, EmailType, OtpValidateType } from "@/schemas/signIn.schema"
 import { Otp } from "./Otp";
 import { useLoing } from "@/hooks/useLogin";
 import CreateAccount from "./CreateAccount"
@@ -46,6 +56,39 @@ export function LoginForm({
     credentialRegister 
   } = useLoing();
 
+  const handleClick = () => {
+
+    if(status === 'send'){
+      const parsed = emailValidateSchema.safeParse(email)
+
+      if (!parsed.success) {
+        console.log(parsed.error.format());
+        return;
+      }
+
+      checkEmailExistance(parsed.data);
+
+    } else if( status === 'verify') {
+      const parsed = otpValidateSchema.safeParse(otpObject);
+
+      if(!parsed.success) {
+        console.log(parsed.error.format());
+        return;
+      }
+
+      otpVerification(parsed.data)
+    } else if( status === 'create') {
+      const parsed = createAccountSchema.safeParse(createAccountObject);
+
+      if(!parsed.success) {
+        console.log(parsed.error.format());
+        return;
+      }
+
+      credentialRegister(parsed.data)
+    }
+  }
+
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -56,40 +99,39 @@ export function LoginForm({
         <CardContent>
           <div className="grid gap-6">
             <>
-            {
-            status === 'send' && (
-                <>
-            <div className="flex flex-col gap-4">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={ githubRegister }
-              >
-                <FaGithub />
-                Create with GitHub
-              </Button>
+              {
+                status === 'send' && ( //google and github provider
+                  <>
+                    <div className="flex flex-col gap-4">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={ githubRegister }
+                      >
+                        <FaGithub />
+                        Create with GitHub
+                      </Button>
 
-        
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={ googleRegister }
-              >
-                <FaGoogle />
-                Create with Google
-              </Button>
-            </div>
-            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-              <span className="bg-card text-muted-foreground relative z-10 px-2">
-                Or continue with
-              </span>
-            </div>
-            </>
-              )
-            }
+                
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={ googleRegister }
+                      >
+                        <FaGoogle />
+                        Create with Google
+                      </Button>
+                    </div>
+                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                      <span className="bg-card text-muted-foreground relative z-10 px-2">
+                        Or continue with
+                      </span>
+                    </div>
+                  </>
+                )
+              }
             </>
 
-            {/* Email + Password onSubmit={handleSubmit}*/}
             <form className="grid gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -103,7 +145,7 @@ export function LoginForm({
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <>
+
               {
                 status === 'create' && (
                   <CreateAccount 
@@ -112,7 +154,6 @@ export function LoginForm({
                   />
                 )
               }
-              </>
 
               {
                 status === 'verify' && (
@@ -127,12 +168,13 @@ export function LoginForm({
                 type="button" 
                 className="w-full" 
                 disabled={loading}
-                onClick={() => status === 'send' ? checkEmailExistance(email) : ( status === 'verify' ? otpVerification(otpObject) : credentialRegister(createAccountObject)) }
+                onClick={ handleClick }
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
                 }
               </Button>
+              
             </form>
           </div>
         </CardContent>

@@ -7,6 +7,21 @@ import { checkAccountExistanceApi } from "@/lib/api/vibeIn/auth/checkEmailExista
 import { otpVerificationApi } from "@/lib/api/vibeIn/auth/otpVerificationApi";
 import { createAccountApi } from "@/lib/api/vibeIn/account/createAccount";
 import { tokenIssueApi } from "@/lib/api/vibeIn/auth/tokenIssueApi";
+import { AccountExistanceReturnType } from "@/lib/api/vibeIn/auth/checkEmailExistanceApi";
+import { z } from 'zod'
+
+export const eventObjectSchema = z.object({
+    origin: z.string(),
+    data: z.object({
+        type: z.string().trim(),
+        id: z.string().trim(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        picture: z.string().optional()
+    })
+})
+
+export type EventObjectType = z.infer<typeof eventObjectSchema>;
 
 
 export const useLoing = () => {
@@ -17,13 +32,23 @@ export const useLoing = () => {
     
     useEffect(() => {
 
-        const handleMessage = async (event: MessageEvent) => {
+        const handleMessage = async (e: EventObjectType) => {
             try {
 
-                if (event.origin !== "https://vibe-in-teal.vercel.app") return;
-                if (event.data?.type !== "GOOGLE_AUTH_SUCCESS") return;
+                const parsed = eventObjectSchema.safeParse(e);
 
-                const providerUniqueId = event.data?.id;
+                if(!parsed.success) {
+                    console.log(parsed.error.format());
+                    return;
+                }
+
+                const event = parsed.data;
+                
+                if (event.origin !== "https://vibe-in-teal.vercel.app") return;
+
+                if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
+
+                const providerUniqueId = event.data.id;
 
                 if(!providerUniqueId) return;
 
@@ -32,10 +57,10 @@ export const useLoing = () => {
                     providerId: providerUniqueId,
                 }
 
-                const user: ProfileType = await checkAccountExistanceApi(accountInfo);
+                const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
 
-                if(user) {
-                    console.log('user already exist');
+                if(account) {
+                    console.log('account already exist');
                     return;
                 }
 
@@ -99,7 +124,7 @@ export const useLoing = () => {
         window.open(googleUrl, "_blank", "width=600,height=600");
     }
 
-    const checkEmailExistance = async (email: EmailType) => { //*
+    const checkEmailExistance = async ({ email }: { email: EmailType }) => { //*
 
         try {
             
@@ -108,10 +133,10 @@ export const useLoing = () => {
                 email: email,
             }
 
-            const user: ProfileType = await checkAccountExistanceApi(accountInfo);
+            const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
 
-            if(user) {
-                console.log('user already exist');
+            if(account) {
+                console.log('account already exist');
                 return;
             }
 
@@ -128,7 +153,7 @@ export const useLoing = () => {
     const otpVerification = async (otpObject: OtpValidateType) => { //*
         try {
 
-            const message = await otpVerificationApi(otpObject.email, otpObject.otp);
+            const message = await otpVerificationApi(otpObject);
 
             setStatus("create");
 
@@ -143,8 +168,6 @@ export const useLoing = () => {
         try {
 
             const { email, password } = createAccountObject;
-
-
 
             const { userId } = await createAccountApi({
                 type: 'credentials',

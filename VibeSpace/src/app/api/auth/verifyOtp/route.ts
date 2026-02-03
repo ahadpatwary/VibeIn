@@ -1,15 +1,22 @@
 import { NextResponse } from "next/server";
 import { getRedisClient } from "@/lib/redis";
+import { z } from 'zod'
+import { otpValidateSchema } from "@/schemas/signIn.schema";
 
 export const POST = async (req: Request) => {
     try {
         const body = await req.json();
-        const { email, value } = body;
 
-        if (!email || !value) return NextResponse.json(
-            { message: "Email and OTP value are required" },
-            { status: 400 }
-        );
+        const parsed = otpValidateSchema.safeParse(body);
+
+        if(!parsed.success) {
+            return NextResponse.json(
+                { message: "email and otp mush be required"},
+                { status: 402 }
+            )
+        }
+
+        const { email , otp } = parsed.data;
         
 
         const Redis = getRedisClient();
@@ -26,14 +33,14 @@ export const POST = async (req: Request) => {
         );
         
 
-        const otp = await Redis.get(`emailOtp:${email}`);
-        if (!otp)  return NextResponse.json(
+        const redisStoreOtp = await Redis.get(`emailOtp:${email}`);
+        if (!redisStoreOtp)  return NextResponse.json(
             { message: "OTP expired" },
             { status: 400 }
         );
         
 
-        if (otp !== value) return NextResponse.json(
+        if (otp !== redisStoreOtp) return NextResponse.json(
             { message: "OTP does not match" },
             { status: 401 }
         );
