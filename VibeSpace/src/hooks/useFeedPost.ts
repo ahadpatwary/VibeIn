@@ -1,29 +1,29 @@
-//createPost
-//editPost
-//getPost
-//deletePost
+// //createPost
+// //editPost
+// //getPost
+// //deletePost
 
 
-export const useFeedPost = () => {
+// export const useFeedPost = () => {
     
-    const createPost = async () => {
+//     const createPost = async () => {
 
-        const res = await createPostApi();
+//         const res = await createPostApi();
 
-    }
+//     }
 
-    const editPost = async () => {
+//     const editPost = async () => {
         
-        const res = await editPostApi();
-    }
+//         const res = await editPostApi();
+//     }
 
-    const getPost = async () => {
+//     const getPost = async () => {
 
-        const res = await getPostApi();
-    }
+//         const res = await getPostApi();
+//     }
 
-    const deletePost = async () => {
+//     const deletePost = async () => {
 
-        const res = await deletePostApi();
-    }
-}
+//         const res = await deletePostApi();
+//     }
+// }

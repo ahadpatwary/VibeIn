@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getRedisClient } from "@/lib/redis";
+import { cookies } from 'next/headers'
+import { jwt } from "jsonwebtoken";
 
 
 export async function POST (req: Request) {
@@ -18,10 +20,38 @@ export async function POST (req: Request) {
             );
         }
 
-        const accessToken = "1234"
+        const accessToken = jwt.sign(
+            {
+                sub: userId,
+                role: 'user',
+            },
+            process.env.NEXT_AUTH_SECRET,
+            {
+                algorithm: "HS256",
+                expiresIn: "15m",
+                notBefore: "0s",
+                issue: "smreaz.com",
+                audience: "VibeIn_client",
+                jwtid: uuid()
+            }
+        )
+
+        (await cookies()).set("accessToken", accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            maxAge: 15 * 60
+        })
+
+        const refreshToken = '2345';
 
 
-        const refreshToken = "5678"
+        (await cookies()).set("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60
+        })
 
 
         await Redis.set(
