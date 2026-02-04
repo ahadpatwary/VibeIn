@@ -1,9 +1,9 @@
-'use client'
-import AllGroup from "@/components/AllGroup";
+// 'use client'
+// import AllGroup from "@/components/AllGroup";
 
 
-export default function Home () {
-    return (
-        <AllGroup />
-    )
-}
+// export default function Home () {
+//     return (
+//         <AllGroup />
+//     )
+// }

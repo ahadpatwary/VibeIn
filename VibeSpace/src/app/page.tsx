@@ -1,19 +1,20 @@
 import { Button } from "@/components/ui/button";
 import homePageCardData from './../data/HomePageCardData.json'
+import { Card } from "@/components/ui/card";
 
 export default async function Page() {
   return(
-    <div className="min-h-dvh w-full flex flex-col bg-[#0b0f1a] text-gray-200 overflow-y-auto">
+    <div className="min-h-dvh w-full flex flex-col bg-[#1F1F22] text-gray-200 overflow-y-auto">
 
       {/* NAVBAR */}
-      <nav className="w-full flex justify-between items-center px-6 py-4 bg-[#0f172a] border-b border-white/10">
-        <p className="text-xl font-semibold text-blue-400">VibeIn</p>
+      <nav className="w-full flex justify-between items-center px-6 py-4 bg-[#242427] border-b border-white/10">
+        <p className="text-3xl font-semibold text-blue-400">VibeIn</p>
 
         <div className="flex items-center gap-6 text-sm text-gray-300">
           <span className="cursor-pointer hover:text-white hidden sm:block">Home</span>
           <span className="cursor-pointer hover:text-white hidden sm:block">About</span>
           <span className="cursor-pointer hover:text-white hidden sm:block">Support</span>
-          <Button className="bg-blue-600 hover:bg-blue-700">Login</Button>
+          <Button className="">Login</Button>
         </div>
       </nav>
 
@@ -34,7 +35,7 @@ export default async function Page() {
               with developers worldwide.
             </p>
 
-            <Button className="mt-6 px-6 py-3 text-lg bg-blue-600 hover:bg-blue-700">
+            <Button className="mt-6 px-6 py-3 text-lg shadow-lg">
               Join VibeIn Today
             </Button>
           </div>
@@ -42,6 +43,7 @@ export default async function Page() {
           {/* Laptop Placeholder */}
           <img src='./laptop.png' className="min-w-[310px] max-w-[500px] w-full bg-gradient-to-br from-blue-500/20 to-blue-700/20 rounded-xl m-2"/>
         </section>
+
 
         {/* TAGLINE */}
         <p className="text-center text-2xl md:text-3xl font-semibold my-16">
@@ -52,9 +54,9 @@ export default async function Page() {
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {
             homePageCardData.map((data) => (
-              <div
+              <Card
                 key={data.id}
-                className="bg-[#111827] border border-white/10 rounded-xl p-6 hover:border-blue-500 transition"
+                className="border border-white/10 rounded-xl p-6 hover:border-blue-500 transition"
               >
                 <p className="text-lg font-semibold text-blue-400 mb-2">
                   {data.title}
@@ -62,7 +64,7 @@ export default async function Page() {
                 <p className="text-sm text-gray-400">
                   {data.description}
                 </p>
-              </div>
+              </Card>
             ))
           }
         </section>
@@ -79,7 +81,7 @@ export default async function Page() {
             <li>✔ Stay up-to-date with latest tutorials</li>
           </ul>
 
-          <Button className="mt-6 px-8 py-3 text-lg bg-blue-600 hover:bg-blue-700">
+          <Button className="mt-6 px-8 py-3 text-lg ">
             Join VibeIn
           </Button>
         </section>
@@ -87,7 +89,7 @@ export default async function Page() {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-[#0f172a] border-t border-white/10 py-10 text-sm text-gray-400">
+      <footer className="bg-[#242427] border-t border-white/10 py-10 text-sm text-gray-400">
         <div className="flex flex-col items-center gap-4">
           <div className="flex gap-4">
             <span>Home</span>

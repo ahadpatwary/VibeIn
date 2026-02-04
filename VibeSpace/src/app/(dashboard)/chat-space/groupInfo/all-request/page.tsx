@@ -1,10 +1,10 @@
-'use client'
-import AllRequest from "@/components/AllRequest";
+// 'use client'
+// import AllRequest from "@/components/AllRequest";
 
 
 
-export default function Home () {
-    return(
-        <AllRequest />
-    )
-}
+// export default function Home () {
+//     return(
+//         <AllRequest />
+//     )
+// }

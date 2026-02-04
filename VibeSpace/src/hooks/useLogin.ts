@@ -102,6 +102,8 @@ export const useLoing = () => {
     const checkEmailExistance = async (email: EmailType) => { //*
 
         try {
+
+            setStatus("verify");
             
             const accountInfo = {
                 type: 'crediantials' as 'crediantials',
@@ -115,7 +117,7 @@ export const useLoing = () => {
                 return;
             }
 
-            setStatus("verify");
+            // setStatus("verify");
 
         } catch (error) {
             if(error instanceof Error)
@@ -128,9 +130,11 @@ export const useLoing = () => {
     const otpVerification = async (otpObject: OtpValidateType) => { //*
         try {
 
+            setStatus("create");
+
             const message = await otpVerificationApi(otpObject.email, otpObject.otp);
 
-            setStatus("create");
+            // setStatus("create");
 
         } catch (error) {
             if(error instanceof Error)

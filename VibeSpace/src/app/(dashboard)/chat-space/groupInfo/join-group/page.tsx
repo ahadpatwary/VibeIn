@@ -2,8 +2,8 @@
 
 
 
-export default function joinGroup(){
-    return(
-        <p>ahad patwary</p>
-    )
-}
+// export default function joinGroup(){
+//     return(
+//         <p>ahad patwary</p>
+//     )
+// }

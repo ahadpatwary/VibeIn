@@ -1,53 +1,53 @@
-'use client'
-import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+// 'use client'
+// import { useSession } from "next-auth/react";
+// import React, { useState } from "react";
 
 
-export const useCreateGroup = () => {
+// export const useCreateGroup = () => {
 
-    const [groupName, setGroupName] = useState<string>("");
-    const [groupBio, setGroupBio] = useState<string>("");
-    const [groupPicture, setGroupPicture] = useState<File | null>(null);
-    const [loading, setloading] = useState<boolean>(false);
-
-
+//     const [groupName, setGroupName] = useState<string>("");
+//     const [groupBio, setGroupBio] = useState<string>("");
+//     const [groupPicture, setGroupPicture] = useState<File | null>(null);
+//     const [loading, setloading] = useState<boolean>(false);
 
 
-    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+
+
+//     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+//         e.preventDefault();
     
-        const {data: session} = useSession();
-        const userId = session?.user.id;
+//         const {data: session} = useSession();
+//         const userId = session?.user.id;
 
-        if (!groupName || !groupBio || !groupPicture || !userId) {
-            return alert("সব ফিল্ড পূরণ করুন!");
-        }
+//         if (!groupName || !groupBio || !groupPicture || !userId) {
+//             return alert("সব ফিল্ড পূরণ করুন!");
+//         }
         
-        const formData = new FormData();
-        formData.append("groupName", groupName);
-        formData.append("groupBio", groupBio);
-        formData.append('userId', userId);
-        formData.append("image", groupPicture); // backend e jei name use korcho, oita dite hobe
+//         const formData = new FormData();
+//         formData.append("groupName", groupName);
+//         formData.append("groupBio", groupBio);
+//         formData.append('userId', userId);
+//         formData.append("image", groupPicture); // backend e jei name use korcho, oita dite hobe
     
-        try {
-            setloading(true);
+//         try {
+//             setloading(true);
         
-            const res = await fetch("https://vibein-production-d87a.up.railway.app/api/createGroup", {
-                method: "POST",
-                body: formData, // ❌ no headers here
-            });
+//             const res = await fetch("https://vibein-production-d87a.up.railway.app/api/createGroup", {
+//                 method: "POST",
+//                 body: formData, // ❌ no headers here
+//             });
     
-            if (!res.ok) throw new Error("Upload failed");
+//             if (!res.ok) throw new Error("Upload failed");
     
-            const data = await res.json();
-            console.log("Response:", data);
+//             const data = await res.json();
+//             console.log("Response:", data);
         
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setloading(false);
-        }
-    };
+//         } catch (err) {
+//             console.error(err);
+//         } finally {
+//             setloading(false);
+//         }
+//     };
 
-    return { groupName, setGroupName, groupBio, setGroupBio, groupPicture, setGroupPicture, loading, handleSubmit };
-}
+//     return { groupName, setGroupName, groupBio, setGroupBio, groupPicture, setGroupPicture, loading, handleSubmit };
+// }

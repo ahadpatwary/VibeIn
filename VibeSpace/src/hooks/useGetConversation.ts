@@ -1,92 +1,92 @@
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+// import { useSession } from "next-auth/react";
+// import { useState, useEffect } from "react";
 
-interface ConversationsMap {
-  [conversationId: string]: Conversation;
-}
+// interface ConversationsMap {
+//   [conversationId: string]: Conversation;
+// }
 
-interface OneToOneConversation {
-  conversationId: string;
-  type: 'oneToOne';
-  text: string;
-  messageTime: string;
-  typing: boolean; // pore thik korbo
-  info: {
-    user_one: {
-      _id: string;
-      name: string;
-      picture: string;
-    };
-    user_two: {
-      _id: string;
-      name: string;
-      picture: string;
-    };
-  };
-}
+// interface OneToOneConversation {
+//   conversationId: string;
+//   type: 'oneToOne';
+//   text: string;
+//   messageTime: string;
+//   typing: boolean; // pore thik korbo
+//   info: {
+//     user_one: {
+//       _id: string;
+//       name: string;
+//       picture: string;
+//     };
+//     user_two: {
+//       _id: string;
+//       name: string;
+//       picture: string;
+//     };
+//   };
+// }
 
-interface GroupConversation {
-  conversationId: string;
-  type: 'group';
-  text: string;
-  messageTime: string;
-  typing: boolean;
-  info: {
-    name: string;
-    picture: string;
-  };
-}
-export type Conversation = OneToOneConversation | GroupConversation;
+// interface GroupConversation {
+//   conversationId: string;
+//   type: 'group';
+//   text: string;
+//   messageTime: string;
+//   typing: boolean;
+//   info: {
+//     name: string;
+//     picture: string;
+//   };
+// }
+// export type Conversation = OneToOneConversation | GroupConversation;
 
 
-const useGetConversation = () => {
-    const [conversations, setConversations] = useState<string[]>([]);
-    const [convObj, setConvObj] = useState<ConversationsMap>({});
+// const useGetConversation = () => {
+//     const [conversations, setConversations] = useState<string[]>([]);
+//     const [convObj, setConvObj] = useState<ConversationsMap>({});
     
-    const { data: session } = useSession(); 
-    const userID = session?.user.id;
+//     const { data: session } = useSession(); 
+//     const userID = session?.user.id;
 
-    useEffect(() => {
-        ;( async () => {
+//     useEffect(() => {
+//         ;( async () => {
         
-            const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userID }),
-            });
+//             const res = await fetch('https://vibein-production-d87a.up.railway.app/api/getConversation', {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify({ userID }),
+//             });
         
-            if (!res.ok) {
-                console.error('Something went wrong');
-                return;
-            }
+//             if (!res.ok) {
+//                 console.error('Something went wrong');
+//                 return;
+//             }
         
-            const data = await res.json();
-            console.log("data", data.conversations);
-            // setConversations(data.conversations || []);
+//             const data = await res.json();
+//             console.log("data", data.conversations);
+//             // setConversations(data.conversations || []);
 
-            const idList = [];
-            const convObjData: ConversationsMap = {};
+//             const idList = [];
+//             const convObjData: ConversationsMap = {};
 
-            const conversations: Conversation[] = data.conversations;
+//             const conversations: Conversation[] = data.conversations;
 
-            for(const conv of conversations){
-                convObjData[conv.conversationId] = {
-                  ...conv,
-                  typing: false,
-                };
-                idList.push(conv.conversationId);
-            }
+//             for(const conv of conversations){
+//                 convObjData[conv.conversationId] = {
+//                   ...conv,
+//                   typing: false,
+//                 };
+//                 idList.push(conv.conversationId);
+//             }
 
-            console.log("convObjData", convObjData);
-            console.log("convList", idList);
+//             console.log("convObjData", convObjData);
+//             console.log("convList", idList);
 
-            setConversations(idList);
-            setConvObj(convObjData);
+//             setConversations(idList);
+//             setConvObj(convObjData);
 
-        })();
-    }, []);
+//         })();
+//     }, []);
 
-    return { conversations, setConversations, convObj, setConvObj };
-}
+//     return { conversations, setConversations, convObj, setConvObj };
+// }
 
-export default useGetConversation;
+// export default useGetConversation;
