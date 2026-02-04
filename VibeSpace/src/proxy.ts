@@ -1,6 +1,5 @@
 // middleware.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 import crypto from "crypto";
 import { cookies } from 'next/headers'
 import jwt from "jsonwebtoken";
@@ -32,7 +31,7 @@ export async function proxy(req: NextRequest) {
       // ❗ refresh এখানে করা যাবে না
       const res = NextResponse.next();
       res.headers.set("x-access-expired", "true");
-      return res;````
+      return res;
     }
 
   // 2️⃣ Generate Nonce for CSP

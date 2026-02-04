@@ -34,7 +34,7 @@
     "framer-motion": "^12.23.22",
     "input-otp": "^1.4.2",
     "ioredis": "^5.8.2",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.3",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.544.0",
