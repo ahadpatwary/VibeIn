@@ -9,30 +9,26 @@ export async function proxy(req: NextRequest) {
   const deviceId = (await cookies()).get('deviceId')?.value;
   const accessToken = (await cookies()).get('accessToken')?.value;
 
-  if(!deviceId || !accessToken) {
-    return false;
+
+  if (!deviceId || !accessToken) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  try {
+    jwt.verify(accessToken, process.env.AUTH_ACCESS_SECRET!, {
+      algorithms: ["HS256"],
+      issuer: "smreaz.com",
+      audience: "VibeIn_client",
+      maxAge: "15m",
+    });
 
-    if (!accessToken) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-
-    try {
-      jwt.verify(accessToken, process.env.AUTH_ACCESS_SECRET!, {
-        algorithms: ["HS256"],
-        issuer: "smreaz.com",
-        audience: "VibeIn_client",
-        maxAge: "15m",
-      });
-
-      // return NextResponse.next();
-    } catch {
-      // ❗ refresh এখানে করা যাবে না
-      const res = NextResponse.next();
-      res.headers.set("x-access-expired", "true");
-      return res;
-    }
+    // return NextResponse.next();
+  } catch {
+    // ❗ refresh এখানে করা যাবে না
+    const res = NextResponse.next();
+    res.headers.set("x-access-expired", "true");
+    return res;
+  }
 
   // 2️⃣ Generate Nonce for CSP
   // const nonce = Buffer.from(crypto.randomUUID()).toString("base64");

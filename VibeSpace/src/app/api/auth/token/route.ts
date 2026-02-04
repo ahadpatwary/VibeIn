@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { getRedisClient } from "@/lib/redis";
 import { cookies } from 'next/headers'
-import { jwt } from "jsonwebtoken";
+import crypto from "crypto";
+
+import jwt from 'jsonwebtoken'
 
 
 export async function POST (req: Request) {
@@ -23,18 +25,18 @@ export async function POST (req: Request) {
         const accessToken = jwt.sign(
             {
                 sub: userId,
-                role: 'user',
+                role: "user",
             },
-            process.env.NEXT_AUTH_SECRET,
+            process.env.NEXT_AUTH_SECRET as string,
             {
                 algorithm: "HS256",
                 expiresIn: "15m",
                 notBefore: "0s",
-                issue: "smreaz.com",
+                issuer: "smreaz.com",
                 audience: "VibeIn_client",
-                jwtid: uuid()
+                jwtid: Buffer.from(crypto.randomUUID()).toString("base64"),
             }
-        )
+        );
 
         (await cookies()).set("accessToken", accessToken, {
             httpOnly: true,
@@ -43,7 +45,21 @@ export async function POST (req: Request) {
             maxAge: 15 * 60
         })
 
-        const refreshToken = '2345';
+        const refreshToken = jwt.sign(
+            {
+                sub: userId,
+                role: "user",
+            },
+            process.env.NEXT_AUTH_SECRET as string,
+            {
+                algorithm: "HS256",
+                expiresIn: "1m",
+                notBefore: "0s",
+                issuer: "smreaz.com",
+                audience: "VibeIn_client",
+                jwtid: Buffer.from(crypto.randomUUID()).toString("base64"),
+            }
+        ); // ekhane semiclone dite i hobe,,
 
 
         (await cookies()).set("refreshToken", refreshToken, {
