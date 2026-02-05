@@ -1,122 +1,99 @@
-// middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { cookies } from 'next/headers'
-import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import { protectedRoutes, publicRoutes } from "./lib/middleware/route-config";
+import { verifyToken } from "./lib/middleware/tokenVerification";
+import { hasAccess } from "./lib/middleware/roleVerification";
 
 export async function proxy(req: NextRequest) {
-
-  const accessToken = (await cookies()).get('accessToken')?.value;
-
-
-  if ( !accessToken) {
-    // return NextResponse.redirect(new URL("/login", req.url));
-    return;
-  }
-
-  try {
-    
-    jwt.verify(accessToken, process.env.AUTH_ACCESS_SECRET!, {
-      algorithms: ["HS256"],
-      issuer: "smreaz.com",
-      audience: "VibeIn_client",
-      maxAge: "15m",
-    });
-
-    // return NextResponse.next();
-  } catch {
-    // ❗ refresh এখানে করা যাবে না
-    const res = NextResponse.next();
-    res.headers.set("x-access-expired", "true");
-    return res;
-  }
-
-  // 2️⃣ Generate Nonce for CSP
-  // const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-
-  // // 3️⃣ Content Security Policy
-  // const cspHeader = `
-  //   default-src 'self';
-  //   script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
-  //   style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
-  //   img-src 'self' blob:
-  //     data: https://www.google-analytics.com
-  //     https://res.cloudinary.com
-  //     https://lh3.googleusercontent.com
-  //     https://avatars.githubusercontent.com
-  //   ;
-  //   font-src 'self' https://fonts.gstatic.com;
-  //   connect-src 'self' https://www.google-analytics.com;
-  //   object-src 'none';
-  //   base-uri 'self';
-  //   form-action 'self';
-  //   frame-ancestors 'none';
-  //   upgrade-insecure-requests;
-  // `
-
-  // // 4️⃣ Set Headers
-  // const contentSecurityPolicyHeaderValue = cspHeader
-  //   .replace(/\s{2,}/g, ' ')
-  //   .trim()
- 
-  // const requestHeaders = new Headers(req.headers)
-  // requestHeaders.set('x-nonce', nonce)
- 
-  // requestHeaders.set(
-  //   'Content-Security-Policy',
-  //   contentSecurityPolicyHeaderValue
-  // )
- 
-  // const response = NextResponse.next({
-  //   request: {
-  //     headers: requestHeaders,
-  //   },
-  // })
-  // response.headers.set(
-  //   'Content-Security-Policy',
-  //   contentSecurityPolicyHeaderValue
-  // )
-
-  // 5️⃣ Auth / Route Logic
   const { pathname } = req.nextUrl;
 
-  // ✅ Public routes
-  const isPublic =
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname === "/register"
-  ;
+  let response: NextResponse | null = null;
 
-  // Logged-in user visiting public page → redirect to feed
-  // if (token && isPublic) {
-  //   return NextResponse.redirect(new URL("/feed", req.url));
-  // }
+  const token = (await cookies()).get("accessToken")?.value;
 
-  // // Logged-out user visiting protected page → redirect to login
-  // if (!token && !isPublic) {
-  //   return NextResponse.redirect(new URL("/login", req.url));
-  // }
+  const route = protectedRoutes.find(r => pathname.startsWith(r.path));
 
-  // // Otherwise, allow request
-  // return response;
+  if (route) {
+    if (!token) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/login";
+      response = NextResponse.redirect(url);
+    } else {
+      try {
+        const user = verifyToken(token);
+
+        if (!hasAccess(user, route.roles)) {
+          const url = req.nextUrl.clone();
+          url.pathname = "/unauthorized";
+          response = NextResponse.redirect(url);
+        }
+      } catch {
+        const url = req.nextUrl.clone();
+        url.pathname = "/login";
+        response = NextResponse.redirect(url);
+      }
+    }
+  }
+
+  if (!response && publicRoutes.some(r => pathname.startsWith(r))) {
+
+    const user = token ? verifyToken(token) : undefined;
+
+    if (user) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/feed";
+      response = NextResponse.redirect(url);
+    }else {
+      response = NextResponse.next();
+    }
+  }
+
+  if (!response) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/notFoundPage";
+    response = NextResponse.redirect(url);
+  }
+
+  if (!pathname.startsWith("/api")) {
+    const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+
+    const cspHeader = `
+      default-src 'self';
+      script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
+      style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
+      img-src 'self' blob: data:
+        https://www.google-analytics.com
+        https://res.cloudinary.com
+        https://lh3.googleusercontent.com
+        https://avatars.githubusercontent.com;
+      font-src 'self' https://fonts.gstatic.com;
+      connect-src 'self' https://www.google-analytics.com;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      upgrade-insecure-requests;
+    `;
+
+    const contentSecurityPolicyHeaderValue = cspHeader .replace(/\s{2,}/g, ' ') .trim()
+
+    response.headers.set("Content-Security-Policy", contentSecurityPolicyHeaderValue);
+    response.headers.set("x-nonce", nonce);
+  }
+
+  return response;
 }
 
-// 6️⃣ Matcher Config
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     {
-      source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+      // source: "/((?!api|_next/static|_next/image|favicon.ico).*)", ekhane backend router er upor middleware colbe na,
+      source: "/((?!_next/static|_next/image|favicon.ico).*)", // ekhon backend e colbe
       missing: [
-        { type: 'header', key: 'next-router-prefetch' },
-        { type: 'header', key: 'purpose', value: 'prefetch' },
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
       ],
     },
   ],
-}
+};
