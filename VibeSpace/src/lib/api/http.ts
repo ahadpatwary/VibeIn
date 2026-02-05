@@ -21,7 +21,7 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
         method = "GET",
         body,
         headers,
-        timeoutMs = 8000,
+        timeoutMs = 80000,
         cache = "no-store",
         schema,
     } = options

@@ -6,21 +6,25 @@ import { z } from "zod";
 import { getRedisClient } from '@/lib/redis';
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers'
+import { connectToDb } from '@/lib/db';
 
 const baseAuthSchema = z.object({
-  type: z.enum(["credentials", "google", "github"]),
-  providerId: z.string().optional(),
-  name: z.string().trim().optional(),
-  profilePicture: z.string().optional(),
-  email: z.string().email().optional(),
-  password: z.string().min(8).optional(),
+    type: z.enum(["credentials", "google", "github"]),
+    providerId: z.string().optional(),
+    name: z.string().trim().optional(),
+    profilePicture: z.string().optional(),
+    email: z.string().email().optional(),
+    password: z.string().min(8).optional(),
 });
 
 
 export const authSchema = baseAuthSchema.superRefine((data, ctx) => {
 
+    console.log("data.type", data.type)
+
     // credentials login
     if (data.type === "credentials") {
+        console.log("yes im coming on credina")
         if (!data.password) {
             ctx.addIssue({
                 path: ["password"],
@@ -32,6 +36,7 @@ export const authSchema = baseAuthSchema.superRefine((data, ctx) => {
 
     // OAuth login
     if (data.type !== "credentials") {
+        console.log("yes outh provider")
         if (!data.providerId) {
             ctx.addIssue({
                 path: ["providerId"],
@@ -40,19 +45,21 @@ export const authSchema = baseAuthSchema.superRefine((data, ctx) => {
             });
         }
     }
-  }
+}
 );
 
 export type AuthSchemaType = z.infer<typeof authSchema>;
 
 
 
-export async function POST (req: Request) {
+export async function POST(req: Request) {
     try {
-        
+
         const body: AuthSchemaType = await req.json();
 
         const result = authSchema.safeParse(body);
+
+        await connectToDb();
 
         if (!result.success) {
             return NextResponse.json(
@@ -73,11 +80,11 @@ export async function POST (req: Request) {
 
         const userId = user._id;
 
-        const account = ( type === 'credentials' ) ? await Account.create({
+        const account = (type === 'credentials') ? await Account.create({
             type: 'credentials',
             email: body.email,
-            password: body.password, 
-            authorId: new Types.ObjectId(userId) 
+            password: body.password,
+            authorId: new Types.ObjectId(userId)
         }) : await Account.create({
             type: type,
             email: body.email,
@@ -109,7 +116,7 @@ export async function POST (req: Request) {
                 ...payload,
                 role: "user",
             },
-            process.env.NEXT_AUTH_SECRET as string,
+            process.env.NEXTAUTH_SECRET as string,
             {
                 algorithm: "HS256",
                 expiresIn: "15m",
@@ -123,7 +130,7 @@ export async function POST (req: Request) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 15 * 60, 
+            maxAge: 15 * 60,
             path: "/"
         })
 
@@ -132,7 +139,7 @@ export async function POST (req: Request) {
                 ...payload,
                 role: "user",
             },
-            process.env.NEXT_AUTH_SECRET as string,
+            process.env.NEXTAUTH_SECRET as string,
             {
                 algorithm: "HS256",
                 expiresIn: "1m",
@@ -166,7 +173,7 @@ export async function POST (req: Request) {
 
 
     } catch (error) {
-        if(error instanceof Error){
+        if (error instanceof Error) {
             throw new Error(error.message);
         }
     }

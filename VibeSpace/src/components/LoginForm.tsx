@@ -7,13 +7,13 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { 
-  createAccountSchema, 
-  CreateAccountType, 
-  EmailType, 
-  emailValidateSchema, 
-  otpValidateSchema, 
-  OtpValidateType 
+import {
+  createAccountSchema,
+  CreateAccountType,
+  EmailType,
+  emailValidateSchema,
+  otpValidateSchema,
+  OtpValidateType
 } from "@/schemas/signIn.schema"
 
 import { cn } from "@/lib/utils"
@@ -49,42 +49,43 @@ export function LoginForm({
     confirmPassword: ""
   })
 
-  const { 
+  const {
     status,
     loading,
     googleRegister,
     githubRegister,
-    checkEmailExistance, 
-    otpVerification, 
-    credentialRegister 
+    checkEmailExistance,
+    otpVerification,
+    credentialRegister
   } = useLoing();
 
   const handleClick = () => {
 
-    if(status === 'send'){
+    if (status === 'send') {
       const parsed = emailValidateSchema.safeParse(email)
 
       if (!parsed.success) {
         console.log(parsed.error.format());
         return;
       }
-      setOtpObject((prev: OtpValidateType) => ({...prev, email: parsed.data}))
+      setCreateAccountObject((prev: CreateAccountType) => ({ ...prev, email: parsed.data }));
+      setOtpObject((prev: OtpValidateType) => ({ ...prev, email: parsed.data }))
 
       checkEmailExistance(parsed.data);
 
-    } else if( status === 'verify') {
+    } else if (status === 'verify') {
       const parsed = otpValidateSchema.safeParse(otpObject);
 
-      if(!parsed.success) {
+      if (!parsed.success) {
         console.log(parsed.error.format());
         return;
       }
 
       otpVerification(parsed.data)
-    } else if( status === 'create') {
+    } else if (status === 'create') {
       const parsed = createAccountSchema.safeParse(createAccountObject);
 
-      if(!parsed.success) {
+      if (!parsed.success) {
         console.log(parsed.error.format());
         return;
       }
@@ -110,17 +111,17 @@ export function LoginForm({
                       <Button
                         variant="outline"
                         className="w-full"
-                        onClick={ githubRegister }
+                        onClick={githubRegister}
                       >
                         <FaGithub />
                         Create with GitHub
                       </Button>
 
-                
+
                       <Button
                         variant="outline"
                         className="w-full"
-                        onClick={ googleRegister }
+                        onClick={googleRegister}
                       >
                         <FaGoogle />
                         Create with Google
@@ -145,40 +146,40 @@ export function LoginForm({
                   placeholder="m@example.com"
                   required
                   value={email}
-                  disabled={ ( loading || status === 'verify' || status === 'create' ) ? true : false }
+                  disabled={(loading || status === 'verify' || status === 'create') ? true : false}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
               {
                 status === 'create' && (
-                  <CreateAccount 
-                    createAccountObject={createAccountObject} 
-                    setCreateAccountObject={setCreateAccountObject} 
+                  <CreateAccount
+                    createAccountObject={createAccountObject}
+                    setCreateAccountObject={setCreateAccountObject}
                   />
                 )
               }
 
               {
                 status === 'verify' && (
-                  <Otp 
-                    otpObject={otpObject} 
-                    setOtpObject={setOtpObject} 
+                  <Otp
+                    otpObject={otpObject}
+                    setOtpObject={setOtpObject}
                   />
                 )
               }
 
-              <Button 
-                type="button" 
-                className="w-full" 
+              <Button
+                type="button"
+                className="w-full"
                 disabled={loading}
-                onClick={ handleClick }
+                onClick={handleClick}
               >
                 {
                   status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
                 }
               </Button>
-              
+
             </form>
           </div>
         </CardContent>

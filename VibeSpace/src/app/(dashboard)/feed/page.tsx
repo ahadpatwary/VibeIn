@@ -55,11 +55,11 @@
 //              )})}
 //           </div>
 //         )}
- 
+
 //         </>
 
 //         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
-    
+
 //         <div className='md:mx-3'>
 //           <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
 //             <Button className="h-13  m-2 w-auto" onClick={handleClick}> Create a post</Button>
@@ -101,3 +101,13 @@
 // }
 
 // export default Feed;
+
+
+
+function page() {
+    return (
+        <div>page</div>
+    )
+}
+
+export default page

@@ -1,5 +1,5 @@
 export const protectedRoutes = [
-  { path: '/dashboard', roles: ['user', 'admin'] },
+  { path: '/feed', roles: ['user', 'admin'] },
   { path: '/admin', roles: ['admin'] },
   { path: '/profile', roles: ['user', 'admin'] },
 ];

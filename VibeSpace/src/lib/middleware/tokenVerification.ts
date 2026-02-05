@@ -9,15 +9,16 @@ export interface UserPayload {
 
 export function verifyToken(token: string): UserPayload {
     try {
-        
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!, {
+
+        console.log("env", process.env.NEXTAUTH_SECRET)
+        const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!, {
             algorithms: ["HS256"],
             issuer: "smreaz.com",
             audience: "VibeIn_client",
             maxAge: "15m",
         }) as UserPayload;
 
-        return decoded;
+        return decoded; 
 
     } catch (err) {
         throw new Error('Invalid token');

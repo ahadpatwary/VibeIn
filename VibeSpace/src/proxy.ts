@@ -23,10 +23,12 @@ export async function proxy(req: NextRequest) {
       try {
         const user = verifyToken(token);
 
-        if (!hasAccess(user, route.roles)) {
+        if (user && !hasAccess(user, route.roles)) {
           const url = req.nextUrl.clone();
           url.pathname = "/unauthorized";
           response = NextResponse.redirect(url);
+        } else if( user ){
+          response = NextResponse.next();
         }
       } catch {
         const url = req.nextUrl.clone();
@@ -39,12 +41,13 @@ export async function proxy(req: NextRequest) {
   if (!response && publicRoutes.some(r => pathname.startsWith(r))) {
 
     const user = token ? verifyToken(token) : undefined;
+    console.log("user", user);
 
     if (user) {
       const url = req.nextUrl.clone();
       url.pathname = "/feed";
       response = NextResponse.redirect(url);
-    }else {
+    } else {
       response = NextResponse.next();
     }
   }
@@ -76,7 +79,7 @@ export async function proxy(req: NextRequest) {
       upgrade-insecure-requests;
     `;
 
-    const contentSecurityPolicyHeaderValue = cspHeader .replace(/\s{2,}/g, ' ') .trim()
+    const contentSecurityPolicyHeaderValue = cspHeader.replace(/\s{2,}/g, ' ').trim()
 
     response.headers.set("Content-Security-Policy", contentSecurityPolicyHeaderValue);
     response.headers.set("x-nonce", nonce);

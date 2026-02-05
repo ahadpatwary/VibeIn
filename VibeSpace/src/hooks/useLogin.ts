@@ -27,9 +27,9 @@ export type EventObjectType = z.infer<typeof eventObjectSchema>;
 export const useLoing = () => {
 
     const router = useRouter();
-    const [status, setStatus] = useState<"send" | "verify" | "create"> ("send");
+    const [status, setStatus] = useState<"send" | "verify" | "create">("send");
     const [loading, setLoading] = useState<boolean>(false);
-    
+
     // useEffect(() => {
 
     //     const handleMessage = async (e: EventObjectType) => {
@@ -43,7 +43,7 @@ export const useLoing = () => {
     //             }
 
     //             const event = parsed.data;
-                
+
     //             if (event.origin !== "https://vibe-in-teal.vercel.app") return;
 
     //             if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
@@ -123,20 +123,20 @@ export const useLoing = () => {
         window.open(googleUrl, "_blank", "width=600,height=600");
     }
 
-    const checkEmailExistance = async ( email :  EmailType ) => { //*
+    const checkEmailExistance = async (email: EmailType) => { //*
 
         try {
 
             setStatus("verify");
-            
+
             const accountInfo = {
-                type: 'crediantials' as 'crediantials',
+                type: 'credentials' as 'credentials',
                 email: email,
             }
 
             const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
 
-            if(account) {
+            if (account) {
                 console.log('account already exist');
                 return;
             }
@@ -144,9 +144,9 @@ export const useLoing = () => {
             // setStatus("verify");
 
         } catch (error) {
-            if(error instanceof Error)
+            if (error instanceof Error)
                 throw new Error(`error message:${error.message}`)
-            ;
+                ;
         }
 
     }
@@ -161,9 +161,9 @@ export const useLoing = () => {
             // setStatus("create");
 
         } catch (error) {
-            if(error instanceof Error)
+            if (error instanceof Error)
                 throw new Error(`error message:${error.message}`)
-            ;
+                ;
         }
     }
 
@@ -172,30 +172,29 @@ export const useLoing = () => {
 
             const { email, password } = createAccountObject;
 
-            const { sub, accountId, deviceId} = await createAccountApi({
+            const { sub, accountId, deviceId } = await createAccountApi({
                 type: 'credentials',
                 email,
                 password
             })
 
-            console.log( sub, accountId, deviceId);
+            console.log(sub, accountId, deviceId);
 
             router.push('/register/user_details');
 
         } catch (error) {
-            if(error instanceof Error)
-                throw new Error(`message: ${error.message}`)
-            ;
+            if (error instanceof Error)
+                throw new Error(`message: ${error.message}`);
         }
     }
 
-    return { 
+    return {
         status,
         loading,
         googleRegister,
         githubRegister,
-        checkEmailExistance, 
-        otpVerification, 
-        credentialRegister 
+        checkEmailExistance,
+        otpVerification,
+        credentialRegister
     }
 }

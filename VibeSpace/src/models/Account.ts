@@ -21,15 +21,15 @@ const accountSchema = new Schema<IAccount>({
     providerId: {
         type: String,
         trim: true,
-        required: function(this: IAccount) {
-            return this.type === 'credentials'
+        required: function (this: IAccount) {
+            return this.type !== 'credentials'
         }
     },
 
     email: {
         type: String,
         trim: true,
-        required: function(this: IAccount) {
+        required: function (this: IAccount) {
             return this.type === 'credentials'
         },
         unique: true,
@@ -37,8 +37,8 @@ const accountSchema = new Schema<IAccount>({
     },
 
     password: {
-        type: String, 
-        required: function(this: IAccount) {
+        type: String,
+        required: function (this: IAccount) {
             return this.type === 'credentials'
         },
     },
@@ -52,15 +52,15 @@ const accountSchema = new Schema<IAccount>({
 }, { timestamps: true })
 
 accountSchema.pre("validate", function (next) {
-  if (this.type === "credentials" && !this.password) {
-    return next(new Error("Password required for credentials"));
-  }
+    if (this.type === "credentials" && !this.password) {
+        return next(new Error("Password required for credentials"));
+    }
 
-  if (this.type !== "credentials" && !this.providerId) {
-    return next(new Error("Provider ID required"));
-  }
+    if (this.type !== "credentials" && !this.providerId) {
+        return next(new Error("Provider ID required"));
+    }
 
-  next();
+    next();
 });
 
 
@@ -78,12 +78,12 @@ accountSchema.pre<IAccount>("save", async function (next) {
     next();
 });
 
-accountSchema.methods.comparePassword = 
-    async function ( candidatePassword: string ) {
+accountSchema.methods.comparePassword =
+    async function (candidatePassword: string) {
         if (!this.password) return false;
         return bcrypt.compare(candidatePassword, this.password);
     }
-;
+    ;
 
 const Account = mongoose.models.Account || mongoose.model<IAccount>("Account", accountSchema);
 export default Account;

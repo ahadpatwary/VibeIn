@@ -39,3 +39,9 @@
 //     )
 // }
 // export default Home;
+
+function Home() {
+    return <p>ahad patwarykdfjsdkfj</p>
+}
+
+export default Home;
