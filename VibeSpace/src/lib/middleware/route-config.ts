@@ -4,6 +4,6 @@ export const protectedRoutes = [
   { path: '/profile', roles: ['user', 'admin'] },
 ];
 
-export const publicRoutes = ['/about'];
+export const publicRoutes = ['/about', '/notFoundPage'];
 
-export const authRoutes = ['/', '/login', '/register', '/register/user_details'];
+export const authRoutes = [ '/login', '/register', '/register/user_details'];

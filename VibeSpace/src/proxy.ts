@@ -21,14 +21,19 @@ export async function proxy(req: NextRequest) {
   const publicUrl = publicRoutes.find(r => pathname.startsWith(r));
   const authUrl = authRoutes.find(r => pathname.startsWith(r));
 
+  console.log("protec", protectedUrl);
+  console.log("public", publicUrl);
+  console.log("auth", authUrl);
+
 
   if(token && user){ // token ache and verifyed
 
     if(protectedUrl){
-
+      console.log("token", user);
       response = NextResponse.next();
       
       if (!hasAccess(user, protectedUrl.roles)) {
+        console.log("ahadkdjf................................................................");
         const url = req.nextUrl.clone();
         url.pathname = "/unauthorized";
         response = NextResponse.redirect(url);
@@ -46,7 +51,7 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.redirect(url);
     }
 
-    if(protectedRoutes && publicRoutes && authUrl){
+    if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
@@ -75,7 +80,7 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.next();
     }
 
-    if(protectedRoutes && publicRoutes && authUrl){
+    if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);

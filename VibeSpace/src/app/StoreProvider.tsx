@@ -25,11 +25,11 @@ export default function StoreProvider({
   console.log(userId);
 
   // ✅ 3. side-effect safely
-  useEffect(() => {
-    if (!socket || !userId) return;
+  // useEffect(() => {
+  //   if (!socket || !userId) return;
 
-    socket.emit('addUser', userId);
-  }, [ socket, userId]);
+  //   socket.emit('addUser', userId);
+  // }, [ socket, userId]);
 
 
   return <Provider store={storeRef.current}>{children}</Provider>;
