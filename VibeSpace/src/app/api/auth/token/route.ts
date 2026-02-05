@@ -1,109 +1,118 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getRedisClient } from "@/lib/redis";
-import { cookies } from 'next/headers'
-import crypto from "crypto";
+import { cookies } from 'next/headers';
+import jwt from 'jsonwebtoken';
 
-import jwt from 'jsonwebtoken'
+const ACCESS_TOKEN_EXP = "15m"; // 15 minutes
+const REFRESH_TOKEN_EXP = "30d"; // 30 days
 
-
-export async function POST (req: Request) {
+export async function POST(req: NextRequest) {
     try {
+        
+        const refreshTokenCookie = (await cookies()).get("refreshToken")?.value;
 
-        const body = await req.json();
-
-        const { userId } = body;
-                
-        const Redis = getRedisClient();
-
-        if (!Redis) {
+        if (!refreshTokenCookie) {
             return NextResponse.json(
-                { message: "Redis not connected" },
-                { status: 501 }
+                { message: "User unauthenticated!" },
+                { status: 401 }
             );
         }
 
-        const accessToken = jwt.sign(
-            {
-                sub: userId,
-                role: "user",
-            },
+        
+        const Redis = getRedisClient();
+        if (!Redis) {
+            return NextResponse.json(
+                { message: "Redis not connected" },
+                { status: 500 }
+            );
+        }
+
+        let decoded;
+        try {
+            decoded = jwt.verify(
+                refreshTokenCookie,
+                process.env.NEXT_AUTH_SECRET as string, {
+                    algorithms: ["HS256"],
+                    issuer: "smreaz.com",
+                    audience: "VibeIn_client",
+                    maxAge: "15m",
+                }
+            );
+        } catch (err) {
+            return NextResponse.json(
+                { message: "Invalid or expired refresh token" },
+                { status: 401 }
+            );
+        }
+
+        const { sub, deviceId, accountId } = decoded as  jwt.JwtPayload;
+
+        if (!sub || !deviceId || !accountId) {
+            return NextResponse.json(
+                { message: "Malformed token payload" },
+                { status: 400 }
+            );
+        }
+
+        const payload = { sub, deviceId, accountId, role: "user" };
+
+
+        const newAccessToken = jwt.sign(
+            payload,
             process.env.NEXT_AUTH_SECRET as string,
             {
                 algorithm: "HS256",
-                expiresIn: "15m",
+                expiresIn: ACCESS_TOKEN_EXP,
                 notBefore: "0s",
                 issuer: "smreaz.com",
                 audience: "VibeIn_client",
-                jwtid: Buffer.from(crypto.randomUUID()).toString("base64"),
             }
         );
 
-        (await cookies()).set("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            maxAge: 15 * 60
-        })
 
-        const refreshToken = jwt.sign(
-            {
-                sub: userId,
-                role: "user",
-            },
+        const newRefreshToken = jwt.sign(
+            payload,
             process.env.NEXT_AUTH_SECRET as string,
             {
                 algorithm: "HS256",
-                expiresIn: "1m",
+                expiresIn: REFRESH_TOKEN_EXP,
                 notBefore: "0s",
                 issuer: "smreaz.com",
                 audience: "VibeIn_client",
-                jwtid: Buffer.from(crypto.randomUUID()).toString("base64"),
             }
-        ); // ekhane semiclone dite i hobe,,
+        );
 
-
-        (await cookies()).set("refreshToken", refreshToken, {
+      
+        (await cookies()).set("accessToken", newAccessToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60
-        })
-
-
-        await Redis.set(
-            `refreshToken:${userId}`,
-            refreshToken,
-            "EX",
-            30 * 24 * 60 * 60 // 30 days
-        )
-
-        const res = NextResponse.json(
-            { message: "accessToken and Refresh token created successfully!" },
-            { status: 200 }
-        )
-
-
-        res.cookies.set("accessToken", accessToken, {
-            httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            path: "/",
-            maxAge: 15 * 60 * 60
-        })
-
-        res.cookies.set("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict",
-            path: "/",
-            maxAge: 30 * 24 * 60 * 60, 
+            maxAge: 15 * 60, 
+            path: "/"
         });
 
-        return res;
-        
+        (await cookies()).set("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/"
+        });
+
+        await Redis.set(
+            `refreshToken:${deviceId}`,
+            newRefreshToken,
+            "EX",
+            30 * 24 * 60 * 60 
+        );
+
+        return NextResponse.json({ sub, accountId, deviceId }, { status: 200 });
+
     } catch (error) {
-        if(error instanceof Error){
-            throw new Error(error.message);
-        }
+        console.error("Token refresh error:", error);
+        return NextResponse.json(
+            { message: "Internal server error" },
+            { status: 500 }
+        );
     }
 }

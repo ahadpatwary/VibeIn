@@ -15,6 +15,7 @@ export async function proxy(req: NextRequest) {
   }
 
   try {
+    
     jwt.verify(accessToken, process.env.AUTH_ACCESS_SECRET!, {
       algorithms: ["HS256"],
       issuer: "smreaz.com",

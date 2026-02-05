@@ -2,11 +2,12 @@ import { http } from "../../http";
 import { z } from 'zod'
 
 export const accountResponseSchema = z.object({
-    message: z.string(),
-    userId: z.string()
+    sub: z.string(),
+    deviceId: z.string(), 
+    accountId: z.string(),
 })
 
-export type AccountResponseType = z.infer<typeof accountResponseSchema>
+export type AccountResponseType = z.infer<typeof accountResponseSchema>;
 
 export interface userObjectType {
     type: string,

@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 import { Types } from 'mongoose'
 import User from '@/models/User';
 import { z } from "zod";
+import { getRedisClient } from '@/lib/redis';
+import jwt from 'jsonwebtoken'
+import { cookies } from 'next/headers'
 
 const baseAuthSchema = z.object({
   type: z.enum(["credentials", "google", "github"]),
@@ -70,7 +73,7 @@ export async function POST (req: Request) {
 
         const userId = user._id;
 
-        ( type === 'credentials' ) ? await Account.create({
+        const account = ( type === 'credentials' ) ? await Account.create({
             type: 'credentials',
             email: body.email,
             password: body.password, 
@@ -81,10 +84,86 @@ export async function POST (req: Request) {
             authorId: new Types.ObjectId(userId)
         })
 
+        const accountId = account._id;
+
+
+        const Redis = getRedisClient();
+
+        if (!Redis) {
+            return NextResponse.json(
+                { message: "Redis not connected" },
+                { status: 501 }
+            );
+        }
+
+        const deviceId = Buffer.from(crypto.randomUUID()).toString("base64");
+
+        const payload = {
+            sub: userId,
+            deviceId: deviceId,
+            accountId: accountId,
+        }
+
+        const accessToken = jwt.sign(
+            {
+                ...payload,
+                role: "user",
+            },
+            process.env.NEXT_AUTH_SECRET as string,
+            {
+                algorithm: "HS256",
+                expiresIn: "15m",
+                notBefore: "0s",
+                issuer: "smreaz.com",
+                audience: "VibeIn_client",
+            }
+        );
+
+        (await cookies()).set("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 15 * 60, 
+            path: "/"
+        })
+
+        const refreshToken = jwt.sign(
+            {
+                ...payload,
+                role: "user",
+            },
+            process.env.NEXT_AUTH_SECRET as string,
+            {
+                algorithm: "HS256",
+                expiresIn: "1m",
+                notBefore: "0s",
+                issuer: "smreaz.com",
+                audience: "VibeIn_client",
+            }
+        ); // ekhane semiclone dite i hobe,,
+
+
+        (await cookies()).set("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/"
+        })
+
+
+        await Redis.set(
+            `refreshToken:${deviceId}`,
+            refreshToken,
+            "EX",
+            30 * 24 * 60 * 60 // 30 days
+        )
+
         return NextResponse.json(
-            { message: 'Account created successfully!', userId: userId },
+            payload,
             { status: 200 }
         )
+
 
     } catch (error) {
         if(error instanceof Error){

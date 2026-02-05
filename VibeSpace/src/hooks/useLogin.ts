@@ -64,7 +64,7 @@ export const useLoing = () => {
                     return;
                 }
 
-                const { userId } = await createAccountApi({
+                const { sub, accountId, deviceId } = await createAccountApi({
                     type: 'google',
                     providerId: event.data.id,
                     name: event.data?.name,
@@ -72,8 +72,7 @@ export const useLoing = () => {
                     profilePicture: event.data?.picture
                 });
 
-                await tokenIssueApi(userId);
-
+                console.log(sub, accountId, deviceId);
 
                 router.push('/register/user_details');
 
@@ -155,13 +154,9 @@ export const useLoing = () => {
     const otpVerification = async (otpObject: OtpValidateType) => { //*
         try {
 
-<<<<<<< HEAD
-            const message = await otpVerificationApi(otpObject);
-=======
             setStatus("create");
 
-            const message = await otpVerificationApi(otpObject.email, otpObject.otp);
->>>>>>> 6431f72bb2ef4af5dcea06e4cf31139022debd5c
+            const message = await otpVerificationApi(otpObject);
 
             // setStatus("create");
 
@@ -177,13 +172,13 @@ export const useLoing = () => {
 
             const { email, password } = createAccountObject;
 
-            const { userId } = await createAccountApi({
+            const { sub, accountId, deviceId} = await createAccountApi({
                 type: 'credentials',
                 email,
                 password
             })
 
-            await tokenIssueApi(userId);
+            console.log( sub, accountId, deviceId);
 
             router.push('/register/user_details');
 

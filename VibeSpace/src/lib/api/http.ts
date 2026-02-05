@@ -1,6 +1,7 @@
 import { HttpError } from "./http-error"
 import { withTimeout } from "./timeout"
 import { ZodSchema } from "zod"
+import { tokenIssueApi, TokenReturnType } from "./vibeIn/auth/tokenIssueApi"
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
@@ -12,6 +13,8 @@ interface HttpOptions<T> {
     cache?: RequestCache
     schema?: ZodSchema<T>
 }
+
+let refreshingPromise: Promise<TokenReturnType> | null = null;
 
 export async function http<T>(url: string, options: HttpOptions<T> = {}): Promise<T> {
     const {
@@ -40,9 +43,23 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
 
         const data = await res.json().catch(() => null)
 
+        if (res.status === 401 && data?.code === "ACCESS_TOKEN_EXPIRED") {
+
+            if (!refreshingPromise) {
+                refreshingPromise = tokenIssueApi()
+                    .finally(() => {
+                        refreshingPromise = null
+                    })
+            }
+
+            await refreshingPromise
+
+            return http<T>(url, { ...options })
+        }
+
         if (!res.ok) {
             throw new HttpError(
-                (data as any)?.message || "Request failed",
+                data?.message || "Request failed",
                 res.status,
                 data
             )
