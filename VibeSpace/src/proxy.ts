@@ -6,12 +6,12 @@ import jwt from "jsonwebtoken";
 
 export async function proxy(req: NextRequest) {
 
-  const deviceId = (await cookies()).get('deviceId')?.value;
   const accessToken = (await cookies()).get('accessToken')?.value;
 
 
-  if (!deviceId || !accessToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  if ( !accessToken) {
+    // return NextResponse.redirect(new URL("/login", req.url));
+    return;
   }
 
   try {

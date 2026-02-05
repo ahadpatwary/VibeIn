@@ -35,10 +35,13 @@ export function LoginForm({
 
   const [email, setEmail] = useState<EmailType>("");
 
+  console.log("email", email);
+
   const [otpObject, setOtpObject] = useState<OtpValidateType>({
-    email,
+    email: email,
     otp: ""
   });
+  console.log(otpObject);
 
   const [createAccountObject, setCreateAccountObject] = useState<CreateAccountType>({
     email,
@@ -65,6 +68,7 @@ export function LoginForm({
         console.log(parsed.error.format());
         return;
       }
+      setOtpObject((prev: OtpValidateType) => ({...prev, email: parsed.data}))
 
       checkEmailExistance(parsed.data);
 
