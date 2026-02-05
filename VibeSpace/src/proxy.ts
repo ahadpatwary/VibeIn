@@ -1,64 +1,90 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { protectedRoutes, publicRoutes } from "./lib/middleware/route-config";
-import { verifyToken } from "./lib/middleware/tokenVerification";
+import { authRoutes, protectedRoutes, publicRoutes } from "./lib/middleware/route-config";
+import { UserPayload, verifyToken } from "./lib/middleware/tokenVerification";
 import { hasAccess } from "./lib/middleware/roleVerification";
 
 export async function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
 
+  const { pathname } = req.nextUrl;
   let response: NextResponse | null = null;
 
   const token = (await cookies()).get("accessToken")?.value;
+  let user: UserPayload | undefined;
 
-  const route = protectedRoutes.find(r => pathname.startsWith(r.path));
+  if(token) user = verifyToken(token)
+  
+  
 
-  if (route) {
-    if (!token) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/login";
-      response = NextResponse.redirect(url);
-    } else {
-      try {
-        const user = verifyToken(token);
+  const protectedUrl = protectedRoutes.find(r => pathname.startsWith(r.path));
+  const publicUrl = publicRoutes.find(r => pathname.startsWith(r));
+  const authUrl = authRoutes.find(r => pathname.startsWith(r));
 
-        if (user && !hasAccess(user, route.roles)) {
-          const url = req.nextUrl.clone();
-          url.pathname = "/unauthorized";
-          response = NextResponse.redirect(url);
-        } else if( user ){
-          response = NextResponse.next();
-        }
-      } catch {
+
+  if(token && user){ // token ache and verifyed
+
+    if(protectedUrl){
+
+      response = NextResponse.next();
+      
+      if (!hasAccess(user, protectedUrl.roles)) {
         const url = req.nextUrl.clone();
-        url.pathname = "/login";
+        url.pathname = "/unauthorized";
         response = NextResponse.redirect(url);
       }
+
     }
-  }
 
-  if (!response && publicRoutes.some(r => pathname.startsWith(r))) {
+    if(publicUrl){
+      response = NextResponse.next();
+    }
 
-    const user = token ? verifyToken(token) : undefined;
-    console.log("user", user);
-
-    if (user) {
+    if(authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/feed";
       response = NextResponse.redirect(url);
-    } else {
+    }
+
+    if(protectedRoutes && publicRoutes && authUrl){
+      const url = req.nextUrl.clone();
+      url.pathname = "/notFoundPage";
+      response = NextResponse.redirect(url);
+    }
+
+  }
+
+  if(token && !user){ // token ache but not verifyed
+
+  }
+
+  if(!token) { // token nai
+
+    if(protectedUrl){
+      response = NextResponse.json(
+        { message: "access token missing" }, 
+        { status: 307 }
+      )
+    }
+
+    if(publicUrl){
       response = NextResponse.next();
     }
+
+    if(authUrl){
+      response = NextResponse.next();
+    }
+
+    if(protectedRoutes && publicRoutes && authUrl){
+      const url = req.nextUrl.clone();
+      url.pathname = "/notFoundPage";
+      response = NextResponse.redirect(url);
+    }
+
   }
 
-  if (!response) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/notFoundPage";
-    response = NextResponse.redirect(url);
-  }
 
-  if (!pathname.startsWith("/api")) {
+  if (response && !pathname.startsWith("/api")) {
     const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
     const cspHeader = `
