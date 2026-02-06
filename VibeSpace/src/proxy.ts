@@ -2,21 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { authRoutes, protectedRoutes, publicRoutes } from "./lib/middleware/route-config";
-import { UserPayload, verifyToken } from "./lib/middleware/tokenVerification";
+      
 
 export async function proxy(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname.replace(/\/+$/, "") || "/";
   let response: NextResponse | null = null;
 
-  const token = (await cookies()).get("accessToken")?.value;
-  let user: UserPayload | undefined;
+  const accessToken = (await cookies()).get("accessToken")?.value;
+  const refreshToken = (await cookies()).get("refreshToken")?.value;
 
-  if(token) user = verifyToken(token)
-  
-  
+  if(accessToken && !refreshToken) {
+    response = NextResponse.json(
+      { message: "hacker tracked" },
+      { status: 307 }
+    )
+  }
 
-  const protectedUrl = protectedRoutes.get(pathname);
+
+  const protectedUrl = protectedRoutes.has(pathname);
   const publicUrl = publicRoutes.has(pathname);
   const authUrl = authRoutes.has(pathname);
 
@@ -24,20 +28,33 @@ export async function proxy(req: NextRequest) {
   console.log("public", publicUrl);
   console.log("auth", authUrl);
 
-
-  if(token && user){ // token ache and verifyed
+  if(!accessToken && !refreshToken){
 
     if(protectedUrl){
-      console.log("token", user);
-      response = NextResponse.next();
-      
-      if (!protectedUrl.includes(user.role)) {
-        console.log("ahadkdjf................................................................");
-        const url = req.nextUrl.clone();
-        url.pathname = "/unauthorized";
-        response = NextResponse.redirect(url);
-      }
+      const url = req.nextUrl.clone();
+      url.pathname = "/register";
+      response = NextResponse.redirect(url);
+    }
 
+    if(publicUrl){
+      response = NextResponse.next();
+    }
+
+    if(authUrl){
+      response = NextResponse.next();
+    }
+
+    if(!protectedUrl && !publicUrl && authUrl){
+      const url = req.nextUrl.clone();
+      url.pathname = "/notFoundPage";
+      response = NextResponse.redirect(url);
+    }
+  }
+
+  if(accessToken && refreshToken) {
+    
+    if(protectedUrl){
+      response = NextResponse.next();
     }
 
     if(publicUrl){
@@ -50,34 +67,20 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.redirect(url);
     }
 
-    if(!protectedUrl && !publicUrl && !authUrl){
+    if(!protectedUrl && !publicUrl && authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
     }
-
   }
 
-  if(token && !user){ // token ache but not verifyed
-
-  }
-
-  if(!token) { // token nai
-
-    const refrestToken = (await cookies()).get('refrestToken')?.value;
+  if(!accessToken && refreshToken) {
 
     if(protectedUrl){
-
-      if(!refrestToken) {
-        const url = req.nextUrl.clone();
-        url.pathname = "/login";
-        response = NextResponse.redirect(url);
-      }
-      
-      const refreshUrl = new URL('/api/auth/token', req.url);
-      refreshUrl.searchParams.set('redirect', req.nextUrl.pathname);
-
-      response = NextResponse.redirect(refreshUrl);
+      response = NextResponse.json(
+        { message: "refresh token avaliable" }, 
+        { status: 301 }
+      )
     }
 
     if(publicUrl){
@@ -85,15 +88,17 @@ export async function proxy(req: NextRequest) {
     }
 
     if(authUrl){
-      response = NextResponse.next();
+      response = NextResponse.json(
+        { message: "refresh token avaliable" }, 
+        { status: 301 }
+      )
     }
 
-    if(!protectedUrl && !publicUrl && !authUrl){
+    if(!protectedUrl && !publicUrl && authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
     }
-
   }
 
 

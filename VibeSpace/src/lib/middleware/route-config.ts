@@ -1,9 +1,4 @@
-export const protectedRoutes = new Map([
-  ['/feed', ['user', 'admin']],
-  ['/admin', ['admin']],
-  ['/profile', ['user', 'admin']],
-  ['/register/user_details', ['user', 'admin']],
-]);
+export const protectedRoutes = new Set(['/feed', '/admin', '/profile', '/register/user_details']);
 
 
 export const publicRoutes = new Set(['/about', '/unauthorized', '/notFoundPage']);
