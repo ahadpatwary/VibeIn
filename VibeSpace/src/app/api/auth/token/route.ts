@@ -8,6 +8,8 @@ const REFRESH_TOKEN_EXP = "30d"; // 30 days
 
 export async function POST(req: NextRequest) {
     try {
+
+        console.log("comming request");
         
         const refreshTokenCookie = (await cookies()).get("refreshToken")?.value;
 

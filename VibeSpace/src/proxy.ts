@@ -3,7 +3,6 @@ import crypto from "crypto";
 import { cookies } from "next/headers";
 import { authRoutes, protectedRoutes, publicRoutes } from "./lib/middleware/route-config";
 import { UserPayload, verifyToken } from "./lib/middleware/tokenVerification";
-import { hasAccess } from "./lib/middleware/roleVerification";
 
 export async function proxy(req: NextRequest) {
 
@@ -17,9 +16,9 @@ export async function proxy(req: NextRequest) {
   
   
 
-  const protectedUrl = protectedRoutes.filter(r => r.path == pathname)[0];
-  const publicUrl = publicRoutes.filter(r => r == pathname)[0];
-  const authUrl = authRoutes.filter(r => r == pathname)[0];
+  const protectedUrl = protectedRoutes.get(pathname);
+  const publicUrl = publicRoutes.has(pathname);
+  const authUrl = authRoutes.has(pathname);
 
   console.log("protec", protectedUrl);
   console.log("public", publicUrl);
@@ -32,7 +31,7 @@ export async function proxy(req: NextRequest) {
       console.log("token", user);
       response = NextResponse.next();
       
-      if (!hasAccess(user, protectedUrl.roles)) {
+      if (!protectedUrl.includes(user.role)) {
         console.log("ahadkdjf................................................................");
         const url = req.nextUrl.clone();
         url.pathname = "/unauthorized";
@@ -69,16 +68,16 @@ export async function proxy(req: NextRequest) {
 
     if(protectedUrl){
 
-      response = NextResponse.json(
-        { message: "access token missing" }, 
-        { status: 307 }
-      )
-
       if(!refrestToken) {
         const url = req.nextUrl.clone();
         url.pathname = "/login";
         response = NextResponse.redirect(url);
       }
+      
+      const refreshUrl = new URL('/api/auth/token', req.url);
+      refreshUrl.searchParams.set('redirect', req.nextUrl.pathname);
+
+      response = NextResponse.redirect(refreshUrl);
     }
 
     if(publicUrl){
