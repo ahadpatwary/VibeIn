@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/TthemeProvider";
 import { Toaster } from "@/components/ui/sonner"
-import StoreProvider from './StoreProvider';
+// import StoreProvider from './StoreProvider';
 import { headers } from 'next/headers'
 import Script from 'next/script';
 
@@ -13,6 +13,7 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const headerList = await headers()
   const nonce = headerList.get('x-nonce')
+  console.log("ahad");
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -32,7 +33,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         </Script>
       </head>
       <body suppressHydrationWarning className="min-h-dvh max-h-dvh min-w-[310px] m-0 p-0 overflow-x-auto">
-          <StoreProvider>
+          {/* <StoreProvider> */}
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
@@ -44,7 +45,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
 
             < Toaster />
             </ThemeProvider>
-          </StoreProvider>
+          {/* </StoreProvider> */}
 
       </body>
     </html>

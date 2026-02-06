@@ -7,7 +7,7 @@ import { hasAccess } from "./lib/middleware/roleVerification";
 
 export async function proxy(req: NextRequest) {
 
-  const { pathname } = req.nextUrl;
+  const pathname = req.nextUrl.pathname.replace(/\/+$/, "") || "/";
   let response: NextResponse | null = null;
 
   const token = (await cookies()).get("accessToken")?.value;
@@ -17,9 +17,9 @@ export async function proxy(req: NextRequest) {
   
   
 
-  const protectedUrl = protectedRoutes.find(r => pathname.startsWith(r.path));
-  const publicUrl = publicRoutes.find(r => pathname.startsWith(r));
-  const authUrl = authRoutes.find(r => pathname.startsWith(r));
+  const protectedUrl = protectedRoutes.filter(r => r.path == pathname)[0];
+  const publicUrl = publicRoutes.filter(r => r == pathname)[0];
+  const authUrl = authRoutes.filter(r => r == pathname)[0];
 
   console.log("protec", protectedUrl);
   console.log("public", publicUrl);
@@ -65,11 +65,20 @@ export async function proxy(req: NextRequest) {
 
   if(!token) { // token nai
 
+    const refrestToken = (await cookies()).get('refrestToken')?.value;
+
     if(protectedUrl){
+
       response = NextResponse.json(
         { message: "access token missing" }, 
         { status: 307 }
       )
+
+      if(!refrestToken) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/login";
+        response = NextResponse.redirect(url);
+      }
     }
 
     if(publicUrl){
@@ -123,7 +132,7 @@ export const config = {
   matcher: [
     {
       // source: "/((?!api|_next/static|_next/image|favicon.ico).*)", ekhane backend router er upor middleware colbe na,
-      source: "/((?!_next/static|_next/image|favicon.ico).*)", // ekhon backend e colbe
+      source: "/((?!api|_next/static|_next/image|favicon.ico).*)", // ekhon backend e colbe
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },
