@@ -1,7 +1,7 @@
 'use client'
 import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
-import { CreateAccountType } from "@/schemas/signIn.schema"
+import { CreateAccountType } from "../schemas/signIn.schema"
 import { Dispatch, SetStateAction } from "react"
 
 
