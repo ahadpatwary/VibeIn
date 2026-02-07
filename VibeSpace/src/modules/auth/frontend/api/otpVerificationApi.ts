@@ -1,6 +1,6 @@
-import { otpValidateSchema, OtpValidateType } from "@/schemas/signIn.schema"
 import { http } from '@/shared/lib/api/http';
 import { z } from 'zod'
+import { OtpValidateType } from "../schemas/signIn.schema";
 
 export const otpVerificationReturnSchema = z.object({
     message: z.string()
