@@ -6,7 +6,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/shared/components/ui/input-otp"
-import { OtpValidateType } from "@/schemas/signIn.schema"
+import { OtpValidateType } from "@/modules/auth/frontend/schemas/signIn.schema"
 
 interface PropsType {
   otpObject: OtpValidateType,
