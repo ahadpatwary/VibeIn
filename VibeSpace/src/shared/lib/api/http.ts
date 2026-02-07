@@ -1,7 +1,7 @@
 import { HttpError } from "./http-error"
 import { withTimeout } from "./timeout"
 import { ZodSchema } from "zod"
-import { tokenIssueApi, TokenReturnType } from "./vibeIn/auth/tokenIssueApi"
+import { tokenIssueApi, TokenReturnType } from "@/modules/auth/frontend/api/tokenIssueApi"
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
