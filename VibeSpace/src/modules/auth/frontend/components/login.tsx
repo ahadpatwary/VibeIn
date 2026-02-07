@@ -1,189 +1,97 @@
 'use client'
 
+import { useState } from "react"
+import { Button } from "@/shared/components/ui/button"
+import Link from "next/link"
 import {
   Card,
+  CardAction,
   CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card"
-
-import {
-  createAccountSchema,
-  CreateAccountType,
-  EmailType,
-  emailValidateSchema,
-  otpValidateSchema,
-  OtpValidateType
-} from "../schemas/signIn.schema"
-
-import { cn } from "@/shared/lib/utils"
-import { Button } from "@/shared/components/ui/button"
+import { useRouter } from "next/navigation"
 import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
-import { useState } from "react"
-import { FaGoogle } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa6";
-import { Otp } from "@/shared/components/Otp"
-import CreateAccount from "../components/createAccount"
-import { useRegister } from "../hooks/useRegister"
 
+export function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
-export function Login({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-
-  const [email, setEmail] = useState<EmailType>("");
-
-  console.log("email", email);
-
-  const [otpObject, setOtpObject] = useState<OtpValidateType>({
-    email: email,
-    otp: ""
-  });
-  console.log(otpObject);
-
-  const [createAccountObject, setCreateAccountObject] = useState<CreateAccountType>({
-    email,
-    password: "",
-    confirmPassword: ""
-  })
-
-  const {
-    status,
-    loading,
-    googleRegister,
-    githubRegister,
-    checkEmailExistance,
-    otpVerification,
-    credentialRegister
-  } = useRegister();
-
-  const handleClick = () => {
-
-    if (status === 'send') {
-      const parsed = emailValidateSchema.safeParse(email)
-
-      if (!parsed.success) {
-        console.log(parsed.error.format());
-        return;
-      }
-      setCreateAccountObject((prev: CreateAccountType) => ({ ...prev, email: parsed.data }));
-      setOtpObject((prev: OtpValidateType) => ({ ...prev, email: parsed.data }))
-
-      checkEmailExistance(parsed.data);
-
-    } else if (status === 'verify') {
-      const parsed = otpValidateSchema.safeParse(otpObject);
-
-      if (!parsed.success) {
-        console.log(parsed.error.format());
-        return;
-      }
-
-      otpVerification(parsed.data)
-    } else if (status === 'create') {
-      const parsed = createAccountSchema.safeParse(createAccountObject);
-
-      if (!parsed.success) {
-        console.log(parsed.error.format());
-        return;
-      }
-
-      credentialRegister(parsed.data)
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("data", e);
   }
 
-
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create an Account</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6">
-            <>
-              {
-                status === 'send' && ( //google and github provider
-                  <>
-                    <div className="flex flex-col gap-4">
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={githubRegister}
-                      >
-                        <FaGithub />
-                        Create with GitHub
-                      </Button>
+    <Card className="w-full max-w-lg m-3">
+      <CardHeader>
+        <CardTitle>Login to your account</CardTitle>
+        <CardDescription >
+          Enter your email below to login to your account
+        </CardDescription>
+        <CardAction>
+          <Link href="/register">Sign Up</Link>
+        </CardAction>
+      </CardHeader>
 
-
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={googleRegister}
-                      >
-                        <FaGoogle />
-                        Create with Google
-                      </Button>
-                    </div>
-                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                      <span className="bg-card text-muted-foreground relative z-10 px-2">
-                        Or continue with
-                      </span>
-                    </div>
-                  </>
-                )
-              }
-            </>
-
-            <form className="grid gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  value={email}
-                  disabled={(loading || status === 'verify' || status === 'create') ? true : false}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              {
-                status === 'create' && (
-                  <CreateAccount
-                    createAccountObject={createAccountObject}
-                    setCreateAccountObject={setCreateAccountObject}
-                  />
-                )
-              }
-
-              {
-                status === 'verify' && (
-                  <Otp
-                    otpObject={otpObject}
-                    setOtpObject={setOtpObject}
-                  />
-                )
-              }
-
-              <Button
-                type="button"
-                className="w-full"
-                disabled={loading}
-                onClick={handleClick}
-              >
-                {
-                  status === 'send' ? "Send Code" : status === 'verify' ? 'verify code' : 'create account'
-                }
-              </Button>
-
-            </form>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="m@example.com"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <div className="grid gap-2">
+            <div className="flex items-center">
+              <Label htmlFor="password">Password</Label>
+              <Link
+                href="/forget_password"
+                className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+            <Input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <Button type="submit" className="w-full cursor-pointer">
+            Login
+          </Button>
+        </form>
+      </CardContent>
+
+      <CardFooter className="flex-col gap-2">
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer"
+        //   onClick={() => signIn("google", { callbackUrl: "/feed" })}
+        >
+          Login with Google
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer"
+          // onClick={() => signIn("github", { callbackUrl: "/feed" })}
+        >
+          Login with GitHub
+        </Button>
+      </CardFooter>
+    </Card>
   )
+  return <p>ahad</p>
 }
