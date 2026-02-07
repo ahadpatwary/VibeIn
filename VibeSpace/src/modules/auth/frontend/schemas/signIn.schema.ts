@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userSchema } from "./user.schema";
+import { userSchema } from "@/shared/schemas/user.schema";
 
 export const emailValidateSchema = z.string().email("Invalid email").trim();
 

@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+import "@/shared/styles/globals.css";
 import { ThemeProvider } from "@/shared/components/TthemeProvider";
 import { Toaster } from "@/shared/components/ui/sonner"
 // import StoreProvider from './StoreProvider';

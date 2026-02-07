@@ -1,5 +1,5 @@
-import { http } from "../../http";
 import { z } from 'zod'
+import { http } from '@/shared/lib/api/http';
 
 export const accountResponseSchema = z.object({
     sub: z.string(),

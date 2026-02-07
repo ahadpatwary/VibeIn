@@ -1,4 +1,4 @@
-import Account from '@/models/Account';
+import Account from '@/modules/account/models/Account';
 import { NextResponse } from 'next/server';
 
 

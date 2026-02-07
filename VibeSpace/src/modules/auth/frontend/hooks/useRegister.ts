@@ -1,14 +1,12 @@
 'use client'
 import { useRouter } from "next/navigation";
 import { useState } from "react"
-import { useEffect } from 'react'
-import { CreateAccountType, EmailType, OtpValidateType, ProfileType } from "@/schemas/signIn.schema";
-import { checkAccountExistanceApi } from "@/modules/lib/api/vibeIn/auth/checkEmailExistanceApi";
-import { otpVerificationApi } from "@/modules/lib/api/vibeIn/auth/otpVerificationApi";
-import { createAccountApi } from "@/modules/lib/api/vibeIn/account/createAccount";
-import { tokenIssueApi } from "@/modules/lib/api/vibeIn/auth/tokenIssueApi";
-import { AccountExistanceReturnType } from "@/modules/lib/api/vibeIn/auth/checkEmailExistanceApi";
 import { z } from 'zod'
+import { AccountExistanceReturnType } from "../api/checkEmailExistanceApi";
+import { otpVerificationApi } from "../api/otpVerificationApi";
+import { checkAccountExistanceApi } from "../api/checkEmailExistanceApi";
+import { CreateAccountType, EmailType, OtpValidateType, ProfileType } from "../schemas/signIn.schema";
+import { createAccountApi } from "../api/createAccountApi";
 
 export const eventObjectSchema = z.object({
     origin: z.string(),
