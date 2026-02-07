@@ -1,12 +1,12 @@
 "use client";
 
-import { CardDemo } from "@/shared/components/Card";
+import { Login } from "@/modules/auth/frontend/components/login";
 
 export default function Home() {
 
   return (
     <div className = "h-screen flex justify-center items-center"> 
-      <CardDemo />
+      <Login />
     </div>
   )
 }

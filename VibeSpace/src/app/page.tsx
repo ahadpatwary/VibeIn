@@ -1,3 +1,4 @@
+'use client'
 import { Button } from "@/shared/components/ui/button";
 import homePageCardData from './../data/HomePageCardData.json'
 import { Card } from "@/shared/components/ui/card";
