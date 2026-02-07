@@ -1,8 +1,11 @@
 import { Button } from "@/shared/components/ui/button";
 import homePageCardData from './../data/HomePageCardData.json'
 import { Card } from "@/shared/components/ui/card";
+import { useRouter } from "next/navigation";
 
 export default async function Page() {
+  const router = useRouter();
+
   return(
     <div className="min-h-dvh w-full flex flex-col bg-[#1F1F22] text-gray-200 overflow-y-auto">
 
@@ -14,7 +17,12 @@ export default async function Page() {
           <span className="cursor-pointer hover:text-white hidden sm:block">Home</span>
           <span className="cursor-pointer hover:text-white hidden sm:block">About</span>
           <span className="cursor-pointer hover:text-white hidden sm:block">Support</span>
-          <Button className="">Login</Button>
+          <Button 
+            className="" 
+            onClick={() => { router.push('/login')}}
+          >
+            Login
+          </Button>
         </div>
       </nav>
 
@@ -35,7 +43,10 @@ export default async function Page() {
               with developers worldwide.
             </p>
 
-            <Button className="mt-6 px-6 py-3 text-lg shadow-lg">
+            <Button 
+              className="mt-6 px-6 py-3 text-lg shadow-lg"
+              onClick={() => { router.push('/register')} }
+            >
               Join VibeIn Today
             </Button>
           </div>
@@ -81,7 +92,10 @@ export default async function Page() {
             <li>✔ Stay up-to-date with latest tutorials</li>
           </ul>
 
-          <Button className="mt-6 px-8 py-3 text-lg ">
+          <Button 
+            className="mt-6 px-8 py-3 text-lg"
+            onClick={() => { router.push('/register')} }
+          >
             Join VibeIn
           </Button>
         </section>
