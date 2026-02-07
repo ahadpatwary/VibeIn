@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 import { Types } from 'mongoose'
 import User from '@/models/User';
 import { z } from "zod";
-import { getRedisClient } from '@/lib/redis';
+import { getRedisClient } from '@/modules/lib/redis';
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers'
-import { connectToDb } from '@/lib/db';
+import { connectToDb } from '@/modules/lib/db';
 
 const baseAuthSchema = z.object({
     type: z.enum(["credentials", "google", "github"]),

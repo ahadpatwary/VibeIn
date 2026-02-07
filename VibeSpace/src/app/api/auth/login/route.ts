@@ -1,9 +1,9 @@
-import { connectToDb } from "@/lib/db";
-import User from "@/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getRedisClient } from "@/lib/redis";
-import { getRabbitChannel } from "@/lib/rabbitMQ";
+import { connectToDb } from "@/shared/lib/db";
+import User from "@/modules/user/models/User";
+import { getRabbitChannel } from "@/shared/lib/rabbitMQ";
+import { getRedisClient } from "@/shared/lib/redis";
 
 
 export async function POST(req: Request) {

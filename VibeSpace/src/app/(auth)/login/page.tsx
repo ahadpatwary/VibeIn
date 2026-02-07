@@ -1,6 +1,6 @@
 "use client";
 
-import { CardDemo } from "@/components/Card";
+import { CardDemo } from "@/shared/components/Card";
 
 export default function Home() {
 

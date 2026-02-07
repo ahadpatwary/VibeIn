@@ -29,8 +29,8 @@
     ".next/types/**/*.ts",
     "src/app/api/deleteUser",
     ".next/dev/types/**/*.ts",
-    "src/lib/api/vibeIn/auth",
-    "src/lib/api/vibeIn/feedPost"
+    "src/modules/lib/api/vibeIn/auth",
+    "src/modules/lib/api/vibeIn/feedPost"
   ],
   "exclude": ["node_modules"]
 }

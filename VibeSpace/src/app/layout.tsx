@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
-import { ThemeProvider } from "@/components/TthemeProvider";
-import { Toaster } from "@/components/ui/sonner"
+import { ThemeProvider } from "@/shared/components/TthemeProvider";
+import { Toaster } from "@/shared/components/ui/sonner"
 // import StoreProvider from './StoreProvider';
 import { headers } from 'next/headers'
 import Script from 'next/script';

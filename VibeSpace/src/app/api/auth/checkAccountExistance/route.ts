@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
-import { connectToDb } from "@/lib/db";
-import { getRedisClient } from "@/lib/redis";
-import { getRabbitChannel } from "@/lib/rabbitMQ";
-import Account from "@/models/Account";
+import { getRedisClient } from "@/shared/lib/redis";
+import { getRabbitChannel } from "@/shared/lib/rabbitMQ";
+import { connectToDb } from "@/shared/lib/db";
+import Account from "@/modules/account/models/Account";
 
 export async function POST(req: NextRequest) {
   try {

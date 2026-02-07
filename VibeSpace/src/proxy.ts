@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { authRoutes, protectedRoutes, publicRoutes } from "./lib/middleware/route-config";
-      
+import { authRoutes, protectedRoutes, publicRoutes } from "./shared/lib/middleware/route-config";
 
 export async function proxy(req: NextRequest) {
 

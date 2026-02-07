@@ -7,8 +7,8 @@
 // final all post id (200) sortend on random ordered 
 // store on redis 
 
-import { connectToDb } from '@/lib/db';
-import { getRedisClient } from '@/lib/redis';
+import { connectToDb } from '@/modules/lib/db';
+import { getRedisClient } from '@/modules/lib/redis';
 import FeedPost from '@/models/FeedPost';
 import Friend from '@/models/Friend';
 import LikePost from '@/models/Like';

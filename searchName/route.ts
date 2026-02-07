@@ -1,5 +1,5 @@
-import { connectToDb } from "@/lib/db";
-import { getRedisClient } from "@/lib/redis";
+import { connectToDb } from "@/modules/lib/db";
+import { getRedisClient } from "@/modules/lib/redis";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 

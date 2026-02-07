@@ -1,7 +1,7 @@
-import { connectToDb } from '@/lib/db'
-import { getRedisClient } from '@/lib/redis'
-import User from '@/models/User'
+import User from '@/modules/user/models/User'
 import { NextRequest, NextResponse } from 'next/server'
+import { connectToDb } from '@/shared/lib/db'
+import { getRedisClient } from '@/shared/lib/redis'
 
 export async function POST(request : NextRequest){
     try{

@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/components/ui/button";
 import homePageCardData from './../data/HomePageCardData.json'
-import { Card } from "@/components/ui/card";
+import { Card } from "@/shared/components/ui/card";
 
 export default async function Page() {
   return(

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getRedisClient } from "@/lib/redis";
 import { z } from 'zod'
-import { otpValidateSchema } from "@/schemas/signIn.schema";
+import { otpValidateSchema } from "@/modules/auth/frontend/schemas/signIn.schema";
+import { getRedisClient } from "@/shared/lib/redis";
 
 export const POST = async (req: Request) => {
     try {
