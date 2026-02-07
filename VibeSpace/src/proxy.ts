@@ -43,7 +43,7 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.next();
     }
 
-    if(!protectedUrl && !publicUrl && authUrl){
+    if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
@@ -66,7 +66,7 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.redirect(url);
     }
 
-    if(!protectedUrl && !publicUrl && authUrl){
+    if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
@@ -93,7 +93,7 @@ export async function proxy(req: NextRequest) {
       )
     }
 
-    if(!protectedUrl && !publicUrl && authUrl){
+    if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
