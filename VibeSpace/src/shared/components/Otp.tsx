@@ -27,8 +27,6 @@ export function Otp({otpObject, setOtpObject, handleClick}: PropsType) {
       <Header 
         title="Create an Account"
         description="Enter your email below to create to your account"
-        goRouter="/login"
-        goText={<AiOutlineArrowRight size={20} className="ml-3"/>}
         backRouter="/register"
         backText={ <AiOutlineArrowLeft size={20} className="mr-3"/>}
       />

@@ -20,7 +20,7 @@ export function CreateAccount({createAccountObject, setCreateAccountObject}: Pro
             <Header 
                 title="Create an Account"
                 description="Enter your email below to create to your account"
-                backRouter="\register?step=verify"
+                backRouter="\register"
                 backText={<AiOutlineArrowLeft size={20} className="" /> }
             />
 
