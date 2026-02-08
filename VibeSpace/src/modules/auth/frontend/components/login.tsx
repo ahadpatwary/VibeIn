@@ -12,11 +12,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Label } from "@/shared/components/ui/label"
 import { useLogin } from "../hooks/useLogin"
 import { CustomInput } from "@/shared/components/Input"
 import { Header } from "./header"
+import { handler } from "next/dist/build/templates/app-page"
+import { HomeLogin } from "./homeLogin"
+import { Otp } from "@/shared/components/Otp"
+import CreateAccount from "./createAccount"
+import { CreateAccountType, OtpValidateType } from "../schemas/signIn.schema"
 
 
 
@@ -24,6 +29,26 @@ export function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const handleClick = () => {
+    console.log("ahad");
+  }
+
+  const [otpObject, setOtpObject] = useState<OtpValidateType>({
+    email: "",
+    otp: ""
+  });
+  const searchParams = useSearchParams()
+  
+  const step = (searchParams.get("step") as "send" | "verify" | "pass_change") || "send"
+
+  const goStep = (nextStep: "send" | "verify" | "pass_change") => {
+    router.push(`/login?step=${nextStep}`)
+  }
+  const [createAccountObject, setCreateAccountObject] = useState<CreateAccountType>({
+    email: "",
+    password: "",
+    confirmPassword: ""
+  })
 
   const {
     googleLogin,
@@ -39,77 +64,43 @@ export function Login() {
     console.log("data", e);
   }
 
+  const handleForgetPassword = async () => {
+    await forgetPassword(email);
+    goStep("verify");
+  }
+
   return (
-    <Card className="w-full max-w-lg m-3">
-      <Header 
-        title='Login to your account'
-        description='Enter your email below to login to your account'
-        goRouter='/register'
-        goText='Register'
-      />
+    <>
+      {
+        step === 'send' && (
+          <HomeLogin 
+            handleSubmit={handleSubmit}
+            email={email}
+            setEmail={setEmail}
+            handleForgetPassword={handleForgetPassword}
+            password={password}
+            setPassword={setPassword}
+            googleLogin={googleLogin}
+            gitHubLogin={gitHubLogin}
+          />
+        )
+      }
 
-      <CardContent>
-        <>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <CustomInput
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                setValue={setEmail}
-              />
-            </div>
-            <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                      href="/forget_password"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      onClick={() => forgetPassword(email) }
-                  >
-                      Forgot your password?
-                  </Link>
-                </div>
-                <CustomInput 
-                  id='password'
-                  type='password'
-                  placeholder="password"
-                  value={password}
-                  setValue={setPassword}
-                />
-            </div>
-            <Button type="submit" className="w-full cursor-pointer">
-                Login
-            </Button>
-            </form>
+      { 
+        step === 'verify' && (
+          <Otp otpObject={otpObject} setOtpObject={setOtpObject} handleClick={handleClick}/>
+        )
+      }
 
-            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t mt-4">
-                <span className="bg-card text-muted-foreground relative z-10 px-2">
-                Or continue with
-                </span>
-            </div>
-        </>
-      </CardContent>
-
-      <CardFooter className="flex-col gap-2">
-        <Button
-          variant="outline"
-          className="w-full cursor-pointer"
-          onClick={ googleLogin }
-        >
-          Login with Google
-        </Button>
-        <Button
-          variant="outline"
-          className="w-full cursor-pointer"
-          onClick={ gitHubLogin }
-        >
-          Login with GitHub
-        </Button>
-      </CardFooter>
-    </Card>
+      {
+        step === 'pass_change' && (
+          <CreateAccount 
+            createAccountObject={createAccountObject}
+            setCreateAccountObject={setCreateAccountObject}
+          />
+        )
+      }
+    </>
   )
   return <p>ahad</p>
 }
