@@ -30,6 +30,8 @@ import CreateAccount from "../components/createAccount"
 import { useRegister } from "../hooks/useRegister"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import { Header } from "./header"
+import { CustomInput } from "@/shared/components/Input"
 
 export function Register({
   className,
@@ -114,20 +116,12 @@ export function Register({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
 
-        <CardHeader>
-          <CardTitle>Create an Account</CardTitle>
-          <CardDescription >
-            Enter your email below to create to your account
-          </CardDescription>
-          <CardAction>
-            <Link 
-              href="/login"
-              className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-            >
-              Login
-            </Link>
-          </CardAction>
-        </CardHeader>
+        <Header 
+          title="Create an Account"
+          description="Enter your email below to create to your account"
+          router="/login"
+          text="Login"
+        />
 
         <CardContent>
           <div className="grid gap-6">
@@ -153,18 +147,19 @@ export function Register({
             )}
 
             <form className="grid gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  value={email}
-                  disabled={loading || step !== "send"}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+
+              {step === 'send' && (
+                <div className="grid gap-3">
+                  <Label htmlFor="email">Email</Label>
+                  <CustomInput 
+                    id="email"
+                    type="Email"
+                    placeholder="m@example.com"
+                    value={email}
+                    setValue={setEmail}
+                  />
+                </div>
+              )}
 
               {step === 'verify' && (
                 <Otp otpObject={otpObject} setOtpObject={setOtpObject} />
