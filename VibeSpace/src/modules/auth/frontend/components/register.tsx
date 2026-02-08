@@ -108,7 +108,12 @@ export function Register({
             Enter your email below to create to your account
           </CardDescription>
           <CardAction>
-            <Link href="/login">Sign Up</Link>
+            <Link 
+              href="/login"
+              className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+            >
+              Login
+            </Link>
           </CardAction>
         </CardHeader>
 

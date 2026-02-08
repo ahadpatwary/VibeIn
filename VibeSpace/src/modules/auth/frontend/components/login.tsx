@@ -45,7 +45,12 @@ export function Login() {
           Enter your email below to login to your account
         </CardDescription>
         <CardAction>
-          <Link href="/register">Sign Up</Link>
+          <Link 
+            href="/register" 
+            className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+          >
+            Register
+          </Link>
         </CardAction>
       </CardHeader>
 
@@ -87,7 +92,7 @@ export function Login() {
             </Button>
             </form>
 
-            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+            <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t mt-4">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
                 Or continue with
                 </span>
