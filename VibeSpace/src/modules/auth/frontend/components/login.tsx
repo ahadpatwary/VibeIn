@@ -13,9 +13,11 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card"
 import { useRouter } from "next/navigation"
-import { Input } from "@/shared/components/ui/input"
 import { Label } from "@/shared/components/ui/label"
 import { useLogin } from "../hooks/useLogin"
+import { CustomInput } from "@/shared/components/Input"
+import { Header } from "./header"
+
 
 
 export function Login() {
@@ -39,52 +41,43 @@ export function Login() {
 
   return (
     <Card className="w-full max-w-lg m-3">
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription >
-          Enter your email below to login to your account
-        </CardDescription>
-        <CardAction>
-          <Link 
-            href="/register" 
-            className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-          >
-            Register
-          </Link>
-        </CardAction>
-      </CardHeader>
+      <Header 
+        title='Login to your account'
+        description='Enter your email below to login to your account'
+        goRouter='/register'
+        goText='Register'
+      />
 
       <CardContent>
         <>
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
+              <Label htmlFor="email">Email</Label>
+              <CustomInput
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                />
+                setValue={setEmail}
+              />
             </div>
             <div className="grid gap-2">
                 <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                    href="/forget_password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    onClick={() => forgetPassword(email) }
-                >
-                    Forgot your password?
-                </Link>
+                  <Label htmlFor="password">Password</Label>
+                  <Link
+                      href="/forget_password"
+                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                      onClick={() => forgetPassword(email) }
+                  >
+                      Forgot your password?
+                  </Link>
                 </div>
-                <Input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                <CustomInput 
+                  id='password'
+                  type='password'
+                  placeholder="password"
+                  value={password}
+                  setValue={setPassword}
                 />
             </div>
             <Button type="submit" className="w-full cursor-pointer">

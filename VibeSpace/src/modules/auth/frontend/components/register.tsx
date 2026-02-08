@@ -1,15 +1,6 @@
 'use client'
 
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card"
-
-import {
   createAccountSchema,
   CreateAccountType,
   EmailType,
@@ -19,19 +10,12 @@ import {
 } from "../schemas/signIn.schema"
 
 import { cn } from "@/shared/lib/utils"
-import { Button } from "@/shared/components/ui/button"
-import { Input } from "@/shared/components/ui/input"
-import { Label } from "@/shared/components/ui/label"
 import { useState, useEffect } from "react"
-import { FaGoogle } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa6";
 import { Otp } from "@/shared/components/Otp"
 import CreateAccount from "../components/createAccount"
 import { useRegister } from "../hooks/useRegister"
-import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Header } from "./header"
-import { CustomInput } from "@/shared/components/Input"
+import { HomeRegister } from "./homeRegister"
 
 export function Register({
   className,
@@ -114,75 +98,28 @@ export function Register({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-
-        <Header 
-          title="Create an Account"
-          description="Enter your email below to create to your account"
-          router="/login"
-          text="Login"
+      {step === 'send' && (
+        <HomeRegister 
+          githubRegister={githubRegister}
+          googleRegister={googleRegister}
+          email={email}
+          setEmail={setEmail}
+          handleClick={handleClick}
         />
+      )}
 
-        <CardContent>
-          <div className="grid gap-6">
+      {step === 'verify' && (
+        <Otp otpObject={otpObject} setOtpObject={setOtpObject} handleClick={handleClick}/>
+      )}
 
-            {step === 'send' && (
-              <>
-                <div className="flex flex-col gap-4">
-                  <Button variant="outline" className="w-full" onClick={githubRegister}>
-                    <FaGithub /> Create with GitHub
-                  </Button>
+      {step === 'create' && (
+        <CreateAccount
+          createAccountObject={createAccountObject}
+          setCreateAccountObject={setCreateAccountObject}
+        />
+      )}
 
-                  <Button variant="outline" className="w-full" onClick={googleRegister}>
-                    <FaGoogle /> Create with Google
-                  </Button>
-                </div>
-
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-card text-muted-foreground relative z-10 px-2">
-                    Or continue with
-                  </span>
-                </div>
-              </>
-            )}
-
-            <form className="grid gap-6">
-
-              {step === 'send' && (
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <CustomInput 
-                    id="email"
-                    type="Email"
-                    placeholder="m@example.com"
-                    value={email}
-                    setValue={setEmail}
-                  />
-                </div>
-              )}
-
-              {step === 'verify' && (
-                <Otp otpObject={otpObject} setOtpObject={setOtpObject} />
-              )}
-
-              {step === 'create' && (
-                <CreateAccount
-                  createAccountObject={createAccountObject}
-                  setCreateAccountObject={setCreateAccountObject}
-                />
-              )}
-
-              <Button type="button" className="w-full" disabled={loading} onClick={handleClick}>
-                {step === 'send'
-                  ? "Send Code"
-                  : step === 'verify'
-                    ? "Verify Code"
-                    : "Create Account"}
-              </Button>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }
+

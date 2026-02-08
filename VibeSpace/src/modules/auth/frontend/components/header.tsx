@@ -1,21 +1,22 @@
 import {
-  Card,
   CardAction,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card"
 import Link from "next/link"    
 
+
 interface propsType {
     title: string,
     description: string,
-    router: string,
-    text: string,
+    goRouter?: string,
+    backRouter?: string,
+    backText?: unknown
+    goText?: unknown
 }
 
-export const Header = ({title, description, router, text}: propsType) => {
+export const Header = ({title, description, backRouter, goRouter, backText, goText}: propsType) => {
     return (
         <CardHeader>
             <CardTitle>{title}</CardTitle>
@@ -23,12 +24,28 @@ export const Header = ({title, description, router, text}: propsType) => {
              {description}
             </CardDescription>
             <CardAction>
-            <Link 
-                href={title}
-                className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-            >
-                {text}
-            </Link>
+                {
+                    backRouter && (
+                        <Link 
+                            href={backRouter}
+                            className="ml-auto inline-block text-sm underline-offset-4 hover:underline m-1"
+                        >
+                            {backText as string}
+                        </Link>
+                    )
+                }
+
+                {
+                    goRouter && (
+
+                        <Link 
+                            href={goRouter}
+                            className="ml-auto inline-block text-sm underline-offset-4 hover:underline m-1"
+                        >
+                            {goText as string}
+                        </Link>
+                    )
+                }
             </CardAction>
         </CardHeader>
     )
