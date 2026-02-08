@@ -2,7 +2,9 @@
 
 import {
   Card,
+  CardAction,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card"
@@ -26,6 +28,7 @@ import { FaGithub } from "react-icons/fa6";
 import { Otp } from "@/shared/components/Otp"
 import CreateAccount from "../components/createAccount"
 import { useRegister } from "../hooks/useRegister"
+import Link from "next/link"
 
 
 export function Register({
@@ -98,9 +101,17 @@ export function Register({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create an Account</CardTitle>
+
+        <CardHeader>
+          <CardTitle>Create an Account</CardTitle>
+          <CardDescription >
+            Enter your email below to create to your account
+          </CardDescription>
+          <CardAction>
+            <Link href="/login">Sign Up</Link>
+          </CardAction>
         </CardHeader>
+
         <CardContent>
           <div className="grid gap-6">
             <>
