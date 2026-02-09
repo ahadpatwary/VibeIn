@@ -37,7 +37,7 @@ export function Otp({otpObject, setOtpObject, handleClick}: PropsType) {
             Verification code
           </FieldLabel>
           <Button 
-            className="bg-transparent hover:bg-transparent dark:text-white" onClick={() => console.log("ahd")}>
+            className="bg-transparent hover:bg-transparent dark:text-white border m-1" onClick={() => console.log("ahd")}>
               <RefreshCwIcon />
               Resend Code
           </Button>
