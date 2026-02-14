@@ -28,4 +28,8 @@ export class UserService {
     await this.userQueue.publishUserCreated(saved);
     return saved;
   }
+
+  async updateUser(dto: { name: string }): Promise<string> {
+    return "yes user update successfully";
+  }
 }

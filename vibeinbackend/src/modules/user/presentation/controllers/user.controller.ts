@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, HttpCode, HttpStatus, Put } from '@nestjs/common';
 import { UserService } from '../../application/user.service';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
@@ -16,7 +16,15 @@ export class UserController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   createUser(@Body() dto: CreateUserDto) {
     return this.userService.createUser(dto);
+  }
+
+  @Put(':id')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  updateUser(@Param('id') id: string, @Body() userObject: {name: string}) {
+    return this.userService.updateUser(userObject);
   }
 }

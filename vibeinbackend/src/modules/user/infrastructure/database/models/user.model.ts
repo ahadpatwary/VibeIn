@@ -22,7 +22,7 @@ export class MongoUserRepository implements UserRepository {
 
   async update(user: User): Promise<User> {
     const updated = await this.userModel.findByIdAndUpdate(user.id, user, { new: true }).exec();
-    return updated ? new User(updated._id.toString(), updated.name, updated.email, updated.roles) : null;
+    return updated ? new User(updated._id.toString(), updated.name, updated.email) : null;
   }
 
   async delete(id: string): Promise<void> {
