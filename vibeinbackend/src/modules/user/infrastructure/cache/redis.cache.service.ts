@@ -5,7 +5,7 @@ import { RedisClientType } from 'redis';
 
 @Injectable()
 export class RedisUserCache implements UserCache {
-  constructor(private readonly redisClient: RedisClientType) {}
+  constructor(private readonly redisClient: RedisClientType) { }
 
   async getUser(id: string): Promise<User | null> {
     const data = await this.redisClient.get(`user:${id}`);

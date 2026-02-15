@@ -7,7 +7,7 @@ import { UserDocument } from '../user.mongo.schema';
 
 @Injectable()
 export class MongoUserRepository implements UserRepository {
-  constructor(@InjectModel(UserDocument.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(UserDocument.name) private userModel: Model<UserDocument>) { }
 
   async findById(id: string): Promise<User | null> {
     const doc = await this.userModel.findById(id).exec();
@@ -22,7 +22,9 @@ export class MongoUserRepository implements UserRepository {
 
   async update(user: User): Promise<User> {
     const updated = await this.userModel.findByIdAndUpdate(user.id, user, { new: true }).exec();
-    return updated ? new User(updated._id.toString(), updated.name, updated.email) : null;
+    // return updated ? new User(updated._id.toString(), updated.name, updated.email) : null;
+    return updated ? new User(updated._id.toString(), updated.name, updated.email) : user;
+
   }
 
   async delete(id: string): Promise<void> {
