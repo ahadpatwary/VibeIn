@@ -8,11 +8,11 @@ export class RedisUserCache implements UserCache {
   constructor(private readonly redisClient: RedisService) { }
 
   async getUser(id: string): Promise<User | null> {
-    const data = await this.redisClient.RedisClient().get(`user:${id}`);
+    const data = await this.redisClient.getClient().get(`user:${id}`);
     return data ? JSON.parse(data) : null;
   }
 
   async setUser(user: User): Promise<void> {
-    await this.redisClient.RedisClient().set(`user:${user.id}`, JSON.stringify(user));
+    await this.redisClient.getClient().set(`user:${user.id}`, JSON.stringify(user));
   }
 }

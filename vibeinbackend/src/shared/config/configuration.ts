@@ -8,4 +8,8 @@ export default () => ({
   queue: {
     uri: process.env.QUEUE_URI,
   },
+
+  cache: {
+    uri: process.env.CACHE_URI,
+  }
 });

@@ -6,6 +6,7 @@ export const validate = (config: Record<string, unknown>) => {
         port: config.PORT ?? '5000',
         database: { uri: config.DB_URI },
         queue: { uri: config.QUEUE_URI },
+        cache: { uri: config.CACHE_URI },
     };
 
     const schema = z.object({
@@ -16,6 +17,9 @@ export const validate = (config: Record<string, unknown>) => {
         queue: z.object({
             uri: z.string(),
         }),
+        cache: z.object({
+            uri: z.string(),
+        })
     });
 
     const parsed = schema.safeParse(filteredConfig);

@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './shared/config/env.validation';
 import configuration from './shared/config/configuration';
 import { join } from 'path';
+import { RedisModule } from './shared/modules/cache/redis.module';
 
 
 
@@ -35,6 +36,15 @@ import { join } from 'path';
         uri: config.get<string>('queue.uri')!,
         retryAttempts: 6,
         retryDelay: 1 * 60 * 1000,
+      }),
+      inject: [ConfigService]
+    }),
+
+    RedisModule.forRootAsync({
+      useFactory:(config: ConfigService) => ({
+        uri: config.get<string>('cache.uri')!,
+        retryAttempts: 6,
+        retryDelay: 1 * 60 * 100,
       }),
       inject: [ConfigService]
     }),

@@ -25,8 +25,7 @@ import { RedisModule } from 'src/shared/modules/cache/redis.module';
     UserService,
     { provide: UserRepository, useClass: MongoUserRepository },
     { provide: UserCache, useClass: RedisUserCache },
-    UserRabbitMQProducer,
-    RedisUserCache,
+    UserRabbitMQProducer, 
   ],
   exports: [UserService],
 })
