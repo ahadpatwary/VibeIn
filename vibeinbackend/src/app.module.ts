@@ -4,24 +4,60 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RabbitMqModule } from './shared/modules/queue/rabbitmq.module';
 import { UserModule } from './modules/user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { validate } from './shared/config/env.validation';
+import configuration from './shared/config/configuration';
+import { join } from 'path';
 
 
-const MONGODB_URI='mongodb+srv://ahad_patwary:PB18vuJj2UdQdWXw@cluster0.mjszrdy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/Cards'
 
 @Module({
   imports: [
-    MongooseModule.forRoot(MONGODB_URI, {
-      retryAttempts: 5,
-      retryDelay: 1 * 60 * 1000,
+
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      validate: validate,
+      // envFilePath: [
+      //   join(__dirname, '../../.env'),            // main .env
+      //   join(__dirname, '../../.env.development') // optional
+      // ],
+      envFilePath: ['.env']
     }),
 
-    RabbitMqModule.forRoot("amqps://dbrcljhf:03DnYhP9lGtrOwhNHHj-yuo4D-KQwytB@shark.rmq.cloudamqp.com/dbrcljhf", {
-      retryAttempts: 5,
-      retryDelay: 1 * 60 * 1000
+    MongooseModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({
+        uri: config.get<string>('database.uri'),
+        retryAttempts: 6,
+        retryDelay: 1 * 60 * 1000,
+      }),
+      inject: [ConfigService]
     }),
+
+    RabbitMqModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({
+        uri: config.get<string>('queue.uri')!,
+        retryAttempts: 6,
+        retryDelay: 1 * 60 * 1000,
+      }),
+      inject: [ConfigService]
+    }),
+
     UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
+
 export class AppModule {}
+
+
+    // RabbitMqModule.forRoot("amqps://dbrcljhf:03DnYhP9lGtrOwhNHHj-yuo4D-KQwytB@shark.rmq.cloudamqp.com/dbrcljhf", {
+    //   retryAttempts: 5,
+    //   retryDelay: 1 * 60 * 1000
+    // }),
+
+    //     MongooseModule.forRoot(MONGODB_URI, {
+    //   retryAttempts: 5,
+    //   retryDelay: 1 * 60 * 1000,
+    // }),

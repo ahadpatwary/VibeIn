@@ -6,10 +6,17 @@ export interface RabbitMqModuleOptions {
   retryDelay?: number | undefined,
 }
 
+export interface RabbitMqModuleFactoryOptions {
+  uri: string,
+  retryAttempts?: number | undefined,
+  retryDelay?: number | undefined,
+}
+
 export interface RabbitMqModuleAsyncOptions {
-  useFactory: () => Promise<RabbitMqModuleOptions> | RabbitMqModuleOptions;
+  useFactory: (...args: any[]) => Promise<RabbitMqModuleFactoryOptions> | RabbitMqModuleFactoryOptions;
   inject?: any[];
 }
+
 
 @Global()
 @Module({})
@@ -29,6 +36,21 @@ export class RabbitMqModule {
       exports: [RabbitMqService],
       global: true,
     };
+  }
+
+  static forRootAsync(options: RabbitMqModuleAsyncOptions): DynamicModule {
+    const asyncOptionProvider: Provider = {
+      provide: 'RABBITMQ_OPTIONS',
+      useFactory: options.useFactory,
+      inject: options.inject
+    }
+
+    return {
+      module: RabbitMqModule,
+      providers: [asyncOptionProvider, RabbitMqService],
+      exports: [RabbitMqService],
+      global: true
+    }
   }
 
   // Optional for multiple queue feature

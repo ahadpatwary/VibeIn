@@ -7,9 +7,13 @@ export interface optionsType {
     retryDelay?: number | undefined,
 }
 
+export interface Publish{
+    publish : (queue: string, message: Buffer<ArrayBufferLike>) => Promise<void>
+} 
+
 
 @Injectable()
-export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
+export class RabbitMqService implements OnModuleInit, OnModuleDestroy, Publish {
     private connection: ChannelModel | null = null;
     private channel: Channel | null = null;
     private tryCount = 0;
