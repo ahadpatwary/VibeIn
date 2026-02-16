@@ -18,10 +18,6 @@ import { join } from 'path';
       isGlobal: true,
       load: [configuration],
       validate: validate,
-      // envFilePath: [
-      //   join(__dirname, '../../.env'),            // main .env
-      //   join(__dirname, '../../.env.development') // optional
-      // ],
       envFilePath: ['.env']
     }),
 
