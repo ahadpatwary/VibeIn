@@ -7,8 +7,8 @@ import { UserModule } from './modules/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './shared/config/env.validation';
 import configuration from './shared/config/configuration';
-import { join } from 'path';
 import { RedisModule } from './shared/modules/cache/redis.module';
+import { StorageModule } from './modules/storage/storage.module';
 
 
 
@@ -49,7 +49,8 @@ import { RedisModule } from './shared/modules/cache/redis.module';
       inject: [ConfigService]
     }),
 
-    UserModule
+    UserModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
