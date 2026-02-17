@@ -21,7 +21,6 @@ export class CloudinaryStorage implements Storage {
   async preSignedUrl(): Promise<preSignedUrlReturnType> {
 
     const timestamp = Math.round(Date.now() / 1000);
-
     const publicId = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
     const paramsToSign = {
