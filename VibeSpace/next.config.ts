@@ -13,17 +13,17 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
+        protocol: 'http',
         hostname: 'res.cloudinary.com',
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'http',
         hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'http',
         hostname: 'avatars.githubusercontent.com',
         pathname: '/**',
       },
@@ -31,37 +31,37 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'], // modern image format (performance + security)
   },
 
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY', // clickjacking prevent
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff', // MIME sniffing বন্ধ
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value:
-              'camera=(), microphone=(), geolocation=(), interest-cohort=()',
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
-          },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: '/(.*)',
+  //       headers: [
+  //         {
+  //           key: 'X-Frame-Options',
+  //           value: 'DENY', // clickjacking prevent
+  //         },
+  //         {
+  //           key: 'X-Content-Type-Options',
+  //           value: 'nosniff', // MIME sniffing বন্ধ
+  //         },
+  //         {
+  //           key: 'Referrer-Policy',
+  //           value: 'strict-origin-when-cross-origin',
+  //         },
+  //         {
+  //           key: 'Permissions-Policy',
+  //           value:
+  //             'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+  //         },
+  //         {
+  //           key: 'Strict-Transport-Security',
+  //           value: 'max-age=63072000; includeSubDomains; preload',
+  //         },
 
-        ],
-      },
-    ];
-  },
+  //       ],
+  //     },
+  //   ];
+  // },
 };
 
 module.exports = nextConfig;

@@ -43,18 +43,19 @@ export const useCard = () => {
 
 
     useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const res = await fetch('http://localhost:3000/feed');
+                const data = await res.json();
+                console.log("post", data);
+                setActivePosts(data);
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        };
 
-        (async() => {
-            const getPublicPost = await fetch('http://localhost:3000/feed/');
-
-            const post = await getPublicPost.json();
-
-            console.log("post", post);
-
-            setActivePosts(post);
-        })();
-
-    }, [])
+        fetchPosts();
+    }, []);
 
     return { activePosts };
 } 

@@ -51,7 +51,7 @@ export async function proxy(req: NextRequest) {
   // }
 
   // if(accessToken && refreshToken) {
-    
+
   //   if(protectedUrl){
   //     response = NextResponse.next();
   //   }
@@ -100,34 +100,34 @@ export async function proxy(req: NextRequest) {
   //   }
   // }
 
-  response = NextResponse.next(); 
-  
-  if (response && !pathname.startsWith("/api")) {
-    const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  response = NextResponse.next();
 
-    const cspHeader = `
-      default-src 'self';
-      script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
-      style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
-      img-src 'self' blob: data:
-        https://www.google-analytics.com
-        https://res.cloudinary.com
-        https://lh3.googleusercontent.com
-        https://avatars.githubusercontent.com;
-      font-src 'self' https://fonts.gstatic.com;
-      connect-src 'self' https://www.google-analytics.com;
-      object-src 'none';
-      base-uri 'self';
-      form-action 'self';
-      frame-ancestors 'none';
-      upgrade-insecure-requests;
-    `;
+  // if (response && !pathname.startsWith("/api")) {
+  //   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
-    const contentSecurityPolicyHeaderValue = cspHeader.replace(/\s{2,}/g, ' ').trim()
+  //   const cspHeader = `
+  //     default-src 'self';
+  //     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://www.googletagmanager.com;
+  //     style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com;
+  //     img-src 'self' blob: data:
+  //       https://www.google-analytics.com
+  //       https://res.cloudinary.com
+  //       https://lh3.googleusercontent.com
+  //       https://avatars.githubusercontent.com;
+  //     font-src 'self' https://fonts.gstatic.com;
+  //     connect-src 'self' https://www.google-analytics.com;
+  //     object-src 'none';
+  //     base-uri 'self';
+  //     form-action 'self';
+  //     frame-ancestors 'none';
+  //     upgrade-insecure-requests;
+  //   `;
 
-    response.headers.set("Content-Security-Policy", contentSecurityPolicyHeaderValue);
-    response.headers.set("x-nonce", nonce);
-  }
+  //   const contentSecurityPolicyHeaderValue = cspHeader.replace(/\s{2,}/g, ' ').trim()
+
+  //   response.headers.set("Content-Security-Policy", contentSecurityPolicyHeaderValue);
+  //   response.headers.set("x-nonce", nonce);
+  // }
 
   return response;
 }

@@ -36,7 +36,7 @@ interface CardProps {
 function ShowCard({
   cardId,
   userId,
-  title, 
+  title,
   image,
   description,
   userName,
@@ -44,14 +44,14 @@ function ShowCard({
   dot = false,
 }: CardProps) {
 
-//   const [state, setState] = useState<string>("");
+  //   const [state, setState] = useState<string>("");
 
 
   // const { deleteItem } = useDelete();
 
-//   const handleClick = async () => {
-//     await deleteItem("Card", cardId);
-//   };
+  //   const handleClick = async () => {
+  //     await deleteItem("Card", cardId);
+  //   };
 
   const str: string =
     "This action cannot be undone. This will permanently delete your account and remove your data from our servers.";
@@ -72,7 +72,7 @@ function ShowCard({
           <AvatarDemo src={userProfile?.url ?? ""} />
         </Button>
 
-        <div className="flex m-0 flex-col w-full overflow-hidden">
+        <div className="flex m-0 flex-col text-white w-full overflow-hidden">
           <Link href={`${userId}`} className="font-bold">
             {userName}
           </Link>
@@ -81,6 +81,7 @@ function ShowCard({
           </p>
         </div>
       </div>
+      <div className="text-white m-1 p-1">{description}</div>
       <div
         className="
           relative 
@@ -102,14 +103,14 @@ function ShowCard({
         />
       </div>
 
-     
-      <div 
+
+      <div
         className="
           flex flex-col justify-between 
           w-full
         "
       >
-        
+
         {/* <div className="flex justify-between items-center gap-2 ">
           <LikeButton cardId={cardId} />
           <FaComments />
