@@ -3,11 +3,10 @@
 // import { UserProfile } from '@/components/UserProfile';
 
 import { useRouter } from 'next/navigation';
-import { useSession } from "next-auth/react"
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
-import { AvatarDemo } from '@/shared/components/AvaterDemo';
+// import { AvatarDemo } from '@/shared/components/AvaterDemo';
 import { MenubarDemo } from '@/shared/components/Bar';
 import { useSearchUser } from '@/shared/hooks/useSearchUser';
 import { feedPostsType } from '../hooks/useCard';
@@ -20,10 +19,9 @@ import CarouselDemo from '@/shared/components/Embla';
 
 
 function Feed() {
-  const { data: session } = useSession()
   const { activePosts } = useCard();
   const router = useRouter();
-const { searchUser, handleSearchClick } = useSearchUser();
+    const { searchUser, handleSearchClick } = useSearchUser();
 
   const handleClick = () => {
     router.push('/create-post');
@@ -80,7 +78,8 @@ const { searchUser, handleSearchClick } = useSearchUser();
                   image = {card.media[0].content.url} 
                   title = {card.title} 
                   description = {card?.caption} 
-                  dot = { (session?.user.id == card.authorId._id) }
+                //   dot = { (session?.user.id == card.authorId._id) }
+                    dot= {true}
                   userName= {card.authorId.name}
                   userProfile= {card.authorId.profilePicture}
                 />
