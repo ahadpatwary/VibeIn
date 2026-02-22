@@ -46,10 +46,10 @@ export const useCard = () => {
         const fetchPosts = async () => {
             try {
                 const res = await fetch(
-                    process.env.NODE_ENV === "development"
-                        ? "http://localhost:3000/feed"
-                        : "https://vibein-2hk5.onrender.com/feed"
-                    // "https://vibein-2hk5.onrender.com/feed"
+                    // process.env.NODE_ENV === "development"
+                    //     ? "http://localhost:3000/feed"
+                    //     : "https://vibein-2hk5.onrender.com/feed"
+                    "https://vibein-2hk5.onrender.com/feed"
                 );
                 const data = await res.json();
                 console.log("post", data);

@@ -13,6 +13,7 @@ import { feedPostsType } from '../hooks/useCard';
 import { useCard } from '../hooks/useCard';
 import { ShowCard } from './ShowCard';
 import CarouselDemo from '@/shared/components/Embla';
+import { UserProfile } from '@/shared/components/UserProfile';
 
 
 
@@ -36,7 +37,7 @@ function Feed() {
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-1 flex justify-around'>
 
         <Card className='flex-1 min-w-0 w-full max-h-auto h-full mt-2 hidden md:block'>
-          {/* <UserProfile dot={true}  userId = "" /> */}
+          <UserProfile dot={true} userId="" />
         </Card>
 
         {/* <>
