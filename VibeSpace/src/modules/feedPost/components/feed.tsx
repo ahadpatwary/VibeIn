@@ -62,7 +62,7 @@ function Feed() {
 
         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
 
-          <div className='md:mx-3'>
+          <div className='sm:mx-0 md:mx-3'>
             <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
               <Button className="h-13  m-2 w-auto" onClick={handleClick}> Create a post</Button>
               <div className="p-0 m-0 h-8"></div>
