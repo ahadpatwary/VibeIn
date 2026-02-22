@@ -45,7 +45,11 @@ export const useCard = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await fetch('http://localhost:3000/feed');
+                const res = await fetch(
+                    process.env.NODE_ENV === "development"
+                        ? "http://localhost:3000/feed"
+                        : "https://vibein-2hk5.onrender.com/feed"
+                    );
                 const data = await res.json();
                 console.log("post", data);
                 setActivePosts(data);
