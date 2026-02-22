@@ -21,7 +21,7 @@ import CarouselDemo from '@/shared/components/Embla';
 function Feed() {
   const { activePosts } = useCard();
   const router = useRouter();
-    const { searchUser, handleSearchClick } = useSearchUser();
+  const { searchUser, handleSearchClick } = useSearchUser();
 
   const handleClick = () => {
     router.push('/create-post');
@@ -62,33 +62,33 @@ function Feed() {
 
         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
 
-        <div className='md:mx-3'>
-          <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
-            <Button className="h-13  m-2 w-auto" onClick={handleClick}> Create a post</Button>
-            <div className="p-0 m-0 h-8"></div>
-          </Card>
+          <div className='md:mx-3'>
+            <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
+              <Button className="h-13  m-2 w-auto" onClick={handleClick}> Create a post</Button>
+              <div className="p-0 m-0 h-8"></div>
+            </Card>
 
-          <div className='flex-1 max-w-[600px] w-full min-w-[310px] mx-auto'>
-            {
-              activePosts?.map((card: feedPostsType) => ( 
-                <ShowCard 
-                  key = {card._id} 
-                  cardId = {card._id} 
-                  userId= {card.authorId._id}
-                  image = {card.media[0].content.url} 
-                  title = {card.title} 
-                  description = {card?.caption} 
-                //   dot = { (session?.user.id == card.authorId._id) }
-                    dot= {true}
-                  userName= {card.authorId.name}
-                  userProfile= {card.authorId.profilePicture}
-                />
-              )
-            )} 
+            <div className='flex-1 max-w-[600px] w-full min-w-[310px] mx-auto'>
+              {
+                activePosts?.map((card: feedPostsType) => (
+                  <ShowCard
+                    key={card._id}
+                    // cardId = {card._id} 
+                    userId={card.authorId._id}
+                    image={card.media[0].content.url}
+                    title={card.title}
+                    description={card?.caption}
+                    //   dot = { (session?.user.id == card.authorId._id) }
+                    dot={true}
+                    userName={card.authorId.name}
+                    userProfile={card.authorId.profilePicture}
+                  />
+                )
+                )}
+            </div>
+
           </div>
-
-        </div>
-          </ScrollArea>
+        </ScrollArea>
 
         <Card className='flex-1 min-h-auto h-min min-w-0 mt-2 hidden lg:block'>
           < CarouselDemo />

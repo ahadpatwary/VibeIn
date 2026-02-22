@@ -23,6 +23,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@reduxjs/toolkit": "^2.11.2",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "@types/bcryptjs": "^2.4.6",
     "amqplib": "^0.10.9",
     "bcryptjs": "^3.0.2",

@@ -11,12 +11,12 @@ import ModeToggle from "./Theam";
 import { useSearchUser } from "../hooks/useSearchUser";
 
 interface MenuberProps {
-    footer?: boolean,
-    onSearch?: (query: string) => void
+  footer?: boolean,
+  onSearch?: (query: string) => void
 }
 
 
-export function MenubarDemo({footer = false, onSearch}: MenuberProps) {
+export function MenubarDemo({ footer = false, onSearch }: MenuberProps) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
@@ -29,9 +29,9 @@ export function MenubarDemo({footer = false, onSearch}: MenuberProps) {
 
   const links = [
     { name: AiTwotoneHome, href: "/feed" },
-    { name: GiPowerLightning, href: '/features'},
-    { name: FaUserFriends, href:"/requests" },
-    { name: IoNotificationsSharp, href:"/notifications" },
+    { name: GiPowerLightning, href: '/features' },
+    { name: FaUserFriends, href: "/requests" },
+    { name: IoNotificationsSharp, href: "/notifications" },
   ];
 
   if (!mounted) {
@@ -42,9 +42,9 @@ export function MenubarDemo({footer = false, onSearch}: MenuberProps) {
   return (
     <nav className="w-full bg-background/90 backdrop-blur-sm border sticky top-0 z-30  ">
       <div className='max-w-[1280px] min-w-[310px] mx-auto py-2 w-full flex px-5 justify-between items-center'>
-        { !footer && <div className="flex h-[70%] border-2 border-black rounded">
-          <input 
-            type="text " 
+        {!footer && <div className="flex h-[70%] border-2 border-black rounded">
+          <input
+            type="text "
             className="border-none outline-none p-1 w-[80%]"
             value={query}
             onChange={(e) => {
@@ -55,25 +55,24 @@ export function MenubarDemo({footer = false, onSearch}: MenuberProps) {
           />
           <button className=" w-[20%] bg-blue-300 p-2" onClick={() => handleSearchClick("aha")}><MdPersonSearch /></button>
         </div>}
-        <div className ={`flex-1 flex justify-around ${!footer && 'hidden md:block'}  `}>
-          <div className="w-full flex justify-around"> 
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`relative pb-1  ${
-                pathname === link.href
+        <div className={`flex-1 flex justify-around ${!footer && 'hidden md:block'}  `}>
+          <div className="w-full flex justify-around">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative pb-1  ${pathname === link.href
                   ? "underline decoration-blue-500 underline-offset-4 font-semibold"
                   : "hover:underline"
-              }`}
-            >
-              <link.name/>
-            </Link>
-          ))}
+                  }`}
+              >
+                <link.name className="dark:text-white" />
+              </Link>
+            ))}
           </div>
         </div>
 
-        { !footer && <ModeToggle /> }
+        {!footer && <ModeToggle />}
       </div>
     </nav>
   );
