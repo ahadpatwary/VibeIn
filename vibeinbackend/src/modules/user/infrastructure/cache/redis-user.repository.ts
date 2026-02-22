@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserCache } from './redis.cache.interface';
 import { User } from '../../domain/entities/user.entity';
 import { RedisService } from 'src/shared/modules/cache/redis.service';
+import { UserCacheRepository } from '../../domain/repositories/user.cache.repository.interface';
 
 @Injectable()
-export class RedisUserCache implements UserCache {
+export class RedisUserRepository implements UserCacheRepository {
   constructor(private readonly redisClient: RedisService) { }
 
   async getUser(id: string): Promise<User | null> {

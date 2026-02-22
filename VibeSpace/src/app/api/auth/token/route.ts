@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { getRedisClient } from "@/shared/lib/redis";
-const ACCESS_TOKEN_EXP = "15m"; // 15 minutes
+const ACCESS_TOKEN_EXP = "30d"; // 15 minutes
 const REFRESH_TOKEN_EXP = "30d"; // 30 days
 
 export async function POST(req: NextRequest) {

@@ -9,6 +9,7 @@ import { validate } from './shared/config/env.validation';
 import configuration from './shared/config/configuration';
 import { RedisModule } from './shared/modules/cache/redis.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { FeedPostModule } from './modules/feed/post/post.module';
 
 
 
@@ -51,6 +52,7 @@ import { StorageModule } from './modules/storage/storage.module';
 
     UserModule,
     StorageModule,
+    FeedPostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

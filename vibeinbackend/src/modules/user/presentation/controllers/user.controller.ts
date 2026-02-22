@@ -1,30 +1,40 @@
-import { Controller, Get, Post, Body, Param, UseGuards, HttpCode, HttpStatus, Put } from '@nestjs/common';
-import { UserService } from '../../application/user.service';
+import { Controller, Get, Post, Body, Param, UseGuards, HttpCode, HttpStatus, Put, UsePipes, Delete } from '@nestjs/common';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
-import { CreateUserDto } from '../../application/dto/user.dto';
+import { CreateUserBody, createUserDto } from '../../application/dto/user.dto';
+import { ZodValidationPipe } from '../../application/pipes/zodValidation.pipe';
+import { UserService } from '../../application/services/user.service';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':id')
-  @UseGuards(RolesGuard)
-  @Roles('admin')
+  // @UseGuards(RolesGuard)
+  // @Roles('admin')
   getUser(@Param('id') id: string) {
     return this.userService.getUser(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() dto: CreateUserDto) {
-    return this.userService.createUser(dto);
+  @UsePipes(new ZodValidationPipe(createUserDto))
+  createUser(@Body() body: CreateUserBody) {
+    return this.userService.createUser(body);
   }
 
   @Put(':id')
-  @UseGuards(RolesGuard)
-  @Roles('admin')
-  updateUser(@Param('id') id: string, @Body() userObject: {name: string}) {
-    return this.userService.updateUser(userObject);
+  // @UseGuards(RolesGuard)
+  // @Roles('admin')
+  updateUser(
+    @Param('id') id: string,
+    @Body(new ZodValidationPipe(createUserDto)) body: CreateUserBody
+  ) {
+    return this.userService.updateUser(id, body);
+  }
+
+  @Delete(':id')
+  deleteUser(@Param('id') id: string) {
+    return this.userService.deleteUser(id);
   }
 }

@@ -70,15 +70,33 @@ export async function POST(req: Request) {
 
         const { type } = body;
 
-        const user = await User.create({
+        const userBody = {
             name: type === 'credentials' ? body.name || "<User>" : "<User>",
             profilePicture: {
                 url: type === 'credentials' ? body.profilePicture : "",
                 public_id: type !== 'credentials' ? null : "",
             }
-        });
+        };
 
-        const userId = user._id;
+        // const response = await fetch('http://localhost:3000/users', {
+        //     method: 'POST',
+        //     headers: {
+        //     'Content-Type': 'application/json',
+        //     // যদি NestJS JWT / token use করে → 'Authorization': `Bearer ${token}`
+        //     },
+        //     body: JSON.stringify(userBody), // Next.js request body forward করা
+        // });
+
+        // const resData = await response.json();
+
+        // if(!resData) return NextResponse.json(
+        //     {},
+        //     { status: 503 }
+        // )
+
+        const resData = await User.create(userBody);
+
+        const userId = resData._id;
 
         const account = (type === 'credentials') ? await Account.create({
             type: 'credentials',
