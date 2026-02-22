@@ -49,7 +49,8 @@ export const useCard = () => {
                     process.env.NODE_ENV === "development"
                         ? "http://localhost:3000/feed"
                         : "https://vibein-2hk5.onrender.com/feed"
-                    );
+                    // "https://vibein-2hk5.onrender.com/feed"
+                );
                 const data = await res.json();
                 console.log("post", data);
                 setActivePosts(data);

@@ -33,7 +33,7 @@ function Feed() {
     <div className="flex flex-col min-h-dvh max-h-dvh">
 
       <MenubarDemo onSearch={handleSearchClick} />
-      <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
+      <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-1 flex justify-around'>
 
         <Card className='flex-1 min-w-0 w-full max-h-auto h-full mt-2 hidden md:block'>
           {/* <UserProfile dot={true}  userId = "" /> */}
