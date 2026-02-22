@@ -49,6 +49,8 @@ export const useCard = () => {
 
             const post = await getPublicPost.json();
 
+            console.log("post", post);
+
             setActivePosts(post);
         })();
 
