@@ -1,9 +1,11 @@
-import React from 'react'
+import Feed from "@/modules/feedPost/components/feed";
 
-function Feed() {
+function Home() {
   return (
-    <div>Feed</div>
+    <>
+      <Feed />
+    </>
   )
 }
 
-export default Feed
+export default Home
