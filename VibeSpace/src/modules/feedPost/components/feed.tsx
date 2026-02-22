@@ -1,9 +1,6 @@
 'use client'
 
-import { ShowCard } from '@/components/ShowCard';
-import { useCards }  from '@/hooks/useFetchCards';
-import { UserProfile } from '@/components/UserProfile';
-import CarouselDemo from '@/components/Embla';
+// import { UserProfile } from '@/components/UserProfile';
 
 import { useRouter } from 'next/navigation';
 import { useSession } from "next-auth/react"
@@ -13,12 +10,18 @@ import { Card } from '@/shared/components/ui/card';
 import { AvatarDemo } from '@/shared/components/AvaterDemo';
 import { MenubarDemo } from '@/shared/components/Bar';
 import { useSearchUser } from '@/shared/hooks/useSearchUser';
+import { feedPostsType } from '../hooks/useCard';
+import { useCard } from '../hooks/useCard';
+import { ShowCard } from './ShowCard';
+import CarouselDemo from '@/shared/components/Embla';
+
+
 
 
 
 function Feed() {
   const { data: session } = useSession()
-  const { activeCards } = useCards(session?.user.id!);
+  const { activePosts } = useCard();
   const router = useRouter();
 const { searchUser, handleSearchClick } = useSearchUser();
 
@@ -35,10 +38,10 @@ const { searchUser, handleSearchClick } = useSearchUser();
       <div className='flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 flex justify-around'>
 
         <Card className='flex-1 min-w-0 w-full max-h-auto h-full mt-2 hidden md:block'>
-          <UserProfile dot={true}  userId = "" />
+          {/* <UserProfile dot={true}  userId = "" /> */}
         </Card>
 
-        <>
+        {/* <>
 
         {searchUser.length > 0 && (
           <div className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto bg-black h-min rounded-lg p-2">
@@ -57,7 +60,7 @@ const { searchUser, handleSearchClick } = useSearchUser();
           </div>
         )}
 
-        </>
+        </> */}
 
         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
 
@@ -69,17 +72,17 @@ const { searchUser, handleSearchClick } = useSearchUser();
 
           <div className='flex-1 max-w-[600px] w-full min-w-[310px] mx-auto'>
             {
-              activeCards?.map((card) => ( 
+              activePosts?.map((card: feedPostsType) => ( 
                 <ShowCard 
                   key = {card._id} 
                   cardId = {card._id} 
-                  userId= {card?.user._id}
-                  image = {card.image?.url} 
+                  userId= {card.authorId._id}
+                  image = {card.media[0].content.url} 
                   title = {card.title} 
-                  description = {card.description} 
-                  dot = { (session?.user.id == card?.user._id) }
-                  userName= {card?.user.name}
-                  userProfile= {card?.user.picture}
+                  description = {card?.caption} 
+                  dot = { (session?.user.id == card.authorId._id) }
+                  userName= {card.authorId.name}
+                  userProfile= {card.authorId.profilePicture}
                 />
               )
             )} 
