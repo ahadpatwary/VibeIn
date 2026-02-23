@@ -42,20 +42,21 @@ function Feed() {
 
         <>
           {searchUser.length > 0 && (
-            <div className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto bg-black h-min rounded-lg p-2">
-              {searchUser.map((user) => { 
+            <Card className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto h-min rounded-lg p-2">
+              {searchUser.map((user) => {
                 console.log("randerd");
-                return(<div
+                return (<div
                   key={user._id}
                   className="w-full h-[60px] text-white flex items-center px-2"
                 >
-                  <div className='flex'>
+                  <div className='flex gap-1'>
                     <AvatarDemo src={user.profilePicture.url ?? undefined} />
-                    <p className='ml-2'>{user.name}</p>
+                    <p className='p-2'>{user.name}</p>
                   </div>
                 </div>
-              )})}
-            </div>
+                )
+              })}
+            </Card>
           )}
         </>
 

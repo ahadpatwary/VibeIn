@@ -45,7 +45,7 @@ export function MenubarDemo({ footer = false, onSearch }: MenuberProps) {
         {!footer && <div className="flex h-[70%] border-2 border-black rounded">
           <input
             type="text "
-            className="border-none outline-none p-1 w-[80%]"
+            className="border-none outline-none text-white p-1 w-[80%]"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
