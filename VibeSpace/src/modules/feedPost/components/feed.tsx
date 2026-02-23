@@ -40,26 +40,24 @@ function Feed() {
           <UserProfile dot={true} userId="" />
         </Card>
 
-        {/* <>
-
-        {searchUser.length > 0 && (
-          <div className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto bg-black h-min rounded-lg p-2">
-            {searchUser.map((user) => { 
-              console.log("randerd");
-              return(<div
-                key={user.id}
-                className="w-full h-[60px] text-white flex items-center px-2"
-              >
-                <div className='flex'>
-                  <AvatarDemo src={user.picture} />
-                  <p className='ml-2'>{user.name}</p>
+        <>
+          {searchUser.length > 0 && (
+            <div className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto bg-black h-min rounded-lg p-2">
+              {searchUser.map((user) => { 
+                console.log("randerd");
+                return(<div
+                  key={user.id}
+                  className="w-full h-[60px] text-white flex items-center px-2"
+                >
+                  <div className='flex'>
+                    <AvatarDemo src={user.picture} />
+                    <p className='ml-2'>{user.name}</p>
+                  </div>
                 </div>
-              </div>
-             )})}
-          </div>
-        )}
-
-        </> */}
+              )})}
+            </div>
+          )}
+        </>
 
         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
 

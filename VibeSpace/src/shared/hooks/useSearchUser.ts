@@ -13,11 +13,8 @@ export const useSearchUser = () => {
             return;
         }
 
-        const res = await fetch('/api/searchName', {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: "1234", query })
-        });
+        // const res = await fetch(`http://localhost:3000/users/?name=${query}`);
+        const res = await fetch(`https://vibein-2hk5.onrender.com/users/?name=${query}`);
 
         if(!res.ok){
             console.log("some error exist");

@@ -35,6 +35,7 @@ export class UserController {
 
   @Get()
   getSearchUser(@Query('name') name: string){
+    console.log("name", name);
     return this.userService.getSearchUser(name);
   }
 

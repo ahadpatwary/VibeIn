@@ -39,27 +39,62 @@ export class MongoUserRepository implements UserPersistenceRepository {
   async getSearchUser(query: string) {
     const page = 1;
     const limit = 10;
+    console.log("query", query)
 
-    const globalSearch = await this.userModel.aggregate([
+    const result = await this.userModel.aggregate([
       {
-          $search: {
-              index: "name_search",
-              autocomplete: {
+        $search: {
+          index: "VibeIn",
+          compound: {
+            must: [
+              {
+                autocomplete: {
                   query: query,
                   path: "name",
                   fuzzy: {
-                      maxEdits: 2,
-                      // prefixLength: 0,
-                      // maxExpanstions: 50
+                    maxEdits: 1
                   }
+                }
               }
+            ],
+            // filter: [
+            //   {
+            //     equals: {
+            //       path: "isActive",
+            //       value: true
+            //     }
+            //   },
+            //   ...(role
+            //     ? [
+            //         {
+            //           equals: {
+            //             path: "role",
+            //             value: role
+            //           }
+            //         }
+            //       ]
+            //     : [])
+            // ]
           }
+        }
       },
-      // { $match: {_id: { $ne: userId } } },
-      { $project: { _id: 1, name: 1, picture: 1, friends: 1} },
-      { $skip: (page - 1) * limit },
-      { $limit: limit }
+      {
+        $addFields: {
+          score: { $meta: "searchScore" }
+        }
+      },
+      { $sort: { score: -1 } },
+      { $skip: 0 },
+      { $limit: limit },
+      // {
+      //   $project: {
+      //     password: 0,
+      //     refreshToken: 0
+      //   }
+      // }
     ])
+
+    return result;
 
   }
 
