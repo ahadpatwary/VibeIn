@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
-// import { AvatarDemo } from '@/shared/components/AvaterDemo';
 import { MenubarDemo } from '@/shared/components/Bar';
 import { useSearchUser } from '@/shared/hooks/useSearchUser';
 import { feedPostsType } from '../hooks/useCard';
@@ -14,6 +13,7 @@ import { useCard } from '../hooks/useCard';
 import { ShowCard } from './ShowCard';
 import CarouselDemo from '@/shared/components/Embla';
 import { UserProfile } from '@/shared/components/UserProfile';
+import { AvatarDemo } from '@/shared/components/AvaterDemo';
 
 
 
@@ -46,11 +46,11 @@ function Feed() {
               {searchUser.map((user) => { 
                 console.log("randerd");
                 return(<div
-                  key={user.id}
+                  key={user._id}
                   className="w-full h-[60px] text-white flex items-center px-2"
                 >
                   <div className='flex'>
-                    <AvatarDemo src={user.picture} />
+                    <AvatarDemo src={user.profilePicture.url ?? undefined} />
                     <p className='ml-2'>{user.name}</p>
                   </div>
                 </div>

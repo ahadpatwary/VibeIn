@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
 // import debounce from "lodash.debounce";
 import { debounce } from "lodash";
+import { userProfileType } from "../components/UserProfile";
 
 export const useSearchUser = () => {
-    const [searchUser, setSearchUser] = useState([]);
+    const [searchUser, setSearchUser] = useState<userProfileType[]>([]);
 
 
     const searchFn = async (query: string) => {
