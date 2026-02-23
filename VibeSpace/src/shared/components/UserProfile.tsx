@@ -16,6 +16,8 @@ import { ScrollArea, ScrollBar } from './ui/scroll-area'
 import { AvatarDemo } from './AvaterDemo';
 import { Button } from './ui/button'
 import { Card } from "./ui/card";
+import { z } from 'zod';
+import { useEffect, useState } from "react";
 
 
 interface UserProps {
@@ -25,9 +27,21 @@ interface UserProps {
     dot?: boolean;
 }
 
+export const UserProfileSchema = z.object({
+    _id: z.string(),
+    name: z.string().trim().min(2),
+    profilePicture: z.object({
+        url: z.string().nullable(),
+        public_id: z.string().nullable(),
+    })
+})
+
+export type userProfileType = z.infer<typeof UserProfileSchema>;
+
 function UserProfile({ dot, userId }: UserProps) {
     const str: string = "ahad patwary aj nai"
     const router = useRouter();
+    const [userProfile, setUserProfile] = useState<userProfileType>();
     // const {
     //     name,
     //     setName, 
@@ -47,6 +61,23 @@ function UserProfile({ dot, userId }: UserProps) {
 
     //     const {data: session} = useSession();
     //     const user =  session?.user.id;
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const res = await fetch(
+                    'https://vibein-2hk5.onrender.com/users/6999909349c46977789eec6b/'
+                );
+                const data = await res.json();
+                setUserProfile(data);
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        };
+
+        fetchUserProfile();
+
+    }, [])
 
     const handleRoute = async () => {
 
@@ -79,8 +110,8 @@ function UserProfile({ dot, userId }: UserProps) {
             {/* ${!isMobile ? 'h-full': ''} */}
             <ScrollArea className=" w-full rounded-lg">
                 <Card className="flex flex-col justify-center items-center gap-2 w-full p-4 rounded-lg ">
-                    <AvatarDemo src={undefined} size="size-30" />
-                    <p className='text-nowrap'>Abdul Ahad Patwary</p>
+                    <AvatarDemo src={userProfile?.profilePicture.url ?? undefined} size="size-30" />
+                    <p className='text-nowrap'>{userProfile?.name}</p>
                     <p>abdulahad2006@gmail.com</p>
                 </Card>
                 <ScrollBar orientation="horizontal" />
