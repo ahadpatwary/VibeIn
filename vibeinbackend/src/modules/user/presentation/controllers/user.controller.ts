@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, HttpCode, HttpStatus, Put, UsePipes, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, HttpCode, HttpStatus, Put, UsePipes, Delete, Query } from '@nestjs/common';
 import { Roles } from '../decorators/roles.decorator';
 import { RolesGuard } from '../guards/roles.guard';
 import { CreateUserBody, createUserDto } from '../../application/dto/user.dto';
@@ -31,6 +31,11 @@ export class UserController {
     @Body(new ZodValidationPipe(createUserDto)) body: CreateUserBody
   ) {
     return this.userService.updateUser(id, body);
+  }
+
+  @Get()
+  getSearchUser(@Query('name') name: string){
+    return this.userService.getSearchUser(name);
   }
 
   @Delete(':id')

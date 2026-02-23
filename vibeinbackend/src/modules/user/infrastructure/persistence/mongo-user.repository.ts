@@ -35,6 +35,34 @@ export class MongoUserRepository implements UserPersistenceRepository {
     return deleteUser;
   }
 
+
+  async getSearchUser(query: string) {
+    const page = 1;
+    const limit = 10;
+
+    const globalSearch = await this.userModel.aggregate([
+      {
+          $search: {
+              index: "name_search",
+              autocomplete: {
+                  query: query,
+                  path: "name",
+                  fuzzy: {
+                      maxEdits: 2,
+                      // prefixLength: 0,
+                      // maxExpanstions: 50
+                  }
+              }
+          }
+      },
+      // { $match: {_id: { $ne: userId } } },
+      { $project: { _id: 1, name: 1, picture: 1, friends: 1} },
+      { $skip: (page - 1) * limit },
+      { $limit: limit }
+    ])
+
+  }
+
   // async searchUserFromFriendlist(userId: string, name: string): Promise<User> {
       
   // }

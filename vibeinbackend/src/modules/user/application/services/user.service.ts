@@ -45,9 +45,11 @@ export class UserService {
     return this.userPersistence.delete(id);
   }
 
-  // async searchUser(name: string) {
+  async getSearchUser(name: string) {
+    return this.userPersistence.getSearchUser(name);
   //   this.userRepo.searchUserFromFriendlist('12345', 'abdul ahad patwary');
   //   this.userRepo.searchUserFromMutualFriendlist('12345', 'abdul ahad patwary');
   //   this.userRepo.searchUserFromGlobally('12345', 'abdul ahad patwary');
-  // }
+
+  }
 }
