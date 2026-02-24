@@ -39,7 +39,7 @@ export const HomeLogin = ({
     gitHubLogin
 }: propsType) => {
     return (
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md m-2">
             <Header
                 title='Login to your account'
                 description='Enter your email below to login to your account'
