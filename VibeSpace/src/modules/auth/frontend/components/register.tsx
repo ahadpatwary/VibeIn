@@ -16,6 +16,8 @@ import CreateAccount from "../components/createAccount"
 import { useRegister } from "../hooks/useRegister"
 import { useRouter, useSearchParams } from "next/navigation"
 import { HomeRegister } from "./homeRegister"
+import WellComeHeader from "./wellComeHeader"
+import { PolicyInfo } from "./policyInfo"
 
 export function Register({
   className,
@@ -97,28 +99,40 @@ export function Register({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      {step === 'send' && (
-        <HomeRegister 
-          githubRegister={githubRegister}
-          googleRegister={googleRegister}
-          email={email}
-          setEmail={setEmail}
-          handleClick={handleClick}
-        />
-      )}
 
-      {step === 'verify' && (
-        <Otp otpObject={otpObject} setOtpObject={setOtpObject} handleClick={handleClick}/>
-      )}
 
-      {step === 'create' && (
-        <CreateAccount
-          createAccountObject={createAccountObject}
-          setCreateAccountObject={setCreateAccountObject}
-        />
-      )}
+    <div className="w-full flex justify-center">
+      <div className="min-h-dvh flex flex-col md:flex-row md:justify-center items-center text-gray-200 max-w-[1280px] w-full">
 
+        <WellComeHeader className="md:hidden" />
+        <PolicyInfo className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full" />
+
+        <div className="w-full md:max-w-sm lg:max-w-lg m-2 flex justify-center my-3 h-auto">
+          {step === 'send' && (
+            <HomeRegister
+              githubRegister={githubRegister}
+              googleRegister={googleRegister}
+              email={email}
+              setEmail={setEmail}
+              handleClick={handleClick}
+            />
+          )}
+
+          {step === 'verify' && (
+            <Otp otpObject={otpObject} setOtpObject={setOtpObject} handleClick={handleClick} />
+          )}
+
+          {step === 'create' && (
+            <CreateAccount
+              createAccountObject={createAccountObject}
+              setCreateAccountObject={setCreateAccountObject}
+            />
+          )}
+
+        </div>
+        <PolicyInfo className="md:hidden" />
+
+      </div>
     </div>
   )
 }
