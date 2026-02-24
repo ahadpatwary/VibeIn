@@ -72,6 +72,194 @@ export function Login() {
   return (
     <div className="w-full flex justify-center">
       <div className="min-h-dvh flex flex-col md:flex-row md:justify-center items-center text-gray-200 max-w-[1280px] w-full">
+
+        <div className="md:hidden p-2 mt-4 max-w-md w-full">
+          <span className="text-3xl font-medium text-gray-400 tracking-wide">
+            VibeIn
+          </span>
+
+          <h1 className="mt-2 text-5xl font-semibold text-white leading-tight">
+            Welcome
+          </h1>
+        </div>
+
+        <div className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full">
+
+          <div>
+
+            <h1 className="text-3xl font-medium text-gray-400 tracking-wide">
+              VibeIn
+            </h1>
+
+            <h1 className="mt-2 text-5xl font-semibold text-white leading-tight">
+              Welcome back
+            </h1>
+
+            <p className="mt-6 hidden md:flex text-lg text-gray-300 leading-relaxed max-w-md">
+              Access your workspace, manage your activity,
+              and stay in control of everything that matters.
+            </p>
+
+            <div className="mt-10 space-y-6">
+
+              <div className="flex items-start gap-4">
+                <div 
+                  className="w-9 h-9 flex items-center justify-center rounded-lg 
+                  bg-gray-800 border border-gray-700 text-sm font-semibold text-white"
+                >
+                  ✓
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    Secure Authentication
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Industry-standard encryption and protection.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-9 h-9 flex items-center justify-center rounded-lg 
+                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+                  ⚡
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    Fast Performance
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Optimized for speed and reliability.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-9 h-9 flex items-center justify-center rounded-lg 
+                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+                  🔒
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    Full Data Control
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Your information stays private and protected.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div className="pt-10 border-t my-3 border-gray-800">
+            <p className="text-xs text-gray-500">
+              Trusted by professionals worldwide.
+            </p>
+          </div>
+
+        </div>
+
+        <div className="w-full md:max-w-sm lg:max-w-lg m-2 flex justify-center my-3 h-auto">
+          {
+            step === 'send' && (
+              <HomeLogin
+                handleSubmit={handleSubmit}
+                email={email}
+                setEmail={setEmail}
+                handleForgetPassword={handleForgetPassword}
+                password={password}
+                setPassword={setPassword}
+                googleLogin={googleLogin}
+                gitHubLogin={gitHubLogin}
+              />
+            )
+          }
+
+          {
+            step === 'verify' && (
+              <Otp otpObject={otpObject} setOtpObject={setOtpObject} handleClick={handleClick} />
+            )
+          }
+
+          {
+            step === 'pass_change' && (
+              <CreateAccount
+                createAccountObject={createAccountObject}
+                setCreateAccountObject={setCreateAccountObject}
+              />
+            )
+          }
+        </div>
+
+        <div className="p-2 md:hidden">
+          <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-md">
+            Access your workspace, manage your activity,
+            and stay in control of everything that matters.
+          </p>
+          <div className="mt-10 space-y-6">
+
+            <div className="flex items-start gap-4">
+              <div className="w-9 h-9 flex items-center justify-center rounded-lg 
+                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+                ✓
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">
+                  Secure Authentication
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Industry-standard encryption and protection.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-9 h-9 flex items-center justify-center rounded-lg 
+                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+                ⚡
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">
+                  Fast Performance
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Optimized for speed and reliability.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-9 h-9 flex items-center justify-center rounded-lg 
+                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+                🔒
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">
+                  Full Data Control
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Your information stays private and protected.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-10 border-t my-2 border-gray-800">
+            <p className="text-xs text-gray-500">
+              Trusted by professionals worldwide.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  ) 
+}
+
+
         {/* <div className="hidden md:flex w-1/2 bg-gray-50 border-r border-gray-200">
         <div className="flex flex-col justify-between px-20 py-16 w-full">
 
@@ -148,186 +336,3 @@ export function Login() {
       </div> */}
         {/* hidden md:flex border-r border-gray-800*/}
         {/* <div className=" "> */}
-
-        <div className="md:hidden p-2 mt-4 max-w-md w-full">
-          <span className="text-3xl font-medium text-gray-400 tracking-wide">
-            VibeIn
-          </span>
-
-          <h1 className="mt-2 text-5xl font-semibold text-white leading-tight">
-            Welcome
-          </h1>
-        </div>
-
-        <div className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full">
-
-          <div>
-
-            <h1 className="text-3xl font-medium text-gray-400 tracking-wide">
-              VibeIn
-            </h1>
-
-            <h1 className="mt-2 text-5xl font-semibold text-white leading-tight">
-              Welcome back
-            </h1>
-
-            <p className="mt-6 hidden md:flex text-lg text-gray-300 leading-relaxed max-w-md">
-              Access your workspace, manage your activity,
-              and stay in control of everything that matters.
-            </p>
-
-            <div className="mt-10 space-y-6">
-
-              <div className="flex items-start gap-4">
-                <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
-                  ✓
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">
-                    Secure Authentication
-                  </h3>
-                  <p className="text-sm text-gray-400">
-                    Industry-standard encryption and protection.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
-                  ⚡
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">
-                    Fast Performance
-                  </h3>
-                  <p className="text-sm text-gray-400">
-                    Optimized for speed and reliability.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
-                  🔒
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">
-                    Full Data Control
-                  </h3>
-                  <p className="text-sm text-gray-400">
-                    Your information stays private and protected.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-          <div className="pt-10 border-t my-3 border-gray-800">
-            <p className="text-xs text-gray-500">
-              Trusted by professionals worldwide.
-            </p>
-          </div>
-
-        </div>
-        {/* </div> */}
-
-        <div className="w-full md:max-w-sm lg:max-w-lg m-2 flex justify-center my-3 h-auto">
-          {
-            step === 'send' && (
-              <HomeLogin
-                handleSubmit={handleSubmit}
-                email={email}
-                setEmail={setEmail}
-                handleForgetPassword={handleForgetPassword}
-                password={password}
-                setPassword={setPassword}
-                googleLogin={googleLogin}
-                gitHubLogin={gitHubLogin}
-              />
-            )
-          }
-
-          {
-            step === 'verify' && (
-              <Otp otpObject={otpObject} setOtpObject={setOtpObject} handleClick={handleClick} />
-            )
-          }
-
-          {
-            step === 'pass_change' && (
-              <CreateAccount
-                createAccountObject={createAccountObject}
-                setCreateAccountObject={setCreateAccountObject}
-              />
-            )
-          }
-        </div>
-        <div className="p-2 md:hidden">
-          <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-md">
-            Access your workspace, manage your activity,
-            and stay in control of everything that matters.
-          </p>
-          <div className="mt-10 space-y-6">
-
-            <div className="flex items-start gap-4">
-              <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
-                ✓
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-white">
-                  Secure Authentication
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Industry-standard encryption and protection.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
-                ⚡
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-white">
-                  Fast Performance
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Optimized for speed and reliability.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
-                🔒
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-white">
-                  Full Data Control
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Your information stays private and protected.
-                </p>
-              </div>
-            </div>
-
-          </div>
-
-          <div className="pt-10 border-t my-2 border-gray-800">
-            <p className="text-xs text-gray-500">
-              Trusted by professionals worldwide.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
