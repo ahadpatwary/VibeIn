@@ -30,7 +30,7 @@ export function MenubarDemo({ footer = false, onSearch }: MenuberProps) {
   const links = [
     { name: AiTwotoneHome, href: "/feed" },
     { name: GiPowerLightning, href: '/features' },
-    { name: FaUserFriends, href: "/requests" },
+    { name: FaUserFriends, href: "/connection" },
     { name: IoNotificationsSharp, href: "/notifications" },
   ];
 

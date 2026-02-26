@@ -1,8 +1,8 @@
-import React from 'react'
+import Content from '@/modules/connection/components/content'
 
 function page() {
   return (
-    <div>page</div>
+    <Content />
   )
 }
 
