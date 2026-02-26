@@ -63,10 +63,49 @@ function Feed() {
         <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
 
           <div className='sm:mx-0 md:mx-3'>
-            <Card className=' max-w-[600px] min-w-[310px] w-full mx-auto p-0 mt-2'>
-              <Button className="h-13  m-2 w-auto" onClick={handleClick}> Create a post</Button>
-              <div className="p-0 m-0 h-8"></div>
-            </Card>
+            <div className=" border mt-2 border-gray-800 rounded-2xl p-5 shadow-sm">
+
+              {/* Top Section */}
+              <div className="flex items-center gap-4">
+                <img
+                  src="https://i.pravatar.cc/100"
+                  alt="profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+
+                <button className="flex-1 text-left bg-[#0f172a] hover:bg-[#1e293b] transition rounded-full px-5 py-3 text-sm text-gray-400 border border-gray-700">
+                  What's on your mind?
+                </button>
+              </div>
+
+              {/* Divider */}
+              <div className="my-4 border-t border-gray-800" />
+
+              {/* Bottom Actions */}
+              <div className="flex items-center justify-between flex-wrap gap-3">
+
+                <div className="flex items-center gap-6 text-sm text-gray-400">
+
+                  <button className="flex items-center gap-2 hover:text-blue-400 transition">
+                    📷 <span>Photo</span>
+                  </button>
+
+                  <button className="flex items-center gap-2 hover:text-green-400 transition">
+                    🎥 <span>Video</span>
+                  </button>
+
+                  <button className="flex items-center gap-2 hover:text-purple-400 transition">
+                    📄 <span>File</span>
+                  </button>
+
+                </div>
+
+                <button className="px-5 py-2 text-sm font-medium rounded-full bg-blue-600 hover:bg-blue-500 transition">
+                  Post
+                </button>
+              </div>
+
+            </div>
 
             <div className='flex-1 max-w-[600px] w-full min-w-[310px] mx-auto'>
               {
