@@ -1,20 +1,51 @@
 import WellComeHeader from "./wellComeHeader";
 
+interface policyInfoPropTypes {
+    className?: string,
+    policyInfo: {
+        description: string;
+        options: {
+            marker: string;
+            title: string;
+            about: string;
+        }[];
+        fotterInfo: string;
+    }
+}
 
 
-export function PolicyInfo({ className }: { className?: string }) {
+export function PolicyInfo({ className, policyInfo }: policyInfoPropTypes) {
     return (
         <div className={`p-2 ${className}`}>
 
             <WellComeHeader className="hidden md:block" />
 
             <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-md">
-                Access your workspace, manage your activity,
-                and stay in control of everything that matters.
+                {/* Access your workspace, manage your activity,
+                and stay in control of everything that matters. */}
+                {policyInfo.description}
             </p>
             <div className="mt-10 space-y-6">
+                {
+                    (policyInfo.options).map((option, i) => (
+                        <div key={i} className="flex items-start gap-4">
+                            <div className="w-9 h-9 flex items-center justify-center rounded-lg 
+                          bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+                                {option.marker}
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-semibold text-white">
+                                    {option.title}
+                                </h3>
+                                <p className="text-sm text-gray-400">
+                                    {option.about}
+                                </p>
+                            </div>
+                        </div>
+                    ))
+                }
 
-                <div className="flex items-start gap-4">
+                {/* <div className="flex items-start gap-4">
                     <div className="w-9 h-9 flex items-center justify-center rounded-lg 
                           bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
                         ✓
@@ -57,7 +88,7 @@ export function PolicyInfo({ className }: { className?: string }) {
                             Your information stays private and protected.
                         </p>
                     </div>
-                </div>
+                </div> */}
 
             </div>
 

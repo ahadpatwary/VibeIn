@@ -18,6 +18,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { HomeRegister } from "./homeRegister"
 import WellComeHeader from "./wellComeHeader"
 import { PolicyInfo } from "./policyInfo"
+import { policyInfo } from "../hooks/useRegister"
 
 export function Register({
   className,
@@ -105,7 +106,11 @@ export function Register({
       <div className="min-h-dvh flex flex-col md:flex-row md:justify-center items-center text-gray-200 max-w-[1280px] w-full">
 
         <WellComeHeader className="md:hidden" />
-        <PolicyInfo className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full" />
+        <PolicyInfo
+          className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full"
+          policyInfo={policyInfo}
+
+        />
 
         <div className="w-full md:max-w-sm lg:max-w-lg m-2 flex justify-center my-3 h-auto">
           {step === 'send' && (
@@ -130,7 +135,10 @@ export function Register({
           )}
 
         </div>
-        <PolicyInfo className="md:hidden" />
+        <PolicyInfo
+          className="md:hidden"
+          policyInfo={policyInfo}
+        />
 
       </div>
     </div>

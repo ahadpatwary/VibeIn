@@ -18,7 +18,9 @@ function LeftSide({ className }: { className?: string }) {
                         <button
                             key={i}
                             className="w-full text-left px-4 py-2 hover:bg-gray-700 transition border-t border-gray-800"
-                            onClick={() => handleClick('/connection/all-connections')}
+                            // onClick={() => handleClick('/connection/all-connections')}
+                            onClick={() => handleClick('/connection/sent-requests')}
+
                         >
                             All Connections
                         </button>

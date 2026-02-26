@@ -24,6 +24,7 @@ import CreateAccount from "./createAccount"
 import { CreateAccountType, OtpValidateType } from "../schemas/signIn.schema"
 import { PolicyInfo } from "./policyInfo"
 import WellComeHeader from "./wellComeHeader"
+import { policyInfo } from "../hooks/useLogin"
 
 
 
@@ -76,7 +77,10 @@ export function Login() {
       <div className="min-h-dvh flex flex-col md:flex-row md:justify-center items-center text-gray-200 max-w-[1280px] w-full">
 
         <WellComeHeader className="md:hidden" />
-        <PolicyInfo className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full" />
+        <PolicyInfo
+          className="hidden md:flex flex-col justify-between px-10 pt-16 pb-5 w-full"
+          policyInfo={policyInfo}
+        />
 
         <div className="w-full md:max-w-sm lg:max-w-lg m-2 flex justify-center my-3 h-auto">
           {
@@ -109,7 +113,10 @@ export function Login() {
             )
           }
         </div>
-        <PolicyInfo className="md:hidden" />
+        <PolicyInfo
+          className="md:hidden"
+          policyInfo={policyInfo}
+        />
 
       </div>
     </div>

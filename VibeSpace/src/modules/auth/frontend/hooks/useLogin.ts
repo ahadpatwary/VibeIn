@@ -34,7 +34,7 @@ export const useLogin = () => {
 
         const parsed = credentialsLoginObjectSchema.safeParse(credentialsLoginObject);
 
-        if(!parsed.success) {
+        if (!parsed.success) {
             console.log(parsed.error.flatten());
             return;
         }
@@ -48,7 +48,7 @@ export const useLogin = () => {
 
         const parsed = z.string().email().trim().safeParse(email);
 
-        if(!parsed.success) {
+        if (!parsed.success) {
             console.log(parsed.error.flatten());
             return;
         }
@@ -60,7 +60,7 @@ export const useLogin = () => {
 
         const parsed = otpValidateSchema.safeParse(otpVerificationObject);
 
-        if(!parsed.success) {
+        if (!parsed.success) {
             console.log(parsed.error.flatten());
             return;
         }
@@ -72,7 +72,7 @@ export const useLogin = () => {
 
         const parsed = passwordChangeObjectSchema.safeParse(passwordChangeObject);
 
-        if(!parsed.success) {
+        if (!parsed.success) {
             console.log(parsed.error.flatten());
             return;
         }
@@ -88,4 +88,27 @@ export const useLogin = () => {
         loginOtpVerification,
         passwordChange
     }
+}
+
+
+export const policyInfo = {
+    description: "Start your journey with VibeIn and unlock a smarter way to connect, share, and grow.",
+    options: [
+        {
+            marker: '✓',
+            title: 'Quick Setup',
+            about: 'Get started in minutes with a simple registration process.'
+        },
+        {
+            marker: '⚡',
+            title: 'Seamless Experience',
+            about: 'Designed for smooth performance across all devices.'
+        },
+        {
+            marker: '🔒',
+            title: 'Privacy First',
+            about: 'We prioritize your security from day one.'
+        }
+    ],
+    fotterInfo: 'Join professionals worldwide and build meaningful connections.'
 }

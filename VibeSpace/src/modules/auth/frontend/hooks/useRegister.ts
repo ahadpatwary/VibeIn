@@ -196,3 +196,25 @@ export const useRegister = () => {
         credentialRegister
     }
 }
+
+export const policyInfo = {
+    description: "Access your workspace, manage your activity, and stay in control of everything that matters.",
+    options: [
+        {
+            marker: '✓',
+            title: 'Secure Authentication',
+            about: 'Industry-standard encryption and protection.'
+        },
+        {
+            marker: '⚡',
+            title: 'Fast Performance',
+            about: 'Optimized for speed and reliability.'
+        },
+        {
+            marker: '🔒',
+            title: 'Full Data Control',
+            about: 'Your information stays private and protected.'
+        }
+    ],
+    fotterInfo: 'Trusted by professionals worldwide.'
+}
