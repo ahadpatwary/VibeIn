@@ -9,7 +9,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./infa/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     restart: unless-stopped
     networks:
       - vibein-net
@@ -19,7 +19,8 @@ services:
       context: ./VibeSpace
       dockerfile: Dockerfile
     env_file:
-      - ./env/VibeSpace.env
+      - path: ./env/VibeSpace.env
+        required: false
     depends_on:
       - mongo
       - redis
@@ -33,7 +34,8 @@ services:
       context: ./vibeinbackend
       dockerfile: Dockerfile
     env_file:
-      - ./env/vibeinbackend.env
+      - path: ./env/vibeinbackend.env
+        required: false
     environment:
       PORT: 3000
     depends_on:
@@ -49,7 +51,8 @@ services:
       context: ./vibeinbackend
       dockerfile: Dockerfile
     env_file:
-      - ./env/vibeinbackend.env
+      - path: ./env/vibeinbackend.env
+        required: false
     environment:
       PORT: 3000
     depends_on:
@@ -65,7 +68,8 @@ services:
       context: ./ChatLoop
       dockerfile: Dockerfile
     env_file:
-      - ./env/ChatLoop.env
+      - path: ./env/ChatLoop.env
+        required: false
     depends_on:
       - mongo
       - redis
@@ -79,7 +83,8 @@ services:
       context: ./Worker
       dockerfile: Dockerfile
     env_file:
-      - ./env/Worker.env
+      - path: ./env/Worker.env
+        required: false
     depends_on:
       - mongo
       - redis
