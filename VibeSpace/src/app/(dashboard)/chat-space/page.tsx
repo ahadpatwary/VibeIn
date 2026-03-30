@@ -113,10 +113,9 @@ import { Card } from "@/shared/components/ui/card";
 import { MenubarDemo } from '@/shared/components/Bar';
 import CarouselDemo from '@/shared/components/Embla';
 import Image from 'next/image';
-import GroupCard from '@/shared/components/chatApp/GroupCard';
+// import GroupCard from '@/shared/components/chatApp/GroupCard';
 // import ChatSidebar from '@/shared/components/chatApp/ChatSidebar';
 import { useState } from 'react';
-import { P } from 'framer-motion/dist/types.d-DsEeKk6G';
 
 
 
