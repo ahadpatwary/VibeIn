@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { CreateFeedPost } from "./dto/feedPost.dto";
+import { CreateFeedPost, UpdateFeedPost } from "./dto/feedPost.dto";
 import type { FeedPostPersistenceRepository } from "../domain/repositories/feedPost.persistence.repository.interface";
 import { PERSISTENCE_REPOSITORY } from "src/shared/tokens/token";
 
@@ -22,12 +22,12 @@ export class FeedPostService {
     }
 
     
-    async updateFeedPost() {
-
+    async updateFeedPost(id: string, body: UpdateFeedPost) {
+        return this.persistence.updateFeedPost(id, body);
     }
 
 
-    async deleteFeedPost() {
-
+    async deleteFeedPost(feedPostId: string = "12345" ) {
+        return this.persistence.deleteFeedPost(feedPostId);
     }
 }

@@ -1,0 +1,130 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - vibespace
+      - vibeinbackend_1
+      - vibeinbackend_2
+      - chatloop
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  vibespace:
+    build:
+      context: ./VibeSpace
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/VibeSpace.env
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  vibeinbackend_1:
+    build:
+      context: ./vibeinbackend
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/vibeinbackend.env
+    environment:
+      PORT: 3000
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  vibeinbackend_2:
+    build:
+      context: ./vibeinbackend
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/vibeinbackend.env
+    environment:
+      PORT: 3000
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  chatloop:
+    build:
+      context: ./ChatLoop
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/ChatLoop.env
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  worker:
+    build:
+      context: ./Worker
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/Worker.env
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  mongo:
+    image: mongo:8.0
+    environment:
+      MONGO_INITDB_DATABASE: vibein
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: vibein
+      RABBITMQ_DEFAULT_PASS: vibeinpass
+    ports:
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+volumes:
+  mongo_data:
+  redis_data:
+  rabbitmq_data:
+
+networks:
+  vibein-net:
+    driver: bridge

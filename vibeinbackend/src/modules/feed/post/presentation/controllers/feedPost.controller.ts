@@ -1,7 +1,9 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UsePipes } from "@nestjs/common";
 import { FeedPostService } from "../../application/feedPost.service";
 import { ZodValidationPipe } from "src/modules/user/application/pipes/zodValidation.pipe";
-import { CreateFeedPostBody, createFeedPostDto } from "../../application/dto/feedPost.dto";
+import { CreateFeedPostBody, createFeedPostDto, updateFeedPostDto } from "../../application/dto/feedPost.dto";
+
+import type { UpdateFeedPost } from "../../application/dto/feedPost.dto";
 
 
 @Controller('feed')
@@ -19,5 +21,19 @@ export class FeedPost {
     @Get()
     getFeedPosts() {
         return this.feedPostService.getFeedPosts();
+    }
+
+    @Put(':id')
+    @UsePipes(new ZodValidationPipe(updateFeedPostDto))
+    updateFeedPost(
+        @Body() body: UpdateFeedPost,
+        @Param('id') id: string
+    ) {
+        return this.feedPostService.updateFeedPost(id, body);
+    }
+
+    @Delete(':id')
+    deleteFeedPost(@Param('id') id: string) {
+        return this.feedPostService.deleteFeedPost(id)
     }
 }

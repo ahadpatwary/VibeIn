@@ -36,6 +36,8 @@ export const createFeedPostDto = z.object({
     videoPrivacy: z.enum(['public', 'friends', 'private']),
 })
 
+export const updateFeedPostDto = createFeedPostDto;
+
     // media: z.array(z.object({url: z.string(), public_id: z.string()})),
 
 export class CreateFeedPostBody {
@@ -47,3 +49,4 @@ export class CreateFeedPostBody {
 }
 
 export type CreateFeedPost = z.infer<typeof createFeedPostDto>;
+export type UpdateFeedPost = z.infer<typeof updateFeedPostDto>;

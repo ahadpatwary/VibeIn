@@ -15,7 +15,7 @@ class ExtraInfo {
     share: number;
 }
 
-const ExtraInfoSchema = SchemaFactory.createForClass(ExtraInfo);
+const ExtraInfoSchema = SchemaFactory.createForClass(ExtraInfo);  // It must be seen later
 
 
 @Schema({ timestamps: true })

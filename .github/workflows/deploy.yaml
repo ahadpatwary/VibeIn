@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. Type check (TypeScript)
+      - name: Type Check
+        run: npm run type-check
+
+      # 5. Lint check (ESLint)
+      - name: Lint Check
+        run: npm run lint
+
+      # 6. Format check (Prettier)
+      - name: Format Check
+        run: npm run format:check
+
+      # 7. Build project
+      - name: Build
+        run: npm run build
+
+      # 8. Run tests (optional but recommended)
+      - name: Run Tests
+        run: npm test
+
+      # 9. Deploy (ONLY if all above steps pass)
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Deploying application..."
+          # Example: SSH deploy / Docker push / Vercel deploy

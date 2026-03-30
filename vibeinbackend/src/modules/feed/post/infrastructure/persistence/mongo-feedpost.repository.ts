@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FeedPostPersistenceRepository } from '../../domain/repositories/feedPost.persistence.repository.interface';
-import { CreateFeedPost } from '../../application/dto/feedPost.dto';
+import { CreateFeedPost, UpdateFeedPost, updateFeedPostDto } from '../../application/dto/feedPost.dto';
 import { FeedPost, FeedPostDocument } from './schemas/feedPost.schema';
 import { Model } from 'mongoose';
 import { Media, MediaDocument } from './schemas/media.schema';
@@ -59,6 +59,25 @@ export class MongoFeedPostRepository implements FeedPostPersistenceRepository {
       .exec();
 
     return posts;
+  }
+
+  async updateFeedPost(id: string, body:  UpdateFeedPost) {
+    const updatedPost = await this.feedPostModel
+      .findByIdAndUpdate(
+        id,
+        body,
+        {
+          returnDocument: 'after' 
+        }
+      )
+    ;
+
+    return updatedPost;
+  }
+
+  async deleteFeedPost(feedpostId: string) {
+    const detetedPost = await this.feedPostModel.findByIdAndDelete(feedpostId);
+    return detetedPost ? true : false;
   }
 
 //   async update(id: string, body: CreateUserDto) {
