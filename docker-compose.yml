@@ -1,4 +1,5 @@
 services:
+  #nginx configuration.......................................
   nginx:
     image: nginx:1.27-alpine
     depends_on:
@@ -14,6 +15,7 @@ services:
     networks:
       - vibein-net
 
+  #frontend configuration......................................
   vibespace:
     build:
       context: ./VibeSpace
@@ -28,6 +30,7 @@ services:
     networks:
       - vibein-net
 
+  #backend server 1................
   vibeinbackend_1:
     build:
       context: ./vibeinbackend
@@ -44,6 +47,7 @@ services:
     networks:
       - vibein-net
 
+  #backend server 2
   vibeinbackend_2:
     build:
       context: ./vibeinbackend
@@ -60,7 +64,8 @@ services:
     networks:
       - vibein-net
 
-  chatloop:
+  #chat application server 1
+  chatloop1:
     build:
       context: ./ChatLoop
       dockerfile: Dockerfile
@@ -74,6 +79,21 @@ services:
     networks:
       - vibein-net
 
+  chatloop2:
+    build:
+      context: ./ChatLoop
+      dockerfile: Dockerfile
+    env_file:
+      - ./env/ChatLoop.env
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vibein-net
+
+  #worker server 
   worker:
     build:
       context: ./Worker
@@ -88,6 +108,7 @@ services:
     networks:
       - vibein-net
 
+  #mongodb server configuration
   mongo:
     image: mongo:8.0
     environment:
@@ -98,6 +119,7 @@ services:
     networks:
       - vibein-net
 
+  #redis server configuration
   redis:
     image: redis:7.4-alpine
     command: ["redis-server", "--appendonly", "yes"]
@@ -107,6 +129,7 @@ services:
     networks:
       - vibein-net
 
+  #rabbitmq server configuration
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
     environment:
