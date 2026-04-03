@@ -3,7 +3,7 @@ import { Card } from "@/shared/components/ui/card"
 
 function CreatePostManually() {
   return (
-    <div className='w-full flex justify-center my-3 h-auto'>
+    <div className='w-full flex justify-center my-3 h-auto md:p-2'>
         <Card className="p-8 rounded-2xl max-w-md w-full shadow-xl">
             <h2 className="text-xl font-semibold mb-3">Create Post</h2>
 

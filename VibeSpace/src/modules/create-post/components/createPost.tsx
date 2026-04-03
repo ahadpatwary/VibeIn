@@ -13,36 +13,19 @@ import {
 } from "@/shared/components/ui/carousel"
 import { CreatePostUsingAi } from './createPostUsingAi'
 import CreatePostManually from './createPostManually'
+import AiChat from './aiChat'
 
 function CreatePost() {
 
-        const aiInfo = {
-        description: "Generate engaging posts for your audience with AI. Just fill out the details, and let AI handle the rest.",
-        options: [
-        {
-            marker: '🤖',
-            title: 'AI-Powered Content',
-            about: 'Get creative and relevant content instantly.'
-        },
-        {
-            marker: '⚡',
-            title: 'Save Time',
-            about: 'Create posts in seconds with minimal effort'
-        },
-        {
-            marker: '⭐',
-            title: 'High Quality',
-            about: 'Well-structured and audience-focused output.'
-        }
-        ],
-        fotterInfo: 'Join professionals worldwide and build meaningful connections.'
-    }
+    const [ai, setAi] = useState(false)
     return (
         <div className='min-w-[310px] lg:max-w-7xl w-full min-h-dvh lg:m-auto'>
             {/* desktop */}
             <div className='hidden md:flex'>
-                <div className=''>
-                    <CreatePostUsingAi />
+                <div className='w-full'>
+                    {
+                        ai ? <AiChat setAi={setAi}/> :  <CreatePostUsingAi setAi={setAi} />
+                    }
                 </div>
                 <div className=' md:min-w-sm lg:min-w-md '>
                     <CreatePostManually />
@@ -55,7 +38,9 @@ function CreatePost() {
 
                        <CarouselItem>
                <CardContent>
-                    <CreatePostUsingAi />
+                    {
+                        ai ? <AiChat setAi={setAi}/> :  <CreatePostUsingAi setAi={setAi} />
+                    }
                 </CardContent>
                                 <div className="absolute bottom-1 m-auto w-full flex justify-center gap-4">
                     <CarouselPrevious />
