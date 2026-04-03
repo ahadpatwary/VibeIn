@@ -33,40 +33,25 @@ function CreatePost() {
 
       <div className="max-w-7xl mx-auto min-h-screen flex p-2 justify-between items-center">
 
-        {/* <div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Create Post Using AI</h1>
-          <p className="text-gray-400 mb-8">
-            Generate engaging posts for your audience with AI. Just fill out the details, and let AI handle the rest.
-          </p>
 
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="bg-blue-500/20 p-3 rounded-xl">🤖</div>
-              <div>
-                <h3 className="font-semibold">AI-Powered Content</h3>
-                <p className="text-gray-400 text-sm">Get creative and relevant content instantly.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="bg-purple-500/20 p-3 rounded-xl">⚡</div>
-              <div>
-                <h3 className="font-semibold">Save Time</h3>
-                <p className="text-gray-400 text-sm">Create posts in seconds with minimal effort.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="bg-green-500/20 p-3 rounded-xl">⭐</div>
-              <div>
-                <h3 className="font-semibold">High Quality</h3>
-                <p className="text-gray-400 text-sm">Well-structured and audience-focused output.</p>
-              </div>
-            </div>
-          </div>
-        </div> */}
 
         <div className="mt-10 space-y-6">
+
+          <div className={`max-w-md w-full`}>
+            <span className="text-3xl font-medium text-gray-400 tracking-wide">
+                VibeIn
+            </span>
+
+            <h1 className="mt-2 text-4xl font-semibold text-white leading-tight">
+              Create Post Using AI.
+            </h1>
+          </div>
+
+          <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-md">
+            Generate engaging posts for your audience with AI.
+            Just fill out the details and let our AI handle the rest of the work.
+          </p>
+
           {
             (aiInfo.options).map((option, i) => (
               <div key={i} className="flex items-start gap-4">
@@ -85,12 +70,26 @@ function CreatePost() {
               </div>
             ))
           }
+          <div className=' w-full flex p-2 border-3 rounded-md'>
+            <input type="text" className='flex-1 outline-none border-0' placeholder='Create Post Using AI' />
+            <button>post</button>
+          </div>
+
+          <div className='pt-10 border-t my-2 border-gray-800'>
+            <p 
+              className='text-xs text-gray-500'
+            >
+              Automated content creation for effortless posting
+            </p>
+          </div>
+
+
         </div>
 
 
 
         <Card className="p-8 rounded-2xl max-w-md w-full shadow-xl">
-          <h2 className="text-xl font-semibold mb-6">Create Post Using AI</h2>
+          <h2 className="text-xl font-semibold mb-3">Create Post</h2>
 
           <form className="space-y-5">
             <div>
