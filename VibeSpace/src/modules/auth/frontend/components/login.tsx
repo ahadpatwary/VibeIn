@@ -74,7 +74,7 @@ export function Login() {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="min-h-dvh flex flex-col md:flex-row md:justify-center items-center text-gray-200 max-w-[1280px] w-full">
+      <div className="min-h-dvh flex flex-col md:flex-row items-center text-gray-200 max-w-[1280px] w-full">
 
         <WellComeHeader className="md:hidden" />
         <PolicyInfo
