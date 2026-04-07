@@ -1,7 +1,15 @@
+'use client'
 import { Card } from "@/shared/components/ui/card"
+import { useRouter } from "next/navigation"
 
 
 function CreatePostManually() {
+    const router = useRouter()
+
+    const handleClick = () => {
+        console.log("feed")
+        router.push('/example');
+    }
   return (
     <div className='w-full flex justify-center my-3 h-auto md:p-2'>
         <Card className="p-8 rounded-2xl max-w-md w-full shadow-xl">
@@ -22,14 +30,19 @@ function CreatePostManually() {
 
                 <div>
                     <label className="block text-sm mb-2">Image</label>
-                    <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center text-gray-400">
-                        Drop an image here or click to upload
-                    </div>
+                    <button 
+                        type="button"
+                        className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center text-gray-400 w-full"
+                        onClick={handleClick}
+                    >
+                        Upload an image or video
+                    </button>
                 </div>
 
                 <button
+                    type="button"
                     className="w-full py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 transition">
-                    Generate Post
+                    Spike
                 </button>
             </form>
         </Card>

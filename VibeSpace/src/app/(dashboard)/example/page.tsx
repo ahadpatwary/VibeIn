@@ -1,6 +1,7 @@
 'use client'
 
 import { useUpload } from '@/shared/hooks/useUpload'
+import { useRouter } from 'next/navigation'
 
 
 export default function UploadBox() {
@@ -12,6 +13,8 @@ export default function UploadBox() {
     getInputProps, 
     isDragActive 
   } = useUpload()
+
+  const router = useRouter();
  
   return (
     <div className="max-w-2xl mx-auto">
@@ -28,7 +31,8 @@ export default function UploadBox() {
         <p className="font-semibold text-lg">Drag & Drop files</p>
         <p className="text-sm text-gray-500">or click to upload</p>
       </div>
-      <button onClick={()=> uploadFiles(files)} className='text-white p-2 m-2 rounded'> send </button>
+      {/* <button onClick={()=> uploadFiles(files)} className='text-white p-2 m-2 rounded'> send </button> */}
+      <button onClick={()=> router.push('/create-post')} className='text-white p-2 m-2 rounded border'> back </button>
 
       {/* Preview */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
