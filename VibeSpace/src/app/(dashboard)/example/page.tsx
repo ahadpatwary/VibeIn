@@ -286,7 +286,8 @@ export default function UploadBox() {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
 
-    const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url');
+    const signatureRes = await fetch(`https://vibein-2hk5.onrender.com/storage/signed-url?count=${files.length}`);
+    
     const signatureResJson = await signatureRes.json()
     console.log("sig", signatureResJson);
 

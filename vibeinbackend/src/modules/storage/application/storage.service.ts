@@ -10,8 +10,8 @@ export class StorageService {
         private readonly storage: Storage
     ) {}
     
-    async getPreSignedUrl(): Promise<preSignedUrlReturnType[]> {
-        return this.storage.preSignedUrl();
+    async getPreSignedUrl(num: number): Promise<preSignedUrlReturnType[]> {
+        return this.storage.preSignedUrl(num);
     }
 
 }

@@ -13,11 +13,11 @@ export interface preSignedUrlReturnType {
 export class CloudinaryStorage implements Storage {
   constructor(private readonly config: ConfigService) {}
 
-  async preSignedUrl(urlNumber: number = 1): Promise<preSignedUrlReturnType[]> {
+  async preSignedUrl(urlNumber: number): Promise<preSignedUrlReturnType[]> {
 
 
     const signatures: preSignedUrlReturnType[] = [];
-    let i = 0;
+
     const params = {
       folder: 'production_assets/profiles',
       context: 'author=ahad|category=avatar|env=prod',
@@ -30,7 +30,7 @@ export class CloudinaryStorage implements Storage {
       use_filename: false
     }
 
-    while(i < urlNumber) {
+    for (let i = 0; i < urlNumber; i++)  {
 
       const timestamp = Math.round(Date.now() / 1000);
       const publicId = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
@@ -47,8 +47,6 @@ export class CloudinaryStorage implements Storage {
       );
 
       signatures.push({ signature, timestamp, public_id: publicId})
-
-      i++;
 
     }
 
