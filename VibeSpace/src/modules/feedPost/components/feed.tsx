@@ -42,7 +42,7 @@ function Feed() {
 
         <>
           {searchUser.length > 0 && (
-            <Card className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] h-full max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto h-min rounded-lg p-2">
+            <Card className=" absolute z-10000 top-10 max-h-[calc(100dvh-100px)] max-w-[30%] min-w-[310px] w-full m-2 overflow-y-auto h-min rounded-lg p-2">
               {searchUser.map((user) => {
                 console.log("randerd");
                 return (<div
@@ -73,7 +73,10 @@ function Feed() {
                   className="w-12 h-12 rounded-full object-cover"
                 />
 
-                <button className="flex-1 text-left bg-[#0f172a] hover:bg-[#1e293b] transition rounded-full px-5 py-3 text-sm text-gray-400 border border-gray-700">
+                <button 
+                  className="flex-1 text-left bg-[#0f172a] hover:bg-[#1e293b] transition rounded-full px-5 py-3 text-sm text-gray-400 border border-gray-700"
+                  onClick={handleClick}
+                >
                   What's on your mind?
                 </button>
               </div>
