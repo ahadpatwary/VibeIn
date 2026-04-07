@@ -7,26 +7,19 @@ export interface preSignedUrlReturnType {
   signature: string,
   timestamp: number,
   public_id: string,
-  cloudName?: string,
-  apiKey?: string,
-  folder: string,
-  context: string,
-  tags: string
 }
 
 @Injectable()
 export class CloudinaryStorage implements Storage {
   constructor(private readonly config: ConfigService) {}
 
-  async preSignedUrl(): Promise<preSignedUrlReturnType> {
+  async preSignedUrl(urlNumber: number = 1): Promise<preSignedUrlReturnType[]> {
 
-    const timestamp = Math.round(Date.now() / 1000);
-    const publicId = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
-    const paramsToSign = {
-      timestamp: timestamp,
+    const signatures: preSignedUrlReturnType[] = [];
+    let i = 0;
+    const params = {
       folder: 'production_assets/profiles',
-      public_id: publicId,
       context: 'author=ahad|category=avatar|env=prod',
       tags: 'user_profile,website_v2',
       eager_async: true,  // eita important!
@@ -35,16 +28,30 @@ export class CloudinaryStorage implements Storage {
       access_mode: 'public',
       unique_filename: true,
       use_filename: false
-    };
+    }
 
-    const signature = cloudinary.utils.api_sign_request(
-      paramsToSign,
-      this.config.get<string>('cloudinary.api_secret')!,
-    );
+    while(i < urlNumber) {
 
-    return {
-      signature,
-      ...paramsToSign
-    };
+      const timestamp = Math.round(Date.now() / 1000);
+      const publicId = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+      const paramsToSign = {
+        public_id: publicId,
+        timestamp: timestamp,
+        ...params
+      };
+
+      const signature = cloudinary.utils.api_sign_request(
+        paramsToSign,
+        this.config.get<string>('cloudinary.api_secret')!,
+      );
+
+      signatures.push({ signature, timestamp, public_id: publicId})
+
+      i++;
+
+    }
+
+    return signatures ;
   }
 }

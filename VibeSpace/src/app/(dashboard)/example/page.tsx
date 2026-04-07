@@ -267,43 +267,59 @@
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
+export interface preSignedUrlReturnType {
+  signature: string,
+  timestamp: number,
+  public_id: string,
+}
+
 type UploadFile = File & {
   id: string
   preview: string
   progress?: number
   status?: 'uploading' | 'done' | 'error'
+  signedInfo: preSignedUrlReturnType
 }
 
 export default function UploadBox() {
   const [files, setFiles] = useState<UploadFile[]>([])
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const mapped: UploadFile[] = acceptedFiles.map((file) =>
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+
+    const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url');
+    const signatureResJson = await signatureRes.json()
+    console.log("sig", signatureResJson);
+
+    const mapped: UploadFile[] = acceptedFiles.map((file, index) =>
       Object.assign(file, {
         id: crypto.randomUUID(), // unique id for React and state tracking
         preview: URL.createObjectURL(file),
         progress: 0,
         status: 'uploading' as const,
+        signedInfo: {
+          ...signatureResJson[index]
+        }
       })
     )
 
+    console.log("file", acceptedFiles[0]);
+
     setFiles((prev) => [...prev, ...mapped])
-    uploadFiles(mapped)
   }, [])
 
   const uploadFiles = async (filesToUpload: UploadFile[]) => {
     // Fetch signature from backend
-    const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url')
-    const { timestamp, signature, public_id, eager_async } = await signatureRes.json()
+    // const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url')
+    // const { timestamp, signature, public_id, eager_async } = await signatureRes.json()
 
     await Promise.all(
       filesToUpload.map(async (file) => {
         const formData = new FormData()
         formData.append('file', file)
         formData.append('api_key', '861997738819367')
-        formData.append('timestamp', timestamp.toString())
-        formData.append('signature', signature)
-        formData.append('public_id', public_id)
+        formData.append('timestamp', file.signedInfo?.timestamp.toString())
+        formData.append('signature', file.signedInfo?.signature)
+        formData.append('public_id', file.signedInfo?.public_id)
         formData.append('folder', 'production_assets/profiles')
         formData.append('tags', 'user_profile,website_v2')
         formData.append('context', 'author=ahad|category=avatar|env=prod')
@@ -312,7 +328,7 @@ export default function UploadBox() {
         formData.append('unique_filename', 'true')
         formData.append('use_filename', 'false')
         formData.append('transformation', 'c_limit,w_1000/q_auto,f_auto')
-        formData.append('eager_async', eager_async);
+        formData.append('eager_async', 'true');
 
         const xhr = new XMLHttpRequest()
         xhr.open('POST', `https://api.cloudinary.com/v1_1/dnyr37sgw/auto/upload`)
@@ -374,6 +390,7 @@ export default function UploadBox() {
         <p className="font-semibold text-lg">Drag & Drop files</p>
         <p className="text-sm text-gray-500">or click to upload</p>
       </div>
+      <button onClick={()=> uploadFiles(files)}> send </button>
 
       {/* Preview */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
@@ -402,3 +419,30 @@ export default function UploadBox() {
     </div>
   )
 }
+
+
+// File {handle: FileSystemFileHandle, path: './Screenshot (39).png', relativePath: './Screenshot (39).png', name: 'Screenshot (39).png', lastModified: 1725026434000, …}
+// handle
+// : 
+// FileSystemFileHandle {kind: 'file', name: 'Screenshot (39).png'}
+// path
+// : 
+// "./Screenshot (39).png"
+// relativePath
+// : 
+// "./Screenshot (39).png"
+// lastModified
+// : 
+// 1725026434000
+// lastModifiedDate
+// : 
+// Fri Aug 30 2024 20:00:34 GMT+0600 (Bangladesh Standard Time) {}
+// name
+// : 
+// "Screenshot (39).png"
+// size
+// : 
+// 226673
+// type
+// : 
+// "image/png"
