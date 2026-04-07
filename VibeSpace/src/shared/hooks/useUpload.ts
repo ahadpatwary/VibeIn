@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useState } from "react"
-import { useDropzone } from "react-dropzone/."
+import { useDropzone } from "react-dropzone"
 
 export interface preSignedUrlReturnType {
   signature: string,
@@ -39,13 +39,12 @@ export const useUpload = () => {
       })
     )
 
-    console.log("file", acceptedFiles[0]);
-
     setFiles((prev) => [...prev, ...mapped])
   }, [])
 
 
   const uploadFiles = async (filesToUpload: UploadFile[]) => {
+    console.log("files", filesToUpload);
 
     await Promise.all(
       filesToUpload.map(async (file) => {
