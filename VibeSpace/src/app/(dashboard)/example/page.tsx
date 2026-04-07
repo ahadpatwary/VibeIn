@@ -308,6 +308,7 @@ export default function UploadBox() {
   }, [])
 
   const uploadFiles = async (filesToUpload: UploadFile[]) => {
+    console.log("file uploaded started")
     // Fetch signature from backend
     // const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url')
     // const { timestamp, signature, public_id, eager_async } = await signatureRes.json()
@@ -390,7 +391,7 @@ export default function UploadBox() {
         <p className="font-semibold text-lg">Drag & Drop files</p>
         <p className="text-sm text-gray-500">or click to upload</p>
       </div>
-      <button onClick={()=> uploadFiles(files)}> send </button>
+      <button onClick={()=> uploadFiles(files)} className='text-white p-2 m-2 rounded'> send </button>
 
       {/* Preview */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
