@@ -23,7 +23,7 @@ function CreatePostUsingAi({setAi}: {setAi: React.Dispatch<React.SetStateAction<
         fotterInfo: 'Join professionals worldwide and build meaningful connections.'
     }
   return (
-    <div className="mt-10 space-y-6 p-2">
+    <div className="mt-10 space-y-6 p-2 max-w-lg min-w-[310px] sm:mx-auto md:mx-1">
 
       <div className={` `}>
         <span className="text-3xl font-medium text-gray-400 tracking-wide">
@@ -58,12 +58,14 @@ function CreatePostUsingAi({setAi}: {setAi: React.Dispatch<React.SetStateAction<
           </div>
         ))
       }
-      <div className=' flex p-2 border-3 rounded-md'>
-        <input type="text" className='flex-1 outline-none border-0' placeholder='Create Post Using AI' />
-        <button onClick={() => {
-          setAi((prev) => !prev)
-        }}>post</button>
-      </div>
+
+
+        <button
+          className="w-full py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 transition"
+          onClick={() => setAi((prev) => !prev)}
+        >
+          Generate Post
+        </button>
 
       <div className='pt-10 border-t my-2 border-gray-800'>
         <p 
