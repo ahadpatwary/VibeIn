@@ -95,12 +95,180 @@
 // }
 
 
+// 'use client'
+
+// import { useCallback, useState } from 'react'
+// import { useDropzone } from 'react-dropzone'
+
+// type UploadFile = File & {
+//   preview: string
+//   progress?: number
+//   status?: 'uploading' | 'done' | 'error'
+// }
+
+// export default function UploadBox() {
+//   const [files, setFiles] = useState<UploadFile[]>([])
+
+//   const onDrop = useCallback((acceptedFiles: File[]) => {
+//     const mapped: UploadFile[] = acceptedFiles.map((file) =>
+//       Object.assign(file, {
+//         preview: URL.createObjectURL(file),
+//         progress: 0,
+//         status: 'uploading' as const,
+//       })
+//     )
+
+//     setFiles((prev) => [...prev, ...mapped])
+//     uploadFiles(mapped)
+//   }, [])
+
+//   const uploadFiles = async (filesToUpload: UploadFile[]) => {
+//     const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url')
+
+//     const { timestamp, signature, public_id  } = await signatureRes.json()
+
+//     console.log(timestamp, signature, public_id);
+
+//     await Promise.all(
+//       filesToUpload.map(async (file) => {
+//         const formData = new FormData()
+
+// //         api_key:861997738819367
+// // timestamp:1771692070
+// // signature:36d41db4d8b7913e1d11de3d043054c9e51f5c43
+// // public_id:img_1771692070078_447
+// // folder:production_assets/profiles
+// // tags:user_profile,website_v2
+// // context:author=ahad|category=avatar|env=prod
+// // overwrite:false
+// // access_mode:public
+// // unique_filename:true
+// // use_filename:false
+// // transformation:c_limit,w_1000/q_auto,f_auto
+//         formData.append('file', file)
+//         formData.append('api_key', '861997738819367')
+//         formData.append('timestamp', timestamp.toString())
+//         formData.append('signature', signature)
+//         formData.append('public_id', public_id)
+//         formData.append('folder', 'production_assets/profiles')
+//         formData.append('tags', 'user_profile,website_v2')
+//         formData.append('context', 'author=ahad|category=avatar|env=prod')
+//         formData.append('overwrite', 'false')
+//         formData.append('access_mode', 'public')
+//         formData.append('unique_filename', 'true')
+//         formData.append('use_filename', 'false')
+//         formData.append('transformation', 'c_limit,w_1000/q_auto,f_auto')
+
+//         const xhr = new XMLHttpRequest()
+
+//         xhr.open(
+//           'POST',
+//           `https://api.cloudinary.com/v1_1/dnyr37sgw/auto/upload`
+//         )
+
+//         xhr.upload.onprogress = (event) => {
+//           if (event.lengthComputable) {
+//             const percent = Math.round((event.loaded * 100) / event.total)
+
+//             setFiles((prev) =>
+//               prev.map((f) =>
+//                 f.name === file.name ? { ...f, progress: percent } : f
+//               )
+//             )
+//           }
+//         }
+
+//         xhr.onload = () => {
+//           setFiles((prev) =>
+//             prev.map((f) =>
+//               f.name === file.name ? { ...f, status: 'done' } : f
+//             )
+//           )
+//         }
+
+//         xhr.onerror = () => {
+//           setFiles((prev) =>
+//             prev.map((f) =>
+//               f.name === file.name ? { ...f, status: 'error' } : f
+//             )
+//           )
+//         }
+
+//         xhr.send(formData)
+//       })
+//     )
+//   }
+
+//   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+//     onDrop,
+//     accept: {
+//       'image/*': [],
+//       'video/*': [],
+//     },
+//     multiple: true,
+//   })
+
+//   return (
+//     <div className="max-w-2xl mx-auto">
+//       {/* Drop Zone */}
+//       <div
+//         {...getRootProps()}
+//         className={`border-2 border-dashed p-10 rounded-2xl text-center cursor-pointer transition ${
+//           isDragActive
+//             ? 'bg-blue-100 border-blue-400'
+//             : 'bg-gray-50 border-gray-300 hover:bg-gray-100'
+//         }`}
+//       >
+//         <input {...getInputProps()} />
+//         <p className="font-semibold text-lg">Drag & Drop files</p>
+//         <p className="text-sm text-gray-500">or click to upload</p>
+//       </div>
+
+//       {/* Preview */}
+//       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+//         {files.map((file, index) => (
+//           <div key={index} className="border rounded-xl overflow-hidden">
+//             {/* {file.type.startsWith('image') ? ( */}
+//               <img
+//                 src={file.preview}
+//                 className="w-full h-40 object-cover"
+//               />
+//             {/* ) : ( */}
+//             {/* //   <video */}
+//             {/* //     src={file.preview}
+//             //     className="w-full h-40 object-cover"
+//             //   />
+//             // )} */}
+
+//             {/* Progress */}
+//             <div className="p-2">
+//               <div className="w-full bg-gray-200 h-2 rounded">
+//                 <div
+//                   className="bg-blue-500 h-2 rounded"
+//                   style={{ width: `${file.progress}%` }}
+//                 />
+//               </div>
+
+//               <p className="text-xs mt-1">
+//                 {file.status === 'uploading' && 'Uploading...'}
+//                 {file.status === 'done' && 'Uploaded ✅'}
+//                 {file.status === 'error' && 'Error ❌'}
+//               </p>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   )
+// }
+
 'use client'
 
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 type UploadFile = File & {
+  id: string
   preview: string
   progress?: number
   status?: 'uploading' | 'done' | 'error'
@@ -112,6 +280,7 @@ export default function UploadBox() {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const mapped: UploadFile[] = acceptedFiles.map((file) =>
       Object.assign(file, {
+        id: crypto.randomUUID(), // unique id for React and state tracking
         preview: URL.createObjectURL(file),
         progress: 0,
         status: 'uploading' as const,
@@ -123,33 +292,18 @@ export default function UploadBox() {
   }, [])
 
   const uploadFiles = async (filesToUpload: UploadFile[]) => {
+    // Fetch signature from backend
     const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url')
-
-    const { timestamp, signature, cloudName, apiKey, uploadPreset } = await signatureRes.json()
-
-    console.log(timestamp, signature, cloudName, apiKey);
+    const { timestamp, signature, public_id, eager_async } = await signatureRes.json()
 
     await Promise.all(
       filesToUpload.map(async (file) => {
         const formData = new FormData()
-
-//         api_key:861997738819367
-// timestamp:1771692070
-// signature:36d41db4d8b7913e1d11de3d043054c9e51f5c43
-// public_id:img_1771692070078_447
-// folder:production_assets/profiles
-// tags:user_profile,website_v2
-// context:author=ahad|category=avatar|env=prod
-// overwrite:false
-// access_mode:public
-// unique_filename:true
-// use_filename:false
-// transformation:c_limit,w_1000/q_auto,f_auto
         formData.append('file', file)
-        formData.append('api_key', apiKey)
+        formData.append('api_key', '861997738819367')
         formData.append('timestamp', timestamp.toString())
         formData.append('signature', signature)
-        formData.append('public_id', 'img_1771692070078_447')
+        formData.append('public_id', public_id)
         formData.append('folder', 'production_assets/profiles')
         formData.append('tags', 'user_profile,website_v2')
         formData.append('context', 'author=ahad|category=avatar|env=prod')
@@ -158,21 +312,18 @@ export default function UploadBox() {
         formData.append('unique_filename', 'true')
         formData.append('use_filename', 'false')
         formData.append('transformation', 'c_limit,w_1000/q_auto,f_auto')
+        formData.append('eager_async', eager_async);
 
         const xhr = new XMLHttpRequest()
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/dnyr37sgw/auto/upload`)
 
-        xhr.open(
-          'POST',
-          `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`
-        )
-
+        // Track progress
         xhr.upload.onprogress = (event) => {
           if (event.lengthComputable) {
             const percent = Math.round((event.loaded * 100) / event.total)
-
             setFiles((prev) =>
               prev.map((f) =>
-                f.name === file.name ? { ...f, progress: percent } : f
+                f.id === file.id ? { ...f, progress: percent } : f
               )
             )
           }
@@ -181,7 +332,7 @@ export default function UploadBox() {
         xhr.onload = () => {
           setFiles((prev) =>
             prev.map((f) =>
-              f.name === file.name ? { ...f, status: 'done' } : f
+              f.id === file.id ? { ...f, status: 'done', progress: 100 } : f
             )
           )
         }
@@ -189,7 +340,7 @@ export default function UploadBox() {
         xhr.onerror = () => {
           setFiles((prev) =>
             prev.map((f) =>
-              f.name === file.name ? { ...f, status: 'error' } : f
+              f.id === file.id ? { ...f, status: 'error' } : f
             )
           )
         }
@@ -227,29 +378,19 @@ export default function UploadBox() {
       {/* Preview */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
         {files.map((file) => (
-          <div key={file.name} className="border rounded-xl overflow-hidden">
-            {/* {file.type.startsWith('image') ? ( */}
-              <img
-                src={file.preview}
-                className="w-full h-40 object-cover"
-              />
-            {/* ) : ( */}
-            {/* //   <video */}
-            {/* //     src={file.preview}
-            //     className="w-full h-40 object-cover"
-            //   />
-            // )} */}
+          <div key={file.id} className="border rounded-xl overflow-hidden">
+            <img src={file.preview} className="w-full h-40 object-cover" />
 
             {/* Progress */}
             <div className="p-2">
               <div className="w-full bg-gray-200 h-2 rounded">
                 <div
                   className="bg-blue-500 h-2 rounded"
-                  style={{ width: `${file.progress}%` }}
+                  style={{ width: `${file.progress ?? 0}%` }}
                 />
               </div>
 
-              <p className="text-xs mt-1">
+              <p className="text-xs text-white mt-1">
                 {file.status === 'uploading' && 'Uploading...'}
                 {file.status === 'done' && 'Uploaded ✅'}
                 {file.status === 'error' && 'Error ❌'}

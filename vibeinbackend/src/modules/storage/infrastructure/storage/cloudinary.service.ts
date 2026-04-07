@@ -29,6 +29,7 @@ export class CloudinaryStorage implements Storage {
       public_id: publicId,
       context: 'author=ahad|category=avatar|env=prod',
       tags: 'user_profile,website_v2',
+      eager_async: true,  // eita important!
       transformation: 'c_limit,w_1000/q_auto,f_auto',
       overwrite: false,
       access_mode: 'public',
@@ -43,11 +44,7 @@ export class CloudinaryStorage implements Storage {
 
     return {
       signature,
-      timestamp,
-      public_id: publicId,
-      folder: paramsToSign.folder,
-      context: paramsToSign.context,
-      tags: paramsToSign.tags
+      ...paramsToSign
     };
   }
 }
