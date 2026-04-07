@@ -3,23 +3,15 @@ import cloudinary from "src/shared/config/cloudinary/cloudinary.config";
 import { ConfigService } from "@nestjs/config";
 import { Storage } from "./storage.interface";
 
-// export interface preSignedUrlReturnType {
-//   signature: string,
-//   timestamp: number,
-//   public_id: string,
-//   cloudName?: string,
-//   apiKey?: string,
-//   folder: string,
-//   context: string,
-//   tags: string
-// }
-
 export interface preSignedUrlReturnType {
-  timestamp: number,
   signature: string,
-  cloudName: string,
-  apiKey: string,
-  uploadPreset: string,
+  timestamp: number,
+  public_id: string,
+  cloudName?: string,
+  apiKey?: string,
+  folder: string,
+  context: string,
+  tags: string
 }
 
 @Injectable()
@@ -49,24 +41,13 @@ export class CloudinaryStorage implements Storage {
       this.config.get<string>('cloudinary.api_secret')!,
     );
 
-    // return {
-    //   signature,
-    //   timestamp,
-    //   public_id: publicId,
-    //   folder: paramsToSign.folder,
-    //   context: paramsToSign.context,
-    //   tags: paramsToSign.tags
-    // };
-
-    const cloudName = this.config.get<string>('cloudinary.cloud_name')!;
-    const apiKey = this.config.get<string>('cloudinary.api_key')!;
-
     return {
-      timestamp,
       signature,
-      cloudName,
-      apiKey,
-      uploadPreset: 'YOUR_UPLOAD_PRESET',
-    }
+      timestamp,
+      public_id: publicId,
+      folder: paramsToSign.folder,
+      context: paramsToSign.context,
+      tags: paramsToSign.tags
+    };
   }
 }

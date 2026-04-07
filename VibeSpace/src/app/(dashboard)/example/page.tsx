@@ -123,21 +123,41 @@ export default function UploadBox() {
   }, [])
 
   const uploadFiles = async (filesToUpload: UploadFile[]) => {
-    const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url', {
-      method: 'POST',
-    })
+    const signatureRes = await fetch('https://vibein-2hk5.onrender.com/storage/signed-url')
 
-    const { timestamp, signature, cloudName, apiKey, uploadPreset } =
-      await signatureRes.json()
+    const { timestamp, signature, cloudName, apiKey, uploadPreset } = await signatureRes.json()
+
+    console.log(timestamp, signature, cloudName, apiKey);
 
     await Promise.all(
       filesToUpload.map(async (file) => {
         const formData = new FormData()
+
+//         api_key:861997738819367
+// timestamp:1771692070
+// signature:36d41db4d8b7913e1d11de3d043054c9e51f5c43
+// public_id:img_1771692070078_447
+// folder:production_assets/profiles
+// tags:user_profile,website_v2
+// context:author=ahad|category=avatar|env=prod
+// overwrite:false
+// access_mode:public
+// unique_filename:true
+// use_filename:false
+// transformation:c_limit,w_1000/q_auto,f_auto
         formData.append('file', file)
         formData.append('api_key', apiKey)
         formData.append('timestamp', timestamp.toString())
         formData.append('signature', signature)
-        formData.append('upload_preset', uploadPreset)
+        formData.append('public_id', 'img_1771692070078_447')
+        formData.append('folder', 'production_assets/profiles')
+        formData.append('tags', 'user_profile,website_v2')
+        formData.append('context', 'author=ahad|category=avatar|env=prod')
+        formData.append('overwrite', 'false')
+        formData.append('access_mode', 'public')
+        formData.append('unique_filename', 'true')
+        formData.append('use_filename', 'false')
+        formData.append('transformation', 'c_limit,w_1000/q_auto,f_auto')
 
         const xhr = new XMLHttpRequest()
 
@@ -208,17 +228,17 @@ export default function UploadBox() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
         {files.map((file) => (
           <div key={file.name} className="border rounded-xl overflow-hidden">
-            {file.type.startsWith('image') ? (
+            {/* {file.type.startsWith('image') ? ( */}
               <img
                 src={file.preview}
                 className="w-full h-40 object-cover"
               />
-            ) : (
-              <video
-                src={file.preview}
-                className="w-full h-40 object-cover"
-              />
-            )}
+            {/* ) : ( */}
+            {/* //   <video */}
+            {/* //     src={file.preview}
+            //     className="w-full h-40 object-cover"
+            //   />
+            // )} */}
 
             {/* Progress */}
             <div className="p-2">
