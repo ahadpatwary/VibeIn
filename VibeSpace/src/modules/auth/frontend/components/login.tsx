@@ -33,7 +33,7 @@ export function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const handleClick = () => {
-    console.log("ahad");
+    goStep('pass_change')
   }
 
   const [otpObject, setOtpObject] = useState<OtpValidateType>({

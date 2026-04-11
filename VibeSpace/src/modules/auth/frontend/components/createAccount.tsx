@@ -16,7 +16,7 @@ interface PropsType {
 
 export function CreateAccount({createAccountObject, setCreateAccountObject}: PropsType){ 
     return (
-        <Card >
+        <Card className="max-w-md md:max-w-sm lg:max-w-lg w-full">
             <Header 
                 title="Create an Account"
                 description="Enter your email below to create to your account"

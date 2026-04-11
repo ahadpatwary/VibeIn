@@ -8,7 +8,6 @@ export default function UploadBox() {
 
   const {
     files, 
-    uploadFiles, 
     getRootProps, 
     getInputProps, 
     isDragActive 

@@ -43,8 +43,10 @@ function CreatePostUsingAi({setAi}: {setAi: React.Dispatch<React.SetStateAction<
       {
         (aiInfo.options).map((option, i) => (
           <div key={i} className="flex items-start gap-4">
-            <div className="w-9 h-9 flex items-center justify-center rounded-lg 
-                      bg-gray-800 border border-gray-700 text-sm font-semibold text-white">
+            <div 
+              className="w-9 h-9 flex items-center justify-center rounded-lg 
+             bg-gray-800 border border-gray-700 text-sm font-semibold text-white"
+            >
               {option.marker}
             </div>
             <div>

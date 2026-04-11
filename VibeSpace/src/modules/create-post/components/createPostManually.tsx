@@ -25,7 +25,8 @@ function CreatePostManually() {
                 <div>
                     <label className="block text-sm mb-2">Description</label>
                     <textarea placeholder="Enter post description..."
-                        className="w-full px-4 py-2 r-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                        className="w-full px-4 py-2 r-4 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </textarea>
                 </div>
 
                 <div>
