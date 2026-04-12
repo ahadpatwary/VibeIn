@@ -7,6 +7,7 @@ import Account from '@/modules/account/models/Account';
 import User from '@/modules/user/models/User';
 import { connectToDb } from '@/shared/lib/db';
 import { getRedisClient } from '@/shared/lib/redis';
+import Session from '@/modules/account/models/session';
 
 const baseAuthSchema = z.object({
     type: z.enum(["credentials", "google", "github"]),
@@ -144,13 +145,13 @@ export async function POST(req: Request) {
             }
         );
 
-        (await cookies()).set("accessToken", accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            maxAge: 15 * 60,
-            path: "/"
-        })
+        // (await cookies()).set("accessToken", accessToken, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production",
+        //     sameSite: "lax",
+        //     maxAge: 15 * 60,
+        //     path: "/"
+        // })
 
         const refreshToken = jwt.sign(
             {
@@ -165,7 +166,7 @@ export async function POST(req: Request) {
                 issuer: "smreaz.com",
                 audience: "VibeIn_client",
             }
-        ); // ekhane semiclone dite i hobe,,
+        ); // ekhane semiclone ditei hobe,,
 
 
         (await cookies()).set("refreshToken", refreshToken, {
@@ -177,15 +178,25 @@ export async function POST(req: Request) {
         })
 
 
-        await Redis.set(
-            `refreshToken:${deviceId}`,
-            refreshToken,
-            "EX",
-            30 * 24 * 60 * 60 // 30 days
-        )
+        // await Redis.set(
+        //     `refreshToken:${deviceId}`,
+        //     refreshToken,
+        //     "EX",
+        //     30 * 24 * 60 * 60 // 30 days
+        // )
+
+        const refreshTokenHash = await Session.create({
+            userId,
+            deviceIdentity: deviceId,
+            refreshTokenHash: refreshToken
+        })
+
 
         return NextResponse.json(
-            payload,
+            {
+                ...payload,
+                accessToken
+            },
             { status: 200 }
         )
 

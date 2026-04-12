@@ -15,35 +15,32 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
     
-    const body = await req.json();
+    const {email} = await req.json();
 
-    const { type } = body;
 
-    if (!type) return NextResponse.json(
-      { message: "type is required" },
+    if (!email) return NextResponse.json(
+      { message: "email is required" },
       { status: 400 }
     );
     
 
-    const accountExistKey = `accountExist:${body?.email ?? body?.providerId}`;
+    const accountExistKey = `accountExist:${email}`;
 
 
     const accountExist = await Redis.get(accountExistKey);
-    if (accountExist) return NextResponse.json( //.........................
+
+    if (accountExist) return NextResponse.json(
       { message: "account already exist", account: true },
       { status: 200 }
     );
 
  
-    const account = type === 'crediantials' ? 
-      await Account.findOne({ type: type, email: body.email }) :
-      await Account.findOne({ type: type, providerId: body.providerId })
-    ;
+    const account = await Account.findOne({ email }) 
 
 
-    if(!account && type === 'crediantials') {
+    if(!account) {
       try {
-        const emailValidateTimeKey = `emailValidate:${body.email}`;
+        const emailValidateTimeKey = `emailValidate:${email}`;
 
         await Redis.set(emailValidateTimeKey, "value", "EX", 5 * 60);
 
@@ -55,7 +52,7 @@ export async function POST(req: NextRequest) {
 
         channel.sendToQueue(
           "emailNotificationQueue",
-          Buffer.from(JSON.stringify({ email: body.email })),
+          Buffer.from(JSON.stringify({ email })),
           { persistent: true }
         );
         
@@ -77,7 +74,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     return NextResponse.json(
-      { message: "Server error" },
+      { message: "Server error" }, 
       { status: 500 }
     );
   }

@@ -34,6 +34,13 @@ export async function POST(request : NextRequest){
 
         // Redis.set(`user:${email}`, '123456', "EX": 300);
 
+        const isOTPSuccess = Redis.get(`otpSuccess:${email}`)
+
+        if(!isOTPSuccess) return NextResponse.json(
+            { error: "Time expired" },
+            { status: 400 }
+        )
+
         // send a email to user email 
 
         // await User.create(
