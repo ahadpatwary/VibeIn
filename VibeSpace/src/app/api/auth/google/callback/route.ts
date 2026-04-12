@@ -199,7 +199,8 @@ export async function GET(req: NextRequest) {
           providerId: user.sub,
           type: "google",
           name: user.name,
-          picture: user.picture
+          picture: user.picture,
+		  authorId: "1234556677777"
         });
       }
     }
@@ -220,9 +221,9 @@ export async function GET(req: NextRequest) {
   const sessionToken = jwt.sign(
     {
       id: account._id,
-      email: account.email,
-      name: account.name,
-      picture: account.picture,
+    //   email: account.email,
+    //   name: account.name,
+    //   picture: account.picture,
     },
     process.env.JWT_SECRET!,
     { expiresIn: "7d" }
