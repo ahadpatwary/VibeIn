@@ -200,7 +200,7 @@ export async function GET(req: NextRequest) {
           type: "google",
           name: user.name,
           picture: user.picture,
-		  authorId: "1234556677777"
+		//   authorId: "1234556677777"
         });
       }
     }

@@ -2,7 +2,7 @@ import mongoose, { Schema, Types, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface IAccount extends Document {
-    type: 'credentials' | 'provider',
+    type: 'credentials' | 'google' | 'github',
     email: string,
     password?: string,
     authorId: Types.ObjectId,
@@ -12,7 +12,7 @@ const accountSchema = new Schema<IAccount>({
 
     type: {
         type: String,
-        enum: ["credentials", "provider"],
+        enum: ["credentials", "google", 'github'],
         required: true,
     },
 
@@ -34,7 +34,7 @@ const accountSchema = new Schema<IAccount>({
     authorId: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        // required: true
     }
 
 }, { timestamps: true })
