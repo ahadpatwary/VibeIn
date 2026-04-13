@@ -34,17 +34,18 @@ export const useRegister = () => {
         const handleMessage = async (e: EventObjectType) => {
             try {
 
-                console.log("eeeeeeeeeeeee", e)
-                const parsed = eventObjectSchema.safeParse(e);
+                // console.log("eeeeeeeeeeeee", e)
+                // const parsed = eventObjectSchema.safeParse(e);
 
-                if(!parsed.success) {
-                    console.log(parsed.error.format());
-                    return;
-                }
+                // if(!parsed.success) {
+                //     console.log(parsed.error.format());
+                //     return;
+                // }
 
-                const event = parsed.data;
+                // const event = parsed.data;
+                const event = e;
 
-                console.log("event", event);
+                // console.log("event", event);
 
                 if (event.origin !== "https://vibe-in-teal.vercel.app") return;
 
