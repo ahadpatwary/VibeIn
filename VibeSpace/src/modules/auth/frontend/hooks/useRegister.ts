@@ -44,9 +44,11 @@ export const useRegister = () => {
 
         if (!parsed.success) {
             // console.log(parsed.error.format());
+            console.log("ahad error");
             return;
         }
 
+        console.log("nahid patwary")
         const event = parsed.data;
 
         // ✅ Origin check
