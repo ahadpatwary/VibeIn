@@ -34,6 +34,8 @@ export const useRegister = () => {
         const handleMessage = async (e: MessageEvent) => { // ✅ MessageEvent type
         try {
 
+            console.log("Received message:", e?.origin, e?.data);
+
         // ✅ এভাবে parse করো — e.origin আর e.data আলাদা
         const parsed = eventObjectSchema.safeParse({
             origin: e.origin,
