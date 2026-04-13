@@ -47,21 +47,21 @@ export const useRegister = () => {
 
                 if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
 
-                const providerUniqueId = event.data.id;
+                // const providerUniqueId = event.data.id;
 
-                if(!providerUniqueId) return;
+                // if(!providerUniqueId) return;
 
-                const accountInfo = {
-                    type: "google" as 'google',
-                    providerId: providerUniqueId,
-                }
+                // const accountInfo = {
+                //     type: "google" as 'google',
+                //     providerId: providerUniqueId,
+                // }
 
-                const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
+                // const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
 
-                if(account) {
-                    console.log('account already exist');
-                    return;
-                }
+                // if(account) {
+                //     console.log('account already exist');
+                //     return;
+                // }
 
                 // const { sub, accountId, deviceId } = await createAccountApi({
                 //     type: 'google',
