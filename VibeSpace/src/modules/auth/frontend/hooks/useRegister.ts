@@ -43,6 +43,8 @@ export const useRegister = () => {
 
                 const event = parsed.data;
 
+                console.log("event", event);
+
                 if (event.origin !== "https://vibe-in-teal.vercel.app") return;
 
                 if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
@@ -72,7 +74,7 @@ export const useRegister = () => {
                 // });
 
 
-                console.log("event", event.data);
+                console.log("eventdata", event.data);
 
                 router.push('/register/user_details');
 
