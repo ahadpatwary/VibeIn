@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 import { cookies } from "next/headers";
 import { authRoutes, protectedRoutes, publicRoutes } from "./shared/lib/middleware/route-config";
 
@@ -10,12 +9,14 @@ export async function proxy(req: NextRequest) {
   let response: NextResponse | null = null;
 
   const authHeader = req.headers.get("authorization");
+  let accessToken;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new Error("Unauthorized");
+    accessToken = null;
+  } else {
+    accessToken = authHeader.split(" ")[1];
   }
 
-  const accessToken = authHeader.split(" ")[1];
   const refreshToken = (await cookies()).get("refreshToken")?.value;
 
   console.log("accessToken", accessToken, refreshToken);
