@@ -6,6 +6,10 @@ import { forgetPasswordApi } from '../api/forgetPasswordApi';
 import { loginOtpVerificationApi } from '../api/loginOtpVerificationApi';
 import { createAccountSchema, otpValidateSchema, OtpValidateType } from '../schemas/signIn.schema';
 import { passwordChangeApi } from '../api/passwordChangeApi';
+import { useEffect } from 'react';
+import { useAppDispatch } from '@/shared/lib/hooks';
+import { setAccessToken } from '@/shared/lib/features/accessToken/accessTokenSlice';
+
 export const credentialsLoginObjectSchema = z.object({
     email: z.string().email().trim(),
     password: z.string().min(4).max(6)
@@ -17,13 +21,85 @@ export const passwordChangeObjectSchema = createAccountSchema;
 
 export type PasswordChangeObjectType = z.infer<typeof passwordChangeObjectSchema>
 
+export const eventObjectSchema = z.object({
+  origin: z.string(),
+  data: z.object({
+    type: z.string().trim(),
+    id: z.string().trim(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    picture: z.string().optional(),
+    accessToken: z.string()
+  })
+});
+
+export type EventObjectType = z.infer<typeof eventObjectSchema>;
 
 export const useLogin = () => {
 
     const router = useRouter();
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+
+        const handleMessage = async (e: MessageEvent) => { // ✅ MessageEvent type
+            try {
+
+                if(!(e?.data?.id)) return;
+
+                console.log("Received message:", e?.origin, e?.data);
+
+                const parsed = eventObjectSchema.safeParse({
+                    origin: e.origin,
+                    data: e.data        
+                });
+
+                if (!parsed.success) {
+                    console.log("data error error");
+                    return;
+                }
+
+                const event = parsed.data;
+
+                // Origin check
+                if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return;
+
+                // Type check
+                if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
+
+                //SET ACCESS TOKEN IN REDUX/CONTEXT/STATE
+                dispatch(setAccessToken(event.data.accessToken));
+
+                router.push('/register/user_details');
+
+            } catch (error) {
+                if (error instanceof Error)
+                    console.error(`Error: ${error.message}`)
+                ;
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
+    }, []);
+    
 
     const googleLogin = () => {
-        console.log("google login");
+
+        const state = crypto.randomUUID(); // import crypto from "crypto"
+
+        const params = new URLSearchParams({
+            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+            redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
+            response_type: "code",
+            scope: "openid email profile",
+            state,
+            prompt: "consent",
+        });
+
+        const googleUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
+
+        window.open(googleUrl, "_blank", "width=600,height=600");
     }
 
     const gitHubLogin = () => {

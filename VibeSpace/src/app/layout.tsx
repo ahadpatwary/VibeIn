@@ -1,9 +1,9 @@
 import "@/shared/styles/globals.css";
 import { ThemeProvider } from "@/shared/components/TthemeProvider";
 import { Toaster } from "@/shared/components/ui/sonner"
-// import StoreProvider from './StoreProvider';
 import { headers } from 'next/headers'
 import Script from 'next/script';
+import StoreProvider from "./StoreProvider";
 
 
 interface RootLayoutProps {
@@ -33,19 +33,19 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         </Script>
       </head>
       <body suppressHydrationWarning className="min-h-dvh max-h-dvh min-w-[310px] m-0 p-0 overflow-x-auto">
-        {/* <StoreProvider> */}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <StoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
 
-          {children}
+            {children}
 
-          < Toaster />
-        </ThemeProvider>
-        {/* </StoreProvider> */}
+            < Toaster />
+          </ThemeProvider>
+        </StoreProvider>
 
       </body>
     </html>

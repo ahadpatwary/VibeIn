@@ -93,20 +93,22 @@ export const useRegister = () => {
     };
 
     const githubRegister = async () => {
-        const state = crypto.randomUUID(); // import crypto from "crypto"
+        // const state = crypto.randomUUID(); // import crypto from "crypto"
 
-        const params = new URLSearchParams({
-            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-            redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
-            response_type: "code",
-            scope: "openid email profile",
-            state,
-            prompt: "consent",
-        });
+        // const params = new URLSearchParams({
+        //     client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+        //     redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!,
+        //     response_type: "code",
+        //     scope: "openid email profile",
+        //     state,
+        //     prompt: "consent",
+        // });
 
-        const googleUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
+        // const googleUrl = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
 
-        window.open(googleUrl, "_blank", "width=600,height=600");
+        // window.open(googleUrl, "_blank", "width=600,height=600");
+
+        console.log("github register");
     }
 
     const checkEmailExistance = async (email: EmailType) => { //*

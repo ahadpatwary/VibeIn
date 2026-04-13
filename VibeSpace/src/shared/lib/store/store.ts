@@ -1,30 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit'
-import reducer from '../features/todo/todosSlice'
-import userId from '../features/userId/userIdSlice'
+import { configureStore } from '@reduxjs/toolkit';
+import accessTokenReducer from '@/shared/lib/features/accessToken/accessTokenSlice';
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      counter: reducer,
-      user: userId,
+      accessToken: accessTokenReducer,  
     },
-  })
-}
+  });
+};
 
-
-
-
-
-
-
-
-
-
-// Infer the type of makeStore
-export type AppStore = ReturnType<typeof makeStore>
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<AppStore['getState']>
-export type AppDispatch = AppStore['dispatch']
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];
 
 
 // import React from 'react'
