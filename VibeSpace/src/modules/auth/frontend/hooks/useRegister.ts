@@ -41,7 +41,7 @@ export const useRegister = () => {
         });
 
         if (!parsed.success) {
-            console.log(parsed.error.format());
+            // console.log(parsed.error.format());
             return;
         }
 
@@ -49,16 +49,18 @@ export const useRegister = () => {
 
         // ✅ Origin check
         if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return;
+        console.log("hi");
 
         // ✅ Type check
         if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
+        console.log("how are you")
 
-        const { accessToken, id, name, email, picture } = event.data;
+        // const { accessToken, id, name, email, picture } = event?.data;
 
         // ✅ accessToken memory/state এ রাখো
         // setAccessToken(accessToken); // zustand/context/state যেটা use করছ
 
-        console.log("User data:", { id, name, email, picture });
+        console.log("User data:", event?.data);
 
         router.push('/register/user_details');
 
