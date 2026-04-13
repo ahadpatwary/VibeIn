@@ -69,7 +69,7 @@ export async function createAccount (
             authorId: new Types.ObjectId(authorId)
         });
 
-        return account._id;
+        return account;
 
     } catch (error) {
         if(error instanceof Error){

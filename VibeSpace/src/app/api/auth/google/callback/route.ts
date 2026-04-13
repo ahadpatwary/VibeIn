@@ -169,6 +169,8 @@ export async function GET(req: NextRequest) {
 
   if (user.email) {
 
+    console.log("emailllll", user.email)
+
     const accountByProvider = await Account.findOne({
       providerId: user.sub,
       type: "google"
@@ -213,6 +215,8 @@ export async function GET(req: NextRequest) {
     }
     // email নেই — OTP flow এ যাবে (পরে handle করো)
   }
+
+  console.log("hello", account);
 
 
 
