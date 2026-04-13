@@ -32,50 +32,46 @@ export const useRegister = () => {
 
     useEffect(() => {
         const handleMessage = async (e: MessageEvent) => { // ✅ MessageEvent type
-        try {
+            try {
 
-            console.log("Received message:", e?.origin, e?.data);
+                if(e?.data?.id) return;
 
-        // ✅ এভাবে parse করো — e.origin আর e.data আলাদা
-        const parsed = eventObjectSchema.safeParse({
-            origin: e.origin,
-            data: e.data        // postMessage এ যা পাঠিয়েছ সেটা e.data তে আসে
-        });
+                console.log("Received message:", e?.origin, e?.data);
 
-        if (!parsed.success) {
-            // console.log(parsed.error.format());
-            console.log("ahad error");
-            return;
-        }
+                const parsed = eventObjectSchema.safeParse({
+                    origin: e.origin,
+                    data: e.data        
+                });
 
-        console.log("nahid patwary", parsed?.data)
-        const event = parsed.data;
+                if (!parsed.success) {
+                    console.log("data error error");
+                    return;
+                }
 
-        // ✅ Origin check
-        if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return;
-        console.log("hi");
+                const event = parsed.data;
 
-        // ✅ Type check
-        if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
-        console.log("how are you")
+                // Origin check
+                if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return;
 
-        // const { accessToken, id, name, email, picture } = event?.data;
+                // Type check
+                if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
 
-        // ✅ accessToken memory/state এ রাখো
-        // setAccessToken(accessToken); // zustand/context/state যেটা use করছ
 
-        console.log("User data:", event?.data);
+                // ✅ accessToken memory/state এ রাখো
+                // setAccessToken(accessToken); // zustand/context/state যেটা use করছ
 
-        router.push('/register/user_details');
 
-        } catch (error) {
-        if (error instanceof Error)
-            console.error(`Error: ${error.message}`);
-        }
-    };
+                router.push('/register/user_details');
 
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
+            } catch (error) {
+                if (error instanceof Error)
+                    console.error(`Error: ${error.message}`)
+                ;
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
     }, []);
 
 
