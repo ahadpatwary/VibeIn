@@ -34,6 +34,7 @@ export const useRegister = () => {
         const handleMessage = async (e: EventObjectType) => {
             try {
 
+                console.log("eeeeeeeeeeeee", e)
                 const parsed = eventObjectSchema.safeParse(e);
 
                 if(!parsed.success) {
