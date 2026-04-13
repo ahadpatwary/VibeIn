@@ -106,10 +106,12 @@
 import { HttpError } from "./http-error"
 import { withTimeout } from "./timeout"
 import { ZodSchema } from "zod"
-import { store } from "@/shared/lib/store/storeInstance"
+import { makeStore } from "@/shared/lib/store/store" 
 import { setAccessToken, clearAccessToken } from "@/shared/lib/features/accessToken/accessTokenSlice"
 
 type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+
+const store = makeStore(); // ✅ store তৈরি করো
 
 interface HttpOptions<T> {
     method?: HttpMethod
