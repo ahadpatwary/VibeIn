@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from "next/navigation";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { z } from 'zod'
 import { AccountExistanceReturnType } from "../api/checkEmailExistanceApi";
 import { otpVerificationApi } from "../api/otpVerificationApi";
@@ -15,7 +15,8 @@ export const eventObjectSchema = z.object({
         id: z.string().trim(),
         name: z.string().optional(),
         email: z.string().optional(),
-        picture: z.string().optional()
+        picture: z.string().optional(),
+        accessToken: z.string()
     })
 })
 
@@ -28,63 +29,64 @@ export const useRegister = () => {
     const [status, setStatus] = useState<"send" | "verify" | "create">("send");
     const [loading, setLoading] = useState<boolean>(false);
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     const handleMessage = async (e: EventObjectType) => {
-    //         try {
+        const handleMessage = async (e: EventObjectType) => {
+            try {
 
-    //             const parsed = eventObjectSchema.safeParse(e);
+                const parsed = eventObjectSchema.safeParse(e);
 
-    //             if(!parsed.success) {
-    //                 console.log(parsed.error.format());
-    //                 return;
-    //             }
+                if(!parsed.success) {
+                    console.log(parsed.error.format());
+                    return;
+                }
 
-    //             const event = parsed.data;
+                const event = parsed.data;
 
-    //             if (event.origin !== "https://vibe-in-teal.vercel.app") return;
+                if (event.origin !== "https://vibe-in-teal.vercel.app") return;
 
-    //             if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
+                if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
 
-    //             const providerUniqueId = event.data.id;
+                const providerUniqueId = event.data.id;
 
-    //             if(!providerUniqueId) return;
+                if(!providerUniqueId) return;
 
-    //             const accountInfo = {
-    //                 type: "google" as 'google',
-    //                 providerId: providerUniqueId,
-    //             }
+                const accountInfo = {
+                    type: "google" as 'google',
+                    providerId: providerUniqueId,
+                }
 
-    //             const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
+                const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
 
-    //             if(account) {
-    //                 console.log('account already exist');
-    //                 return;
-    //             }
+                if(account) {
+                    console.log('account already exist');
+                    return;
+                }
 
-    //             const { sub, accountId, deviceId } = await createAccountApi({
-    //                 type: 'google',
-    //                 providerId: event.data.id,
-    //                 name: event.data?.name,
-    //                 email: event.data?.email,
-    //                 profilePicture: event.data?.picture
-    //             });
+                // const { sub, accountId, deviceId } = await createAccountApi({
+                //     type: 'google',
+                //     providerId: event.data.id,
+                //     name: event.data?.name,
+                //     email: event.data?.email,
+                //     profilePicture: event.data?.picture
+                // });
 
-    //             console.log(sub, accountId, deviceId);
 
-    //             router.push('/register/user_details');
+                console.log("event", event.data);
 
-    //         } catch (error) {
-    //             if(error instanceof Error)
-    //                 throw new Error(`error message${error.message}`)
-    //             ;
-    //         }
-    //     };
+                router.push('/register/user_details');
 
-    //     window.addEventListener("message", handleMessage);
+            } catch (error) {
+                if(error instanceof Error)
+                    throw new Error(`error message${error.message}`)
+                ;
+            }
+        };
 
-    //     return () => window.removeEventListener("message", handleMessage);
-    // }, []);
+        window.addEventListener("message", handleMessage);
+
+        return () => window.removeEventListener("message", handleMessage);
+    }, []);
 
 
     const googleRegister = () => {

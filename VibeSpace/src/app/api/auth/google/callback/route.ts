@@ -130,6 +130,7 @@ import Account from "@/modules/account/models/Account";
 import { connectToDb } from "@/shared/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken"; // npm i jsonwebtoken
+import { createAccount, createUser, tokenGeneration } from "@/shared/services/accountServices";
 
 export async function GET(req: NextRequest) {
 
@@ -194,14 +195,10 @@ export async function GET(req: NextRequest) {
         account = accountByEmail;
 
       } else {
-        account = await Account.create({
-          email: user.email,
-          providerId: user.sub,
-          type: "google",
-          name: user.name,
-          picture: user.picture,
-		//   authorId: "1234556677777"
-        });
+
+        const userId = await createUser(user?.name, user.email, user?.picture, "");
+
+        account = await createAccount(user.email, userId, undefined, user.sub, "google");
       }
     }
 
@@ -217,17 +214,9 @@ export async function GET(req: NextRequest) {
     // email নেই — OTP flow এ যাবে (পরে handle করো)
   }
 
-  // 3️⃣ JWT বানাও
-  const sessionToken = jwt.sign(
-    {
-      id: account._id,
-    //   email: account.email,
-    //   name: account.name,
-    //   picture: account.picture,
-    },
-    process.env.JWT_SECRET!,
-    { expiresIn: "7d" }
-  );
+
+
+  const { accessToken, refreshToken, refreshTokenHash } = await tokenGeneration(account.authorId.toString(), account._id.toString());
 
   // 4️⃣ Cookie set করো + HTML পাঠাও
   const normalizedUser = {
@@ -235,7 +224,8 @@ export async function GET(req: NextRequest) {
     id: user.sub,
     name: user?.name ?? "<User>",
     email: user?.email,
-    picture: user?.picture
+    picture: user?.picture,
+    accessToken: accessToken
   };
 
   console.log("norma", normalizedUser);
@@ -261,7 +251,7 @@ export async function GET(req: NextRequest) {
 
   response.headers.append(
     "Set-Cookie",
-    `session=${sessionToken}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax${process.env.NODE_ENV === "production" ? "; Secure" : ""}`
+    `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax${process.env.NODE_ENV === "production" ? "; Secure" : ""}`
   );
 
   return response;
