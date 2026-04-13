@@ -8,17 +8,18 @@ import { checkAccountExistanceApi } from "../api/checkEmailExistanceApi";
 import { CreateAccountType, EmailType, OtpValidateType, ProfileType } from "../schemas/signIn.schema";
 import { createAccountApi } from "../api/createAccountApi";
 
+// ✅ Schema ঠিক করো
 export const eventObjectSchema = z.object({
-    origin: z.string(),
-    data: z.object({
-        type: z.string().trim(),
-        id: z.string().trim(),
-        name: z.string().optional(),
-        email: z.string().optional(),
-        picture: z.string().optional(),
-        accessToken: z.string()
-    })
-})
+  origin: z.string(),
+  data: z.object({
+    type: z.string().trim(),
+    id: z.string().trim(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    picture: z.string().optional(),
+    accessToken: z.string()
+  })
+});
 
 export type EventObjectType = z.infer<typeof eventObjectSchema>;
 
@@ -30,72 +31,45 @@ export const useRegister = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
+        const handleMessage = async (e: MessageEvent) => { // ✅ MessageEvent type
+        try {
 
-        const handleMessage = async (e: EventObjectType) => {
-            try {
+        // ✅ এভাবে parse করো — e.origin আর e.data আলাদা
+        const parsed = eventObjectSchema.safeParse({
+            origin: e.origin,
+            data: e.data        // postMessage এ যা পাঠিয়েছ সেটা e.data তে আসে
+        });
 
-                // console.log("eeeeeeeeeeeee", e)
-                // const parsed = eventObjectSchema.safeParse(e);
+        if (!parsed.success) {
+            console.log(parsed.error.format());
+            return;
+        }
 
-                // if(!parsed.success) {
-                //     console.log(parsed.error.format());
-                //     return;
-                // }
+        const event = parsed.data;
 
-                // const event = parsed.data;
-                const event = e;
-                
+        // ✅ Origin check
+        if (event.origin !== process.env.NEXT_PUBLIC_APP_URL) return;
 
-                // console.log("event", event);
-                
-                if(event?.data?.type === "GOOGLE_AUTH_SUCCESS") {
-                    console.log("google auth success", event);
-                }
+        // ✅ Type check
+        if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
 
+        const { accessToken, id, name, email, picture } = event.data;
 
-                if (event.origin !== "https://vibe-in-teal.vercel.app") return;
+        // ✅ accessToken memory/state এ রাখো
+        // setAccessToken(accessToken); // zustand/context/state যেটা use করছ
 
-                if (event.data.type !== "GOOGLE_AUTH_SUCCESS") return;
+        console.log("User data:", { id, name, email, picture });
 
-                // const providerUniqueId = event.data.id;
+        router.push('/register/user_details');
 
-                // if(!providerUniqueId) return;
+        } catch (error) {
+        if (error instanceof Error)
+            console.error(`Error: ${error.message}`);
+        }
+    };
 
-                // const accountInfo = {
-                //     type: "google" as 'google',
-                //     providerId: providerUniqueId,
-                // }
-
-                // const account: AccountExistanceReturnType = await checkAccountExistanceApi(accountInfo);
-
-                // if(account) {
-                //     console.log('account already exist');
-                //     return;
-                // }
-
-                // const { sub, accountId, deviceId } = await createAccountApi({
-                //     type: 'google',
-                //     providerId: event.data.id,
-                //     name: event.data?.name,
-                //     email: event.data?.email,
-                //     profilePicture: event.data?.picture
-                // });
-
-
-                console.log("eventdata", event.data);
-
-                router.push('/register/user_details');
-
-            } catch (error) {
-                if(error instanceof Error)
-                    throw new Error(`error message${error.message}`)
-                ;
-            }
-        };
-
-        window.addEventListener("message", handleMessage);
-
-        return () => window.removeEventListener("message", handleMessage);
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
     }, []);
 
 
