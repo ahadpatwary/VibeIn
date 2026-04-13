@@ -48,7 +48,7 @@ export const useRegister = () => {
             return;
         }
 
-        console.log("nahid patwary")
+        console.log("nahid patwary", parsed?.data)
         const event = parsed.data;
 
         // ✅ Origin check
