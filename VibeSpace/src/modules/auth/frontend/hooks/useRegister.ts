@@ -34,7 +34,7 @@ export const useRegister = () => {
         const handleMessage = async (e: MessageEvent) => { // ✅ MessageEvent type
             try {
 
-                if(e?.data?.id) return;
+                if(!(e?.data?.id)) return;
 
                 console.log("Received message:", e?.origin, e?.data);
 
