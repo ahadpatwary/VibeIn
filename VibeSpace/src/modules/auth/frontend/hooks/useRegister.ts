@@ -44,8 +44,14 @@ export const useRegister = () => {
 
                 // const event = parsed.data;
                 const event = e;
+                
 
                 // console.log("event", event);
+                
+                if(event?.data?.type === "GOOGLE_AUTH_SUCCESS") {
+                    console.log("google auth success", event);
+                }
+
 
                 if (event.origin !== "https://vibe-in-teal.vercel.app") return;
 
