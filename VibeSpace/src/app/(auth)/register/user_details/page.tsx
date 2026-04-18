@@ -214,7 +214,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-dvh bg-slate-50 py-12">
-      <div className="min-w-[310px] max-w-3xl mx-auto">
+      <div className="min-w-[310px] max-w-3xl px-2 mx-auto">
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight"> Account Info</h1>
