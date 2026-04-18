@@ -56,7 +56,7 @@ export const useCard = () => {
                 // console.log("post", data);
              
 
-                const data = await http("https://vibein-2hk5.onrender.com/feed", {
+                const data = await http("https://aware-insight-production-d8ec.up.railway.app/feed", {
                     method: 'GET',
                 })
                    
