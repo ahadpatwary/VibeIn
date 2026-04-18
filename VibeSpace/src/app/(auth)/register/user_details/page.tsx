@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 // ── Zod Schema ────────────────────────────────────────────────
@@ -71,7 +71,7 @@ const COUNTRIES = [
 // ── Main Component ────────────────────────────────────────────
 
 export default function RegisterPage() {
-  const router = useRouter();
+  // const router = useRouter();
 
   const [form, setForm] = useState<Omit<FormData, "educations" | "skills" | "socialMedias"> & {
     educations: { college: string; degree: string }[];
@@ -135,18 +135,18 @@ export default function RegisterPage() {
   };
 
   const addSocialMedia = () =>
-    setForm((p) => ({ ...p, socialMedias: [...p.socialMedias, { name: "" }] }));
+    setForm((p) => ({ ...p, socialMedias: [...p.socialMedias, { account: "", link: "" }] }));
 
-  const removeSocialMedis = (i: number) =>
+  const removeSocialMedia = (i: number) =>
     setForm((p) => ({ ...p, socialMedias: p.socialMedias.filter((_, idx) => idx !== i) }));
 
-  const setSocialMedia = (i: number, val: string) => {
+  const setSocialMedia = (i: number, field: "account" | "link", val: string) => {
     setForm((p) => {
       const updated = [...p.socialMedias];
-      updated[i] = { name: val };
-      return { ...p, socialMedial: updated };
+      updated[i] = { ...updated[i], [field]: val };
+      return { ...p, socialMedias: updated };
     });
-    clearErr(`socialMedias.${i}.name`);
+    clearErr(`socialMedias.${i}.${field}`);
   };
 
   // ── Avatar ──
@@ -206,15 +206,15 @@ export default function RegisterPage() {
     // await fetch("/api/register", { method: "POST", body: JSON.stringify(form) });
     await new Promise((r) => setTimeout(r, 1200));
     setLoading(false);
-    router.push("/dashboard");
+    // router.push("/dashboard");
   }
 
 //   const strength = passwordStrength(form.password);
   const initials = [form.firstName[0], form.lastName[0]].filter(Boolean).join("").toUpperCase() || "?";
 
   return (
-    <div className="min-h-dvh min-w-[310px] w-full bg-slate-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-dvh bg-slate-50 py-12">
+      <div className="min-w-[310px] max-w-3xl mx-auto">
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight"> Account Info</h1>
@@ -475,7 +475,7 @@ export default function RegisterPage() {
               </div>
             ))}
 
-            <button type="button" onClick={addEducation}
+            <button type="button" onClick={addSocialMedia}
               className="w-full rounded-2xl border-2 border-dashed border-indigo-200 py-2.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 transition-colors">
               + Add another account
             </button>
