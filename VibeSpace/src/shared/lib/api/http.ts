@@ -4,9 +4,9 @@ import { ZodSchema } from "zod"
 import { makeStore } from "@/shared/lib/store/store" 
 import { setAccessToken, clearAccessToken } from "@/shared/lib/features/accessToken/accessTokenSlice"
 
-type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+const store = makeStore()
 
-const store = makeStore(); // ✅ store তৈরি করো
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 
 interface HttpOptions<T> {
     method?: HttpMethod
@@ -15,25 +15,31 @@ interface HttpOptions<T> {
     timeoutMs?: number
     cache?: RequestCache
     schema?: ZodSchema<T>
+    _retry?: boolean 
 }
 
 let refreshingPromise: Promise<string> | null = null;
 
-// ✅ accessToken refresh করো
 async function refreshAccessToken(): Promise<string> {
-    const res = await fetch("/api/auth/refresh", {
-        method: "POST",
-        credentials: "include", // refreshToken cookie automatically যাবে
-    });
+    try {
+        const res = await fetch("/api/auth/refresh", {
+            method: "POST",
+            credentials: "include",
+        });
 
-    if (!res.ok) {
+        if (!res.ok) {
+            store.dispatch(clearAccessToken());
+            throw new HttpError("Session expired", 401);
+        }
+
+        const data = await res.json();
+        store.dispatch(setAccessToken(data.accessToken));
+        return data.accessToken;
+
+    } catch (err) {
         store.dispatch(clearAccessToken());
-        throw new HttpError("Session expired", 401);
+        throw err;
     }
-
-    const data = await res.json();
-    store.dispatch(setAccessToken(data.accessToken)); // ✅ store update
-    return data.accessToken;
 }
 
 export async function http<T>(url: string, options: HttpOptions<T> = {}): Promise<T> {
@@ -44,29 +50,22 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
         timeoutMs = 8000,
         cache = "no-store",
         schema,
+        _retry = false,
     } = options
 
     const { controller, timeoutId } = withTimeout(timeoutMs)
 
     try {
-        // ✅ hook এর বদলে store থেকে directly নাও
         let accessToken = store.getState().accessToken.accessToken;
 
-        console.log("...........................................................ahadToken", accessToken);
-
-        if(!accessToken){
+        if (!accessToken) {
             if (!refreshingPromise) {
                 refreshingPromise = refreshAccessToken().finally(() => {
                     refreshingPromise = null;
                 });
             }
             accessToken = await refreshingPromise;
-            console.log("new access token after refresh", accessToken);
-
-            store.dispatch(setAccessToken(accessToken)); // ✅ store update
-
         }
-
 
         const res = await fetch(url, {
             method,
@@ -83,13 +82,8 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
 
         const data = await res.json().catch(() => null)
 
-        console.log("res", data);
-
-        // ✅ 401 আসলে refresh করে retry
-        if (res.status === 401 && data?.code === "ACCESS_TOKEN_EXPIRED") {
-
-            console.log("ahad..........")
-
+        // 401 — accessToken expire, but only retry once
+        if (res.status === 401 && data?.code === "ACCESS_TOKEN_EXPIRED" && !_retry) {
             if (!refreshingPromise) {
                 refreshingPromise = refreshAccessToken().finally(() => {
                     refreshingPromise = null;
@@ -98,9 +92,9 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
 
             const newAccessToken = await refreshingPromise;
 
-            // ✅ নতুন token দিয়ে retry
             return http<T>(url, {
                 ...options,
+                _retry: true, // ← infinite loop বন্ধ
                 headers: {
                     ...headers,
                     Authorization: `Bearer ${newAccessToken}`,
@@ -119,11 +113,7 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
         if (schema) {
             const parsed = schema.safeParse(data)
             if (!parsed.success) {
-                throw new HttpError(
-                    "Invalid server response",
-                    500,
-                    parsed.error.flatten()
-                )
+                throw new HttpError("Invalid server response", 500, parsed.error.flatten())
             }
             return parsed.data
         }
@@ -134,9 +124,7 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
         if (err.name === "AbortError") {
             throw new HttpError("Request timeout", 408)
         }
-        if (err instanceof HttpError) {
-            throw err
-        }
+        if (err instanceof HttpError) throw err
         throw new HttpError("Network error", 0)
     } finally {
         clearTimeout(timeoutId)

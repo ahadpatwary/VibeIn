@@ -47,15 +47,15 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.redirect(url);
     }
 
-    if(publicUrl){
+    else if(publicUrl){
       response = NextResponse.next();
     }
 
-    if(authUrl){
+    else if(authUrl){
       response = NextResponse.next();
     }
 
-    if(!protectedUrl && !publicUrl && !authUrl){
+    else if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
@@ -68,17 +68,17 @@ export async function proxy(req: NextRequest) {
       response = NextResponse.next();
     }
 
-    if(publicUrl){
+    else if(publicUrl){
       response = NextResponse.next();
     }
 
-    if(authUrl){
+    else if(authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/feed";
       response = NextResponse.redirect(url);
     }
 
-    if(!protectedUrl && !publicUrl && !authUrl){
+    else if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
@@ -88,24 +88,14 @@ export async function proxy(req: NextRequest) {
   if(!accessToken && refreshToken) {
 
     if(protectedUrl){
-      // response = NextResponse.json(
-      //   { message: "refresh token avaliable" }, 
-      //   { status: 301 }
-      // )
-
-      // response = NextResponse.json(
-      //   { message: "Access token expired", code: "ACCESS_TOKEN_EXPIRED" },
-      //   { status: 401 }
-      // )
-
       response = NextResponse.next();
     }
 
-    if(publicUrl){
+    else if(publicUrl){
       response = NextResponse.next();
     }
 
-    if(authUrl){
+    else if(authUrl){
 
       const url = req.nextUrl.clone();
       url.pathname = "/feed";
@@ -113,14 +103,13 @@ export async function proxy(req: NextRequest) {
       
     }
 
-    if(!protectedUrl && !publicUrl && !authUrl){
+    else if(!protectedUrl && !publicUrl && !authUrl){
       const url = req.nextUrl.clone();
       url.pathname = "/notFoundPage";
       response = NextResponse.redirect(url);
     }
   }
 
-  // response = NextResponse.next();
 
   // if (response && !pathname.startsWith("/api")) {
   //   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
