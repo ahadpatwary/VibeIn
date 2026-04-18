@@ -1,4 +1,4 @@
-export const protectedRoutes = new Set(['/feed', '/admin', '/profile', '/register/user_details']);
+export const protectedRoutes = new Set(['/feed', '/admin', '/notification', '/profile', '/register/user_details', '/chat-space']);
 
 
 export const publicRoutes = new Set(['/about', '/unauthorized', '/notFoundPage']);
