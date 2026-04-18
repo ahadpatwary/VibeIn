@@ -110,8 +110,8 @@ export default function RegisterPage() {
     .filter(Boolean).join("").toUpperCase() || "?";
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-dvh min-w-[310px] bg-slate-50 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
 
         {/* Page heading */}
         <div className="mb-8">
