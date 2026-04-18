@@ -28,10 +28,12 @@ export async function POST(req: NextRequest) {
         )
     }
 
+    const { sub, accountId, deviceId } = payload as UserPayload;
+
 
 
     const newAccessToken = jwt.sign(
-        { ...payload as UserPayload, role: "user" },
+        { sub, accountId, deviceId, role: "user" },
         process.env.NEXTAUTH_SECRET as string,
         {
             algorithm: "HS256",
@@ -41,6 +43,8 @@ export async function POST(req: NextRequest) {
             audience: "VibeIn_client",
         }
     );
+
+    console.log("newaccessToken", newAccessToken)
    
 
     return NextResponse.json({
