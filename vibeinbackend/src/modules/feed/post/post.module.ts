@@ -6,6 +6,7 @@ import { FeedPostSchema } from "./infrastructure/persistence/schemas/feedPost.sc
 import { PERSISTENCE_REPOSITORY } from "src/shared/tokens/token";
 import { MongoFeedPostRepository } from "./infrastructure/persistence/mongo-feedpost.repository";
 import { Media, MediaSchema } from "./infrastructure/persistence/schemas/media.schema";
+import { JwtModule } from "@nestjs/jwt";
 
 
 
@@ -14,7 +15,9 @@ import { Media, MediaSchema } from "./infrastructure/persistence/schemas/media.s
         MongooseModule.forFeature([
             { name: FeedPost.name, schema: FeedPostSchema },
             { name: Media.name, schema: MediaSchema }
-        ])
+        ]),
+
+        JwtModule.register({})
     ],
     controllers: [FeedPost],
     providers: [

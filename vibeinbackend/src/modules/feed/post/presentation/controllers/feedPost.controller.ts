@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards, UsePipes } from "@nestjs/common";
 import { FeedPostService } from "../../application/feedPost.service";
 import { ZodValidationPipe } from "src/modules/user/application/pipes/zodValidation.pipe";
 import { CreateFeedPostBody, createFeedPostDto, updateFeedPostDto } from "../../application/dto/feedPost.dto";
 
 import type { UpdateFeedPost } from "../../application/dto/feedPost.dto";
+import { AuthGuard } from "../guards/auth";
 
 
 @Controller('feed')
+@UseGuards(AuthGuard)
 export class FeedPost {
 
     constructor(private readonly feedPostService: FeedPostService) {}

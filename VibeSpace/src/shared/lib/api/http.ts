@@ -1,108 +1,3 @@
-// import { HttpError } from "./http-error"
-// import { withTimeout } from "./timeout"
-// import { ZodSchema } from "zod"
-// import { tokenIssueApi, TokenReturnType } from "@/modules/auth/frontend/api/tokenIssueApi"
-// import { useAppSelector } from "../hooks"
-
-// type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
-
-// interface HttpOptions<T> {
-//     method?: HttpMethod
-//     body?: unknown
-//     headers?: HeadersInit
-//     timeoutMs?: number
-//     cache?: RequestCache
-//     schema?: ZodSchema<T>
-// }
-
-// let refreshingPromise: Promise<TokenReturnType> | null = null;
-
-// export async function http<T>(url: string, options: HttpOptions<T> = {}): Promise<T> {
-//     const {
-//         method = "GET",
-//         body,
-//         headers,
-//         timeoutMs = 80000,
-//         cache = "no-store",
-//         schema,
-//     } = options
-
-//     const { controller, timeoutId } = withTimeout(timeoutMs)
-
-//     try {
-
-//         const accessToken = useAppSelector(state => state.accessToken.accessToken);
-
-//         const res = await fetch(url, {
-//             method,
-//             credentials: "include",
-//             cache,
-//             signal: controller.signal,
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 ...(accessToken && { "Authorization": `Bearer ${accessToken}` }),
-//                 ...headers,
-//             },
-//             body: body ? JSON.stringify(body) : undefined,
-//         })
-
-//         const data = await res.json().catch(() => null)
-
-//         if (res.status === 401 && data?.code === "ACCESS_TOKEN_EXPIRED") {
-
-//             if (!refreshingPromise) {
-//                 refreshingPromise = tokenIssueApi()
-//                     .finally(() => {
-//                         refreshingPromise = null
-//                     })
-//             }
-
-//             await refreshingPromise
-
-//             return http<T>(url, { ...options })
-//         }
-
-//         if (!res.ok) {
-//             throw new HttpError(
-//                 data?.message || "Request failed",
-//                 res.status,
-//                 data
-//             )
-//         }
-
-//         if (schema) {
-//             const parsed = schema.safeParse(data)
-
-//             if (!parsed.success) {
-//                 throw new HttpError(
-//                     "Invalid server response",
-//                     500,
-//                     parsed.error.flatten()
-//                 )
-//             }
-
-//             return parsed.data
-//         }
-
-//         return data as T
-
-//     } catch (err: any) {
-//         if (err.name === "AbortError") {
-//             throw new HttpError("Request timeout", 408)
-//         }
-
-//         if (err instanceof HttpError) {
-//             throw err
-//         }
-
-//         throw new HttpError("Network error", 0)
-//     } finally {
-//         clearTimeout(timeoutId)
-//     }
-// }
-
-
-// src/shared/lib/http/http.ts
 import { HttpError } from "./http-error"
 import { withTimeout } from "./timeout"
 import { ZodSchema } from "zod"
@@ -155,7 +50,23 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
 
     try {
         // ✅ hook এর বদলে store থেকে directly নাও
-        const accessToken = store.getState().accessToken.accessToken;
+        let accessToken = store.getState().accessToken.accessToken;
+
+        console.log("...........................................................ahadToken", accessToken);
+
+        if(!accessToken){
+            if (!refreshingPromise) {
+                refreshingPromise = refreshAccessToken().finally(() => {
+                    refreshingPromise = null;
+                });
+            }
+            accessToken = await refreshingPromise;
+            console.log("new access token after refresh", accessToken);
+
+            store.dispatch(setAccessToken(accessToken)); // ✅ store update
+
+        }
+
 
         const res = await fetch(url, {
             method,
@@ -172,8 +83,12 @@ export async function http<T>(url: string, options: HttpOptions<T> = {}): Promis
 
         const data = await res.json().catch(() => null)
 
+        console.log("res", data);
+
         // ✅ 401 আসলে refresh করে retry
         if (res.status === 401 && data?.code === "ACCESS_TOKEN_EXPIRED") {
+
+            console.log("ahad..........")
 
             if (!refreshingPromise) {
                 refreshingPromise = refreshAccessToken().finally(() => {

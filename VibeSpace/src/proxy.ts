@@ -6,6 +6,7 @@ import { authRoutes, protectedRoutes, publicRoutes } from "./shared/lib/middlewa
 export async function proxy(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname.replace(/\/+$/, "") || "/";
+  console.log("middleware called for ", pathname);
   let response: NextResponse | null = null;
 
   const authHeader = req.headers.get("authorization");
@@ -17,7 +18,7 @@ export async function proxy(req: NextRequest) {
     accessToken = authHeader.split(" ")[1];
   }
 
-  const refreshToken = (await cookies()).get("refreshToken")?.value;
+  const refreshToken = (await cookies()).get("refreshToken")?.value; 
 
   console.log("accessToken", accessToken, refreshToken);
 
@@ -87,10 +88,17 @@ export async function proxy(req: NextRequest) {
   if(!accessToken && refreshToken) {
 
     if(protectedUrl){
-      response = NextResponse.json(
-        { message: "refresh token avaliable" }, 
-        { status: 301 }
-      )
+      // response = NextResponse.json(
+      //   { message: "refresh token avaliable" }, 
+      //   { status: 301 }
+      // )
+
+      // response = NextResponse.json(
+      //   { message: "Access token expired", code: "ACCESS_TOKEN_EXPIRED" },
+      //   { status: 401 }
+      // )
+
+      response = NextResponse.next();
     }
 
     if(publicUrl){
@@ -98,10 +106,11 @@ export async function proxy(req: NextRequest) {
     }
 
     if(authUrl){
-      response = NextResponse.json(
-        { message: "refresh token avaliable" }, 
-        { status: 301 }
-      )
+
+      const url = req.nextUrl.clone();
+      url.pathname = "/feed";
+      response = NextResponse.redirect(url);
+      
     }
 
     if(!protectedUrl && !publicUrl && !authUrl){
@@ -111,7 +120,7 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  response = NextResponse.next();
+  // response = NextResponse.next();
 
   // if (response && !pathname.startsWith("/api")) {
   //   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");

@@ -1,3 +1,4 @@
+import { http } from "@/shared/lib/api/http";
 import { useEffect, useState } from "react"
 
 
@@ -45,15 +46,21 @@ export const useCard = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await fetch(
-                    process.env.NODE_ENV === "development"
-                        ? "http://localhost:3000/feed"
-                        : "https://vibein-2hk5.onrender.com/feed"
-                    // "https://vibein-2hk5.onrender.com/feed"
-                );
-                const data = await res.json();
-                console.log("post", data);
-                setActivePosts(data);
+                // const res = await fetch(
+                //     process.env.NODE_ENV === "development"
+                //         ? "http://localhost:3000/feed"
+                //         : "https://vibein-2hk5.onrender.com/feed"
+                //     // "https://vibein-2hk5.onrender.com/feed"
+                // );
+                // const data = await res.json();
+                // console.log("post", data);
+             
+
+                const data = await http("https://vibein-2hk5.onrender.com/feed", {
+                    method: 'GET',
+                })
+                   
+                setActivePosts(data as feedPostsType[]);
             } catch (error) {
                 console.error("Fetch error:", error);
             }
