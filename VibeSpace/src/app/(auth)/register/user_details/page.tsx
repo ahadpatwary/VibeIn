@@ -94,7 +94,8 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    // if (!validate()) return;
+    console.log("data", form);
     setLoading(true);
     // Replace this with your actual API call:
     // await fetch("/api/register", { method: "POST", body: JSON.stringify(form) });
@@ -114,15 +115,13 @@ export default function RegisterPage() {
 
         {/* Page heading */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Create account</h1>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Account Info</h1>
           <p className="text-slate-500 mt-1.5 text-sm">
-            Fill in your details below to get started. Already have an account?{" "}
-            <a href="/login" className="text-indigo-600 hover:underline font-medium">Sign in</a>
+            Fill in your details below to get started {" "}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-
 
           {/* ── Section: Personal Info ── */}
           <Section title="Personal information" subtitle="Your basic identity details">
@@ -203,6 +202,64 @@ export default function RegisterPage() {
             </div>
           </Section>
 
+          {/* // education- section */}
+            <Section title="Education" subtitle="Where did you study?">
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="College" error={errors.country} required>
+                <input
+                    type='text' placeholder='college'
+                    value={form.country}
+                    onChange={(e) => set("country", e.target.value)}
+                    className={input(errors.country)}
+                />
+              </Field>
+
+              <Field label="Degree">
+                <input
+                  type="text" placeholder="Degree"
+                  value={form.city}
+                  onChange={(e) => set("city", e.target.value)}
+                  className={input()}
+                />
+              </Field>
+        
+            </div>
+
+            <button type="button"
+                onClick={() => {
+                    // Handle additional skill entry
+                    }}
+                className="text-white hover:text-indigo-800 text-sm font-medium w-full rounded-2xl bg-indigo-600 py-2"
+            >
+                Add another education
+            </button>
+
+          </Section>
+
+          {/* skill -> section */}
+
+          <Section title="Skills" subtitle="What are your top skills?">
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Skill 1">
+                <input  
+                    type="text" placeholder="e.g., JavaScript"
+                    // value={form.skill1}
+                    // onChange={(e) => set("skill1", e.target.value)}
+                    className={input()}
+                />
+              </Field>
+            </div>
+                <button type="button"
+                    onClick={() => {
+                        // Handle additional skill entry
+                        }}
+                    className="text-white hover:text-indigo-800 text-sm font-medium w-full rounded-2xl bg-indigo-600 py-2"
+                >
+                    Add another skill
+                </button>
+          </Section>
+
+
 
           {/* ── Section: Address ── */}
           <Section title="Location" subtitle="Where are you based?">
@@ -265,7 +322,7 @@ export default function RegisterPage() {
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
+      <div className="px-6 py-4 border-b border-slate-100 bg-slate-200">
         <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
         {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
       </div>
