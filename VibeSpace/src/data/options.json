@@ -1,0 +1,32 @@
+[
+    {
+        "key": 1,
+        "option": "Create Group",
+        "router": "create-group",
+        "component": "CreateGroup"
+    },
+    {
+        "key": 2,
+        "option": "All Group",
+        "router": "all-group",
+        "component": "AllGroup"
+    },
+    {
+        "key": 3,
+        "option": "My Group",
+        "router": "my-group",
+        "component": "MyGroup"
+    },
+    {
+        "key": 4,
+        "option": "All Request",
+        "router": "all-request",
+        "component": "AllRequest"
+    },
+    {
+        "key": 5,
+        "option": "Join Group",
+        "router": "join-group",
+        "component": "JoinGroup"
+    }
+]
