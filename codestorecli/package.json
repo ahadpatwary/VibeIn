@@ -1,6 +1,6 @@
 {
   "name": "@adoxfa/codestore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI to sell and manage code on CloudDecode Marketplace",
   "main": "dist/bin/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "cloudecode": "./dist/bin/index.js"
+    "codestore": "./dist/bin/index.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "ora": "^9.4.0"
   },
   "devDependencies": {
+    "@types/chalk": "^0.4.31",
     "@types/configstore": "^6.0.2",
     "@types/fs-extra": "^11.0.4",
     "@types/inquirer": "^9.0.9",

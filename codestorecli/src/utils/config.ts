@@ -1,8 +1,7 @@
 import Configstore from 'configstore';
-import packageJson from '../../package.json';
 
-// প্রজেক্টের নামে একটি লোকাল স্টোরেজ তৈরি হবে
-const config = new Configstore(packageJson.name as string);
+
+const config = new Configstore("codestore");
 
 export const setToken = (token: string): void => {
   config.set('auth_token', token);
