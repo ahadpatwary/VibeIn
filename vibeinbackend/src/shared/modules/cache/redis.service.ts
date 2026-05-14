@@ -9,7 +9,7 @@ export interface optionsType {
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
-    private client: Redis;
+    private client: Redis | undefined;
 
     constructor(
         @Inject('REDIS_OPTIONS') private readonly options: optionsType,
@@ -46,7 +46,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
-    getClient(): Redis {
+    getClient(): Redis | undefined {
         return this.client;
     }
 }
