@@ -43,22 +43,23 @@ export class RedisModule {
         config: RedisConfig,
       ) => {
 
-        const client = new Redis({
-          host: config.host,
-          port: config.port,
-          password: config.password,
-          db: config.db,
-          keyPrefix: config.keyPrefix,
-          connectTimeout: config.connectTimeout,
-          commandTimeout: config.commandTimeout,
-          maxRetriesPerRequest: config.maxRetriesPerRequest,
-          enableReadyCheck: config.enableReadyCheck ?? true,
-          lazyConnect: true,
-          keepAlive: config.keepAlive,
-          family: config.family,
-          retryStrategy: config.retryStrategy,
-          ...(config.tls ? { tls: {} } : {}),
-        });
+        // const client = new Redis({
+        //   host: config.host,
+        //   port: config.port,
+        //   password: config.password,
+        //   db: config.db,
+        //   keyPrefix: config.keyPrefix,
+        //   connectTimeout: config.connectTimeout,
+        //   commandTimeout: config.commandTimeout,
+        //   maxRetriesPerRequest: config.maxRetriesPerRequest,
+        //   enableReadyCheck: config.enableReadyCheck ?? true,
+        //   lazyConnect: true,
+        //   keepAlive: config.keepAlive,
+        //   family: config.family,
+        //   retryStrategy: config.retryStrategy,
+        //   ...(config.tls ? { tls: {} } : {}),
+        // });
+        const client = new Redis("")
 
         return client;
       }

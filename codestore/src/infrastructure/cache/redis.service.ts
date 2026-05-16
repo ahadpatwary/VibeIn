@@ -54,13 +54,13 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
             this.isConnected = false;
 
-            throw new this.RedisConnectionException(
-                err as Error,
-                { 
-                    host: this.config.host,
-                    port: this.config.port,
-                },
-            );
+            // throw new this.RedisConnectionException(
+            //     err as Error,
+            //     { 
+            //         host: this.config.host,
+            //         port: this.config.port,
+            //     },
+            // );
         }
     }
 

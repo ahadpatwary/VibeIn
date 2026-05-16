@@ -4,7 +4,7 @@ import { DatabaseService } from './database.service';
 import { DatabaseLogger } from './utils/database.logger';
 import { DATABASE_EVENTS } from './constants/database.constants';
 import { ConnectionError } from './exceptions/database.exceptions';
-import { Pool } from 'pg';
+
 
 
 // export interface DatabaseAsyncOptions {
@@ -48,6 +48,7 @@ export class DatabaseModule {
         loggerProvider,
         eventsProvider,
         exceptionProvider,
+        DatabaseService,
       ],
       exports: [DatabaseService],
     };

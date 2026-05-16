@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 export type LogLevel = 'error' | 'warn'  | 'info' | 'debug';
 
 export interface Logger {
@@ -20,7 +22,7 @@ export class DatabaseLogger implements Logger {
     private format(level: LogLevel, message: string, meta?: Record<string, unknown>): string {
         const timestamp = new Date().toISOString();
         const metaStr = meta ? ` ${JSON.stringify(meta)}` : '';
-        return `${timestamp} ${level.toUpperCase()} ${this.prefix} ${message}${metaStr}`;
+        return `[APP] ${chalk.yellow(timestamp)} ${level.toUpperCase()} ${this.prefix} ${chalk.cyan(message)}${chalk.grey(metaStr)}`;
     }
 
     debug(message: string, meta?: Record<string, unknown>): void {
@@ -31,7 +33,9 @@ export class DatabaseLogger implements Logger {
 
     info(message: string, meta?: Record<string, unknown>): void {
         if (this.shouldLog('info')) {
-            console.info(this.format('info', message, meta));
+            // console.info(this.format('info', message, meta));
+            console.log(chalk.green(this.format('info', message, meta)));
+            
         }
     }
 

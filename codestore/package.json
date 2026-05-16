@@ -26,6 +26,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "chalk": "^5.6.2",
     "drizzle-orm": "^0.45.2",
     "ioredis": "^5.10.1",
     "p-retry": "^8.0.0",

@@ -58,6 +58,7 @@ export class DatabaseService {
       });
 
       this.isConnected = true;
+      const result = await this.pool.query('SELECT 1');
 
       this.logger.info('Database pool created successfully', {
         host: this.config.host,
