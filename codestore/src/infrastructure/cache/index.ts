@@ -2,7 +2,7 @@
 export { RedisService } from './redis.service';
 
 // Client
-export { RedisClient } from './redis.client';
+// export { RedisClient } from './redis.client';
 
 // Config
 export { RedisConfigBuilder, createRedisConfig } from './config/redis.config';
@@ -45,6 +45,7 @@ export type { Logger, LogLevel } from './utils/redis.logger';
 // Decorators / Helpers
 export { withRetry, withCommandError, Retry } from './decorators/retry.decorator';
 export type { RetryOptions } from './decorators/retry.decorator';
+
 
 // Constants
 export { REDIS_CONSTANTS, REDIS_ERRORS, REDIS_EVENTS, EXPIRE_MODES } from './constants/redis.constants';

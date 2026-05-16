@@ -35,7 +35,9 @@ export class RedisConfigBuilder {
       enableReadyCheck: true,
       lazyConnect: true,
       keepAlive: REDIS_CONSTANTS.DEFAULT_KEEPALIVE,
-      ...this.config,
+
+      //________________________ override the previous values _______________________
+      ...this.config,  
     };
   }
 }
@@ -49,7 +51,8 @@ export function createRedisConfig(env?: NodeJS.ProcessEnv): RedisConfig {
     .setKeyPrefix(e.REDIS_KEY_PREFIX ?? REDIS_CONSTANTS.DEFAULT_KEY_PREFIX)
     .setConnectTimeout(parseInt(e.REDIS_CONNECT_TIMEOUT ?? String(REDIS_CONSTANTS.DEFAULT_CONNECT_TIMEOUT), 10))
     .setCommandTimeout(parseInt(e.REDIS_COMMAND_TIMEOUT ?? String(REDIS_CONSTANTS.DEFAULT_COMMAND_TIMEOUT), 10))
-    .setMaxRetries(parseInt(e.REDIS_MAX_RETRIES ?? String(REDIS_CONSTANTS.DEFAULT_MAX_RETRIES), 10));
+    .setMaxRetries(parseInt(e.REDIS_MAX_RETRIES ?? String(REDIS_CONSTANTS.DEFAULT_MAX_RETRIES), 10)) 
+  ;
 
   if (e.REDIS_PASSWORD) builder.setPassword(e.REDIS_PASSWORD);
   if (e.REDIS_TLS === 'true') builder.enableTLS();

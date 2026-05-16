@@ -1,56 +1,76 @@
-// database.module.ts
 import { Global, Module, DynamicModule } from '@nestjs/common';
-import { DATABASE_OPTIONS, DB_CLIENT } from './database/constants';
-import { DatabaseOptions } from './types';
-import { createDrizzleClient } from './drizzle.provider';
+import { DatabaseConfig } from './types/database.types';
+import { DatabaseService } from './database.service';
+import { DatabaseLogger } from './utils/database.logger';
+import { DATABASE_EVENTS } from './constants/database.constants';
+import { ConnectionError } from './exceptions/database.exceptions';
+import { Pool } from 'pg';
 
-export interface DatabaseAsyncOptions {
-  useFactory: (...args: any[]) =>
-    Promise<DatabaseOptions> | DatabaseOptions;
-  inject?: any[];
-}
+
+// export interface DatabaseAsyncOptions {
+//   useFactory: (...args: any[]) =>
+//     Promise<DatabaseOptions> | DatabaseOptions;
+//   inject?: any[];
+// }
 
 @Global()
 @Module({})
 export class DatabaseModule {
-  static forRoot(options: DatabaseOptions): DynamicModule {
+  static forRoot(config: DatabaseConfig ): DynamicModule {
+
+    const optionsProvider = {
+      provide: 'DATABASE_CONFIG',
+      useValue: config,
+    };
+
+    const loggerProvider = {
+      provide: 'DATABASE_LOGGER',
+      useValue: new DatabaseLogger(),
+    };
+
+    const eventsProvider = {
+      provide: 'DATABASE_EVENTS',
+      useValue: DATABASE_EVENTS,
+    };
+
+    const exceptionProvider = {
+      provide: 'DATABASE_CONNECTION_EXCEPTION',
+      useValue: ConnectionError,
+    };
+
+
+
     return {
       module: DatabaseModule,
+      global: true,
       providers: [
-        {
-          provide: DATABASE_OPTIONS,
-          useValue: options,
-        },
-        {
-          provide: DB_CLIENT,
-          useFactory: (opts: DatabaseOptions) => {
-            return createDrizzleClient(opts);
-          },
-          inject: [DATABASE_OPTIONS],
-        },
+        optionsProvider,
+        loggerProvider,
+        eventsProvider,
+        exceptionProvider,
       ],
-      exports: [DB_CLIENT],
+      exports: [DatabaseService],
     };
   }
 
-  static forRootAsync(options: DatabaseAsyncOptions): DynamicModule {
-    return {
-      module: DatabaseModule,
-      providers: [
-        {
-          provide: DATABASE_OPTIONS,
-          useFactory: options.useFactory,
-          inject: options.inject || [],
-        },
-        {
-          provide: DB_CLIENT,
-          useFactory: (opts: DatabaseOptions) => {
-            return createDrizzleClient(opts);
-          },
-          inject: [DATABASE_OPTIONS],
-        },
-      ],
-      exports: [DB_CLIENT],
-    };
-  }
+  // static forRootAsync(options: DatabaseAsyncOptions): DynamicModule {
+  //   return {
+  //     module: DatabaseModule,
+  //     providers: [
+  //       {
+  //         provide: DATABASE_OPTIONS,
+  //         useFactory: options.useFactory,
+  //         inject: options.inject || [],
+  //       },
+  //       {
+  //         provide: DB_CLIENT,
+  //         useFactory: (opts: DatabaseOptions) => {
+  //           return createDrizzleClient(opts);
+  //         },
+  //         inject: [DATABASE_OPTIONS],
+  //       },
+  //     ],
+  //     exports: [DB_CLIENT],
+  //   };
+  // }
 }
