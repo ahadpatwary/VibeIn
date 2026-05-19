@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ProductCardType } from "../schemas/productCard";
+import { productType } from "../schemas/productCard";
 
-type ProductCardProps = ProductCardType;
+type ProductCardProps = productType;
 
 export const ShowCard = ({
   title,
