@@ -69,11 +69,15 @@ export default function ImageEditor() {
   }
 
   return (
-    <div className="p-6 text-white bg-black min-h-screen space-y-4">
-      <input type="file" onChange={onFileChange} />
+    <div className="p-6 text-foreground bg-background dark:bg-background min-h-screen space-y-4">
+      <input 
+        type="file" 
+        onChange={onFileChange}
+        className="text-foreground bg-card border border-border p-2 rounded"
+      />
 
       {image && (
-        <div className="relative w-full h-96 bg-gray-900">
+        <div className="relative w-full h-96 bg-muted dark:bg-muted border border-border rounded">
           <Cropper
             image={image}
             crop={crop}
@@ -88,9 +92,9 @@ export default function ImageEditor() {
         </div>
       )}
 
-      <div className="space-y-3">
-        <div>
-          Zoom
+      <div className="space-y-3 bg-card p-4 rounded-lg border border-border">
+        <div className="space-y-2">
+          <label className="text-foreground font-semibold">Zoom</label>
           <input
             type="range"
             min="1"
@@ -98,44 +102,47 @@ export default function ImageEditor() {
             step="0.1"
             value={zoom}
             onChange={(e) => setZoom(Number(e.target.value))}
+            className="w-full"
           />
         </div>
 
-        <div>
-          Rotation
+        <div className="space-y-2">
+          <label className="text-foreground font-semibold">Rotation</label>
           <input
             type="range"
             min="0"
             max="360"
             value={rotation}
             onChange={(e) => setRotation(Number(e.target.value))}
+            className="w-full"
           />
         </div>
 
-        <div>
-          Brightness
+        <div className="space-y-2">
+          <label className="text-foreground font-semibold">Brightness</label>
           <input
             type="range"
             min="50"
             max="150"
             value={brightness}
             onChange={(e) => setBrightness(Number(e.target.value))}
+            className="w-full"
           />
         </div>
 
-        <div>
-          Text
+        <div className="space-y-2">
+          <label className="text-foreground font-semibold">Text</label>
           <input
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="text-black"
+            className="w-full px-3 py-2 bg-background border border-border text-foreground rounded focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
 
         <button
           onClick={handleExport}
-          className="px-4 py-2 bg-blue-600 rounded"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90 transition font-semibold"
         >
           Export Image
         </button>

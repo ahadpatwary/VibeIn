@@ -98,7 +98,7 @@ import Link from "next/link";
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-2 bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold px-3.5 py-1.5 rounded-full">
+    <span className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-semibold px-3.5 py-1.5 rounded-full dark:bg-primary/20 dark:border-primary/30">
       {children}
     </span>
   );
@@ -107,8 +107,8 @@ function Badge({ children }: { children: React.ReactNode }) {
 function StatPill({ num, label }: { num: string; label: string }) {
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{num}</span>
-      <span className="text-xs text-slate-400 font-medium">{label}</span>
+      <span className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">{num}</span>
+      <span className="text-xs text-muted-foreground font-medium">{label}</span>
     </div>
   );
 }
@@ -125,14 +125,14 @@ function FeatureCard({
   accent: string;
 }) {
   return (
-    <div className="group relative  rounded-2xl border p-6 hover:border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div className="group relative rounded-2xl border border-border bg-card p-6 hover:border-primary hover:shadow-lg transition-all duration-300 overflow-hidden">
       {/* subtle hover shimmer */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-violet-50/40 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
       <div className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl ${accent}`}>
         {icon}
       </div>
-      <h3 className="text-[15px] font-semibold text-white mb-1.5 leading-snug">{title}</h3>
-      <p className="text-[13px] text-slate-500 leading-relaxed">{desc}</p>
+      <h3 className="text-[15px] font-semibold text-foreground mb-1.5 leading-snug">{title}</h3>
+      <p className="text-[13px] text-muted-foreground leading-relaxed">{desc}</p>
     </div>
   );
 }
@@ -155,30 +155,30 @@ function PostCard({
   free?: boolean;
 }) {
   return (
-    <div className="group  rounded-2xl border overflow-hidden hover:border-violet-200 hover:shadow-xl transition-all duration-300 cursor-pointer">
+    <div className="group rounded-2xl border border-border bg-card overflow-hidden hover:border-primary hover:shadow-xl transition-all duration-300 cursor-pointer">
       {/* thumb */}
       <div className={`h-36 flex items-center justify-center text-4xl select-none ${gradient}`} aria-hidden="true" />
       <div className="p-5">
         <div className="flex flex-wrap gap-1.5 mb-3">
           {tags.map((t) => (
-            <span key={t} className="text-[10px] font-semibold bg-violet-50 text-violet-700 px-2.5 py-0.5 rounded-full border border-violet-100">
+            <span key={t} className="text-[10px] font-semibold bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20 dark:bg-primary/20 dark:border-primary/30">
               {t}
             </span>
           ))}
         </div>
-        <h3 className="text-sm font-semibold text-white leading-snug mb-1.5">{title}</h3>
-        <p className="text-[12px] text-slate-400 leading-relaxed mb-4">{desc}</p>
+        <h3 className="text-sm font-semibold text-foreground leading-snug mb-1.5">{title}</h3>
+        <p className="text-[12px] text-muted-foreground leading-relaxed mb-4">{desc}</p>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="h-6 w-6 rounded-full bg-violet-100 flex items-center justify-center text-[9px] font-bold text-violet-700">
+            <span className="h-6 w-6 rounded-full bg-primary/20 flex items-center justify-center text-[9px] font-bold text-primary dark:bg-primary/30">
               {author.slice(0, 2).toUpperCase()}
             </span>
-            <span className="text-xs text-slate-400">{author}</span>
+            <span className="text-xs text-muted-foreground">{author}</span>
           </div>
           {free ? (
-            <span className="text-xs font-semibold text-violet-600 bg-violet-50 border border-violet-100 px-2.5 py-0.5 rounded-full">Free</span>
+            <span className="text-xs font-semibold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full dark:bg-primary/20 dark:border-primary/30">Free</span>
           ) : (
-            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full">৳ {price}</span>
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-full dark:text-emerald-400 dark:bg-emerald-950 dark:border-emerald-900">৳ {price}</span>
           )}
         </div>
       </div>
@@ -200,16 +200,16 @@ function StepItem({
   return (
     <div className="flex gap-5">
       <div className="flex flex-col items-center gap-0">
-        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-violet-600 text-white text-sm font-bold flex items-center justify-center shadow-md shadow-violet-200">
+        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shadow-md shadow-primary/20">
           {n}
         </div>
-        {n < 4 && <div className="flex-1 w-px bg-slate-100 my-2 min-h-[40px]" />}
+        {n < 4 && <div className="flex-1 w-px bg-border my-2 min-h-[40px]" />}
       </div>
       <div className="pb-8">
-        <h3 className="text-[15px] font-semibold text-white mb-1">{title}</h3>
-        <p className="text-sm text-slate-400 mb-2">{desc}</p>
+        <h3 className="text-[15px] font-semibold text-foreground mb-1">{title}</h3>
+        <p className="text-sm text-muted-foreground mb-2">{desc}</p>
         {cmd && (
-          <code className="inline-block text-xs font-mono bg-slate-50 border border-slate-100 text-violet-600 px-3 py-1.5 rounded-lg">
+          <code className="inline-block text-xs font-mono bg-muted border border-border text-foreground px-3 py-1.5 rounded-lg dark:bg-background">
             {cmd}
           </code>
         )}
@@ -237,13 +237,13 @@ export default function HeroSection() {
             npm install -g codestore-cli
           </Badge>
 
-          <h1 className="mt-8 text-[44px] sm:text-6xl lg:text-7xl text-white leading-[1.05] max-w-4xl mx-auto">
+          <h1 className="mt-8 text-[44px] sm:text-6xl lg:text-7xl text-foreground leading-[1.05] max-w-4xl mx-auto">
             Share, sell &amp;{" "}
-            <span className="text-violet-600">discover code</span>
+            <span className="text-primary">discover code</span>
             {" "}— like a feed
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
             Push code from your terminal, publish as a rich post, sell in the marketplace,
             and sync with GitHub — all in one unified platform.
           </p>
@@ -251,7 +251,7 @@ export default function HeroSection() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm px-7 py-3.5 rounded-xl shadow-md hover:shadow-violet-300 hover:shadow-xl transition-all duration-200"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:opacity-90 text-primary-foreground font-semibold text-sm px-7 py-3.5 rounded-xl shadow-md hover:shadow-xl transition-all duration-200"
             >
               Get started free
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -260,7 +260,7 @@ export default function HeroSection() {
             </Link>
             <Link
               href="/marketplace"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold text-sm px-7 py-3.5 rounded-xl hover:bg-slate-50 transition-all duration-200"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-card border border-border hover:border-primary text-foreground font-semibold text-sm px-7 py-3.5 rounded-xl hover:bg-muted transition-all duration-200"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
@@ -273,14 +273,14 @@ export default function HeroSection() {
           </div>
 
           {/* Terminal */}
-          <div className="mt-14 mx-auto max-w-lg bg-slate-900 rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/20 border border-slate-800 text-left">
-            <div className="flex items-center gap-1.5 px-4 py-3 border-b border-slate-800 bg-slate-900/80">
+          <div className="mt-14 mx-auto max-w-lg bg-muted rounded-2xl overflow-hidden shadow-2xl shadow-foreground/10 border border-border text-left">
+            <div className="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-card/80">
               <span className="h-3 w-3 rounded-full bg-red-500/80" />
               <span className="h-3 w-3 rounded-full bg-amber-400/80" />
               <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
-              <span className="ml-3 text-xs text-slate-500 font-mono">~ Terminal</span>
+              <span className="ml-3 text-xs text-muted-foreground font-mono">~ Terminal</span>
             </div>
-            <div className="px-5 py-5 font-mono text-[13px] space-y-2 leading-relaxed">
+            <div className="px-5 py-5 font-mono text-[13px] space-y-2 leading-relaxed text-foreground/80">
               {[
                 { prompt: "$", cmd: "npm install -g codestore-cli", out: null },
                 { prompt: "$", cmd: "cs login", out: null },
@@ -289,8 +289,8 @@ export default function HeroSection() {
                 { prompt: null, cmd: null, out: "✓ Published to CodeStore! 🎉" },
               ].map((l, i) => (
                 <div key={i} className="flex gap-2">
-                  {l.prompt && <span className="text-slate-500 select-none">{l.prompt}</span>}
-                  {l.cmd && <span className="text-violet-300">{l.cmd}</span>}
+                  {l.prompt && <span className="text-muted-foreground select-none">{l.prompt}</span>}
+                  {l.cmd && <span className="text-primary">{l.cmd}</span>}
                   {l.out && <span className="text-emerald-400">{l.out}</span>}
                 </div>
               ))}
@@ -300,61 +300,61 @@ export default function HeroSection() {
           {/* Stats */}
           <div className="mt-14 flex items-center justify-center gap-10 sm:gap-16 flex-wrap ">
             <StatPill num="24k+" label="Packages published" />
-            <div className="hidden sm:block h-8 w-px bg-white" aria-hidden="true" />
+            <div className="hidden sm:block h-8 w-px bg-border" aria-hidden="true" />
             <StatPill num="8.3k" label="Developers" />
-            <div className="hidden sm:block h-8 w-px bg-slate-100" aria-hidden="true" />
+            <div className="hidden sm:block h-8 w-px bg-border" aria-hidden="true" />
             <StatPill num="$142k" label="Earned by creators" />
           </div>
         </div>
       </section>
 
       {/* ══ 2. FEATURES ══════════════════════════════════════════ */}
-      <section className="border-y py-20 sm:py-28">
+      <section className="border-y border-border py-20 sm:py-28 bg-card/50">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">Features</span>
-            <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <span className="text-xs font-bold text-primary uppercase tracking-widest">Features</span>
+            <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
               Everything your code needs
             </h2>
-            <p className="mt-4 text-slate-400 text-base">
+            <p className="mt-4 text-muted-foreground text-base">
               From CLI push to marketplace sale — one unified platform built for developers.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <FeatureCard
-              icon={<span className="text-violet-600 text-xl">⌨️</span>}
-              accent="bg-violet-50"
+              icon={<span className="text-primary text-xl">⌨️</span>}
+              accent="bg-primary/10"
               title="CLI-first workflow"
               desc="Install via npm and push code, branches, and commits directly from your terminal. Git-like commands, zero learning curve."
             />
             <FeatureCard
-              icon={<span className="text-emerald-600 text-xl">📰</span>}
-              accent="bg-emerald-50"
+              icon={<span className="text-emerald-600 dark:text-emerald-400 text-xl">📰</span>}
+              accent="bg-emerald-50 dark:bg-emerald-950"
               title="Feed posts"
               desc="Publish your package as a rich post with title, description, demo video, and screenshots — visible to the whole community."
             />
             <FeatureCard
-              icon={<span className="text-amber-600 text-xl">💰</span>}
-              accent="bg-amber-50"
+              icon={<span className="text-amber-600 dark:text-amber-400 text-xl">💰</span>}
+              accent="bg-amber-50 dark:bg-amber-950"
               title="Sell your code"
               desc="Set a price, accept payments, and let buyers purchase and instantly clone your package to VS Code with one click."
             />
             <FeatureCard
-              icon={<span className="text-blue-600 text-xl">🔔</span>}
-              accent="bg-blue-50"
+              icon={<span className="text-blue-600 dark:text-blue-400 text-xl">🔔</span>}
+              accent="bg-blue-50 dark:bg-blue-950"
               title="Smart notifications"
               desc="Every buyer is automatically notified on new commits and updates. Keep your users always on the latest version."
             />
             <FeatureCard
-              icon={<span className="text-slate-700 text-xl">🐙</span>}
-              accent="bg-slate-100"
+              icon={<span className="text-slate-700 dark:text-slate-300 text-xl">🐙</span>}
+              accent="bg-slate-100 dark:bg-slate-900"
               title="GitHub two-way sync"
               desc="Connect your GitHub repo. Changes on GitHub reflect here, and pushes here reflect on GitHub — always in sync."
             />
             <FeatureCard
-              icon={<span className="text-rose-600 text-xl">🔒</span>}
-              accent="bg-rose-50"
+              icon={<span className="text-rose-600 dark:text-rose-400 text-xl">🔒</span>}
+              accent="bg-rose-50 dark:bg-rose-950"
               title="Secure auth"
               desc="OAuth login, role-based access, token-protected CLI sessions, and private repos baked in from day one."
             />
@@ -363,18 +363,18 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 3. MARKETPLACE FEED PREVIEW ══════════════════════════ */}
-      <section className="py-20 sm:py-28 ">
+      <section className="py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
-              <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">Marketplace</span>
-              <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              <span className="text-xs font-bold text-primary uppercase tracking-widest">Marketplace</span>
+              <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
                 Discover community code
               </h2>
             </div>
             <Link
               href="/marketplace"
-              className="shrink-0 text-sm font-semibold text-violet-600 hover:text-violet-800 flex items-center gap-1 transition-colors"
+              className="shrink-0 text-sm font-semibold text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
             >
               View all →
             </Link>
@@ -382,7 +382,7 @@ export default function HeroSection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <PostCard
-              gradient="bg-gradient-to-br from-violet-100 to-violet-200"
+              gradient="bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/30 dark:to-primary/20"
               tags={["React", "Charts"]}
               title="Animated chart library with 12 types"
               desc="Lightweight zero-dependency chart components for React with smooth animations and TypeScript support."
@@ -390,7 +390,7 @@ export default function HeroSection() {
               price="350"
             />
             <PostCard
-              gradient="bg-gradient-to-br from-emerald-100 to-teal-200"
+              gradient="bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-950 dark:to-teal-950"
               tags={["Node.js", "API"]}
               title="REST API boilerplate with auth & rate limiting"
               desc="Production-ready Express starter with JWT auth, Redis rate limiting, and structured logging."
@@ -398,7 +398,7 @@ export default function HeroSection() {
               free
             />
             <PostCard
-              gradient="bg-gradient-to-br from-blue-100 to-indigo-200"
+              gradient="bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-blue-950 dark:to-indigo-950"
               tags={["Flutter", "UI Kit"]}
               title="Flutter dashboard UI kit — 40+ screens"
               desc="Complete admin dashboard for Flutter with dark mode, responsive layout, and Figma source included."
@@ -410,12 +410,12 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 4. HOW IT WORKS ══════════════════════════════════════ */}
-      <section className="py-20 sm:py-28  border-y ">
+      <section className="py-20 sm:py-28 border-y border-border">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">How it works</span>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              <span className="text-xs font-bold text-primary uppercase tracking-widest">How it works</span>
+              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
                 From terminal to marketplace in minutes
               </h2>
               <p className="mt-4 text-slate-400 text-base max-w-md">

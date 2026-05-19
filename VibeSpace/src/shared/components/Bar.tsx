@@ -40,14 +40,15 @@ export function MenubarDemo({ footer = false, onSearch }: MenuberProps) {
   }
 
   return (
-    <nav className="w-full bg-background/90 backdrop-blur-sm border sticky top-0 z-30  ">
+    <nav className="w-full bg-background/90 backdrop-blur-sm border sticky top-0 z-30">
       <div className='max-w-[1280px] min-w-[310px] mx-auto py-2 w-full flex px-5 justify-between items-center'>
         {!footer && 
-        <div className="flex h-[70%] border-1 border-black rounded-lg pl-2">
+        <div className="flex h-[70%] border border-border rounded-lg pl-2 bg-card dark:bg-card">
           <input
-            type="text "
-            className="border-none outline-none text-white p-1 w-[80%]"
+            type="text"
+            className="border-none outline-none bg-card text-foreground dark:bg-card dark:text-foreground p-1 w-[80%] placeholder-muted-foreground"
             value={query}
+            placeholder="Search users..."
             onChange={(e) => {
               setQuery(e.target.value)
               onSearch && onSearch(e.target.value);
@@ -55,7 +56,7 @@ export function MenubarDemo({ footer = false, onSearch }: MenuberProps) {
             }
           />
           <div 
-            className="text-white border-l-1 flex justify-center items-center w-[20%]" 
+            className="text-foreground border-l border-border flex justify-center items-center w-[20%] cursor-pointer hover:opacity-80" 
             onClick={() => handleSearchClick("aha")}
           >
             <MdPersonSearch className="size-6" />
@@ -67,12 +68,12 @@ export function MenubarDemo({ footer = false, onSearch }: MenuberProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative pb-1  ${pathname === link.href
-                  ? "underline decoration-blue-500 underline-offset-4 font-semibold"
-                  : "hover:underline"
+                className={`relative pb-1 text-foreground transition-colors ${pathname === link.href
+                  ? "underline decoration-primary underline-offset-4 font-semibold"
+                  : "hover:underline hover:text-primary"
                   }`}
               >
-                <link.name className="dark:text-white" />
+                <link.name className="size-5" />
               </Link>
             ))}
           </div>

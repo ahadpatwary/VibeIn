@@ -17,7 +17,7 @@ function Main() {
     <ScrollArea className='flex-2 max-w-[600px] min-w-[310px] w-full flex flex-col overflow-y-auto'>
 
         <div className='sm:mx-0 md:mx-3'>
-            <div className=" border mt-2 border-gray-800 rounded-2xl p-5 shadow-sm">
+            <div className="border mt-2 rounded-2xl p-5 shadow-sm border-border bg-card">
 
               {/* Top Section */}
               <div className="flex items-center gap-4">
@@ -28,7 +28,7 @@ function Main() {
                 />
 
                 <button 
-                  className="flex-1 text-left bg-[#0f172a] hover:bg-[#1e293b] transition rounded-full px-5 py-3 text-sm text-gray-400 border border-gray-700"
+                  className="flex-1 text-left bg-background hover:bg-muted transition rounded-full px-5 py-3 text-sm text-muted-foreground border border-border"
                   onClick={handleClick}
                 >
                   What's on your mind?
@@ -36,28 +36,28 @@ function Main() {
               </div>
 
               {/* Divider */}
-              <div className="my-4 border-t border-gray-800" />
+              <div className="my-4 border-t border-border" />
 
               {/* Bottom Actions */}
               <div className="flex items-center justify-between flex-wrap gap-3">
 
-                <div className="flex items-center gap-6 text-sm text-gray-400">
+                <div className="flex items-center gap-6 text-sm text-muted-foreground">
 
-                  <button className="flex items-center gap-2 hover:text-blue-400 transition">
+                  <button className="flex items-center gap-2 hover:text-primary transition">
                     📷 <span>Photo</span>
                   </button>
 
-                  <button className="flex items-center gap-2 hover:text-green-400 transition">
+                  <button className="flex items-center gap-2 hover:text-primary transition">
                     🎥 <span>Video</span>
                   </button>
 
-                  <button className="flex items-center gap-2 hover:text-purple-400 transition">
+                  <button className="flex items-center gap-2 hover:text-primary transition">
                     📄 <span>File</span>
                   </button>
 
                 </div>
 
-                <button className="px-5 py-2 text-sm font-medium rounded-full bg-blue-600 hover:bg-blue-500 transition">
+                <button className="px-5 py-2 text-sm font-medium rounded-full bg-primary text-primary-foreground hover:opacity-90 transition">
                   Post
                 </button>
               </div>

@@ -80,7 +80,7 @@
 
 .dark {
   --background: oklch(0.2405 0.0057 285.97);
-  --foreground: oklch(0.2405 0.0057 285.97);
+  --foreground: oklch(94.016% 0.00427 271.369);
   --card: oklch(0.2825 0.0073 285.93);
   --card-foreground: oklch(94.016% 0.00427 271.369);
   --popover: oklch(32.027% 0.00604 258.436);
@@ -112,13 +112,29 @@
   --sidebar-ring: oklch(26.251% 0.01505 256.835);
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
+    color-scheme: light dark;
+  }
+
+  /* Smooth theme transitions */
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+/* Ensures elements respect the current theme */
+@layer utilities {
+  .theme-transition {
+    @apply transition-colors duration-300;
   }
 }
