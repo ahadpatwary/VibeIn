@@ -103,6 +103,10 @@ export function Register({
 
 
     <div className="w-full flex justify-center">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(91,79,232,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(91,79,232,0.09)_1px,transparent_1px)] bg-[size:40px_40px]"
+        />
       <div className="min-h-dvh flex flex-col md:flex-row md:justify-center items-center text-gray-200 max-w-[1280px] w-full">
 
         <WellComeHeader className="md:hidden" />

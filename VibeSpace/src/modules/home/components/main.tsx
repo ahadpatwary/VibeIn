@@ -107,7 +107,7 @@ function Badge({ children }: { children: React.ReactNode }) {
 function StatPill({ num, label }: { num: string; label: string }) {
   return (
     <div className="flex flex-col items-center gap-0.5">
-      <span className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{num}</span>
+      <span className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{num}</span>
       <span className="text-xs text-slate-400 font-medium">{label}</span>
     </div>
   );
@@ -125,13 +125,13 @@ function FeatureCard({
   accent: string;
 }) {
   return (
-    <div className="group relative bg-white rounded-2xl border border-slate-100 p-6 hover:border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
+    <div className="group relative  rounded-2xl border p-6 hover:border-slate-200 hover:shadow-lg transition-all duration-300 overflow-hidden">
       {/* subtle hover shimmer */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-violet-50/40 via-transparent to-transparent pointer-events-none" />
       <div className={`mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl ${accent}`}>
         {icon}
       </div>
-      <h3 className="text-[15px] font-semibold text-slate-900 mb-1.5 leading-snug">{title}</h3>
+      <h3 className="text-[15px] font-semibold text-white mb-1.5 leading-snug">{title}</h3>
       <p className="text-[13px] text-slate-500 leading-relaxed">{desc}</p>
     </div>
   );
@@ -155,7 +155,7 @@ function PostCard({
   free?: boolean;
 }) {
   return (
-    <div className="group bg-white rounded-2xl border border-slate-100 overflow-hidden hover:border-violet-200 hover:shadow-xl transition-all duration-300 cursor-pointer">
+    <div className="group  rounded-2xl border overflow-hidden hover:border-violet-200 hover:shadow-xl transition-all duration-300 cursor-pointer">
       {/* thumb */}
       <div className={`h-36 flex items-center justify-center text-4xl select-none ${gradient}`} aria-hidden="true" />
       <div className="p-5">
@@ -166,7 +166,7 @@ function PostCard({
             </span>
           ))}
         </div>
-        <h3 className="text-sm font-semibold text-slate-900 leading-snug mb-1.5">{title}</h3>
+        <h3 className="text-sm font-semibold text-white leading-snug mb-1.5">{title}</h3>
         <p className="text-[12px] text-slate-400 leading-relaxed mb-4">{desc}</p>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -206,7 +206,7 @@ function StepItem({
         {n < 4 && <div className="flex-1 w-px bg-slate-100 my-2 min-h-[40px]" />}
       </div>
       <div className="pb-8">
-        <h3 className="text-[15px] font-semibold text-slate-900 mb-1">{title}</h3>
+        <h3 className="text-[15px] font-semibold text-white mb-1">{title}</h3>
         <p className="text-sm text-slate-400 mb-2">{desc}</p>
         {cmd && (
           <code className="inline-block text-xs font-mono bg-slate-50 border border-slate-100 text-violet-600 px-3 py-1.5 rounded-lg">
@@ -225,16 +225,10 @@ export default function HeroSection() {
     <main className="pt-16">
 
       {/* ══ 1. HERO ══════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-white">
-        {/* soft radial glow */}
+      <section className="relative overflow-hidden ">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[900px] h-[600px] rounded-full bg-violet-100/50 blur-3xl"
-        />
-        {/* subtle grid pattern */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(91,79,232,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(91,79,232,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(91,79,232,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(91,79,232,0.09)_1px,transparent_1px)] bg-[size:40px_40px]"
         />
 
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-24 pb-20 sm:pt-32 sm:pb-28 text-center">
@@ -243,7 +237,7 @@ export default function HeroSection() {
             npm install -g codestore-cli
           </Badge>
 
-          <h1 className="mt-8 text-[44px] sm:text-6xl lg:text-7xl font-extrabold tracking-tighter text-slate-900 leading-[1.05] max-w-4xl mx-auto">
+          <h1 className="mt-8 text-[44px] sm:text-6xl lg:text-7xl text-white leading-[1.05] max-w-4xl mx-auto">
             Share, sell &amp;{" "}
             <span className="text-violet-600">discover code</span>
             {" "}— like a feed
@@ -304,9 +298,9 @@ export default function HeroSection() {
           </div>
 
           {/* Stats */}
-          <div className="mt-14 flex items-center justify-center gap-10 sm:gap-16 flex-wrap">
+          <div className="mt-14 flex items-center justify-center gap-10 sm:gap-16 flex-wrap ">
             <StatPill num="24k+" label="Packages published" />
-            <div className="hidden sm:block h-8 w-px bg-slate-100" aria-hidden="true" />
+            <div className="hidden sm:block h-8 w-px bg-white" aria-hidden="true" />
             <StatPill num="8.3k" label="Developers" />
             <div className="hidden sm:block h-8 w-px bg-slate-100" aria-hidden="true" />
             <StatPill num="$142k" label="Earned by creators" />
@@ -315,11 +309,11 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 2. FEATURES ══════════════════════════════════════════ */}
-      <section className="bg-slate-50 border-y border-slate-100 py-20 sm:py-28">
+      <section className="border-y py-20 sm:py-28">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">Features</span>
-            <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               Everything your code needs
             </h2>
             <p className="mt-4 text-slate-400 text-base">
@@ -369,12 +363,12 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 3. MARKETPLACE FEED PREVIEW ══════════════════════════ */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 ">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
               <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">Marketplace</span>
-              <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 Discover community code
               </h2>
             </div>
@@ -416,12 +410,12 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 4. HOW IT WORKS ══════════════════════════════════════ */}
-      <section className="py-20 sm:py-28 bg-slate-50 border-y border-slate-100">
+      <section className="py-20 sm:py-28  border-y ">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div>
               <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">How it works</span>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 From terminal to marketplace in minutes
               </h2>
               <p className="mt-4 text-slate-400 text-base max-w-md">
@@ -439,20 +433,20 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 5. GITHUB SYNC + NOTIFICATIONS ══════════════════════ */}
-      <section className="py-20 sm:py-28 bg-white">
+      <section className="py-20 sm:py-28 ">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* notifications mockup */}
             <div>
               <span className="text-xs font-bold text-violet-600 uppercase tracking-widest">Notifications</span>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 Buyers always stay updated
               </h2>
               <p className="mt-4 text-slate-400 text-base max-w-md">
                 Every commit you push triggers instant notifications to all your buyers. No manual changelogs needed.
               </p>
 
-              <div className="mt-8 bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden divide-y divide-slate-50">
+              <div className="mt-8 bg-gray-200 border rounded-2xl shadow-sm overflow-hidden divide-y divide-slate-50">
                 {[
                   { color: "bg-violet-500", text: "chart-lib released v1.4.0 — 3 new chart types added.", time: "2m ago" },
                   { color: "bg-emerald-500", text: "Your purchase of api-boilerplate is ready to clone in VS Code.", time: "1h ago" },
@@ -461,9 +455,9 @@ export default function HeroSection() {
                   <div key={i} className="flex items-start gap-4 px-5 py-4 hover:bg-slate-50/50 transition-colors">
                     <span className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${color}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] text-slate-700 leading-snug">{text}</p>
+                      <p className="text-[13px] text-slate-900 leading-snug">{text}</p>
                     </div>
-                    <span className="text-[11px] text-slate-300 flex-shrink-0 mt-0.5">{time}</span>
+                    <span className="text-[11px] text-slate-900 flex-shrink-0 mt-0.5">{time}</span>
                   </div>
                 ))}
               </div>
@@ -472,32 +466,32 @@ export default function HeroSection() {
             {/* github sync mockup */}
             <div>
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">GitHub Sync</span>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 Two-way GitHub sync
               </h2>
               <p className="mt-4 text-slate-400 text-base max-w-md">
                 Connect your GitHub repo and both stay in sync automatically. Push anywhere — it reflects everywhere.
               </p>
 
-              <div className="mt-8 bg-slate-50 border border-slate-100 rounded-2xl p-6">
+              <div className="mt-8 border rounded-2xl p-6">
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1 bg-white border border-slate-200 rounded-xl p-4 text-center">
+                  <div className="flex-1  border bg-gray-700 rounded-xl p-4 text-center">
                     <div className="text-2xl mb-1">🐙</div>
-                    <div className="text-xs font-semibold text-slate-700">GitHub repo</div>
+                    <div className="text-xs font-semibold text-white">GitHub repo</div>
                     <div className="text-[10px] text-slate-400 mt-0.5">main branch</div>
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <div className="text-slate-300 text-lg">⇄</div>
                     <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">Live sync</span>
                   </div>
-                  <div className="flex-1 bg-white border border-violet-200 rounded-xl p-4 text-center">
+                  <div className="flex-1  border bg-gray-700 rounded-xl p-4 text-center">
                     <div className="h-8 w-8 rounded-lg bg-violet-600 flex items-center justify-center mx-auto mb-1">
                       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                         <path d="M3 5l5-3 5 3v6l-5 3-5-3V5z" stroke="white" strokeWidth="1.4" strokeLinejoin="round" fill="none"/>
                         <circle cx="8" cy="8" r="1.5" fill="white"/>
                       </svg>
                     </div>
-                    <div className="text-xs font-semibold text-slate-700">CodeStore</div>
+                    <div className="text-xs font-semibold text-white">CodeStore</div>
                     <div className="text-[10px] text-slate-400 mt-0.5">your package</div>
                   </div>
                 </div>
@@ -507,10 +501,10 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              <div className="mt-4 bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4">
+              <div className="mt-4 border rounded-2xl p-5 flex items-start gap-4">
                 <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0 text-lg">💻</div>
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900">One-click VS Code clone</h3>
+                  <h3 className="text-sm font-semibold text-white">One-click VS Code clone</h3>
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">After purchase, buyers open the package in VS Code instantly — no manual git clone needed.</p>
                 </div>
               </div>
@@ -520,7 +514,7 @@ export default function HeroSection() {
       </section>
 
       {/* ══ 6. CTA BANNER ════════════════════════════════════════ */}
-      <section className="relative overflow-hidden bg-violet-600 py-20 sm:py-28">
+      <section className="relative overflow-hidden  py-20 sm:py-28">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.08),transparent_60%)]"
