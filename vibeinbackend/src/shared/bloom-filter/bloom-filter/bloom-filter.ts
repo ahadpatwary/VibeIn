@@ -105,31 +105,36 @@ export class BloomFilter {
   }
 
   async init(): Promise<this> {
-    [
-      this._shaAdd,
-      this._shaHas,
-      this._shaCountAdd,
-      this._shaCountRemove,
-    ] = await Promise.all([
+    const exists = await this._redis.exists(this._metaKey);
+
+    if (!exists) {
+      await this._redis.hset(
+        this._metaKey,
+        'capacity', this._capacity,
+        'errorRate', this._errorRate,
+        'bitSize', this._m,
+        'hashCount', this._k,
+        'counting', this._counting ? '1' : '0',
+        'createdAt', Date.now(),
+      );
+
+      if (this._ttl) {
+        await this._redis.expire(this._metaKey, this._ttl);
+      }
+    }
+
+    // scripts still load (but ideally cache later)
+    const [add, has, cAdd, cRemove] = await Promise.all([
       this._redis.script('LOAD', LUA_ADD),
       this._redis.script('LOAD', LUA_HAS),
       this._redis.script('LOAD', LUA_COUNT_ADD),
       this._redis.script('LOAD', LUA_COUNT_REMOVE),
-    ]) as string[];
+    ]) as [string, string, string, string];
 
-    await this._redis.hset(
-      this._metaKey,
-      'capacity', this._capacity,
-      'errorRate', this._errorRate,
-      'bitSize', this._m,
-      'hashCount', this._k,
-      'counting', this._counting ? '1' : '0',
-      'createdAt', Date.now(),
-    );
-
-    if (this._ttl) {
-      await this._redis.expire(this._metaKey, this._ttl);
-    }
+    this._shaAdd = add;
+    this._shaHas = has;
+    this._shaCountAdd = cAdd;
+    this._shaCountRemove = cRemove;
 
     return this;
   }

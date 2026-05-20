@@ -5,6 +5,7 @@ import type { UserCacheRepository } from '../../domain/repositories/user.cache.r
 import type { UserQueueRepository } from '../../domain/repositories/user.queue.repository.interface';
 import { CreateUserDto } from '../dto/user.dto';
 import { User } from '../../domain/entities/user.entity';
+import { BloomFilter } from 'src/shared/bloom-filter';
 
 
 @Injectable()
@@ -15,6 +16,9 @@ export class UserService {
 
     @Inject(CACHE_REPOSITORY)
     private readonly userCache: UserCacheRepository,
+
+    @Inject('BLOOM_FILTER')
+    private readonly bloomFilter: BloomFilter,
 
     // @Inject(QUEUE_REPOSITORY)
     // private readonly userQueue: UserQueueRepository,
@@ -27,6 +31,13 @@ export class UserService {
       if (user) await this.userCache.setUser(user);
     }
     return user;
+  }
+
+  async existUserName(userName: string): Promise<boolean> {
+
+    const ans = this.bloomFilter.stats()
+    console.log('ans', ans);
+    return true;
   }
 
   async createUser(CreateUserBody: CreateUserDto){

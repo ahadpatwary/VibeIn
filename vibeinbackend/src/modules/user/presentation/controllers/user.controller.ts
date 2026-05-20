@@ -5,25 +5,31 @@ import { CreateUserBody, createUserDto } from '../../application/dto/user.dto';
 import { ZodValidationPipe } from '../../application/pipes/zodValidation.pipe';
 import { UserService } from '../../application/services/user.service';
 
-@Controller('users')
+@Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
+ 
+  @Get('user:id')
   // @UseGuards(RolesGuard)
   // @Roles('admin')
   getUser(@Param('id') id: string) {
     return this.userService.getUser(id);
   }
 
-  @Post()
+  @Get('username:username')
+  existUserName(@Param('username') userName: string) {
+    return this.userService.existUserName(userName)
+  }
+
+  @Post('user')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ZodValidationPipe(createUserDto))
   createUser(@Body() body: CreateUserBody) {
     return this.userService.createUser(body);
   }
 
-  @Put(':id')
+  @Put('user:id')
   // @UseGuards(RolesGuard)
   // @Roles('admin')
   updateUser(
@@ -33,13 +39,13 @@ export class UserController {
     return this.userService.updateUser(id, body);
   }
 
-  @Get()
+  @Get('user')
   getSearchUser(@Query('name') name: string){
     console.log("name", name);
     return this.userService.getSearchUser(name);
   }
 
-  @Delete(':id')
+  @Delete('user:id')
   deleteUser(@Param('id') id: string) {
     return this.userService.deleteUser(id);
   }
