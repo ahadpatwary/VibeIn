@@ -1,74 +1,24 @@
 ﻿import type { Redis } from 'ioredis';
 import { getHashPositions } from '../hash';
+import fs from 'fs';
+import path from 'path';
 
-// ─────────────────────────────────────────────────────────────────
-//  Lua Scripts (atomic Redis operations — no race conditions)
-// ─────────────────────────────────────────────────────────────────
+const loadLua = (filename: string): string => {
+  return fs.readFileSync(
+    path.join(__dirname, 'lua_script', filename),
+    'utf8',
+  );
+};
 
-/**
- * Atomically SET k bits and return the number that were ALREADY set.
- * KEYS[1] = bitfield key
- * ARGV[1..k] = bit positions
- */
-const LUA_ADD = `
-local key = KEYS[1]
-local already = 0
-for i = 1, #ARGV do
-  local prev = redis.call('GETBIT', key, ARGV[i])
-  if prev == 1 then already = already + 1 end
-  redis.call('SETBIT', key, ARGV[i], 1)
-end
-return already
-`;
+const LUA_ADD = loadLua('lua-add.lua');
 
-/**
- * Check if ALL k bits are set (element membership test).
- * Returns 1 if all set (probably present), 0 if any unset (definitely absent).
- * KEYS[1] = bitfield key
- * ARGV[1..k] = bit positions
- */
-const LUA_HAS = `
-local key = KEYS[1]
-for i = 1, #ARGV do
-  if redis.call('GETBIT', key, ARGV[i]) == 0 then
-    return 0
-  end
-end
-return 1
-`;
+const LUA_HAS = loadLua('lua-has.lua');
 
-/**
- * Counting Bloom Filter — atomically increment k counters.
- * Uses a separate HASH key for counts.
- * KEYS[1] = counter hash key
- * ARGV[1..k] = counter field names (bit positions as strings)
- */
-const LUA_COUNT_ADD = `
-local key = KEYS[1]
-for i = 1, #ARGV do
-  redis.call('HINCRBY', key, ARGV[i], 1)
-end
-return 1
-`;
+const LUA_COUNT_ADD = loadLua('lua-count-add.lua');
 
-/**
- * Counting Bloom Filter — decrement counters, clear bit if count reaches 0.
- * KEYS[1] = bitfield key, KEYS[2] = counter hash key
- * ARGV[1..k] = positions
- */
-const LUA_COUNT_REMOVE = `
-local bitKey   = KEYS[1]
-local countKey = KEYS[2]
-for i = 1, #ARGV do
-  local pos   = ARGV[i]
-  local count = tonumber(redis.call('HINCRBY', countKey, pos, -1))
-  if count <= 0 then
-    redis.call('HSET', countKey, pos, 0)
-    redis.call('SETBIT', bitKey, pos, 0)
-  end
-end
-return 1
-`;
+const LUA_COUNT_REMOVE = loadLua('lua-count-remove.lua');
+
+
 
 function optimalBitSize(n: number, p: number): number {
   return Math.ceil(-n * Math.log(p) / Math.LN2 ** 2);
@@ -361,3 +311,16 @@ export class BloomFilter {
     }
   }
 }
+
+
+//This class given methods
+//____  1: add(item: string): Promise<boolean>
+//____  2: addMany(items: string[]): Promise<boolean[]>
+//____  3: has(item: string): Promise<boolean>
+//____  4: hasMany(items: string[]): Promise<boolean[]>
+//____  5: remove(item: string): Promise<void>
+//____  6: stats(): Promise<BloomFilterStats>
+//____  7: clear(): Promise<void>
+//----  8: get bitSize(): number
+//----  9: get hashCount(): number
+//---- 10: get theoreticalFPR(): number

@@ -13,7 +13,6 @@ interface RootLayoutProps {
 export default async function RootLayout({ children }: RootLayoutProps) {
   const headerList = await headers()
   const nonce = headerList.get('x-nonce')
-  console.log("ahad");
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -51,3 +50,10 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     </html>
   );
 }
+
+export const metadata = {
+  title: "CodeStore",
+  icons: {
+    icon: "/unique_codeshop_logo.svg",
+  },
+};

@@ -24,6 +24,7 @@ const formSchema = z.object({
   // Personal
   firstName: z.string().min(1, "Required"),
   lastName: z.string().min(1, "Required"),
+  userName: z.string().min(3, "Required"),
   email: z.string().email("Valid email required"),
   phone: z.string().min(1, "Required"),
   dob: z.string().optional(),
@@ -78,7 +79,7 @@ export default function RegisterPage() {
     skills: { name: string }[];
     socialMedias: { account: string, link: string}[];
   }>({
-    firstName: "", lastName: "", dob: "", gender: "", phone: "", email: "",
+    firstName: "", lastName: "", userName: " ", dob: "", gender: "", phone: "", email: "",
     country: "", city: "", address: "",
     bio: "",
     educations: [{ college: "", degree: "" }],
@@ -239,6 +240,24 @@ export default function RegisterPage() {
                   className={input(errors.lastName)} />
               </Field>
             </div>
+            <Field label="User name" error={errors.userName} required>
+              <input type="search" placeholder="abdulahad"
+                value={form.userName}
+                onChange={(e) => { set("userName", e.target.value); clearErr("userName"); }}
+                className={input(errors.userName)} />
+            </Field>
+            <Field label="Email" error={errors.email} required>
+              <input type="email" placeholder="abdul@gmail.com"
+                value={form.email}
+                onChange={(e) => { set("email", e.target.value); clearErr("email"); }}
+                className={input(errors.email)} />
+            </Field>
+            <Field label="Phone number" error={errors.phone} required>
+              <input type="tel" placeholder="+880 17XX XXX XXX"
+                value={form.phone}
+                onChange={(e) => { set("phone", e.target.value); clearErr("phone"); }}
+                className={input(errors.phone)} />
+            </Field>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Date of birth">
                 <input type="date" value={form.dob}
@@ -255,18 +274,7 @@ export default function RegisterPage() {
                 </select>
               </Field>
             </div>
-            <Field label="Email" error={errors.email} required>
-              <input type="email" placeholder="abdul@gmail.com"
-                value={form.email}
-                onChange={(e) => { set("email", e.target.value); clearErr("email"); }}
-                className={input(errors.email)} />
-            </Field>
-            <Field label="Phone number" error={errors.phone} required>
-              <input type="tel" placeholder="+880 17XX XXX XXX"
-                value={form.phone}
-                onChange={(e) => { set("phone", e.target.value); clearErr("phone"); }}
-                className={input(errors.phone)} />
-            </Field>
+
             <Field label="Short bio">
               <textarea rows={3} placeholder="Tell us a little about yourself…"
                 value={form.bio}

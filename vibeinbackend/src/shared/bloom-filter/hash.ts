@@ -75,9 +75,10 @@ export function getHashPositions(key: string, k: number, m: number): number[] {
   const h2 = murmurhash3(key, 0x5f3759df);
 
   const positions = new Array<number>(k);
+  
   for (let i = 0; i < k; i++) {
     positions[i] = Number(
-      (BigInt(h1) + BigInt(i) * BigInt(h2)) % BigInt(m)
+      (BigInt(h1) + BigInt(i) * BigInt(h2)) % BigInt(m) // x & (m - 1)
     );
   }
   return positions;
