@@ -85,19 +85,19 @@ import { UserRole, UserStatus } from '../../../../../shared/enums';
 @Schema({ _id: false })
 export class SellerStats {
   @Prop({ default: 0, min: 0 })
-  totalSales: number;
+  totalSales!: number;
 
   @Prop({ default: 0, min: 0 })
-  totalRevenue: number; // stored in cents to avoid float issues
+  totalRevenue!: number; // stored in cents to avoid float issues
 
   @Prop({ default: 0, min: 0, max: 5 })
-  averageRating: number;
+  averageRating!: number;
 
   @Prop({ default: 0, min: 0 })
-  totalReviews: number;
+  totalReviews!: number;
 
   @Prop({ default: 0, min: 0 })
-  totalListings: number;
+  totalListings!: number;
 }
 export const SellerStatsSchema = SchemaFactory.createForClass(SellerStats);
 
@@ -110,7 +110,7 @@ export class PayoutInfo {
   accountIdentifier?: string; // masked — full value encrypted in vault
 
   @Prop({ default: false })
-  isVerified: boolean;
+  isVerified!: boolean;
 }
 export const PayoutInfoSchema = SchemaFactory.createForClass(PayoutInfo);
 
@@ -121,13 +121,13 @@ export type UserDocument = User & Document;
 @Schema({
   collection: 'users',
   timestamps: true,
-  toJSON: {
-    virtuals: true,
-    transform: (_doc, ret) => {
-      delete ret.__v;
-      return ret;
-    },
-  },
+  // toJSON: {
+  //   virtuals: true,
+  //   transform: (_doc, ret) => {
+  //     delete ret.__v;
+  //     return ret;
+  //   },
+  // },
 })
 export class User {
   // ── Identity ──
@@ -213,7 +213,7 @@ export class User {
     enum: Object.values(UserRole),
     default: [UserRole.BUYER],
   })
-  roles: UserRole[];
+  roles!: UserRole[];
 
   // @Prop({
   //   type: String,
@@ -225,7 +225,7 @@ export class User {
 
   // ── Email verification ──
   @Prop({ default: false })
-  isEmailVerified: boolean;
+  isEmailVerified!: boolean;
 
   @Prop({ select: false })
   emailVerificationToken?: string;
@@ -242,10 +242,10 @@ export class User {
 
   // ── Seller-specific ──
   @Prop({ default: false })
-  isVerifiedSeller: boolean;
+  isVerifiedSeller!: boolean;
 
   @Prop({ type: SellerStatsSchema, default: () => ({}) })
-  sellerStats: SellerStats;
+  sellerStats!: SellerStats;
 
   @Prop({ type: PayoutInfoSchema })
   payoutInfo?: PayoutInfo;
@@ -255,11 +255,11 @@ export class User {
   lastLoginAt?: Date;
 
   @Prop({ default: 0 })
-  loginCount: number;
+  loginCount!: number;
 
   // ── Soft delete ──
   @Prop({ default: false, index: true })
-  isDeleted: boolean;
+  isDeleted!: boolean;
 
   @Prop()
   deletedAt?: Date;

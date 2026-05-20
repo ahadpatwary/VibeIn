@@ -1,23 +1,104 @@
 ﻿import type { Redis } from 'ioredis';
 import { getHashPositions } from '../hash';
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 
-const loadLua = (filename: string): string => {
-  return fs.readFileSync(
-    path.join(__dirname, 'lua_script', filename),
-    'utf8',
-  );
-};
 
-const LUA_ADD = loadLua('lua-add.lua');
+// const testPath = path.resolve(
+//   __dirname,
+//   'lua_script',
+// );
 
-const LUA_HAS = loadLua('lua-has.lua');
+// console.log('FINAL PATH:', testPath);
+// console.log('EXISTS:', fs.existsSync(testPath));
 
-const LUA_COUNT_ADD = loadLua('lua-count-add.lua');
 
-const LUA_COUNT_REMOVE = loadLua('lua-count-remove.lua');
+// // const content = fs.readFileSync(testPath, 'utf8');
+// // console.log('LUA SIZE:', content.length);
 
+// const loadLua = (filename: string): string => {
+//   return fs.readFileSync(
+//     path.join(testPath, filename),
+//     'utf8',
+//   );
+// };
+
+// const LUA_ADD = loadLua('lua-add.lua');
+
+// const LUA_HAS = loadLua('lua-has.lua');
+
+// const LUA_COUNT_ADD = loadLua('lua-count-add.lua');
+
+// const LUA_COUNT_REMOVE = loadLua('lua-count-remove.lua');
+
+// ─────────────────────────────────────────────────────────────────
+//  Lua Scripts (atomic Redis operations — no race conditions)
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * Atomically SET k bits and return the number that were ALREADY set.
+ * KEYS[1] = bitfield key
+ * ARGV[1..k] = bit positions
+ */
+const LUA_ADD = `
+local key = KEYS[1]
+local already = 0
+for i = 1, #ARGV do
+  local prev = redis.call('GETBIT', key, ARGV[i])
+  if prev == 1 then already = already + 1 end
+  redis.call('SETBIT', key, ARGV[i], 1)
+end
+return already
+`;
+
+/**
+ * Check if ALL k bits are set (element membership test).
+ * Returns 1 if all set (probably present), 0 if any unset (definitely absent).
+ * KEYS[1] = bitfield key
+ * ARGV[1..k] = bit positions
+ */
+const LUA_HAS = `
+local key = KEYS[1]
+for i = 1, #ARGV do
+  if redis.call('GETBIT', key, ARGV[i]) == 0 then
+    return 0
+  end
+end
+return 1
+`;
+
+/**
+ * Counting Bloom Filter — atomically increment k counters.
+ * Uses a separate HASH key for counts.
+ * KEYS[1] = counter hash key
+ * ARGV[1..k] = counter field names (bit positions as strings)
+ */
+const LUA_COUNT_ADD = `
+local key = KEYS[1]
+for i = 1, #ARGV do
+  redis.call('HINCRBY', key, ARGV[i], 1)
+end
+return 1
+`;
+
+/**
+ * Counting Bloom Filter — decrement counters, clear bit if count reaches 0.
+ * KEYS[1] = bitfield key, KEYS[2] = counter hash key
+ * ARGV[1..k] = positions
+ */
+const LUA_COUNT_REMOVE = `
+local bitKey   = KEYS[1]
+local countKey = KEYS[2]
+for i = 1, #ARGV do
+  local pos   = ARGV[i]
+  local count = tonumber(redis.call('HINCRBY', countKey, pos, -1))
+  if count <= 0 then
+    redis.call('HSET', countKey, pos, 0)
+    redis.call('SETBIT', bitKey, pos, 0)
+  end
+end
+return 1
+`;
 
 
 function optimalBitSize(n: number, p: number): number {
