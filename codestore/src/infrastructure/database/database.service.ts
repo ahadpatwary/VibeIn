@@ -10,7 +10,7 @@ import { Pool } from "pg";
 @Injectable()
 export class DatabaseService {
   private isConnected = false;
-  private pool: Pool;
+  private pool: Pool | null = null;
 
   constructor(
     @Inject('DATABASE_CONFIG') private readonly config: DatabaseConfig,

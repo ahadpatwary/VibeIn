@@ -45,7 +45,6 @@ export class FixedWindowCounter implements IAlgorithmEngine {
 
   async init(): Promise<this> {
     this._sha = await this._redis.script('LOAD', LUA_FIXED_WINDOW) as string || null;
-    return this;
   }
 
   get name(): string {
@@ -74,8 +73,9 @@ export class FixedWindowCounter implements IAlgorithmEngine {
       [count, ttl] = await this._redis.evalsha(this._sha!, 1, key, windowSecs, limit) as [number, number];
     } catch (err: any) {
       if (err.message?.includes('NOSCRIPT')) {
-        [count, ttl] = await this._redis.eval(LUA_FIXED_WINDOW, 1, key, windowSecs, limit) as [number, number];
+        // [count, ttl] = await this._redis.eval(LUA_FIXED_WINDOW, 1, key, windowSecs, limit) as [number, number];
         this._sha = await this._redis.script('LOAD', LUA_FIXED_WINDOW) as string || null;
+        [count, ttl] = await this._redis.evalsha(this._sha!, 1, key, windowSecs, limit) as [number, number];
       } else {
         throw err;
       }
