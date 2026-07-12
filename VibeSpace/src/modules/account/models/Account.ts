@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 export interface IAccount extends Document {
     type: 'credentials' | 'google' | 'github',
-    email: string,
+    email: string, 
     password?: string,
     authorId: Types.ObjectId,
 }

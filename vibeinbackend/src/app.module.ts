@@ -7,8 +7,11 @@ import { UserModule } from './modules/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './shared/config/env.validation';
 import configuration from './shared/config/configuration';
-import { RedisModule } from './shared/modules/cache/redis.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { DatabaseModule } from './infrastructure/database/database.module';
+import { RedisModule } from './infrastructure/cache/redis.module';
+import { RedisConfig } from './infrastructure/cache';
+import { DatabaseConfig } from './infrastructure/database/types/database.type';
 // import { FeedPostModule } from './modules/feed/post/post.module';
 
 
@@ -32,6 +35,13 @@ import { StorageModule } from './modules/storage/storage.module';
       inject: [ConfigService]
     }),
 
+    DatabaseModule.forRootAsync({
+      useFactory: (config: ConfigService): DatabaseConfig => ({
+        uri: config.get<string>('uri')!,
+      }),
+      inject: [ConfigService]
+    }),
+
     RabbitMqModule.forRootAsync({
       useFactory: (config: ConfigService) => ({
         uri: config.get<string>('queue.uri')!,
@@ -41,11 +51,15 @@ import { StorageModule } from './modules/storage/storage.module';
       inject: [ConfigService]
     }),
 
-    RedisModule.forRootAsync({
-      useFactory:(config: ConfigService) => ({
-        uri: config.get<string>('cache.uri')!,
-        retryAttempts: 6,
-        retryDelay: 1 * 60 * 100,
+    RedisModule.forRoot({
+      useFactory:(config: ConfigService): RedisConfig => ({
+        host: config.get<string>('host')!,
+        port: Number(config.get<string>('port'))!,
+        commandTimeout: 3000,
+        // db: config.get<string>('redisDbName')!,
+        keepAlive: 10,
+        keyPrefix: 'vibein',
+        password: config.get<string>('password'),
       }),
       inject: [ConfigService]
     }),
@@ -59,14 +73,3 @@ import { StorageModule } from './modules/storage/storage.module';
 })
 
 export class AppModule {}
-
-
-    // RabbitMqModule.forRoot("amqps://dbrcljhf:03DnYhP9lGtrOwhNHHj-yuo4D-KQwytB@shark.rmq.cloudamqp.com/dbrcljhf", {
-    //   retryAttempts: 5,
-    //   retryDelay: 1 * 60 * 1000
-    // }),
-
-    //     MongooseModule.forRoot(MONGODB_URI, {
-    //   retryAttempts: 5,
-    //   retryDelay: 1 * 60 * 1000,
-    // }),

@@ -1,81 +1,3 @@
-// import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-// import { Document, HydratedDocument } from 'mongoose';
-
-// // export type UserDocument = User & Document;
-// export type UserDocument = HydratedDocument<User>;
-
-// @Schema({_id: false})
-// class ProfilePicture {
-//   @Prop({
-//     type: String,
-//     default: null,
-//   })
-//   url?: string | null;
-
-//   @Prop({
-//     type: String,
-//     default: null
-//   })
-//   public_id?: string | null;
-
-// }
-
-// const ProfilePictureSchema = SchemaFactory.createForClass(ProfilePicture);
-
-
-// @Schema({ timestamps: true })
-// export class User {
-//   @Prop({
-//     type: String,
-//     trim: true,
-//     default: '<User>',
-//   })
-//   name: string;
-
-//   @Prop({
-//     type: String,
-//     trim: true,
-//   })
-//   phoneNumber?: string;
-
-//   @Prop({
-//     type: ProfilePictureSchema,
-//     default: {}
-//   })
-//   profilePicture?: ProfilePicture;
-
-//   @Prop({
-//     type: Date,
-//   })
-//   dateOfBirth?: Date;
-
-//   @Prop({
-//     type: Number,
-//     default: 0,
-//   })
-//   friendsCount: number;
-// }
-
-// export const UserSchema = SchemaFactory.createForClass(User);
-
-
-// UserSchema.pre<UserDocument>('validate', async function () {
-//   const profile = this.profilePicture;
-
-//   if (!profile) return;
-
-//   const hasUrl = !!profile.url;
-//   const hasPublicId = !!profile.public_id;
-
-//   if ((hasUrl && !hasPublicId) || (!hasUrl && hasPublicId)) {
-//     throw new Error(
-//       'profilePicture.url and profilePicture.public_id must be provided together',
-//     );
-//   }
-// });
-
-
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { UserRole, UserStatus } from '../../../../../shared/enums';
@@ -144,9 +66,9 @@ export class User {
   username!: string;
 
   @Prop({
-    required: true,
     trim: true,
     maxlength: 60,
+    default: '< USER >',
     index: true,
   })
   fullName!: string;
@@ -176,6 +98,12 @@ export class User {
 
   @Prop({ trim: true, maxlength: 500 })
   avatarUrl?: string;
+
+  @Prop({
+    trim: true,
+    maxlength: 200,
+  })
+  public_id?: string;
 
   @Prop({
     type: [{ college: String, degree: String }],
@@ -215,65 +143,45 @@ export class User {
   })
   roles!: UserRole[];
 
-  // @Prop({
-  //   type: String,
-  //   enum: Object.values(UserStatus),
-  //   default: UserStatus.ACTIVE,
-  //   index: true,
-  // })
-  // status: UserStatus;
+  @Prop({
+    type: String,
+    enum: Object.values(UserStatus),
+    default: UserStatus.ACTIVE,
+    index: true,
+  })
+  status!: UserStatus;
 
-  // ── Email verification ──
-  @Prop({ default: false })
-  isEmailVerified!: boolean;
 
-  @Prop({ select: false })
-  emailVerificationToken?: string;
+  // @Prop({ type: SellerStatsSchema, default: () => ({}) })
+  // sellerStats!: SellerStats;
 
-  @Prop({ select: false })
-  emailVerificationExpires?: Date;
+  // @Prop({ type: PayoutInfoSchema })
+  // payoutInfo?: PayoutInfo;
 
-  // ── Password reset ──
-  @Prop({ select: false })
-  passwordResetToken?: string;
-
-  @Prop({ select: false })
-  passwordResetExpires?: Date;
-
-  // ── Seller-specific ──
-  @Prop({ default: false })
-  isVerifiedSeller!: boolean;
-
-  @Prop({ type: SellerStatsSchema, default: () => ({}) })
-  sellerStats!: SellerStats;
-
-  @Prop({ type: PayoutInfoSchema })
-  payoutInfo?: PayoutInfo;
-
-  // ── Activity ──
-  @Prop()
-  lastLoginAt?: Date;
-
-  @Prop({ default: 0 })
-  loginCount!: number;
-
-  // ── Soft delete ──
-  @Prop({ default: false, index: true })
-  isDeleted!: boolean;
-
-  @Prop()
-  deletedAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
 // ── Indexes ───────────────────────────────────────────────────
-UserSchema.index({ username: 1, isDeleted: 1 });
-UserSchema.index({ email: 1, isDeleted: 1 });
-UserSchema.index({ status: 1, roles: 1 });
+UserSchema.index({ username: 1, status: 1 });
+UserSchema.index({ email: 1, status: 1 });
+// UserSchema.index({ status: 1, roles: 1 });
 UserSchema.index({ createdAt: -1 });
 
 // ── Virtuals ──────────────────────────────────────────────────
 UserSchema.virtual('profileUrl').get(function () {
   return `/u/${this.username}`;
+});
+
+UserSchema.pre("validate", function () {
+  const hasAvatar = !!this.avatarUrl;
+  const hasPublicId = !!this.public_id;
+
+  if (hasAvatar === hasPublicId)  return;
+  
+  throw new Error(
+    hasAvatar
+      ? "public_id is required when avatarUrl is provided."
+      : "avatarUrl is required when public_id is provided."
+  );
 });

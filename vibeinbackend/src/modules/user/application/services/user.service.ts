@@ -25,11 +25,10 @@ export class UserService {
   ) {}
 
   async getUser(id: string): Promise<User | null> {
-    let user = await this.userCache.getUser(id);
-    if (!user) {
-      user = await this.userPersistence.findById(id);
+ 
+    const user = await this.userPersistence.findById(id);
       if (user) await this.userCache.setUser(user);
-    }
+    
     return user;
   }
 

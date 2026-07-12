@@ -16,8 +16,10 @@
  *  ✔ Full input validation at service boundary
  */
 
-import crypto from 'crypto';
+import crypto, { verify } from 'crypto';
 import bcrypt from 'bcrypt';
+import { RedisService } from '../modules/cache/redis.service';
+import { Script } from 'vm';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Interfaces — define these contracts in your own adapter layer
@@ -40,6 +42,8 @@ export interface RedisClient {
   /** Execute multiple commands atomically (pipeline / multi-exec). */
   pipeline(commands: RedisPipelineCommand[]): Promise<void>;
 }
+
+
 
 export type RedisPipelineCommand =
   | ['set', string, unknown, 'EX', number]
@@ -134,6 +138,7 @@ const KEYS = {
   cooldown:    (deviceId: string, email: string)  => `otp:cooldown:${deviceId}:${email}`,
   sendCount:   (deviceId: string, email: string)  => `otp:sendCount:${deviceId}:${email}`,
   lock:        (deviceId: string, email: string)  => `otp:lock:${deviceId}:${email}`,
+  // lock:        (email: string)                    => `otp:lock:${email}`,
   verifyToken: (email: string)                    => `otp:verified:${email}`,
 } as const;
 
@@ -166,10 +171,6 @@ function maskEmail(email: string): string {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// A dummy hash used to ensure constant-time behaviour on NOT_FOUND paths.
-// Pre-computed so we don't pay bcrypt cost on every miss.
-const DUMMY_HASH = '$2b$10$invalidhashfortimingprotectionXXXXXXXXXXXXXXXXXXXX';
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Service
 // ─────────────────────────────────────────────────────────────────────────────
@@ -182,11 +183,42 @@ export class OtpService {
   private readonly lockTtlSeconds: number;
   private readonly verifyTokenTtl: number;
   private readonly backoff:        BackoffEntry[];
+  private otpSha:                  string | null;
+  private readonly DUMMY_HASH = bcrypt.hashSync('dummy-password-for-timing-safety', 10);
+  private readonly LOCK_TTL_SECONDS = 5;
+
+  // Compare-and-delete so a request can only release a lock it actually owns.
+  private readonly RELEASE_LOCK_SCRIPT = `
+    if redis.call("GET", KEYS[1]) == ARGV[1] then
+      return redis.call("DEL", KEYS[1])
+    else
+      return 0
+    end
+  `;
+
+
+  private readonly TOKEN_VERIFY_SCRIPT = `
+    local key = KEYS[1]
+    local token = ARGV[1]
+
+    local stored = redis.call('GET', key)
+
+    if not stored or stored ~= token then
+      return false
+    end
+
+    redis.call('DEL', key)
+
+    return true
+    
+  `
+  
 
   constructor(
     private readonly redis:  RedisClient,
     private readonly mailer: MailerService,
     private readonly logger: Logger,
+    private readonly client: RedisService,
     config: OtpServiceConfig = {},
     backoff: BackoffEntry[] = DEFAULT_BACKOFF,
   ) {
@@ -197,6 +229,10 @@ export class OtpService {
     this.lockTtlSeconds = config.lockTtlSeconds  ?? 10;
     this.verifyTokenTtl = config.verifyTokenTtl  ?? 60;
     this.backoff        = backoff;
+  }
+
+  async init(): void {
+    this.otpSha = await this.client.getClient()?.script('LOAD', "") as string || null;
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
@@ -222,163 +258,177 @@ export class OtpService {
     return ms > 0 ? Math.ceil(ms / 1000) : 0;
   }
 
-  /**
-   * Generates, stores, and delivers an OTP.
-   *
-   * Guarantees:
-   *  - Only one concurrent call per deviceId+email (distributed lock).
-   *  - OTP data + cooldown written atomically (pipeline).
-   *  - Cooldown is enforced before any work is done.
-   *
-   * @throws {ValidationError}       on bad input
-   * @throws {CooldownError}         if the device is still in cooldown
-   * @throws {ConcurrentRequestError} if another request is in flight
-   */
+  // ── SEND OTP ─────────────────────────────────────────────────────────
+
   async sendOtp(deviceId: string, email: string): Promise<OtpSendResult> {
     this.validateInputs(email, deviceId);
 
-    // ── 1. Cooldown guard ───────────────────────────────────────────────────
-    const wait = await this.cooldownSeconds(deviceId, email);
-    if (wait > 0) {
-      this.logger.warn('otp.send.blocked_by_cooldown', {
-        deviceId,
-        email: maskEmail(email),
-        waitSeconds: wait,
-      });
-      throw new CooldownError(`Please wait ${wait}s before requesting a new OTP.`, wait);
-    }
+    // ──  Generate OTP ───────────────────────────────────────────────────
+    const otp       = this.generateOtp(this.otpLength);
+    const hashedOtp = await bcrypt.hash(otp, this.bcryptRounds);
 
-    // ── 2. Distributed lock (prevents race on concurrent requests) ──────────
-    const lockKey     = KEYS.lock(deviceId, email);
-    const lockAcquired = await this.redis.setNx(lockKey, '1', this.lockTtlSeconds);
-    if (!lockAcquired) {
-      this.logger.warn('otp.send.concurrent_request_rejected', {
-        deviceId,
-        email: maskEmail(email),
-      });
-      throw new ConcurrentRequestError();
-    }
+    const otpTtlSecs  = Math.ceil(this.otpTtlMs / 1000);
+
+    const numOfKeys = 3;
+
+    let cooldownSecs: number;
+    let sendCount: number;
 
     try {
-      // ── 3. Generate OTP ───────────────────────────────────────────────────
-      const otp       = this.generateOtp(this.otpLength);
-      const hashedOtp = await bcrypt.hash(otp, this.bcryptRounds);
+      [cooldownSecs, sendCount] = await this.client.getClient()?.evalsha(
+        this.otpSha!,
 
-      const now         = Date.now();
-      const otpTtlSecs  = Math.ceil(this.otpTtlMs / 1000);
+        numOfKeys,
 
-      const otpData: OtpData = {
+        KEYS.otp(email),
+        KEYS.cooldown(deviceId, email), 
+        KEYS.sendCount(deviceId, email), 
+        // KEYS.lock(deviceId, email),
+
+
         hashedOtp,
-        expiresAt: now + this.otpTtlMs,
-        attempts:  0,
-      };
+        otpTtlSecs 
+      ) as [number, number];
 
-      // ── 4. Compute backoff before pipeline ────────────────────────────────
-      // We read current send count, compute next cooldown, then pipeline-write
-      // the incremented value together with otp data and cooldown data.
-      const sendCountKey   = KEYS.sendCount(deviceId, email);
-      const currentCount   = (await this.redis.get<number>(sendCountKey)) ?? 0;
-      const nextCount      = currentCount + 1;
-      const cooldownMs     = this.computeCooldown(nextCount);
-      const cooldownSecs   = Math.ceil(cooldownMs / 1000);
+    } catch (err: any) {
+      if (err.message?.includes('NOSCRIPT')) {
+        this.otpSha = await this.client.getClient()?.script('LOAD', "") as string || null;
 
-      const cooldownData: CooldownData = {
-        assignedAt: now,
-        sendableAt: now + cooldownMs,
-      };
+        [cooldownSecs, sendCount] = await this.client.getClient()?.evalsha(
+          this.otpSha!,
 
-      // ── 5. Atomic pipeline write ──────────────────────────────────────────
-      // All three keys written together — no partial state on crash.
-      await this.redis.pipeline([
-        ['set', KEYS.otp(email),              otpData,      'EX', otpTtlSecs],
-        ['set', KEYS.cooldown(deviceId, email), cooldownData, 'EX', cooldownSecs],
-        ['set', sendCountKey,                 nextCount,    'EX', 24 * 60 * 60],
-      ]);
+          numOfKeys,
 
-      // ── 6. Deliver ────────────────────────────────────────────────────────
-      // Done after Redis write so a slow mailer doesn't block state update.
-      await this.mailer.sendOtpEmail(email, otp, Math.ceil(this.otpTtlMs / 60_000));
+          KEYS.otp(email),
+          KEYS.cooldown(deviceId, email), 
+          KEYS.sendCount(deviceId, email), 
+          KEYS.lock(deviceId, email),
 
-      this.logger.info('otp.send.success', {
-        deviceId,
-        email:       maskEmail(email),
-        sendAttempt: nextCount,
-        cooldownMs,
-      });
 
-      return { cooldownSeconds: cooldownSecs };
+          hashedOtp,
+          otpTtlSecs 
+        ) as [number, number];
 
-    } finally {
-      // Always release lock — even on mailer failure.
-      await this.redis.del(lockKey);
+      } else {
+        throw err;
+      }
     }
+
+
+
+    // ── 6. Deliver ────────────────────────────────────────────────────────
+    // Done after Redis write so a slow mailer doesn't block state update.
+    await this.mailer.sendOtpEmail(email, otp, Math.ceil(this.otpTtlMs / 60_000));
+
+    this.logger.info('otp.send.success', {
+      deviceId,
+      email:       maskEmail(email),
+      sendAttempt: sendCount,
+      cooldownSeconds: cooldownSecs * 1000
+    });
+
+    return { cooldownSeconds: cooldownSecs };
+
   }
 
-  /**
-   * Verifies a user-supplied OTP string against the stored hash.
-   *
-   * Security properties:
-   *  - Constant-time path: bcrypt.compare runs even on NOT_FOUND.
-   *  - Attempt counter incremented *before* compare.
-   *  - On success, issues a short-lived verifyToken for downstream use.
-   *  - Token is single-use; downstream must consume it within verifyTokenTtl.
-   */
-  async verifyOtp(email: string, input: string): Promise<OtpVerifyResult> {
+  async verifyOtp(deviceId: string, email: string, input: string): Promise<OtpVerifyResult> {
     this.validateEmail(email);
     if (!input?.trim()) throw new ValidationError('OTP input must not be empty.');
 
-    const key  = KEYS.otp(email);
-    const data = await this.redis.get<OtpData>(key);
+    const key = KEYS.otp(email);
+    const lockKey = KEYS.lock(deviceId, email);
+    const lockToken = crypto.randomUUID();
+    let lockAcquired = false;
 
-    // ── Constant-time guard: always run bcrypt.compare ────────────────────
-    const hashToCompare = data?.hashedOtp ?? DUMMY_HASH;
+    const client = this.client.getClient();
+    if (!client) throw new Error('Redis client unavailable.');
 
-    // ── Structural checks (before compare to avoid wasted bcrypt cost) ────
-    if (data) {
-      if (Date.now() > data.expiresAt) {
-        await this.redis.del(key);
-        this.logger.info('otp.verify.expired', { email: maskEmail(email) });
-        return { ok: false, reason: 'EXPIRED' };
+    try {
+      const results = await client
+        .multi()
+        .set(lockKey, lockToken, 'NX', 'EX', this.LOCK_TTL_SECONDS)
+        .get(key)
+        .exec();
+
+      if (!results) throw new Error('Redis transaction failed to execute.');
+
+      const [lockErr, lockResult] = results[0];
+      const [getErr, raw] = results[1];
+      if (lockErr) throw lockErr;
+      if (getErr) throw getErr;
+
+      if (lockResult !== 'OK') {
+        throw new ConcurrentRequestError();
+      }
+      lockAcquired = true;
+
+      let data: OtpRecord | null = null;
+      if (raw) {
+        try {
+          data = JSON.parse(raw as string);
+        } catch {
+          this.logger.error('otp.verify.corrupt_record', { email: maskEmail(email) });
+          await client.del(key);
+        }
       }
 
-      if (data.attempts >= this.maxAttempts) {
-        await this.redis.del(key);
-        this.logger.warn('otp.verify.max_attempts', { email: maskEmail(email) });
-        return { ok: false, reason: 'MAX_ATTEMPTS' };
+      if (data) {
+        if (Date.now() > data.expiresAt) {
+          await client.del(key);
+          this.logger.info('otp.verify.expired', { email: maskEmail(email) });
+          return { ok: false, reason: 'EXPIRED' };
+        }
+
+        if (data.attempts >= this.maxAttempts) {
+          await client.del(key);
+          this.logger.warn('otp.verify.max_attempts', { email: maskEmail(email) });
+          return { ok: false, reason: 'MAX_ATTEMPTS' };
+        }
       }
 
-      // Increment attempts first — prevents timing-based enumeration
-      const remainingTtl = Math.ceil((data.expiresAt - Date.now()) / 1000);
-      await this.redis.set(key, { ...data, attempts: data.attempts + 1 }, remainingTtl);
+      // Always bcrypt.compare against a real hash — present or dummy —
+      // so response timing doesn't leak whether a record exists.
+      const hashToCompare = data?.hashedOtp ?? this.DUMMY_HASH;
+      const valid = await bcrypt.compare(input, hashToCompare);
+
+      if (!valid) {
+        this.logger.info(data ? 'otp.verify.invalid' : 'otp.verify.not_found', {
+          email: maskEmail(email),
+        });
+
+        if (!data) return { ok: false, reason: 'INVALID' };
+
+        const remainingTtlSeconds = Math.max(1, Math.ceil((data.expiresAt - Date.now()) / 1000));
+        await client.set(
+          key,
+          JSON.stringify({ ...data, attempts: data.attempts + 1 }),
+          'EX',
+          remainingTtlSeconds,
+        );
+
+        return { ok: false, reason: 'INVALID' };
+      }
+
+      // ── Success ──────────────────────────────────────────────────────────
+      const verifyToken = crypto.randomUUID();
+
+      await client
+        .multi()
+        .del(key)
+        .set(KEYS.verifyToken(email), verifyToken, 'EX', this.verifyTokenTtl)
+        .exec();
+
+      this.logger.info('otp.verify.success', { email: maskEmail(email) });
+      return { ok: true, verifyToken };
+    } finally {
+      if (lockAcquired) {
+        try {
+          await client.eval(this.RELEASE_LOCK_SCRIPT, 1, lockKey, lockToken);
+        } catch (err) {
+          this.logger.error('otp.verify.lock_release_failed', { email: maskEmail(email), err });
+        }
+      }
     }
-
-    // ── Constant-time compare ─────────────────────────────────────────────
-    const valid = await bcrypt.compare(input, hashToCompare);
-
-    if (!data || !valid) {
-      // Unify NOT_FOUND and INVALID to the same response to prevent oracle attacks.
-      // Internal log still distinguishes them.
-      this.logger.info(data ? 'otp.verify.invalid' : 'otp.verify.not_found', {
-        email: maskEmail(email),
-      });
-      return { ok: false, reason: 'INVALID' };
-    }
-
-    // ── Success ───────────────────────────────────────────────────────────
-    // Delete OTP immediately (single-use).
-    await this.redis.del(key);
-
-    // Issue a short-lived verifyToken for downstream services to confirm
-    // that OTP was successfully verified without re-verifying themselves.
-    const verifyToken = crypto.randomUUID();
-    await this.redis.set( 
-      KEYS.verifyToken(email),
-      verifyToken,
-      this.verifyTokenTtl,
-    );
-
-    this.logger.info('otp.verify.success', { email: maskEmail(email) });
-    return { ok: true, verifyToken };
   }
 
   /**
@@ -388,14 +438,16 @@ export class OtpService {
   async consumeVerifyToken(email: string, token: string): Promise<boolean> {
     this.validateEmail(email);
     const key   = KEYS.verifyToken(email);
-    const stored = await this.redis.get<string>(key);
-    if (!stored || stored !== token) {
+
+    const result: boolean = await this.client.getClient()?.eval(this.TOKEN_VERIFY_SCRIPT, 1, key, token) as boolean
+
+    if(!result) {
       this.logger.warn('otp.consumeToken.invalid', { email: maskEmail(email) });
-      return false;
-    }
-    await this.redis.del(key);
+      return result;
+    } 
+
     this.logger.info('otp.consumeToken.success', { email: maskEmail(email) });
-    return true;
+    return result ;
   }
 
   // ── Private helpers ────────────────────────────────────────────────────────

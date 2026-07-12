@@ -17,7 +17,7 @@ export interface RabbitMqModuleFactoryOptions {
 }
 
 export interface RabbitMqModuleAsyncOptions {
-  useFactory: (...args: any[]) => Promise<RabbitMqModuleFactoryOptions> | RabbitMqModuleFactoryOptions;
+  useFactory: (...args: any[]) => RedisConfig;
   inject?: any[];
 }
 
@@ -28,7 +28,7 @@ export class RedisModule {
 
   static forRoot(options: RabbitMqModuleAsyncOptions): DynamicModule {
 
-    const redisProvider = {
+    const redisOptions = {
       provide: 'REDIS_OPTIONS',
       inject: options.inject,
       useFactory: options.useFactory,
@@ -38,7 +38,7 @@ export class RedisModule {
       module: RedisModule,
       global: true,
       providers: [
-        redisProvider,
+        redisOptions,
         RedisService,
       ],
       exports: [RedisService],
