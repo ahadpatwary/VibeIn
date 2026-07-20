@@ -88,7 +88,7 @@ export const useLogin = () => {
 
  
 
-        window.open(googleUrl, "_blank", "width=600,height=600");
+        // window.open(googleUrl, "_blank", "width=600,height=600");
     }
 
     const gitHubLogin = () => {

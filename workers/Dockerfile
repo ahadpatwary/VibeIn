@@ -4,7 +4,7 @@ FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
 # RUN npm ci
-RUN npm install
+RUN npm i
 
 FROM node:22-alpine AS builder
 WORKDIR /app
