@@ -1,4 +1,4 @@
-import jwt, { JwtPayload, SignOptions, VerifyOptions } from "jsonwebtoken";
+import jwt, { JwtPayload, SignOptions, VerifyOptions, JsonWebTokenError } from "jsonwebtoken";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import type { Redis, Cluster } from 'ioredis';

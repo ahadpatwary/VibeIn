@@ -1,8 +1,25 @@
+export const RABBITMQ_CONFIG_CONSTANTS = {
+  DEFAULT_PROTOCOL: 'amqp',
+  DEFAULT_HOSTNAME: 'localhost',
+  DEFAULT_PORT: 5672,
+  DEFAULT_USERNAME: 'guest',
+  DEFAULT_PASSWORD: 'guest',
+  DEFAULT_HEARTBEAT: 10_000,
+  DEFAULT_CHANNELMAX: 10,
 
+  DEFAULT_NO_DELAY: false,
+  DEFAULT_TIMEOUT: 3000,
+  DEFAULT_KEEP_ALIVE: true,
+  DEFAULT_KEEP_ALIVE_DELAY: 1000,
+
+  DEFAULT_INITIAL_DELAY: 200,
+  DEFAULT_MAX_DELAY: 5000,
+  DEFAULT_FACTOR: 2,
+  DEFAULT_JITTER: 100,
+  DEFAULT_MAX_RETRIES: 10,
+}
 
 export const RabbitMQ_CONSTANTS = {
- 
-  url: 'amqp://user:pass@host:port/vhost',
   connectionName: 'vibein-backend',
   maxReconnectAttempts: Infinity,
   reconnectDelay: 1000,
@@ -143,3 +160,14 @@ export const RABBITMQ_ERRORS = {
 } as const;
  
 export type RabbitMQErrorCode = (typeof RABBITMQ_ERRORS)[keyof typeof RABBITMQ_ERRORS];
+
+export const RABBITMQ_CONNECTION_EVENT = {
+  CONNECT: 'connect',
+  DISCONNECT: 'disconnect',
+  CONNECTION_FAILED: 'connect-failed',
+  RECONNECT_SCHEDULED: 'reconnect-scheduled',
+  RECONNECT_FAILED: 'reconnect-failed',
+  BLOCKED: 'blocked',
+  UNBLOCKED: 'unblocked',
+  UPDATE_SECRET_OK: 'update-secret-ok'
+}

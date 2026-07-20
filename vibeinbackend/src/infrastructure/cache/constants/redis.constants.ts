@@ -57,6 +57,8 @@ export const REDIS_ERRORS = {
 } as const;
 
 export const REDIS_EVENTS = {
+  CONNECTING: 'connecting',
+  WAIT: 'wait',
   CONNECT: 'connect',
   READY: 'ready',
   ERROR: 'error',

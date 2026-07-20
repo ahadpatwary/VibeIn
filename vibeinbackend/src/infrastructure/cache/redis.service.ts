@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 
 import Redis, { ChainableCommander } from 'ioredis';
-
 import { HashScanResult, Nullable, RedisPipelineResult, ScanOptions, ScanResult, SetOptions, ZMember, ZRangeOptions, type RedisConfig } from './types/redis.types';
 import { type RedisClient } from './redis.client';
 import { Retry, withCommandError } from './decorators/retry.decorator';
@@ -20,27 +19,17 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     ) {}
 
     async onModuleInit() {
-
-        if(this.redisClient.connected) return this.redisClient.getClient;
-
         this.redisClient.connect();
-
     }
 
     async onModuleDestroy() {
-
-        if(!this.redisClient.connected) return;
-
         this.redisClient.disconnect();
     }
 
-    get connected(): boolean {
-        return this.redisClient.connected;
-    }
-
-    private get client(): Redis {
+    get client(): Redis {
         return this.redisClient.getClient;
     }
+
 
     async set<T>(key: string, value: T, options?: SetOptions): Promise<'OK' | null> {
         return withCommandError('SET', async () => {
@@ -91,7 +80,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         return withCommandError('MSET', async () => {
             const args: string[] = [];
             for (const [key, value] of Object.entries(pairs)) {
-            args.push(key, RedisSerializer.serialize(value));
+                args.push(key, RedisSerializer.serialize(value));
             }
             await this.client.mset(...args);
         });

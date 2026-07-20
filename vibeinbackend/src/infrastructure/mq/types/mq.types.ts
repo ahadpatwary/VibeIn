@@ -1,21 +1,22 @@
+import amqp, { RecoveryOptions, SocketOptions, Options } from "amqplib";
 
-export interface RabbitMQConfig {
-  url: string;
-  /** Human-readable connection name shown in RabbitMQ management UI */
-  connectionName?: string;
-  /** Max reconnect attempts before giving up (default: Infinity) */
-  maxReconnectAttempts?: number;
-  /** Initial reconnect delay in ms (default: 1000) */
-  reconnectDelay?: number;
-  /** Max reconnect delay cap in ms (default: 30_000) */
-  maxReconnectDelay?: number;
-  /** Heartbeat interval in seconds (default: 60) */
-  heartbeat?: number;
-  /** Channel prefetch count — QoS (default: 10) */
-  prefetch?: number;
-  /** Publisher confirm timeout in ms (default: 5000) */
-  publisherConfirmTimeout?: number;
-}
+export type RabbitMqConnectionOptions = Omit<Required<Options.Connect>, 'locale' | 'frameMax' | 'vhost' |'credentials' >;
+
+export type RabbitMqRecoverAndSocketOptions = Required<Omit<SocketOptions, 'clientProperties' | 'credentials'> & { recovery: Required< Omit<RecoveryOptions, 'setup'> | true > }> 
+
+// type RabbitMQAllConfig =  SocketOptions & RecoveryOptions & Options.Connect;
+
+type OptionalRabbitOpts = Partial<Pick<RabbitMqConnectionOptions, 'heartbeat' | 'channelMax'>>;
+type RequiredSocketOpts = Partial<Omit<SocketOptions, 'clientProperties' | 'credentials'>>;
+type RequiredRecoveryOpts = Partial<Omit<RecoveryOptions, 'setup'>>;
+export type RequiredRabbitOpts = Required<Omit<RabbitMqConnectionOptions, 'heartbeat' | 'channelMax'>>;
+
+export interface RabbitMQConfig 
+  extends OptionalRabbitOpts, 
+          RequiredSocketOpts, 
+          RequiredRecoveryOpts, 
+          RequiredRabbitOpts {}
+          
 
 export interface ExchangeConfig {
   name: string;
@@ -24,6 +25,38 @@ export interface ExchangeConfig {
   autoDelete?: boolean;    // default: false
   internal?: boolean;
   alternateExchange?: string;
+}
+
+// type assertQueueRequiredOptions = Required<
+//     Pick<Options.AssertQueue & Partial<{ maxLengthBytes: string, lazy: boolean}>, 'messageTtl' | 'deadLetterExchange' | 'deadLetterRoutingKey'>
+// >;
+// type assertQueueOptionalOptions = Omit<Options.AssertQueue & Partial<{ maxLengthBytes: string, lazy: boolean}>, 'messageTtl'| 'deadLetterExchange' | 'deadLetterRoutingKey'> 
+
+// export interface RTAssertQueueOptions 
+//     extends assertQueueRequiredOptions, assertQueueOptionalOptions {}
+// ;
+
+// type assertQueueRequiredOptionsForMain = Required<
+//     Pick<Options.AssertQueue & Partial<{ maxLengthBytes: string, lazy: boolean}>, 'deadLetterExchange' | 'deadLetterRoutingKey'>
+// >;
+
+// type assertQueueOptionalOptionsForMain = Omit<Options.AssertQueue & Partial<{ maxLengthBytes: string, lazy: boolean}>, 'deadLetterExchange' | 'deadLetterRoutingKey'> 
+
+// export interface RTAssertQueueOptionsForMain 
+//     extends assertQueueRequiredOptionsForMain, assertQueueOptionalOptionsForMain {}
+// ;
+
+// মেইন কিউ এর জন্য যখন DLX লাগবে (REQUIRED)
+export interface RTAssertQueueOptionsForMain extends amqp.Options.AssertQueue {
+    deadLetterExchange: string;     // এটি অবশ্যই থাকতে হবে
+    deadLetterRoutingKey: string;   // এটিও অবশ্যই থাকতে হবে
+}
+
+// রিট্রাই কিউ এর জন্য (REQUIRED to route back to Main Exchange)
+export interface RTAssertQueueOptions extends amqp.Options.AssertQueue {
+    messageTtl: number;             // রিট্রাই কিউতে TTL থাকা বাধ্যতামূলক
+    deadLetterExchange: string;     // মেসেজ ড্রপ হলে মেইন এক্সচেঞ্জে ফেরত যাবে
+    deadLetterRoutingKey: string;   // মেইন কিউয়ের রাউটিং কি
 }
 
 export interface QueueConfig {
@@ -69,24 +102,11 @@ export interface DLQConfig {
   messageTtl?: number;
 }
 
-export interface PublishOptions {
-  routingKey?: string;
-  /** Message priority 0-255 */
-  priority?: number;
-  /** Message expiration TTL (ms as string) */
-  expiration?: string;
-  headers?: Record<string, unknown>;
-  /** Correlation ID for RPC or tracing */
-  correlationId?: string;
-  /** Queue to reply to (for RPC pattern) */
-  replyTo?: string;
-  /** Wait for broker confirm before resolving (default: true) */
-  mandatory?: boolean;
-  /** Persist across broker restarts (default: true) */
-  persistent?: boolean;
-  /** Custom message ID; auto-generated if omitted */
-  messageId?: string;
-}
+export type requiredOptions = Required<Pick<Options.Publish, 'userId' | 'replyTo' | 'type' | 'contentType' | 'timestamp'>> 
+export type optionalOptions = Partial<Omit<Options.Publish, 'userId' | 'replyTo' | 'type' | 'contentType' | 'timestamp'>>
+
+export interface PublishOptions 
+  extends requiredOptions , optionalOptions {}
 
 export interface ConsumeOptions {
   /** Consume without requiring ack (default: false) */

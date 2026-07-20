@@ -1,4 +1,4 @@
-import { REDIS_ERRORS } from '../constants/redis.constants';
+import { REDIS_ERRORS } from '../constants/redis.constants'; 
 
 export class RedisException extends Error {
   public readonly code: string;
@@ -18,6 +18,7 @@ export class RedisException extends Error {
     this.context = context;
     Error.captureStackTrace(this, this.constructor);
   }
+  
 
   toJSON() {
     return {

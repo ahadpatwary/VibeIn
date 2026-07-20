@@ -3,7 +3,8 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+# RUN npm ci
+RUN npm install
 
 FROM node:22-alpine AS builder
 WORKDIR /app
@@ -16,9 +17,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY package*.json ./
-COPY ecosystem.config.js ./
+# COPY ecosystem.config.js ./
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 RUN npm prune --omit=dev
 
-CMD ["npx", "pm2-runtime", "ecosystem.config.js"]
+# CMD ["npx", "pm2-runtime", "ecosystem.config.js"]
+CMD ["npm", "start"]

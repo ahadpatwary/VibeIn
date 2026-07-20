@@ -198,7 +198,7 @@ export abstract class BaseConsumer<T = unknown> {
             settled = true;
             ch.nack(msg, false, requeue);
           }
-        },
+        },  
         reject: () => {
           if (!settled) {
             settled = true;

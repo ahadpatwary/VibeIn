@@ -19,9 +19,8 @@ export class RedisClient {
     ) {}
 
 
-    async connect(): Promise<Redis> {
+    async connect(): Promise<void> {
 
-        if (this.client) return this.client;
 
         if(this.isConnecting) throw new RedisConnectionException(
             new Error('Connection attempt already in processing')
@@ -29,31 +28,9 @@ export class RedisClient {
 
         this.isConnecting = true;
 
-        this.config = createRedisConfig(this.config);
-    
-
-        const options: RedisOptions = {
-            host: this.config.host,
-            port: this.config.port,
-            password: this.config.password,
-            db: this.config.db,
-            keyPrefix: this.config.keyPrefix,
-            connectTimeout: this.config.connectTimeout,
-            commandTimeout: this.config.commandTimeout,
-            maxRetriesPerRequest: this.config.maxRetriesPerRequest,
-            enableReadyCheck: this.config.enableReadyCheck ?? true,
-            lazyConnect: this.config.lazyConnect ?? true,
-            keepAlive: this.config.keepAlive,
-            family: this.config.family,
-            retryStrategy: this.config.retryStrategy ?? this.defaultRetryStrategy.bind(this),
-            ...(this.config.tls ? { tls: {} } : {}),
-        };
-
-        this.client = new Redis(options);
-        this.registerEventHandlers(this.client);
 
         try {
-            await this.client.connect();
+            await this.createClient.connect();
             
             this.logger.info('Redis connected successfully', {
                 host: this.config.host,
@@ -61,13 +38,13 @@ export class RedisClient {
                 db: this.config.db,
             });
 
-            return this.client;
         } catch (err) {
             
             throw new RedisConnectionException(err as Error, {
                 host: this.config.host,
                 port: this.config.port,
             });
+            
         } finally {
             this.isConnecting = false;
         }
@@ -92,16 +69,63 @@ export class RedisClient {
   
     get getClient(): Redis {
 
-        if(this.client) return this.client;
+        if(!this.client) {
+            throw new RedisConnectionException(
+                new Error('Redis client missing')
+            )
+        }
 
-        throw new RedisConnectionException(
-            new Error('Redis client not initialized. Call connect() first.'),
-        );
+        this.connected();
+
+        return this.client;
       
     }
 
-    get connected(): boolean {
-        return !!this.client;
+    private connected(): void {
+        if(this.client!.status !== 'ready'){ 
+            throw new RedisConnectionException(
+                new Error('Redis connection not ready to push messages')
+            )
+        }  
+    }
+
+    private get createClient(): Redis {
+
+        if (this.client) return this.client;
+
+        this.config = createRedisConfig(this.config);
+        
+        const options: RedisOptions = {
+            host: this.config.host,
+            port: this.config.port,
+            username: 'username',
+            password: this.config.password,
+            db: this.config.db,
+            keyPrefix: this.config.keyPrefix,
+            connectTimeout: this.config.connectTimeout,
+            commandTimeout: this.config.commandTimeout,
+            maxRetriesPerRequest: this.config.maxRetriesPerRequest,
+            enableReadyCheck: this.config.enableReadyCheck ?? true,
+            lazyConnect: this.config.lazyConnect ?? true,
+            keepAlive: this.config.keepAlive,
+            family: this.config.family,
+            retryStrategy: this.config.retryStrategy ?? this.defaultRetryStrategy.bind(this),
+            ...(this.config.tls ? { tls: {} } : {}),
+        };
+
+        
+        this.client = new Redis(options);  // create redis instance
+
+        if(!this.client) {
+            throw new RedisConnectionException(
+                new Error('Redis client not initialized') 
+            )
+        }
+
+        this.registerEventHandlers(this.client);
+
+        return this.client;
+
     }
 
     private defaultRetryStrategy(times: number): number | null {
@@ -115,8 +139,16 @@ export class RedisClient {
     }
 
     private registerEventHandlers(client: Redis): void {
+
+        client.on(REDIS_EVENTS.CONNECTING, () => {
+            this.logger.info('Redis connecting...');
+        });
+
+        client.on(REDIS_EVENTS.WAIT, () => {
+            this.logger.info('Redis wait');
+        })
+
         client.on(REDIS_EVENTS.CONNECT, () => {
-        
             this.logger.info('Redis connection established');
         });
 

@@ -1,6 +1,6 @@
 import mongoose, { Connection, ConnectOptions } from "mongoose";
 import { DATABASE_EVENTS } from "./constants/database.constant";
-import { DatabaseConnectionException } from "./exceptions/database.exception";
+import { DatabaseConnectionException, DatabaseNotInitializedException } from "./exceptions/database.exception";
 import { type DatabaseConfig } from "./types/database.type";
 import { ILogger } from "./utils/database.logger";
 import { Injectable } from "@nestjs/common";
@@ -18,29 +18,19 @@ export class DatabaseConnection {
 
     async connect(): Promise<Connection> {
 
-        if(this.connection) return this.connection;
 
         if(this.isConnecting) throw new Error('Connection attempt already in progress')
 
         this.isConnecting = true;
-
-        const options: ConnectOptions = {
-            dbName: this.config.dbName,
-            maxPoolSize: this.config.maxPoolSize ?? 10,
-            minPoolSize: this.config.minPoolSize ?? 1,
-            connectTimeoutMS: this.config.connectTimeoutMS ?? 10000,
-            socketTimeoutMS: this.config.socketTimeoutMS ?? 45000,
-            serverSelectionTimeoutMS: this.config.serverSelectionTimeoutMS ?? 10000,
-            retryWrites: this.config.retryWrites ?? true,
-            autoIndex: this.config.autoIndex ?? true,
-        };
+  
 
         const maxRetries = this.config.maxConnectionRetries ?? 10;
         const retryStrategy = this.config.retryStrategy ?? this.defaultRetryStrategy.bind(this);
 
         try {
 
-            this.connection = await this.connectWithRetry(options, maxRetries, retryStrategy);
+            this.connection = await this.connectWithRetry(this.createConnInstance, maxRetries, retryStrategy);
+            
 
             this.logger.info('MongoDB connected successfully', {
                 dbName: this.config.dbName,
@@ -76,37 +66,73 @@ export class DatabaseConnection {
         }
     }
 
-    get getConnection(): Connection {
- 
-        if (this.connection) return this.connection;
- 
-        throw new DatabaseConnectionException(
-            new Error('Database connection not initialized. Call connect() first.'),
-        );
+    get getClient(): Connection {
+        
+        if(!this.connection) {
+            throw new DatabaseConnectionException(
+                new Error('Database client missing')
+            )
+        }
+
+        this.connected();
+
+        return this.connection;
  
     }
 
-    get connected(): boolean {
-        return !!this.connection && this.connection.readyState === 1;
+    private connected():void {
+        if(this.connection!.readyState === 1){ 
+            throw new DatabaseConnectionException(
+                new Error('Database connection missing')
+            )
+        }  
+    }
+
+    private get createConnInstance(): Connection {
+
+        if(this.connection) return this.connection;
+
+        const options: ConnectOptions = {
+            dbName: this.config.dbName,
+            maxPoolSize: this.config.maxPoolSize ?? 10,
+            minPoolSize: this.config.minPoolSize ?? 5,
+            connectTimeoutMS: this.config.connectTimeoutMS ?? 10000,
+            socketTimeoutMS: this.config.socketTimeoutMS ?? 45000,
+            serverSelectionTimeoutMS: this.config.serverSelectionTimeoutMS ?? 10000,
+            retryWrites: this.config.retryWrites ?? true,
+            autoIndex: this.config.autoIndex ?? true,
+            
+            // retryReads: true,
+            // waitQueueTimeoutMS: 3000, 
+        };
+
+        this.connection = mongoose.createConnection(this.config.uri, options);    
+        
+        if(!this.connection) {
+            throw new DatabaseNotInitializedException()
+        }
+
+        this.registerEventHandlers(this.connection);
+
+        return this.connection;
+
     }
 
     private async connectWithRetry(
-        options: ConnectOptions,
+        client: Connection,
         maxRetries: number,
         retryStrategy: (attempt: number) => number | null,
     ): Promise<Connection> {
         let attempt = 0;
  
         while (true) {
-            const connection = mongoose.createConnection(this.config.uri, options);
-            this.registerEventHandlers(connection);
  
             try {
-                await connection.asPromise();
-                return connection;
+                await client.asPromise();
+                return client;
             } catch (err) {
                 attempt += 1;
-                await connection.close(true).catch(() => undefined);
+                await client.close(true).catch(() => undefined);
  
                 if (attempt > maxRetries) {
                     this.logger.error('MongoDB max reconnection attempts reached. Giving up.', {

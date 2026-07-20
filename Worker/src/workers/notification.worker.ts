@@ -1,1 +1,0 @@
-console.log("✅notification worker running");

@@ -4,7 +4,7 @@ import { RabbitMqLogger, Logger } from '../utils/mq.logger';
 
 
 
-export class ChannelManager {
+export class Channel {
   private channels = new Map<string, amqp.ConfirmChannel>();
   private readonly logger: Logger;
 
@@ -29,8 +29,8 @@ export class ChannelManager {
     const conn = await this.connManager.getConnection();
     const ch   = await conn.createConfirmChannel();
 
-    // const prefetch = this.connManager.getConfig().prefetch;
-    // await ch.prefetch(prefetch);
+    const prefetch = 5;
+    await ch.prefetch(prefetch);
 
     ch.on('error', (err: Error) => {
       this.logger.error('Channel error', { name, error: err.message });
@@ -168,7 +168,7 @@ export class ChannelManager {
       durable: true,
       arguments: {
         'x-message-ttl':          delayMs,
-        'x-dead-letter-exchange':  mainExchange.name,
+        'x-dead-letter-exchange':  mainExchange.name, 
         'x-dead-letter-routing-key': routingKey,
       },
     });

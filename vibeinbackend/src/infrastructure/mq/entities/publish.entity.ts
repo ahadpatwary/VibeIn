@@ -36,7 +36,7 @@ export abstract class BasePublisher {
   async publish<T>(
     data: T,
     routingKey: string,
-    opts: PublishOptions = {},
+    opts: PublishOptions,
   ): Promise<MessageEnvelope<T>> {
     const ch = await this.getChannel();
 
@@ -45,13 +45,32 @@ export abstract class BasePublisher {
       headers:       opts.headers ?? {},
     });
 
+  // const amqpOpts: amqp.Options.Publish = {
+  //   expiration: string | number;
+  //   userId: string;
+  //   CC: string | string[];
+  //   mandatory: boolean;
+  //   persistent: boolean;
+  //   deliveryMode: number | boolean;
+  //   BCC: string | string[];
+  //   contentType: string;
+  //   contentEncoding: string;
+  //   headers: any;
+  //   priority: number;
+  //   correlationId: string;
+  //   replyTo: string;
+  //   messageId: string;
+  //   timestamp: number;
+  //   type: string;
+  //   appId: string;
+  // }
+
     const amqpOpts: amqp.Options.Publish = {
-      persistent:    opts.persistent    ?? true,     // survives broker restart
+      persistent:    opts.persistent    ?? true,   
       messageId:     opts.messageId     ?? envelope.id,
-      correlationId: opts.correlationId,
-      replyTo:       opts.replyTo,
-      priority:      opts.priority,
-      expiration:    opts.expiration,
+      correlationId: opts.correlationId ??  '1',
+      // replyTo:       opts.replyTo,
+      // expiration:    opts.expiration,
       timestamp:     Date.now(),
       contentType:   'application/json',
       contentEncoding: 'utf-8',
@@ -60,6 +79,8 @@ export abstract class BasePublisher {
         'x-message-id':   envelope.id,
         'x-published-at': envelope.timestamp,
       },
+
+      ...opts,
     };
 
     await this.publishWithConfirm(ch, this.exchange.name, routingKey, buffer, amqpOpts);
@@ -127,7 +148,6 @@ export abstract class BasePublisher {
         });
       }
     });
-
   }
 
   private async getChannel(): Promise<amqp.ConfirmChannel> {

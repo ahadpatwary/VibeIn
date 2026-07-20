@@ -12,6 +12,7 @@ import { DatabaseModule } from './infrastructure/database/database.module';
 import { RedisModule } from './infrastructure/cache/redis.module';
 import { RedisConfig } from './infrastructure/cache';
 import { DatabaseConfig } from './infrastructure/database/types/database.type';
+import { JwtModule } from '@nestjs/jwt';
 // import { FeedPostModule } from './modules/feed/post/post.module';
 
 

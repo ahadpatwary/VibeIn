@@ -1,5 +1,7 @@
 import { RedisCommandException } from '../exceptions/redis.exception';
 import { REDIS_CONSTANTS } from '../constants/redis.constants';
+import { ReplyError } from 'ioredis';
+
 
 export interface RetryOptions {
   retries?: number;
