@@ -1,26 +1,14 @@
-import express from "express";
+import { Router, RouterOptions } from 'express';
 
-const app = express();
+const routerOptions: RouterOptions = {
+    caseSensitive: true,
+    strict: true,
+};
 
-app.use(express.json());
+const router: Router = Router(routerOptions);
 
-app.get("/", (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Worker server is running 🚀",
-  });
-});
+//__________________________ route config  ____________________________
 
-app.get("/health", (_req, res) => {
-  res.status(200).json({
-    status: "ok",
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-  });
-});
+router.get('/id');
 
-const PORT = Number(process.env.PORT) || 3000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+export default router;

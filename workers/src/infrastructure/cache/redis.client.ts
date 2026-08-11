@@ -6,7 +6,6 @@ import { ILogger } from './utils/logger';
 import { createRedisConfig } from './config/redis.config';
 import { Inject, Injectable } from '@nestjs/common';
 
-
 @Injectable()
 export class RedisClient {
     private client: Redis | null = null;
@@ -14,51 +13,42 @@ export class RedisClient {
 
     constructor(
         @Inject('REDIS_OPTIONS')
-        private config: RedisConfig,    // module e ja pathano hobe
-        private readonly logger: ILogger
+        private config: RedisConfig, // module e ja pathano hobe
+        private readonly logger: ILogger,
     ) {}
 
-
     async connect(): Promise<void> {
-
-
-        if(this.isConnecting) throw new RedisConnectionException(
-            new Error('Connection attempt already in processing')
-        )
+        if (this.isConnecting)
+            throw new RedisConnectionException(
+                new Error('Connection attempt already in processing'),
+            );
 
         this.isConnecting = true;
 
-        this.client?.
-
-
         try {
             await this.createClient.connect();
-            
+
             this.logger.info('Redis connected successfully', {
                 host: this.config.host,
                 port: this.config.port,
                 db: this.config.db,
             });
-
         } catch (err) {
-            
             throw new RedisConnectionException(err as Error, {
                 host: this.config.host,
                 port: this.config.port,
             });
-            
         } finally {
             this.isConnecting = false;
         }
     }
 
- 
     async disconnect(): Promise<void> {
         if (!this.client) return;
 
         try {
             await this.client.quit();
-        
+
             this.logger.info('Redis disconnected gracefully');
         } catch {
             this.client.disconnect();
@@ -68,35 +58,31 @@ export class RedisClient {
         }
     }
 
-  
     get getClient(): Redis {
-
-        if(!this.client) {
+        if (!this.client) {
             throw new RedisConnectionException(
-                new Error('Redis client missing')
-            )
+                new Error('Redis client missing'),
+            );
         }
 
         this.connected();
 
         return this.client;
-      
     }
 
     private connected(): void {
-        if(this.client!.status !== 'ready'){ 
+        if (this.client!.status !== 'ready') {
             throw new RedisConnectionException(
-                new Error('Redis connection not ready to push messages')
-            )
-        }  
+                new Error('Redis connection not ready to push messages'),
+            );
+        }
     }
 
     private get createClient(): Redis {
-
         if (this.client) return this.client;
 
         this.config = createRedisConfig(this.config);
-        
+
         const options: RedisOptions = {
             host: this.config.host,
             port: this.config.port,
@@ -111,44 +97,47 @@ export class RedisClient {
             lazyConnect: this.config.lazyConnect ?? true,
             keepAlive: this.config.keepAlive,
             family: this.config.family,
-            retryStrategy: this.config.retryStrategy ?? this.defaultRetryStrategy.bind(this),
+            retryStrategy:
+                this.config.retryStrategy ??
+                this.defaultRetryStrategy.bind(this),
             ...(this.config.tls ? { tls: {} } : {}),
         };
 
-        
-        this.client = new Redis(options);  // create redis instance
+        this.client = new Redis(options); // create redis instance
 
-        if(!this.client) {
+        if (!this.client) {
             throw new RedisConnectionException(
-                new Error('Redis client not initialized') 
-            )
+                new Error('Redis client not initialized'),
+            );
         }
 
         this.registerEventHandlers(this.client);
 
         return this.client;
-
     }
 
     private defaultRetryStrategy(times: number): number | null {
         if (times > 10) {
-            this.logger.error('Redis max reconnection attempts reached. Giving up.');
+            this.logger.error(
+                'Redis max reconnection attempts reached. Giving up.',
+            );
             return null;
         }
         const delay = Math.min(times * 100, 3000);
-        this.logger.warn(`Redis reconnecting in ${delay}ms...`, { attempt: times });
+        this.logger.warn(`Redis reconnecting in ${delay}ms...`, {
+            attempt: times,
+        });
         return delay;
     }
 
     private registerEventHandlers(client: Redis): void {
-
         client.on(REDIS_EVENTS.CONNECTING, () => {
             this.logger.info('Redis connecting...');
         });
 
         client.on(REDIS_EVENTS.WAIT, () => {
             this.logger.info('Redis wait');
-        })
+        });
 
         client.on(REDIS_EVENTS.CONNECT, () => {
             this.logger.info('Redis connection established');

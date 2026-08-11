@@ -1,5 +1,6 @@
 import { RABBITMQ_ERRORS, RabbitMQErrorCode } from '../constants/mq.constants';
 
+import amqp from 'amqplib'
 // ─────────────────────────────────────────────────────────────────────────────
 // Base exception
 // ─────────────────────────────────────────────────────────────────────────────
