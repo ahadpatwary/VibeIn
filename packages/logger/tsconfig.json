@@ -6,6 +6,10 @@
 
     "strict": true,
 
+    
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
