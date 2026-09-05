@@ -1,0 +1,25 @@
+{
+  "name": "@myorg/rabbitmq",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "amqplib": "^2.0.1",
+    "uuid": "^14.0.2"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.0"
+  }
+}

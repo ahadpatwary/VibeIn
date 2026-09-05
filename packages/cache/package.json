@@ -1,0 +1,27 @@
+{
+  "name": "@myorg/redis",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "ioredis": "^5.8.0",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/ioredis": "^4.28.10",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

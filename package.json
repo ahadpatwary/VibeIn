@@ -1,0 +1,32 @@
+{
+  "name": "codestore-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo for VibeIn (workspaces)",
+  "homepage": "https://github.com/ahadpatwary/VibeIn#readme",
+  "bugs": {
+    "url": "https://github.com/ahadpatwary/VibeIn/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahadpatwary/VibeIn.git"
+  },
+  "license": "ISC",
+  "author": "Abdul Ahad Patwary",
+  "packageManager": "npm@9",
+  "workspaces": [
+    "apps/*",
+    "apps/services/*"
+  ],
+  "scripts": {
+    "bootstrap": "npm install",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "prune:deps": "node ./scripts/prune-deps.js",
+    "prepare-workspaces": "echo 'Run npm install at root to install workspace deps'"
+  },
+  "devDependencies": {
+    "depcheck": "^1.4.2"
+  }
+}
