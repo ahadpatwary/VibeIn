@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 
 export abstract class ILogger {
     abstract info(message: string, meta?: Record<string, unknown>): void;

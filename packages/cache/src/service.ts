@@ -19,7 +19,7 @@ import type {
 import { REDIS_CONSTANTS } from './constants/redis.constants.js';
 import { RedisSerializer } from './utils/redis.serializer.js';
 import { Logger, RedisLogger } from './utils/redis.logger.js';
-import { withCommandError } from './decorators/retry.decorator.js';
+import { withCommandError } from '../../../outside/decorators/retry.decorator.js';
 import { RedisLockException } from './exceptions/redis.exception.js';
 
 /**

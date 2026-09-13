@@ -78,26 +78,6 @@ export class RedisTimeoutException extends RedisException {
     }
 }
 
-export class RedisLockException extends RedisException {
-    constructor(
-        key: string,
-        action: 'acquire' | 'release',
-        originalError?: Error,
-        context?: Record<string, unknown>,
-    ) {
-        const code =
-            action === 'acquire'
-                ? REDIS_ERRORS.LOCK_ACQUISITION_FAILED
-                : REDIS_ERRORS.LOCK_RELEASE_FAILED;
-        super(
-            `Redis lock ${action} failed for key '${key}': ${originalError?.message ?? 'Lock not available'}`,
-            code,
-            originalError,
-            { key, action, ...context },
-        );
-        this.name = 'RedisLockException';
-    }
-}
 
 export class RedisSerializationException extends RedisException {
     constructor(

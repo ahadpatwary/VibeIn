@@ -1,27 +1,37 @@
 {
-  "name": "@myorg/redis",
-  "version": "1.0.0",
+  "name": "@yourscope/redis-client",
+  "version": "0.1.0",
+  "description": "Type-safe ioredis wrapper with custom domain methods",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
+  "files": ["dist"],
+  "sideEffects": false,
   "scripts": {
-    "build": "tsc"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "ioredis": "^5.8.0",
+    "ioredis": "5.8.0",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/ioredis": "^4.28.10",
+    "tsup": "^8.0.0",
     "@types/node": "^24.0.0",
     "typescript": "^5.9.0"
-  }
+  },
+  "keywords": ["redis", "ioredis", "typescript"],
+  "license": "MIT"
 }

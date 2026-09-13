@@ -1,5 +1,5 @@
 {
-  "name": "codestore-monorepo",
+  "name": "soundfear",
   "version": "1.0.0",
   "private": true,
   "description": "Monorepo for VibeIn (workspaces)",
@@ -16,15 +16,14 @@
   "packageManager": "npm@9",
   "workspaces": [
     "apps/*",
-    "apps/services/*"
+    "packages/*"
   ],
   "scripts": {
     "bootstrap": "npm install",
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "prune:deps": "node ./scripts/prune-deps.js",
-    "prepare-workspaces": "echo 'Run npm install at root to install workspace deps'"
+    "prune:deps": "node ./scripts/prune-deps.js"
   },
   "devDependencies": {
     "depcheck": "^1.4.2"
