@@ -1,5 +1,5 @@
 {
-  "name": "@yourscope/redis-client",
+  "name": "@myorg/redis-client",
   "version": "0.1.0",
   "description": "Type-safe ioredis wrapper with custom domain methods",
   "private": true,

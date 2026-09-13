@@ -16,6 +16,7 @@
   "packageManager": "npm@9",
   "workspaces": [
     "apps/*",
+    "apps/services/*",
     "packages/*"
   ],
   "scripts": {
