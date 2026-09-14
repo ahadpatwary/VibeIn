@@ -10,6 +10,7 @@ import {
     RedisCommandException,
     RedisConnectionException,
 } from "./exceptions/redis.exception";
+import { injectable } from "tsyringe";
 
 
 
@@ -32,7 +33,7 @@ type LoadedLuaScript = {
     path: string;
 };
 
-
+@injectable()
 export class LuaHandler {
     /**
      * Stores loaded Lua scripts.

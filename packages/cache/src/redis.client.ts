@@ -2,17 +2,22 @@ import Redis, { RedisOptions } from 'ioredis';
 import { type RedisConfig } from './types/redis.types.js';
 import { REDIS_EVENTS } from './constants/redis.constants.js';
 import { RedisConnectionException } from './exceptions/redis.exception.js';
-import { ILogger } from './utils/logger.js';
+import { inject, injectable } from 'tsyringe';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 
+@injectable()
 export class RedisClientManager {
     private redis: Redis;
     private isRedisConnected: boolean = false;
+    private readonly logger: ILogger;
 
     constructor(
         private config: RedisConfig,
-        private readonly logger: ILogger,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
+
+        this.logger = factory.forModule('RedisModule');
 
         const options: RedisOptions = {
             host: this.config.host,
@@ -133,7 +138,7 @@ export class RedisClientManager {
 
     async #registerShutdownHooks(): Promise<void> {
         const shutdown = async (signal: string) => {
-            // this.logger.info(`Received ${signal}, initiating Kafka graceful shutdown`);
+            this.logger.info(`Received ${signal}, initiating Kafka graceful shutdown`);
             await this.disconnect();
         };
     

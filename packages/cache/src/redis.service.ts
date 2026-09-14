@@ -1,4 +1,3 @@
-import { inject, injectable } from 'tsyringe';
 import Redis, { ChainableCommander, ReplyError } from 'ioredis';
 import {
     HashScanResult,
@@ -15,6 +14,7 @@ import { type RedisClientManager } from './redis.client.js';
 import { RedisSerializer } from './utils/redis.serializer.js';
 import { REDIS_CONSTANTS } from './constants/redis.constants.js';
 import { RedisCommandException } from './exceptions/redis.exception.js';
+import { inject, injectable } from 'tsyringe';
 
 @injectable()
 export class RedisService {

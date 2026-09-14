@@ -14,7 +14,9 @@
       "require": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "scripts": {
     "build": "tsup",
@@ -22,16 +24,21 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@app/logger": "^1.0.0",
     "ioredis": "5.8.0",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "tsup": "^8.0.0",
     "@types/node": "^24.0.0",
+    "tsup": "^8.0.0",
     "typescript": "^5.9.0"
   },
-  "keywords": ["redis", "ioredis", "typescript"],
+  "keywords": [
+    "redis",
+    "ioredis",
+    "typescript"
+  ],
   "license": "MIT"
 }

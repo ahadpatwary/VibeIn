@@ -1,12 +1,14 @@
 import "reflect-metadata";
 import { container, inject, injectable } from "tsyringe";
-import { registerLogger, shutdownLogger, LOGGER_TOKENS, correlationIdMiddleware, LoggerFactory } from "../src";
+import { registerLogger, shutdownLogger, LOGGER_TOKENS, LoggerFactory } from "../src";
 import type { ILogger } from "../src";
 
-// ── 1. Bootstrap (once, at app startup) ────────────────────────────
-registerLogger(); // binds ILogger -> PinoLoggerAdapter in the root container
+/**
+ *  Bootstrap (once, at app startup)
+ */ 
+registerLogger();
 
-// ── 2. Any service just depends on ILogger via LoggerFactory ───────
+
 @injectable()
 class OrderService {
   private readonly logger: ILogger;

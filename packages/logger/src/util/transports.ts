@@ -1,6 +1,6 @@
 import path from "node:path";
 import type { TransportMultiOptions, TransportTargetOptions } from "pino";
-import type { LoggerConfig } from "./config";
+import { LoggerConfig } from "../config/config";
 
 /**
  * transports.ts

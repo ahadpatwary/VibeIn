@@ -1,9 +1,9 @@
 import pino, { type Logger as PinoInstance } from "pino";
 import { injectable } from "tsyringe";
-import type { ILogger, LogMeta } from "../types";
-import type { LoggerConfig } from "../config";
-import { buildTransport } from "../transports";
-import { buildRedactPaths } from "../redaction";
+import type { ILogger, LogMeta } from "../types/types";
+import type { LoggerConfig } from "../config/config";
+import { buildTransport } from "../util/transports";
+import { buildRedactPaths } from "../util/redaction";
 import { getRequestContext } from "../context";
 
 /**
@@ -24,8 +24,6 @@ import { getRequestContext } from "../context";
 export class PinoLoggerAdapter implements ILogger {
   private readonly pino: PinoInstance;
 
-  constructor(config: LoggerConfig);
-  constructor(pinoInstance: PinoInstance);
   constructor(configOrInstance: LoggerConfig | PinoInstance) {
     this.pino = isPinoInstance(configOrInstance)
       ? configOrInstance
@@ -59,7 +57,7 @@ export class PinoLoggerAdapter implements ILogger {
     });
   }
 
-  private mergedMeta(meta?: LogMeta): LogMeta {
+  #mergedMeta(meta?: LogMeta): LogMeta {
     // Auto-attach request-scoped context (correlationId, userId...)
     // set by context.ts — callers never pass this manually.
     const requestContext = getRequestContext();
@@ -68,33 +66,32 @@ export class PinoLoggerAdapter implements ILogger {
   }
 
   fatal(message: string, meta?: LogMeta): void {
-    this.pino.fatal(this.mergedMeta(meta), message);
+    this.pino.fatal(this.#mergedMeta(meta), message);
   }
 
   error(message: string, error?: unknown, meta?: LogMeta): void {
     const errPayload = error !== undefined ? { err: normalizeError(error) } : {};
-    this.pino.error({ ...this.mergedMeta(meta), ...errPayload }, message);
+    this.pino.error({ ...this.#mergedMeta(meta), ...errPayload }, message);
   }
 
   warn(message: string, meta?: LogMeta): void {
-    this.pino.warn(this.mergedMeta(meta), message);
+    this.pino.warn(this.#mergedMeta(meta), message);
   }
 
   info(message: string, meta?: LogMeta): void {
-    this.pino.info(this.mergedMeta(meta), message);
+    this.pino.info(this.#mergedMeta(meta), message);
   }
 
   debug(message: string, meta?: LogMeta): void {
-    this.pino.debug(this.mergedMeta(meta), message);
+    this.pino.debug(this.#mergedMeta(meta), message);
   }
 
   trace(message: string, meta?: LogMeta): void {
-    this.pino.trace(this.mergedMeta(meta), message);
+    this.pino.trace(this.#mergedMeta(meta), message);
   }
 
   child(bindings: LogMeta): ILogger {
-    // return new PinoLoggerAdapter(this.pino.child(bindings));
-    // return new PinoLoggerAdapter()
+    return new PinoLoggerAdapter(this.pino.child(bindings));
   }
 
   async flush(): Promise<void> {

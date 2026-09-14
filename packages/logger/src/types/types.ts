@@ -7,7 +7,6 @@
  * writing a new class that implements ILogger and rebinding the DI
  * token in container.ts. No call-site in any service changes.
 */
-
 export enum LogLevel {
   FATAL = "fatal",
   ERROR = "error",
@@ -57,8 +56,20 @@ export interface ILogger {
    * Returns a new logger with `bindings` merged into every subsequent
    * log line. Used to scope a logger to a module/service/request
    * without re-passing context on every call.
+   * 
+   * EXAMPLE: 
+   *  1:  const logger = factory.forModule("OrderService");
+   *      logger.info("Order created");
+   *            OUTPUT: { module: "PaymentService" } Payment processed
+   * 
+   *  2:  const logger = factory.forModule("PaymentService");
+   *      logger.info("Payment processed");
+   *            OUTPUT: { module: "PaymentService" } Payment processed
+   * 
+   * DON'T NEED to use it: =>
+   *         rootLogger.info( { module: "OrderService" },"Order created");
    */
-  child(bindings: LogMeta): ILogger;
+  child(bindings: LogMeta): ILogger; 
 
   /**
    * Flush any buffered/async transports before process exit.

@@ -1,13 +1,19 @@
-export { LogLevel } from "./types";
-export type { ILogger, LogMeta, RequestContext, LoggerBaseContext } from "./types";
+export { LOGGER_TOKENS } from "./tokens/tokens";
 
-export { loadLoggerConfig } from "./config";
-export type { LoggerConfig } from "./config";
+export { loadLoggerConfig } from "./config/config";
+export type { LoggerConfig } from "./config/config";
+export { LogLevel } from "./types/types";
 
-export { LOGGER_TOKENS } from "./tokens";
+export type { ILogger, LogMeta, RequestContext, LoggerBaseContext } from "./types/types";
 
-export { runWithRequestContext, getRequestContext, updateRequestContext, correlationIdMiddleware } from "./context";
+
+export {
+    runWithRequestContext,
+    getRequestContext,
+    updateRequestContext, 
+    correlationIdMiddleware 
+} from "./context";
 
 export { PinoLoggerAdapter } from "./adapters/PinoLoggerAdapter";
 export { LoggerFactory } from "./LoggerFactory";
-export { registerLogger, shutdownLogger } from "./container";
+export { registerLogger, shutdownLogger } from "./container/container";

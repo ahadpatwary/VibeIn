@@ -1,6 +1,6 @@
 import { inject, injectable, singleton } from "tsyringe";
-import type { ILogger } from "./types";
-import { LOGGER_TOKENS } from "./tokens";
+import type { ILogger } from "./types/types";
+import { LOGGER_TOKENS } from "./tokens/tokens";
 
 /**
  * LoggerFactory.ts
@@ -20,6 +20,7 @@ import { LOGGER_TOKENS } from "./tokens";
  *     }
  *   }
  */
+
 @injectable()
 @singleton()
 export class LoggerFactory {

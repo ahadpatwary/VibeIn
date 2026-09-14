@@ -1,13 +1,7 @@
 import { z } from "zod";
-import { LogLevel } from "./types";
+import { LogLevel } from "../types/types";
 
-/**
- * config.ts
- *
- * Zod schema + loader for logger configuration. Fails fast at boot
- * (throws) if env vars are missing/invalid instead of silently
- * falling back to bad defaults in production.
- */
+
 
 const LoggerConfigSchema = z.object({
   SERVICE_NAME: z.string().min(1, "SERVICE_NAME is required"),
@@ -21,7 +15,8 @@ const LoggerConfigSchema = z.object({
   LOG_PRETTY: z
     .string()
     .optional()
-    .transform((v) => v === "true"),
+    .transform((v) => v === "true")
+  ,
 
   // File transport (rotating). Leave unset to log to stdout only
   // (recommended when your infra ships stdout to a log collector —
@@ -49,9 +44,8 @@ export function loadLoggerConfig(env: NodeJS.ProcessEnv = process.env): LoggerCo
   if (cachedConfig) return cachedConfig;
 
   const parsed = LoggerConfigSchema.safeParse(env);
+
   if (!parsed.success) {
-    // Intentionally thrown, not logged — the logger itself isn't
-    // built yet, this is a boot-time fatal.
     throw new Error(`Invalid logger configuration: ${parsed.error.toString()}`);
   }
 
@@ -59,8 +53,6 @@ export function loadLoggerConfig(env: NodeJS.ProcessEnv = process.env): LoggerCo
 
   cachedConfig = {
     ...parsed.data,
-    // Pretty printing is force-disabled in production regardless of
-    // the env var — this is a safety rail, not a suggestion.
     LOG_PRETTY: parsed.data.LOG_PRETTY && !isProduction,
     isProduction,
   };
