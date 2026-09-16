@@ -1,23 +1,23 @@
-export interface RedisConfig {
-    host: string;
-    port: number;
-    password?: string;
-    db?: number;
-    keyPrefix?: string;
-    tls?: boolean;
-    connectTimeout?: number;
-    commandTimeout?: number;
-    maxRetriesPerRequest?: number;
-    retryStrategy?: (times: number) => number | null;
-    enableReadyCheck?: boolean;
-    lazyConnect?: boolean;
-    keepAlive?: number;
-    family?: 4 | 6;
-    sentinels?: Array<{ host: string; port: number }>;
-    name?: string; // Sentinel master name
-    clusterMode?: boolean;
-    clusterNodes?: Array<{ host: string; port: number }>;
+import { RedisOptions } from "ioredis";
+
+export interface RedisConfig extends RedisOptions {
+    host: string, 
+    port: number,
 }
+
+/**
+ * Lua script related types
+ */
+export type ScriptLoaderConfig = {
+    name: string;
+    path: string;
+};
+
+export type LoadedLuaScript = {
+    source: string;
+    sha: string;
+    path: string;
+};
 
 export interface CacheOptions {
     ttl?: number; // seconds

@@ -16,7 +16,10 @@ import type { ILogger } from "../types/types";
  * Nothing else in the app changes — every service still depends on
  * ILogger via LOGGER_TOKENS.Logger.
  */
-export function registerLogger(targetContainer: DependencyContainer = container, config?: LoggerConfig): void {
+export function registerLogger(
+  targetContainer: DependencyContainer = container,
+  config?: LoggerConfig
+): void {
   const cfg = config ?? loadLoggerConfig();
 
   targetContainer.registerInstance<LoggerConfig>(LOGGER_TOKENS.LoggerConfig, cfg);

@@ -3,7 +3,8 @@ export { RedisService } from './redis.service.js';
 
 
 // Config
-export { RedisConfigBuilder, createRedisConfig } from './config/redis.config.js';
+// export { RedisConfigBuilder, createRedisConfig } from './config/redis.config.js';
+export { loadRedisConfig } from './config/config'
 
 // Types
 export type {
@@ -22,6 +23,8 @@ export type {
     RedisValue,
     Nullable,
     MaybeArray,
+    LoadedLuaScript,
+    ScriptLoaderConfig,
 } from './types/redis.types.js';
 
 // Exceptions
@@ -36,9 +39,6 @@ export {
 
 // Utils
 export { RedisSerializer } from './utils/redis.serializer.js';
-export { RedisLogger, NoopLogger } from './utils/redis.logger.js';
-export type { Logger, LogLevel } from './utils/redis.logger.js';
-
 
 
 // Constants

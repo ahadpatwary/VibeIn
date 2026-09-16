@@ -2,8 +2,8 @@ import { REDIS_ERRORS } from '../constants/redis.constants.js';
 
 export class RedisException extends Error {
     public readonly code: string;
-    public readonly originalError?: Error;
-    public readonly context?: Record<string, unknown>;
+    public readonly originalError?: Error | undefined;
+    public readonly context?: Record<string, unknown> | undefined;
 
     constructor(
         message: string,

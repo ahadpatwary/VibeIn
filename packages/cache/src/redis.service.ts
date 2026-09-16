@@ -1,29 +1,22 @@
-import Redis, { ChainableCommander, ReplyError } from 'ioredis';
-import {
-    HashScanResult,
-    Nullable,
-    RedisPipelineResult,
-    ScanOptions,
-    ScanResult,
-    SetOptions,
-    ZMember,
-    ZRangeOptions,
-    type RedisConfig,
-} from './types/redis.types.js';
+import Redis, { ChainableCommander } from 'ioredis';
+import { RedisPipelineResult } from './types/redis.types.js';
 import { type RedisClientManager } from './redis.client.js';
-import { RedisSerializer } from './utils/redis.serializer.js';
-import { REDIS_CONSTANTS } from './constants/redis.constants.js';
 import { RedisCommandException } from './exceptions/redis.exception.js';
 import { inject, injectable } from 'tsyringe';
+import { REDIS_TOKENS } from './tokens/redis.token.js';
+import { ILogger, LoggerFactory } from '@app/logger';
 
 @injectable()
 export class RedisService {
+    private readonly logger: ILogger;
+
     constructor(
-        @inject('RedisClientManager')
+        @inject(REDIS_TOKENS.RedisClientManager)
         private readonly client: RedisClientManager,
-        @inject('RedisLogger')
-        private readonly logger: any, //TODO: Replace 'any' with the actual type of your logger if available
-    ) {}
+        @inject(REDIS_TOKENS.Logger) factory: LoggerFactory,
+    ) {
+        this.logger = factory.forModule('RedisModule');
+    }
 
     async commandWraper<T>(
         command: string,
@@ -34,6 +27,10 @@ export class RedisService {
         try {
             return await fn(client);
         } catch (err) {
+            this.logger.error(`Redis command error`, err, {
+                command: command,
+            } )
+            
             if (err instanceof RedisCommandException) throw err;
             throw new RedisCommandException(command, err as Error);
         }

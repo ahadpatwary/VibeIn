@@ -1,4 +1,4 @@
-"workspaces": ["apps/*", "packages/*"]
+<!-- "workspaces": ["apps/*", "packages/*"]
 
 npm i @myorg/redis-client -w apps/services/vibeinbackend
 
@@ -13,4 +13,4 @@ npm install @myorg/redis-client --workspace=apps/services/vibeinbackend
 }
 
 
-import CustomRedisClient from '@myorg/redis-client';
+import CustomRedisClient from '@myorg/redis-client'; -->

@@ -1,10 +1,17 @@
 import { defineConfig } from "tsup";
+import packageJson from './package.json';
 
 export default defineConfig({
   entry: ["src/index.ts"],
   format: ["cjs", "esm"],
   dts: true,
-  external: ['ioredis'], // bundle e ioredis include korbe na, runtime e node_modules theke resolve hobe
+  /**
+   * bundle e ioredis include korbe na, runtime e node_modules theke resolve hobe
+   */
+  external: [
+    ...Object.keys(packageJson.dependencies ?? {}),
+    ...Object.keys(packageJson.peerDependencies ?? {}),
+  ],
   sourcemap: true,
   clean: true,
   minify: false,

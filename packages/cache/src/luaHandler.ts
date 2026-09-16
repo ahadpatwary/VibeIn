@@ -1,37 +1,17 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-import Redis from "ioredis";
-
 import { RedisClientManager } from "./redis.client";
-import { ILogger } from "./utils/logger";
+
 import {
     RedisCommandException,
     RedisConnectionException,
 } from "./exceptions/redis.exception";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from "@app/logger";
+import { REDIS_TOKENS } from "./tokens/redis.token";
+import { LoadedLuaScript, ScriptLoaderConfig } from "./types/redis.types";
 
 
-
-export const LuaScriptName = {
-    LEAKY_BUCKET: "leaky-bucket",
-    TOKEN_BUCKET: "token-bucket",
-} as const;
-
-export type LuaScriptName =
-    (typeof LuaScriptName)[keyof typeof LuaScriptName];
-
-export type ScriptLoaderConfig = {
-    name: LuaScriptName;
-    path: string;
-};
-
-type LoadedLuaScript = {
-    source: string;
-    sha: string;
-    path: string;
-};
 
 @injectable()
 export class LuaHandler {
@@ -44,26 +24,25 @@ export class LuaHandler {
      *   path
      * }
      */
-    private readonly _scripts = new Map<
-        LuaScriptName,
-        LoadedLuaScript
-    >();
+    private readonly _scripts = new Map<string, LoadedLuaScript>();
 
     /**
      * Prevents multiple concurrent SCRIPT LOAD operations
      * for the same script.
      */
-    private readonly _loading = new Map<
-        LuaScriptName,
-        Promise<LoadedLuaScript>
-    >();
+    private readonly _loading = new Map<string, Promise<LoadedLuaScript>>();
 
     private _initialized = false;
 
+    private readonly logger: ILogger;
+
     constructor(
+        @inject(REDIS_TOKENS.RedisClientManager)
         private readonly redisClient: RedisClientManager,
-        private readonly logger: ILogger,
-    ) {}
+        @inject(REDIS_TOKENS.Logger) factory: LoggerFactory,
+    ) {
+        this.logger = factory.forModule("RedisModule");
+    }
 
 
     /**
@@ -75,9 +54,9 @@ export class LuaHandler {
     async initialize(
         configs: ScriptLoaderConfig[],
     ): Promise<void> {
-        if (this._initialized) {
-            return;
-        }
+
+        if (this._initialized) return;
+        
 
         try {
             for (const config of configs) {
@@ -86,7 +65,7 @@ export class LuaHandler {
 
             this._initialized = true;
 
-            this.logger.info?.(
+            this.logger.info(
                 "Redis Lua scripts initialized successfully",
                 {
                     scripts: configs.map((config) => config.name),
@@ -106,7 +85,7 @@ export class LuaHandler {
 
 
     async execute<T = unknown>(
-        name: LuaScriptName,
+        name: string,
         keys: string[] = [],
         args: string[] = [],
     ): Promise<T> {
@@ -192,7 +171,7 @@ export class LuaHandler {
      * args - arguments to be passed to the script
      */
     async #handleNoScript<T>(
-        name: LuaScriptName,
+        name: string,
         keys: string[],
         args: string[],
     ): Promise<T> {
@@ -373,7 +352,7 @@ export class LuaHandler {
      * @returns 
      */
     async #reloadScript(
-        name: LuaScriptName,
+        name: string,
         source: string,
     ): Promise<string> {
         /*

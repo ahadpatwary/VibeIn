@@ -1,9 +1,11 @@
 import Redis, { RedisOptions } from 'ioredis';
-import { type RedisConfig } from './types/redis.types.js';
 import { REDIS_EVENTS } from './constants/redis.constants.js';
 import { RedisConnectionException } from './exceptions/redis.exception.js';
 import { inject, injectable } from 'tsyringe';
 import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import { REDIS_TOKENS } from './tokens/redis.token.js';
+import { RedisConfig } from './types/redis.types.js';
+
 
 
 @injectable()
@@ -13,30 +15,34 @@ export class RedisClientManager {
     private readonly logger: ILogger;
 
     constructor(
-        private config: RedisConfig,
+        @inject(REDIS_TOKENS.RedisConfig) 
+        private readonly config: RedisConfig, 
         @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
 
         this.logger = factory.forModule('RedisModule');
 
-        const options: RedisOptions = {
-            host: this.config.host,
-            port: this.config.port,
-            username: 'username',
-            password: this.config.password ?? "017164",
-            db: this.config.db ?? 111111,
-            keyPrefix: this.config.keyPrefix ?? 'app',
-            connectTimeout: this.config.connectTimeout ?? 3000,
-            commandTimeout: this.config.commandTimeout ?? 3000,
-            maxRetriesPerRequest: this.config.maxRetriesPerRequest ?? 3,
-            enableReadyCheck: this.config.enableReadyCheck ?? true,
-            lazyConnect: this.config.lazyConnect ?? true,
-            keepAlive: this.config.keepAlive ?? 6000,
-            family: this.config.family,
-            retryStrategy:
-                this.config.retryStrategy ??
-                this.#defaultRetryStrategy.bind(this),
-            ...(this.config.tls ? { tls: {} } : {}),
+        const options: RedisConfig = {
+            // host: config.host,
+            // port: config.port,
+            // username: 'username',
+            // password: config.password ?? "017164",
+            // db: config.db ?? 111111,
+            // keyPrefix: config.keyPrefix ?? 'app',
+            // connectTimeout: config.connectTimeout ?? 3000,
+            // commandTimeout: config.commandTimeout ?? 3000,
+            // maxRetriesPerRequest: config.maxRetriesPerRequest ?? 3,
+            // enableReadyCheck: config.enableReadyCheck ?? true,
+            // lazyConnect: config.lazyConnect ?? true,
+            // keepAlive: config.keepAlive ?? 6000,
+            // family: config.family,
+
+            // retryStrategy:
+            //     config.retryStrategy ??
+            //     this.#defaultRetryStrategy.bind(this),
+            // ...(config.tls ? { tls: {} } : {}),
+            ...config,
+            retryStrategy: config.retryStrategy ?? this.#defaultRetryStrategy.bind(this),
         };
 
         this.redis = new Redis(options);
@@ -48,12 +54,14 @@ export class RedisClientManager {
     async getClient(): Promise<Redis> {
 
         if(this.isRedisConnected) return this.redis;
+        
 
         try {
 
             await this.redis.connect();
             this.isRedisConnected = true;
 
+        
             this.logger.info('Redis connected successfully', {
                 host: this.config.host,
                 port: this.config.port,
