@@ -7,7 +7,7 @@ const routerOptions: RouterOptions = {
 
 const router: Router = Router(routerOptions);
 
-//__________________________ route config  ____________________________
+//__________________________ route config  ____________
 
 router.get('/id');
 
