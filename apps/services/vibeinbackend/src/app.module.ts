@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { RabbitMqModule } from './shared/modules/queue/rabbitmq.module';
 import { UserModule } from './modules/user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './shared/config/env.validation';
 import configuration from './shared/config/configuration';
 import { StorageModule } from './modules/storage/storage.module';
-import { DatabaseModule } from './infrastructure/database/database.module';
-import { RedisModule } from './infrastructure/cache/redis.module';
-import { RedisConfig } from './infrastructure/cache';
-import { DatabaseConfig } from './infrastructure/database/types/database.type';
-import { JwtModule } from '@nestjs/jwt';
+// import { DatabaseModule } from './infrastructure/database/database.module';
+// import { RedisModule } from './infrastructure/cache/redis.module';
+// import { RedisConfig } from './infrastructure/cache';
+// import { DatabaseConfig } from './infrastructure/database/types/database.type';
+// import { JwtModule } from '@nestjs/jwt';
 // import { FeedPostModule } from './modules/feed/post/post.module';
 
 

@@ -17,6 +17,7 @@
   "workspaces": [
     "apps/*",
     "apps/services/*",
+    "apps/web/*",
     "packages/*"
   ],
   "scripts": {

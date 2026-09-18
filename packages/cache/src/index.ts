@@ -1,5 +1,5 @@
 // Main service
-export { RedisService } from './redis.service.js';
+export { RedisService } from './redis.service';
 
 
 // Config
@@ -25,7 +25,7 @@ export type {
     MaybeArray,
     LoadedLuaScript,
     ScriptLoaderConfig,
-} from './types/redis.types.js';
+} from './types/redis.types';
 
 // Exceptions
 export {
@@ -35,10 +35,10 @@ export {
     RedisTimeoutException,
     RedisSerializationException,
     RedisNotInitializedException,
-} from './exceptions/redis.exception.js';
+} from './exceptions/redis.exception';
 
 // Utils
-export { RedisSerializer } from './utils/redis.serializer.js';
+export { RedisSerializer } from './utils/redis.serializer';
 
 
 // Constants
@@ -47,4 +47,7 @@ export {
     REDIS_ERRORS,
     REDIS_EVENTS,
     EXPIRE_MODES,
-} from './constants/redis.constants.js';
+} from './constants/redis.constants';
+
+
+export { registerRedis } from './container/container'
