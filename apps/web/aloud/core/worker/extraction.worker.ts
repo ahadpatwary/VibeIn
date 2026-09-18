@@ -3,7 +3,7 @@
 import { AudioTrackDemuxer, DemuxProgressEvent, DemuxResult } from "../extraction/AudioTrackDemuxer";
 // import { TopLevelBoxScanner } from "../extraction/TopLevelBoxScanner";
 import { PipelineState } from "../pipeline/ExtractionPipeline";
-import { WorkerOutboundMessage } from "../pipeline/types";
+// import { WorkerOutboundMessage } from "../pipeline/types";
 
 export type WorkerInboundMessage =
   | { kind: "start"; file: File; maxFileSizeBytes: number }

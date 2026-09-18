@@ -1,4 +1,4 @@
-import { AppError } from "../errors/AppError";
+// import { AppError } from "../errors/AppError";
 import { TypedEventEmitter } from "../events/Emitter";
 import { WorkerInboundMessage } from "../worker/extraction.worker";
 import { WorkerOutboundMessage } from "./types";
