@@ -21,6 +21,7 @@ export function DropZone({ onFileSelected, disabled }: DropZoneProps) {
 
   const handleFile = useCallback(
     (file: File | undefined) => {
+      console.log("file", file);
       if (!file) return;
       if (!isAcceptedFile(file)) {
         setValidationError("That format isn't supported. Use MP4, MOV, or M4V.");

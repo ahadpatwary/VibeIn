@@ -29,6 +29,21 @@ const config: Config = {
         },
         mint: "hsl(var(--mint) / <alpha-value>)",
         ring: "hsl(var(--ring) / <alpha-value>)",
+
+        // ---- Ported from Project X, aliased onto existing tokens ----
+        bg: "hsl(var(--background) / <alpha-value>)",
+        "surface-raised": "hsl(var(--surface-raised) / <alpha-value>)",
+        ink: {
+          primary: "hsl(var(--foreground) / <alpha-value>)",
+          secondary: "hsl(var(--muted-foreground) / <alpha-value>)",
+          muted: "hsl(var(--ink-muted) / <alpha-value>)",
+        },
+        signal: {
+          DEFAULT: "hsl(var(--accent) / <alpha-value>)",
+          strong: "hsl(var(--accent-strong) / <alpha-value>)",
+        },
+        success: "hsl(var(--success) / <alpha-value>)",
+        danger: "hsl(var(--danger) / <alpha-value>)",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
@@ -38,6 +53,9 @@ const config: Config = {
       borderRadius: {
         xl: "1.1rem",
         "2xl": "1.5rem",
+      },
+      maxWidth: {
+        content: "760px",
       },
       keyframes: {
         "bar-idle": {
@@ -55,6 +73,9 @@ const config: Config = {
       },
       animation: {
         "bar-idle": "bar-idle 1.4s ease-in-out infinite",
+        // Reuses bar-idle's keyframes at Project X's original timing/name
+        // so any `animate-bar-pulse` class from the old project still works.
+        "bar-pulse": "bar-idle 1.8s ease-in-out infinite",
         "fade-up": "fade-up 0.6s ease-out both",
         "pulse-ring": "pulse-ring 2.2s ease-out infinite",
       },

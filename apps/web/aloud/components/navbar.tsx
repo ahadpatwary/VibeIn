@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Waveform } from "@/components/ui/waveform";
@@ -36,12 +36,12 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle className="hidden sm:inline-flex" />
-          <a
+          <Link
             href="/video_extractor"
             className="hidden rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity hover:opacity-90 sm:inline-flex"
           >
             Start speaking
-          </a>
+          </Link>
         </div>
       </Container>
     </header>

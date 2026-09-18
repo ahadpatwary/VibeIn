@@ -20,7 +20,7 @@ export default function HomePage() {
   const isBusy = state.stage !== "idle" && state.stage !== "uploaded" && state.stage !== "error";
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-content flex-col px-6 sm:px-10">
+    <div className="mx-auto flex max-w-7xl min-h-screen max-w-content flex-col px-6 sm:px-10">
       <TopBar />
 
       <main className="flex flex-1 flex-col gap-10 py-14">

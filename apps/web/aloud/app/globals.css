@@ -6,33 +6,56 @@
   Design tokens — single source of truth for color.
   Format: HSL triplet without hsl(), so Tailwind can add alpha channels.
   To re-theme the whole product, edit only the values below.
+
+  Note: bg / surface / ink.primary / ink.secondary / border are aliased
+  directly onto background / surface / foreground / muted-foreground /
+  border (see tailwind.config.ts) because Project X's original hex values
+  converted to near-identical HSL — no need for duplicate variables.
+  Only genuinely new tokens (surface-raised, ink-muted, accent-strong,
+  success, danger) get their own variables below.
 */
 :root {
+  color-scheme: light;
+
   --background: 40 24% 97%;
   --surface: 0 0% 100%;
   --surface-2: 40 22% 94%;
+  --surface-raised: 40 20% 91%;
   --foreground: 222 24% 11%;
   --muted-foreground: 220 10% 40%;
+  --ink-muted: 220 8% 55%;
   --border: 220 15% 87%;
 
   --accent: 38 88% 50%;
+  --accent-strong: 34 90% 44%;
   --accent-foreground: 30 45% 12%;
   --mint: 160 45% 38%;
   --ring: 38 88% 50%;
+
+  --success: 174 55% 38%;
+  --danger: 8 70% 50%;
 }
 
 .dark {
+  color-scheme: dark;
+
   --background: 220 18% 7%;
   --surface: 220 16% 10%;
   --surface-2: 220 15% 13%;
+  --surface-raised: 220 15% 16%;
   --foreground: 210 25% 95%;
   --muted-foreground: 216 12% 64%;
+  --ink-muted: 217 11% 40%;
   --border: 220 13% 19%;
 
   --accent: 38 92% 58%;
+  --accent-strong: 34 88% 66%;
   --accent-foreground: 30 45% 10%;
   --mint: 160 55% 55%;
   --ring: 38 92% 58%;
+
+  --success: 174 59% 56%;
+  --danger: 8 77% 60%;
 }
 
 * {

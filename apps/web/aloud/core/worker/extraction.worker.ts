@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import { AudioTrackDemuxer, DemuxProgressEvent, DemuxResult } from "../extraction/AudioTrackDemuxer";
-import { TopLevelBoxScanner } from "../extraction/TopLevelBoxScanner";
+// import { TopLevelBoxScanner } from "../extraction/TopLevelBoxScanner";
 import { PipelineState } from "../pipeline/ExtractionPipeline";
 import { WorkerOutboundMessage } from "../pipeline/types";
 
@@ -25,8 +25,8 @@ async function handleStart(file: File, maxFileSizeBytes: number) {
     }
 
     currentController = new AbortController();
-    const boxScanner = new TopLevelBoxScanner(file);
-    const demuxer = new AudioTrackDemuxer(file, boxScanner);
+    // const boxScanner = new TopLevelBoxScanner(file);
+    const demuxer = new AudioTrackDemuxer(file);
 
     demuxer.on('progress', (data: DemuxProgressEvent) => post({
         stage: "extracting", 
