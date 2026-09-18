@@ -11,6 +11,7 @@ const links = [
 ];
 
 export function Navbar() {
+  
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between">
@@ -36,7 +37,7 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <ThemeToggle className="hidden sm:inline-flex" />
           <a
-            href="#start"
+            href="/video_extractor"
             className="hidden rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-background transition-opacity hover:opacity-90 sm:inline-flex"
           >
             Start speaking
