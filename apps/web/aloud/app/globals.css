@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Design tokens — single source of truth for color.
+  Format: HSL triplet without hsl(), so Tailwind can add alpha channels.
+  To re-theme the whole product, edit only the values below.
+*/
+:root {
+  --background: 40 24% 97%;
+  --surface: 0 0% 100%;
+  --surface-2: 40 22% 94%;
+  --foreground: 222 24% 11%;
+  --muted-foreground: 220 10% 40%;
+  --border: 220 15% 87%;
+
+  --accent: 38 88% 50%;
+  --accent-foreground: 30 45% 12%;
+  --mint: 160 45% 38%;
+  --ring: 38 88% 50%;
+}
+
+.dark {
+  --background: 220 18% 7%;
+  --surface: 220 16% 10%;
+  --surface-2: 220 15% 13%;
+  --foreground: 210 25% 95%;
+  --muted-foreground: 216 12% 64%;
+  --border: 220 13% 19%;
+
+  --accent: 38 92% 58%;
+  --accent-foreground: 30 45% 10%;
+  --mint: 160 55% 55%;
+  --ring: 38 92% 58%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "ss01" on, "cv01" on;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection {
+  background-color: hsl(var(--accent) / 0.28);
+  color: hsl(var(--foreground));
+}
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.bg-grain {
+  background-image: radial-gradient(hsl(var(--foreground) / 0.06) 0.6px, transparent 0.6px);
+  background-size: 14px 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
