@@ -9,7 +9,7 @@ import {
     MP4,
 } from "mediabunny";
 
-import { TopLevelBoxScanner } from "./TopLevelBoxScanner";
+// import { TopLevelBoxScanner } from "./TopLevelBoxScanner";
 import { DemuxError, NoAudioTrackError } from "../errors/ExtractionError";
 import { TypedEventEmitter } from "../events/Emitter";
 
@@ -99,7 +99,7 @@ export class AudioTrackDemuxer extends TypedEventEmitter<DemuxEvents> {
          * Mediabunny does not need the old TopLevelBoxScanner for normal
          * demuxing because BlobSource/Input handles container discovery.
          */
-        private readonly boxScanner?: TopLevelBoxScanner,
+        // private readonly boxScanner?: TopLevelBoxScanner,
     ) {
         super();
     }
