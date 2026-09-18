@@ -1,8 +1,8 @@
 'use client'
 
-import { AppError } from "@/core/errors/AppError";
+// import { AppError } from "@/core/errors/AppError";
 import { ExtractionPipeline, PipelineState } from "@/core/pipeline/ExtractionPipeline";
-import { PipelineResult, PipelineStage } from "@/core/pipeline/types"
+// import { PipelineResult, PipelineStage } from "@/core/pipeline/types"
 import { MAX_FILE_SIZE_BYTES } from "@/lib/constants";
 import { useCallback, useMemo, useRef, useState } from "react"
 
