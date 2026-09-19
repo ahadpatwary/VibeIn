@@ -18,7 +18,7 @@ export class RedisService {
         this.logger = factory.forModule('RedisModule');
     }
 
-    async commandWraper<T>(
+    async commandWraper<T>( 
         command: string,
         fn: (client: Redis) => Promise<T>,
     ): Promise<T> {

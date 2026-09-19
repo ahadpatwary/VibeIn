@@ -1,8 +1,9 @@
 {
-  "name": "@app/redis-client",
+  "name": "@app/rate-limiter",
   "version": "0.1.0",
   "description": "Type-safe ioredis wrapper with custom domain methods",
   "private": true,
+  "type": "module",
 
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -32,7 +33,7 @@
 
   "dependencies": {
     "@app/logger": "^1.0.0",
-    "ioredis": "5.8.0",
+    "@app/redis-client": "^0.1.0",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "zod": "^4.4.3"
@@ -45,9 +46,9 @@
   },
 
   "keywords": [
-    "redis",
-    "ioredis",
+    "rate-limiter",
     "typescript"
   ],
+  
   "license": "MIT"
 }

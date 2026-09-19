@@ -25,9 +25,11 @@
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "prune:deps": "node ./scripts/prune-deps.js"
+    "prune:deps": "node ./scripts/prune-deps.js",
+    "dev": "tsx watch packages/rate-limiter/src/container/container.ts"
   },
   "devDependencies": {
-    "depcheck": "^1.4.2"
+    "depcheck": "^1.4.2",
+    "tsx": "^4.23.13"
   }
 }

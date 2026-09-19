@@ -283,6 +283,8 @@ export class LuaHandler {
         try {
             const source = await this.#readScript(config.path);
 
+            console.log("source", source);
+
             const redis = await this.redisClient.getClient();
 
             const sha = await redis.script(

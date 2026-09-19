@@ -1,37 +1,37 @@
 import amqp from 'amqplib';
-// import { QueueConfigItemSchema } from './your-zod-schema-file.js'; // জোড স্কিমা পাথ
-// import { QueueRegistry } from './your-config-file.js'; // কনফিগারেশন পাথ
-
 import { RabbitMQConsumerStartException } from './exceptions/mq.exceptions.js';
 import { channelOptions, consumerSideMessageHearders } from './types/mq.types.js';
 import { ChannelRecoveryModule } from './mq.channelModule.js';
-
+import { ILogger, LoggerFactory } from '@app/logger';
 
 
 export abstract class BaseConsumer {
     protected config!: any;
     protected queueName!: string;
     protected channelOptions!: channelOptions;
-    protected channel!: amqp.ConfirmChannel; 
+    private channel!: amqp.Channel;
+    private readonly logger: ILogger;
+
 
     constructor(
-        protected channelModel: ChannelRecoveryModule,
-        protected readonly serviceId: string,
-    ) { }
+        protected readonly channelModel: ChannelRecoveryModule,
+        factory: LoggerFactory,
+        // protected readonly serviceId: string,
+    ) { 
+        this.logger = factory.forModule("MQ_MODULE");
+    }
 
     public async start(
+        queueName: string,
         channelOptions: channelOptions,
         consumerOptions: amqp.Options.Consume,
     ): Promise<void> {
 
         this.channelOptions = channelOptions;
+        this.queueName = queueName;
 
-        this.queueName = `consumer:${channelOptions.name}` || this.config.queueName;
+        this.channel = await this.channelModel.getChannel(channelOptions);
 
-        this.channel = await this.channelModel.getChannel(channelOptions); // get the consumer channel.
-
-
-        console.log(`Consumer started for queue: [${this.queueName}]`);
 
         const option: amqp.Options.Consume = {
             exclusive: false,
@@ -48,12 +48,12 @@ export abstract class BaseConsumer {
 
     public async stop(): Promise<void> {
         this.channelModel.closeChannel(this.queueName);
-        console.log(`Consumer stopped for queue: [${this.queueName}]`);
+        this.logger.info(`Consumer stopped for queue: [${this.queueName}]`);
         this.channel = null as unknown as amqp.ConfirmChannel;
     }
 
 
-    async #consumerEngine( msg: amqp.ConsumeMessage | null ): Promise<void> {
+    async #consumerEngine(msg: amqp.ConsumeMessage | null): Promise<void> {
 
         if (msg === null) return;
 
@@ -64,8 +64,12 @@ export abstract class BaseConsumer {
          * message processing time exceeded the limit, then we will reject the message and send it to DLQ or drop it.
         */
         if(lastProcessTime && (Date.now() - lastProcessTime) > 0) { 
-            console.error(`Message processing time exceeded for ID: ${this.config.id}`);
-            this.channel.nack(msg, false, false); // Reject the message and don't requeue it
+            this.logger.error(`Message processing time exceeded for ID: ${this.config.id}`);
+            /**
+             * last message processing time close.
+             * Reject the message and don't requeue it.
+             */
+            this.channel.nack(msg, false, false); 
             return;
         }
 
@@ -73,7 +77,7 @@ export abstract class BaseConsumer {
         try {
             const result = await this.processMessage(msg.content.toString());
 
-            console.log(
+            this.logger.info(
                 `Message processed successfully for ID: ${this.config.id}`,
             );
 
@@ -86,7 +90,7 @@ export abstract class BaseConsumer {
 
         } catch (error: any) {
             // If message processing failed or server cannot send the message to another queue,
-            console.error(
+            this.logger.error(
                 `Error parsing message in [${this.config.id}]:`,
                 error.message,
             );
@@ -102,11 +106,11 @@ export abstract class BaseConsumer {
 
         const headers: consumerSideMessageHearders = msg.properties.headers as consumerSideMessageHearders;
 
-        let currentRetryCount = headers['x-retry-count'] || 0;
+        let currentRetryCount: number = headers['x-retry-count'] || 0;
 
 
         if (headers['x-death'] && headers['x-death'].length > 0) {
-            currentRetryCount = headers['x-death'][0].count;
+            currentRetryCount = headers['x-death'][0]?.count ?? 0;
         }
 
         const maxRetryAllowed: number = headers['x-max-retry'] ?? this.config.retry?.maxRetry ?? 0;
@@ -114,10 +118,11 @@ export abstract class BaseConsumer {
         const isRetryable =
             (this.config.processType === 'RETRY' ||
                 this.config.processType === 'RETRY_DLX') &&
-            currentRetryCount < maxRetryAllowed;
+            currentRetryCount < maxRetryAllowed
+        ;
 
         if (isRetryable && this.config.retry) {
-            console.log(
+            this.logger.info(
                 `🔄 Message is retryable. Count: [${currentRetryCount + 1}/${maxRetryAllowed}]. Pushing to Retry Chain...`,
             );
 
@@ -137,17 +142,17 @@ export abstract class BaseConsumer {
 
             this.channel.ack(msg);
         } else {
-            console.log(
+            this.logger.info(
                 `⚠️ Max retries reached or process not retryable. Evaluating Dead-Letter/Drop Policy...`,
             );
 
             if (this.config.DLQ === null) {
-                console.log(
+                this.logger.info(
                     ` DLQ is null for [${this.config.id}]. Rejecting message via NACK (Requeue: false) -> Message DROPPED.`,
                 );
                 this.channel.nack(msg, false, false);
             } else {
-                console.log(
+                this.logger.info(
                     `💀 DLQ exists. Escalating to DLX Exchange: [${this.config.DLQ.dlx_exchange}] via NACK.`,
                 );
                 this.channel.nack(msg, false, false);
@@ -169,3 +174,28 @@ export abstract class BaseConsumer {
      */
     protected abstract processMessage(msg: JSON | string): Promise<any>;
 }
+
+
+/** 
+@injectable()
+export class Consumer extends BaseConsumer {
+
+
+    constructor(        
+        @inject(MQ_TOKENS.Channel)
+        protected readonly channelModel: ChannelRecoveryModule,
+        @inject(MQ_TOKENS.Logger) factory: LoggerFactory,
+    ) {
+        super(channelModel, factory)
+    }
+
+    protected async sendAnotherQueue(
+        msg: amqp.ConsumeMessage,
+        result: unknown
+    ): Promise<void> { }
+
+    protected async processMessage(msg: JSON | string): Promise<any> {
+        
+    }
+}
+*/

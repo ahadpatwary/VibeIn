@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "Production ready rabbitmq custom package",
+
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -13,10 +15,12 @@
       "require": "./dist/index.js"
     }
   },
+
   "scripts": {
     "build": "tsup",
     "buildtsc": "tsc -p tsconfig.json"
   },
+
   "dependencies": {
     "@app/logger": "^1.0.0",
     "amqplib": "^2.0.1",
@@ -25,6 +29,9 @@
     "uuid": "^14.0.2",
     "zod": "^4.4.3"
   },
+
+  "peerDependencies": {},
+  
   "devDependencies": {
     "@types/node": "^22.10.7",
     "typescript": "^5.7.3"

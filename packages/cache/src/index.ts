@@ -1,6 +1,6 @@
 // Main service
 export { RedisService } from './redis.service';
-
+export { LuaHandler } from './luaHandler'
 
 // Config
 // export { RedisConfigBuilder, createRedisConfig } from './config/redis.config.js';

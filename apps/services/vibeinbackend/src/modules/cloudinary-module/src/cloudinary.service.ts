@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { v2 as CloudinaryClient, UploadApiResponse } from 'cloudinary';
 import { CLOUDINARY_CLIENT, CLOUDINARY_MODULE_OPTIONS } from './constants/cloudinary.constants';
-import { CloudinaryModuleOptions } from './interfaces/cloudinary-module-options.interface';
+import { type CloudinaryModuleOptions } from './interfaces/cloudinary-module-options.interface';
 import {
   CloudinaryAssetResult,
   PresignedUploadParams,
