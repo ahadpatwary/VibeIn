@@ -2,9 +2,6 @@ import {
   RateLimiterOptions,
   RateLimitDecision,
   RouteConfigWithKeyspace,
-  IAlgorithmEngine,
-  BanStatus,
-  ViolationStatus,
   RateLimitAlgorithm,
   RouteConfig,
   RateLimitResult,
@@ -19,8 +16,6 @@ import { DEFAULT_ALGORITHM } from './constants/constant';
 
 @injectable()
 export class RateLimiter {
-  // private _engines: Map<RateLimitAlgorithm, IAlgorithmEngine>;
-  private _penalizeSha: string | null = null;
   private _initialized: boolean = false;
   private readonly logger: ILogger;
 
@@ -67,7 +62,7 @@ export class RateLimiter {
        * -> No limitation
        * -> For admin and others official
        */
-      const whitelisted = await this._isWhitelisted(identifier);
+      const whitelisted = await this.redisService.isWhitelisted(identifier);
       if (whitelisted) {
         return this._makeDecision(true, identifier, {
           allowed: true,
@@ -86,7 +81,7 @@ export class RateLimiter {
        * -> user has been blocked
        * -> user can't access resourch without reset
        */
-      const blacklisted = await this._isBlacklisted(identifier);
+      const blacklisted = await this.redisService.isBlacklisted(identifier);
       if (blacklisted) {
         return this._makeDecision(
           false,
@@ -111,7 +106,7 @@ export class RateLimiter {
        * -> After ttl user can access the resourch automatically
        */
       if (this.globalOptions.enablePenalty) {
-        const ban = await this._checkBan(namespacedId);
+        const ban = await this.redisService.checkBan(namespacedId);
         if (ban.banned) {
           return this._makeDecision(
             false,
@@ -137,7 +132,10 @@ export class RateLimiter {
       );
 
       if (!result.allowed && this.globalOptions.enablePenalty) {
-        await this._incrementViolation(namespacedId);
+        await this.redisService.incrementViolation(
+          namespacedId, 
+          this.globalOptions.penaltyThreshold
+        );
       }
 
       return this._makeDecision(result.allowed, identifier, result, routeConfig);
@@ -327,8 +325,8 @@ export class RateLimiter {
     const [allowed, remaining, retrySecs] = await this.redisService.luaExecute<
       [allowed: number, remaining: number, retrySecs: number]
       >(
-        'token-bucket',
-        [key],
+        'token-bucket',    
+        [key], 
         [  
           String(capacity),
           String(refillRate),
@@ -351,150 +349,6 @@ export class RateLimiter {
       count: limit - remaining,
       algorithm: 'token-bucket',
     };
-  }
-
-  /**
-   * Add identifier to whitelist (bypass all rate limits)
-   */
-  // async whitelist(identifier: string, ttlSecs: number | null = null): Promise<void> {
-  //   if (ttlSecs) {
-  //     await this._redis.set(`${WHITELIST_KEY}:${identifier}`, '1', 'EX', ttlSecs);
-  //   } else {
-  //     await this._redis.sadd(WHITELIST_KEY, identifier);
-  //   }
-  // }
-
-  /**
-   * Remove identifier from whitelist
-   */
-  // async unwhitelist(identifier: string): Promise<void> {
-  //   await Promise.all([
-  //     this._redis.srem(WHITELIST_KEY, identifier),
-  //     this._redis.del(`${WHITELIST_KEY}:${identifier}`),
-  //   ]);
-  // }
-
-  /**
-   * Permanently block an identifier
-   */
-  // async blacklist(identifier: string, ttlSecs: number | null = null): Promise<void> {
-  //   if (ttlSecs) {
-  //     await this._redis.set(`${BLACKLIST_KEY}:${identifier}`, '1', 'EX', ttlSecs);
-  //   } else {
-  //     await this._redis.sadd(BLACKLIST_KEY, identifier);
-  //   }
-  // }
-
-  /**
-   * Remove identifier from blacklist
-   */
-  // async unblacklist(identifier: string): Promise<void> {
-  //   await Promise.all([
-  //     this._redis.srem(BLACKLIST_KEY, identifier),
-  //     this._redis.del(`${BLACKLIST_KEY}:${identifier}`),
-  //   ]);
-  // }
-
-  /**
-   * Reset all rate limit counters for an identifier + keyspace
-   */
-  async reset(identifier: string, keyspace: string | null = null): Promise<void> {
-    const pattern = keyspace
-      ? `rl:*:${keyspace}:${identifier}:*`
-      : `rl:*:${identifier}:*`;
-    const keys = await this._redis.keys(pattern);
-    if (keys.length) await this._redis.del(...keys);
-
-    // Also clear penalties
-    await this._redis.del(
-      `${PENALTY_KEY_PREFIX}:violations:${identifier}`,
-      `${PENALTY_KEY_PREFIX}:ban:${identifier}`
-    );
-  }
-
-  /**
-   * Get current violation + ban status for an identifier
-   */
-  async getStatus(
-    identifier: string,
-    keyspace: string | null = null
-  ): Promise<ViolationStatus> {
-    const namespacedId = keyspace ? `${keyspace}:${identifier}` : identifier;
-
-    const [violations, banTTL, whitelisted, blacklisted] = await Promise.all([
-      this._redis.get(`${PENALTY_KEY_PREFIX}:violations:${namespacedId}`),
-      this._redis.ttl(`${PENALTY_KEY_PREFIX}:ban:${namespacedId}`),
-      this._isWhitelisted(identifier),
-      this._isBlacklisted(identifier),
-    ]);
-
-    return {
-      identifier,
-      violations: parseInt(violations ?? '0', 10),
-      banned: banTTL > 0,
-      banTTL: banTTL > 0 ? banTTL : 0,
-      whitelisted,
-      blacklisted,
-    };
-  }
-
-  // ── Private Helpers ───────────────────────────────────────────
-
-  private async _isWhitelisted(id: string): Promise<boolean> {
-    const [inSet, withTTL] = await Promise.all([
-      this._redis.sismember(WHITELIST_KEY, id),
-      this._redis.exists(`${WHITELIST_KEY}:${id}`),
-    ]);
-    return inSet === 1 || withTTL === 1;
-  }
-
-  private async _isBlacklisted(id: string): Promise<boolean> {
-    const [inSet, withTTL] = await Promise.all([
-      this._redis.sismember(BLACKLIST_KEY, id),
-      this._redis.exists(`${BLACKLIST_KEY}:${id}`),
-    ]);
-    return inSet === 1 || withTTL === 1;
-  }
-
-  private async _checkBan(namespacedId: string): Promise<BanStatus> {
-    const banKey = `${PENALTY_KEY_PREFIX}:ban:${namespacedId}`;
-    const ttl = await this._redis.ttl(banKey);
-    return { banned: ttl > 0, ttl };
-  }
-
-  private async _incrementViolation(namespacedId: string): Promise<void> {
-    const violKey = `${PENALTY_KEY_PREFIX}:violations:${namespacedId}`;
-    const banKey = `${PENALTY_KEY_PREFIX}:ban:${namespacedId}`;
-
-    const violations = parseInt((await this._redis.get(violKey)) ?? '0', 10);
-
-    if (violations >= this._opts.penaltyThreshold) {
-      try {
-        await this._redis.evalsha(
-          this._penalizeSha!,
-          2,
-          violKey,
-          banKey,
-          ...PENALTY_TIERS.map(String)
-        );
-      } catch (err: any) {
-        if (err.message?.includes('NOSCRIPT')) {
-          await this._redis.eval(
-            LUA_PENALIZE,
-            2,
-            violKey,
-            banKey,
-            ...PENALTY_TIERS.map(String)
-          );
-          this._penalizeSha = await this._redis.script('LOAD', LUA_PENALIZE) as string || null;
-        } else {
-          throw err;
-        }
-      }
-    } else {
-      await this._redis.incr(violKey);
-      await this._redis.expire(violKey, 86400 * 7);
-    }
   }
 
   private _makeDecision(

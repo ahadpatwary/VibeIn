@@ -1,21 +1,21 @@
 import { ILogger, LoggerFactory } from "@app/logger";
-import { LuaHandler, RedisService, ScriptLoaderConfig } from "@app/redis-client";
+import {
+    LuaHandler, 
+    RedisCommandException, 
+    RedisService, 
+    ScriptLoaderConfig 
+} from "@app/redis-client";
+import {
+    BLACKLIST_KEY, 
+    PENALTY_KEY_PREFIX, 
+    PENALTY_TIERS, 
+    WHITELIST_KEY 
+} from "../constants/constant";
 import { inject, injectable } from "tsyringe";
 import { RATE_LIMIT_TOKENS } from "../token/token";
-import { FixedWindowCounter } from "../../../../outside/algorithms/fixed-window";
-import { SlidingWindowCounter } from "../../../../outside/algorithms/sliding-window";
-import { TokenBucket } from "../../../../outside/algorithms/token-bucket";
-import { LeakyBucket } from "../../../../outside/algorithms/leaky-bucket";
-import { IAlgorithmEngine, RateLimitAlgorithm } from "../types/types";
+import { BanStatus, ViolationStatus } from "../types/types";
 
 
-const DEFAULT_ALGORITHM: RateLimitAlgorithm = 'sliding-window';
-const PENALTY_KEY_PREFIX = 'rl:penalty';
-const BLACKLIST_KEY = 'rl:blacklist';
-const WHITELIST_KEY = 'rl:whitelist';
-
-// Penalty: exponential backoff ban durations (seconds)
-const PENALTY_TIERS: readonly number[] = [60, 300, 1800, 86400]; // 1m, 5m, 30m, 24h
 
 @injectable()
 export class StoreService {
@@ -115,39 +115,142 @@ export class StoreService {
         ? `rl:*:${keyspace}:${identifier}:*`
         : `rl:*:${identifier}:*`;
 
-        //TODO: total query same lua script
-        // const keys = await this._redis.keys(pattern);
-        // if (keys.length) await this._redis.del(...keys);
+        const LUA_RESET_BLOCK = `
+            local pattern = ARGV[1]
+            
+            local keys = redis.call('KEYS', pattern)
 
-        // // Also clear penalties
-        // await this._redis.del(
-        //     `${PENALTY_KEY_PREFIX}:violations:${identifier}`,
-        //     `${PENALTY_KEY_PREFIX}:ban:${identifier}`
-        // );
+            if #keys > 0 then
+                redis.call('DEL', unpack(keys))
+            end
+
+            redis.call('DEL', KEYS[1], KEYS[2])
+
+            return #keys
+        `
+
+        await this.redisService.commandWraper('EVAL', async (client) => {
+            client.eval(
+                LUA_RESET_BLOCK,
+                2,
+                `${PENALTY_KEY_PREFIX}:violations:${identifier}`,
+                `${PENALTY_KEY_PREFIX}:ban:${identifier}`,
+                pattern,
+            )
+        })
     }
 
     async isWhitelisted(id: string): Promise<boolean> {
-        const [inSet, withTTL] = await Promise.all([
-            this._redis.sismember(WHITELIST_KEY, id),
-            this._redis.exists(`${WHITELIST_KEY}:${id}`),
-        ]);
+ 
+        const { results, errors } = await this.redisService.pipeline((pipe) => {
+            pipe.sismember(WHITELIST_KEY, id);
+            pipe.exists(`${WHITELIST_KEY}:${id}`);
+        })
+
+        if (errors.length > 0) {
+            throw new RedisCommandException('PIPELINE', errors[0]);
+        }
+        
+        const inSet = results[0]?.[1];
+        const withTTL = results[1]?.[1];
+
         return inSet === 1 || withTTL === 1;
+
     }
 
     async isBlacklisted(id: string): Promise<boolean> {
-        const [inSet, withTTL] = await Promise.all([
-            this._redis.sismember(BLACKLIST_KEY, id),
-            this._redis.exists(`${BLACKLIST_KEY}:${id}`),
-        ]);
+
+        const { results, errors } = await this.redisService.pipeline((pipe) => {
+            pipe.sismember(BLACKLIST_KEY, id);
+            pipe.exists(`${BLACKLIST_KEY}:${id}`);
+        })
+
+        if (errors.length > 0) {
+            throw new RedisCommandException('PIPELINE', errors[0]);
+        }
+        
+        const inSet = results[0]?.[1];
+        const withTTL = results[1]?.[1];
+
         return inSet === 1 || withTTL === 1;
     }
 
     async checkBan(namespacedId: string): Promise<BanStatus> {
         const banKey = `${PENALTY_KEY_PREFIX}:ban:${namespacedId}`;
-        const ttl = await this._redis.ttl(banKey);
+        const ttl = await this.redisService.commandWraper<number>('TTL', async (client) => {
+            return client.ttl(banKey);
+        })
         return { banned: ttl > 0, ttl };
     }
 
+    async incrementViolation(namespacedId: string, penaltyThreshold: number): Promise<void> {
+        const violKey = `${PENALTY_KEY_PREFIX}:violations:${namespacedId}`;
+        const banKey = `${PENALTY_KEY_PREFIX}:ban:${namespacedId}`;
 
+        this.luaExecute(
+            'panaly-check', 
+            [violKey, banKey], 
+            [
+                String(penaltyThreshold),
+                String(86400 * 7),
+                ...PENALTY_TIERS.map(String),
+            ]
+        )
+    }
 
+    /**
+     * Get current violation + ban status for an identifier
+     */
+    async getStatus(
+        identifier: string,
+        keyspace: string | null = null,
+    ): Promise<ViolationStatus> {
+        const namespacedId = keyspace
+            ? `${keyspace}:${identifier}`
+            : identifier;
+
+        const { results, errors } = await this.redisService.pipeline((pipe) => {
+            pipe.get(
+                `${PENALTY_KEY_PREFIX}:violations:${namespacedId}`,
+            );
+
+            pipe.ttl(
+                `${PENALTY_KEY_PREFIX}:ban:${namespacedId}`,
+            );
+
+            pipe.sismember(WHITELIST_KEY, namespacedId);
+            pipe.exists(`${WHITELIST_KEY}:${namespacedId}`);
+
+            pipe.sismember(BLACKLIST_KEY, namespacedId);
+            pipe.exists(`${BLACKLIST_KEY}:${namespacedId}`);
+        });
+
+        if (errors.length > 0) {
+            throw new RedisCommandException('PIPELINE', errors[0]);
+        }
+
+        const violations = Number(results[0]?.[1] ?? 0);
+        const banTTL = Number(results[1]?.[1] ?? -2);
+
+        const whitelistInSet = results[2]?.[1];
+        const whitelistWithTTL = results[3]?.[1];
+
+        const blacklistInSet = results[4]?.[1];
+        const blacklistWithTTL = results[5]?.[1];
+
+        const whitelisted =
+            whitelistInSet === 1 || whitelistWithTTL === 1;
+
+        const blacklisted =
+            blacklistInSet === 1 || blacklistWithTTL === 1;
+
+        return {
+            identifier,
+            violations,
+            banned: banTTL > 0,
+            banTTL: banTTL > 0 ? banTTL : 0,
+            whitelisted,
+            blacklisted,
+        };
+    }
 }
