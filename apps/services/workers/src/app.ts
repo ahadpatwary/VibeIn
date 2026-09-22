@@ -7,7 +7,7 @@ app.use(express.json());
 app.get('/', (_req, res) => {
     res.status(200).json({
         success: true,
-        message: 'Worker server is running 🚀',
+        message: 'Worker server is running🚀',
     });
 });
 
