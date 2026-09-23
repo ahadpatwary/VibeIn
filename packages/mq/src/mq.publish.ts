@@ -3,8 +3,7 @@ import { MessageSerializer } from './utils/mq.serializer.js';
 import { v4 as uuidv4 } from 'uuid';
 import { RabbitMQPublishException } from './exceptions/mq.exceptions.js';
 import { inject, injectable } from 'tsyringe';
-import { ILogger, LoggerFactory } from '@app/logger';
-import { MQ_TOKENS } from './tokens/tokens.js';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 
 
@@ -12,7 +11,7 @@ import { MQ_TOKENS } from './tokens/tokens.js';
 export class PublishService {
     private readonly logger: ILogger;
 
-    constructor(@inject(MQ_TOKENS.Logger) factory: LoggerFactory) {
+    constructor(@inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory) {
         this.logger = factory.forModule("RABBITMQ_MODULE");
     }
 

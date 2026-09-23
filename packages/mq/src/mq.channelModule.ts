@@ -4,7 +4,7 @@ import { channelOptions } from './types/mq.types.js';
 import { inject, injectable, singleton } from 'tsyringe';
 import { RabbitMqConnection } from './mq.connection.js';
 import { MQ_TOKENS } from './tokens/tokens.js';
-import { ILogger, LoggerFactory } from '@app/logger';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 
 
@@ -17,7 +17,7 @@ export class ChannelRecoveryModule {
     constructor(
         @inject(MQ_TOKENS.RabbitMqConnection)
         private client: RabbitMqConnection,
-        @inject(MQ_TOKENS.Logger) factory: LoggerFactory,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
         this.logger = factory.forModule("RABBITMQ_MODULE")
     }

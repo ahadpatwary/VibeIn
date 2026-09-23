@@ -1,4 +1,4 @@
-import amqp, { Options, Replies } from 'amqplib';
+import { Options, Replies } from 'amqplib';
 import {
     RabbitMQBindingException,
     RabbitMQChannelCreationException,
@@ -11,7 +11,7 @@ import {
     RTAssertQueueOptionsForMain,
 } from './types/mq.types.js';
 import { inject, injectable } from 'tsyringe';
-import { ILogger, LoggerFactory } from '@app/logger';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 import { MQ_TOKENS } from './tokens/tokens.js';
 import { ChannelRecoveryModule } from './mq.channelModule.js';
 
@@ -24,7 +24,7 @@ export class QueueInit {
     constructor(
         @inject(MQ_TOKENS.Channel)
         private readonly channel: ChannelRecoveryModule,
-        @inject(MQ_TOKENS.Logger) factory: LoggerFactory,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
         this.logger = factory.forModule("RABBITMQ_MODULE");
     }

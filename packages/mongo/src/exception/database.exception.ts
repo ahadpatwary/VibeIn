@@ -15,7 +15,7 @@ export abstract class DatabaseException extends Error {
   abstract readonly httpStatus: number;
   readonly isOperational = true;
   readonly cause?: unknown;
-  readonly meta?: Record<string, unknown>;
+  readonly meta?: Record<string, unknown> | undefined;
 
   constructor(message: string, cause?: unknown, meta?: Record<string, unknown>) {
     super(message);

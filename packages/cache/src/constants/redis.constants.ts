@@ -1,3 +1,15 @@
+import { RedisConfig } from "../types/redis.types";
+
+export const REDIS_CONFIG: Partial<RedisConfig> = {
+    db: 0,
+    keyPrefix: 'app',
+    connectTimeout: 10_000, //10 seconds
+    commandTimeout: 5_000, //5 seconds
+    maxRetriesPerRequest: 3,
+    keepAlive: 10_000,
+    lazyConnect: true,
+}
+
 export const REDIS_CONSTANTS = {
     DEFAULT_HOST: 'localhost',
     DEFAULT_PORT: 6379,

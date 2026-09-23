@@ -1,4 +1,4 @@
-import { SoftDeletable } from '../../plugins/base.plugin';
+import { SoftDeletable } from '../../../plugins/base.plugin';
 import { UserRole, UserStatus } from '../constants/user.constant';
 // import type { SoftDeletable } from '../plugins/base.plugin';
 import {

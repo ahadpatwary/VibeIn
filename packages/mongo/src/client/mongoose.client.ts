@@ -10,7 +10,7 @@ import {
 } from '../exception/database.exception';
 import { withRetry } from '../util/retry.util';
 import { MONGOOSE_CONNECTION_EVENTS } from '../constants/db.constants';
-import { ILogger, LoggerFactory } from '@app/logger';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 
 
@@ -23,7 +23,7 @@ export class MongooseClient {
 
   constructor(
     @inject(DB_TOKENS.DatabaseConnOpt) private readonly databaseConnOpt: DatabaseConnOpt,
-    @inject(DB_TOKENS.Logger) factory: LoggerFactory,
+    @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
   ) {
     this.logger = factory.forModule("DATABASE_MODULE");
   }

@@ -403,29 +403,3 @@ UserSchema.index(
 //     );
 //   },
 // );
-
-/*
-|--------------------------------------------------------------------------
-| Model
-|--------------------------------------------------------------------------
-*/
-
-// export const UserModel: Model<IUser> =
-//   model<IUser>('User', UserSchema);
-
-
-
-
-
-
-// applyBasePlugin(userSchema);
-
-// /**
-//  * Models must be bound to a specific mongoose Connection (the one
-//  * MongooseClient establishes via mongoose.createConnection) rather than the
-//  * global mongoose singleton — this keeps multi-connection / multi-tenant
-//  * setups safe and avoids "model already compiled" errors across services.
-//  */
-export function createUserModel(connection: Connection): Model<UserDocument> {
-  return (connection.models.User as Model<UserDocument>) ?? connection.model<IUser>('User', UserSchema);
-}

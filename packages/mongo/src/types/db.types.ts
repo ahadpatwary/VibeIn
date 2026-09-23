@@ -19,7 +19,7 @@ export interface DatabaseConnOpt extends ConnectOptions {
   dbName: string;
   maxPoolSize: number;
   minPoolSize: number;
-  serverSelectionTimeoutMS: number;
+  serverSelectionTimeoutMS?: number;
   socketTimeoutMS?: number;
   connectTimeoutMS?: number;
   heartbeatFrequencyMS?: number;
@@ -29,6 +29,11 @@ export interface DatabaseConnOpt extends ConnectOptions {
   autoIndex?: boolean;
 }
 
+
+export interface DatabaseConfig {
+  uri: string,
+  connOption: DatabaseConnOpt,
+}
 
 export interface PaginationOptions {
   page?: number;

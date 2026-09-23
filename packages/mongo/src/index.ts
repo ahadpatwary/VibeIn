@@ -7,4 +7,4 @@ export * from './tokens/db.tokens';
 export * from './types/db.types';
 export * from './util/retry.util';
 export * from './client/mongoose.client';
-export * from './repository/base.repository';
+// export * from './repository/base.repository';

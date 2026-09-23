@@ -1,5 +1,6 @@
 import z from 'zod'
 import { RedisConfig } from '../types/redis.types';
+import { REDIS_CONFIG, REDIS_CONSTANTS } from '../constants/redis.constants';
 
 const RedisConfigSchema = z.object({
     host: z.string().trim().min(1, 'Host name is required!'),
@@ -8,22 +9,22 @@ const RedisConfigSchema = z.object({
             return `port: ${port} is invalid. Port should be between 1 to 65535`;
         }
     })
-})
+}).passthrough();
 
 let cachedConfig: RedisConfig | null = null;
 
 
-export function loadRedisConfig(env: NodeJS.ProcessEnv = process.env): RedisConfig {
+export function loadRedisConfig(cfg: RedisConfig): RedisConfig {
     if(cachedConfig) return cachedConfig;
 
-    const parsed = RedisConfigSchema.safeParse(env);
+    const parsed = RedisConfigSchema.safeParse(cfg);
 
     if (!parsed.success) {
         throw new Error(`Invalid Redis configuration: ${parsed.error.toString()}`);
     }
 
     cachedConfig = {
-        ...env,
+        ...REDIS_CONFIG,
         ...parsed.data,
     }
 

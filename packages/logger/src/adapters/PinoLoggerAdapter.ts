@@ -1,9 +1,6 @@
 import pino, { type Logger as PinoInstance } from "pino";
 import { injectable } from "tsyringe";
-import type { ILogger, LogMeta } from "../types/types";
-import type { LoggerConfig } from "../config/config";
-import { buildTransport } from "../util/transports";
-import { buildRedactPaths } from "../util/redaction";
+import type { ILogger, LogMeta, PinoConfig } from "../types/types";
 import { getRequestContext } from "../context";
 
 /**
@@ -24,37 +21,14 @@ import { getRequestContext } from "../context";
 export class PinoLoggerAdapter implements ILogger {
   private readonly pino: PinoInstance;
 
-  constructor(configOrInstance: LoggerConfig | PinoInstance) {
+  constructor(configOrInstance: PinoConfig | PinoInstance) {
     this.pino = isPinoInstance(configOrInstance)
       ? configOrInstance
       : PinoLoggerAdapter.createRootInstance(configOrInstance);
   }
 
-  private static createRootInstance(cfg: LoggerConfig): PinoInstance {
-    return pino({
-      level: cfg.LOG_LEVEL,
-      base: {
-        service: cfg.SERVICE_NAME,
-        env: cfg.NODE_ENV,
-        version: cfg.APP_VERSION,
-        pid: process.pid,
-      },
-      timestamp: pino.stdTimeFunctions.isoTime,
-      redact: {
-        paths: buildRedactPaths(cfg.LOG_REDACT_PATHS),
-        censor: "[REDACTED]",
-      },
-      formatters: {
-        // Keep level as a string ("info") instead of pino's default
-        // numeric level — massively improves readability in raw
-        // NDJSON log viewers (CloudWatch, Loki, etc).
-        level: (label) => ({ level: label }),
-      },
-      serializers: {
-        err: pino.stdSerializers.err,
-      },
-      transport: buildTransport(cfg),
-    });
+  private static createRootInstance(cfg: PinoConfig): PinoInstance {
+    return pino(cfg);
   }
 
   #mergedMeta(meta?: LogMeta): LogMeta {

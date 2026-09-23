@@ -1,9 +1,9 @@
 import { container, type DependencyContainer } from "tsyringe";
 import { LOGGER_TOKENS } from "../tokens/tokens";
-import { loadLoggerConfig, type LoggerConfig } from "../config/config";
+import { loadLoggerConfig } from "../config/config";
 import { PinoLoggerAdapter } from "../adapters/PinoLoggerAdapter";
 import { LoggerFactory } from "../LoggerFactory";
-import type { ILogger } from "../types/types";
+import type { ILogger, PinoConfig } from "../types/types";
 
 /**
  * container.ts
@@ -18,11 +18,12 @@ import type { ILogger } from "../types/types";
  */
 export function registerLogger(
   targetContainer: DependencyContainer = container,
-  config?: LoggerConfig
+  pinoConfig: PinoConfig,
 ): void {
-  const cfg = config ?? loadLoggerConfig();
+  const cfg = loadLoggerConfig(pinoConfig);
 
-  targetContainer.registerInstance<LoggerConfig>(LOGGER_TOKENS.LoggerConfig, cfg);
+
+  targetContainer.registerInstance<PinoConfig>(LOGGER_TOKENS.LoggerConfig, pinoConfig);
 
   // Root logger is a true singleton: one Pino instance, one set of
   // open file/stdout handles, for the lifetime of the process.

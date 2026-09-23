@@ -1,19 +1,10 @@
-import 'reflect-metadata';
 import { container, DependencyContainer } from 'tsyringe';
 import { DB_TOKENS } from '../tokens/db.tokens';
 import { MongooseClient } from '../client/mongoose.client';
 import { parseDatabaseConfig } from '../config/database.config';
-import type { DatabaseConnOpt } from '../types/db.types';
-import { ILogger } from '@app/logger';
+import type { DatabaseConfig, DatabaseConnOpt } from '../types/db.types';
 
-export interface RegisterDatabaseModuleOptions {
-  /** Raw config object; validated internally against databaseConfigSchema (Zod). */
-  config: unknown;
-  /** Optional custom logger. Defaults to ConsoleLogger. */
-  logger?: ILogger;
-  /** Optional tsyringe child container. Defaults to the root container. */
-  childContainer?: DependencyContainer;
-}
+
 
 /**
  * Registers the database module (config, logger, MongooseClient) into a
@@ -24,15 +15,22 @@ export interface RegisterDatabaseModuleOptions {
  *   const client = dbContainer.resolve(MongooseClient);
  *   await client.connect();
  */
-export function registerDatabaseModule(options: RegisterDatabaseModuleOptions): DependencyContainer {
-  const target = options.childContainer ?? container;
-  const parsedConfig: DatabaseConfig = parseDatabaseConfig(options.config);
+export function registerDatabaseModule(
+  targetContainer: DependencyContainer = container,
+  config: DatabaseConfig, 
+): DependencyContainer {
 
-  target.register<DatabaseConnOpt>(DB_TOKENS.DatabaseConnOpt, { useValue: parsedConfig });
-  target.register<Logger>(DB_TOKENS.Logger, { useValue: options.logger ?? new ConsoleLogger() });
-  target.registerSingleton(MongooseClient);
+  const parsedConfig: DatabaseConfig = parseDatabaseConfig(config);
 
-  return target;
+  targetContainer.register<DatabaseConnOpt>(
+    DB_TOKENS.DatabaseConnOpt,
+    { useValue: parsedConfig.connOption })
+  ;
+
+  targetContainer.registerSingleton(MongooseClient);
+
+
+  return targetContainer;
 }
 
 export { container as rootContainer };

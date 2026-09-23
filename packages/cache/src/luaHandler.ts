@@ -39,7 +39,7 @@ export class LuaHandler {
     constructor(
         @inject(REDIS_TOKENS.RedisClientManager)
         private readonly redisClient: RedisClientManager,
-        @inject(REDIS_TOKENS.Logger) factory: LoggerFactory,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
         this.logger = factory.forModule("RedisModule");
     }

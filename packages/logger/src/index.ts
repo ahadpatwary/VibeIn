@@ -1,10 +1,15 @@
 export { LOGGER_TOKENS } from "./tokens/tokens";
 
 export { loadLoggerConfig } from "./config/config";
-export type { LoggerConfig } from "./config/config";
 export { LogLevel } from "./types/types";
 
-export type { ILogger, LogMeta, RequestContext, LoggerBaseContext } from "./types/types";
+export type {
+    ILogger,
+    LogMeta, 
+    RequestContext, 
+    LoggerBaseContext, 
+    PinoConfig 
+} from "./types/types";
 
 
 export {

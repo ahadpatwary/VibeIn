@@ -41,12 +41,11 @@ export function Retryable(options: Partial<RetryOptions> = {}) {
   return function (_target: unknown, _propertyKey: string, descriptor: PropertyDescriptor) {
     const original = descriptor.value;
     descriptor.value = async function (this: unknown, ...args: unknown[]) {
-      return withRetry(() => original.apply(this, args), {
-        attempts: options.attempts ?? 3,
-        baseDelayMs: options.baseDelayMs ?? 200,
-        maxDelayMs: options.maxDelayMs ?? 5000,
-        onRetry: options.onRetry,
-        isRetryable: options.isRetryable,
+      //TODO: we have to change there
+      return withRetry(() => original.apply(this, args), {  
+        attempts: 3,
+        baseDelayMs: 3000,
+        maxDelayMs: 3000,
       });
     };
     return descriptor;

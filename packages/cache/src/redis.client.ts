@@ -23,24 +23,6 @@ export class RedisClientManager {
         this.logger = factory.forModule('RedisModule');
 
         const options: RedisConfig = {
-            // host: config.host,
-            // port: config.port,
-            // username: 'username',
-            // password: config.password ?? "017164",
-            // db: config.db ?? 111111,
-            // keyPrefix: config.keyPrefix ?? 'app',
-            // connectTimeout: config.connectTimeout ?? 3000,
-            // commandTimeout: config.commandTimeout ?? 3000,
-            // maxRetriesPerRequest: config.maxRetriesPerRequest ?? 3,
-            // enableReadyCheck: config.enableReadyCheck ?? true,
-            // lazyConnect: config.lazyConnect ?? true,
-            // keepAlive: config.keepAlive ?? 6000,
-            // family: config.family,
-
-            // retryStrategy:
-            //     config.retryStrategy ??
-            //     this.#defaultRetryStrategy.bind(this),
-            // ...(config.tls ? { tls: {} } : {}),
             ...config,
             retryStrategy: config.retryStrategy ?? this.#defaultRetryStrategy.bind(this),
         };

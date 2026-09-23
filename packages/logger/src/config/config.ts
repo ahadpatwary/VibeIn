@@ -1,61 +1,20 @@
-import { z } from "zod";
-import { LogLevel } from "../types/types";
+// import { z } from "zod";
+import {  PinoConfig } from "../types/types";
+import { pinoConstConfig } from "../constant/constant";
 
 
 
-const LoggerConfigSchema = z.object({
-  SERVICE_NAME: z.string().min(1, "SERVICE_NAME is required"),
-  NODE_ENV: z.enum(["development", "test", "staging", "production"]).default("development"),
-  APP_VERSION: z.string().optional(),
+let cachedConfig: PinoConfig | null = null;
 
-  LOG_LEVEL: z.nativeEnum(LogLevel).default(LogLevel.INFO),
-
-  // Pretty-print to stdout (dev only — never in prod, it's slow and
-  // not machine-parseable). Auto-forced off when NODE_ENV=production.
-  LOG_PRETTY: z
-    .string()
-    .optional()
-    .transform((v) => v === "true")
-  ,
-
-  // File transport (rotating). Leave unset to log to stdout only
-  // (recommended when your infra ships stdout to a log collector —
-  // Loki/CloudWatch/ELK — which is the standard production pattern).
-  LOG_DIR: z.string().optional(),
-  LOG_FILE_NAME: z.string().default("app.log"),
-  LOG_MAX_SIZE_MB: z.coerce.number().positive().default(50),
-  LOG_MAX_FILES: z.coerce.number().int().positive().default(14),
-
-  // Redaction — comma separated pino redact paths, merged with the
-  // built-in defaults in redaction.ts (never disable those defaults).
-  LOG_REDACT_PATHS: z
-    .string()
-    .optional()
-    .transform((v) => (v ? v.split(",").map((s) => s.trim()) : [])),
-});
-
-export type LoggerConfig = z.infer<typeof LoggerConfigSchema> & {
-  isProduction: boolean;
-};
-
-let cachedConfig: LoggerConfig | null = null;
-
-export function loadLoggerConfig(env: NodeJS.ProcessEnv = process.env): LoggerConfig {
+export function loadLoggerConfig(cfg: PinoConfig): PinoConfig {
   if (cachedConfig) return cachedConfig;
 
-  const parsed = LoggerConfigSchema.safeParse(env);
-
-  if (!parsed.success) {
-    throw new Error(`Invalid logger configuration: ${parsed.error.toString()}`);
-  }
-
-  const isProduction = parsed.data.NODE_ENV === "production";
 
   cachedConfig = {
-    ...parsed.data,
-    LOG_PRETTY: parsed.data.LOG_PRETTY && !isProduction,
-    isProduction,
-  };
+    ...pinoConstConfig, // constent value
+                        // parsed required data
+  }
+
 
   return cachedConfig;
 }
@@ -64,3 +23,10 @@ export function loadLoggerConfig(env: NodeJS.ProcessEnv = process.env): LoggerCo
 export function __resetLoggerConfigCache(): void {
   cachedConfig = null;
 }
+
+
+// const parsed = LoggerConfigSchema.safeParse(cfg);
+
+// if (!parsed.success) {
+//   throw new Error(`Invalid logger configuration: ${parsed.error.toString()}`);
+// }

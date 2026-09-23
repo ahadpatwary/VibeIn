@@ -1,3 +1,8 @@
+import pino from "pino";
+
+export type PinoConfig = pino.DestinationStream | pino.LoggerOptions<never, boolean> | undefined
+
+
 /**
  * types.ts
  *

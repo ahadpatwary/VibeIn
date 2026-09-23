@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { MQ_TOKENS } from "./tokens/tokens";
-import { ILogger, LoggerFactory } from "@app/logger";
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from "@app/logger";
 import { ProcessType, QueueConfigItem, QueueRegistrySchema } from "./configuration";
 import { QueueInit } from "./mq.queueInit";
 import { channelOptions } from "./types/mq.types";
@@ -21,7 +21,7 @@ export class SetUpMq {
         private readonly queueInit: QueueInit,
         @inject(MQ_TOKENS.QueueConfig)
         private readonly config: QueueConfigItem<ProcessType>,
-        @inject(MQ_TOKENS.Logger) factory: LoggerFactory,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
         this.logger = factory.forModule("RABBITMQ_MODULE");
     }

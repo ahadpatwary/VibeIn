@@ -7,7 +7,7 @@ import { RabbitMQConnectionException } from './exceptions/mq.exceptions.js';
 import { RABBITMQ_CONNECTION_EVENT } from './constants/mq.constants.js';
 import { inject, injectable } from 'tsyringe';
 import { MQ_TOKENS } from './tokens/tokens.js';
-import { ILogger, LoggerFactory } from '@app/logger';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 @injectable()
 export class RabbitMqConnection {
@@ -20,7 +20,7 @@ export class RabbitMqConnection {
         private readonly config: RabbitmqConfig,
         @inject(MQ_TOKENS.ConnectionOptions) 
         private readonly rabbitMqConnectionOptions: ConnectionOptions,
-        @inject(MQ_TOKENS.Logger) factory: LoggerFactory,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
         this.logger = factory.forModule('MQ_MODULE');
     }

@@ -4,7 +4,7 @@ import { type RedisClientManager } from './redis.client.js';
 import { RedisCommandException } from './exceptions/redis.exception.js';
 import { inject, injectable } from 'tsyringe';
 import { REDIS_TOKENS } from './tokens/redis.token.js';
-import { ILogger, LoggerFactory } from '@app/logger';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 @injectable()
 export class RedisService {
@@ -13,7 +13,7 @@ export class RedisService {
     constructor(
         @inject(REDIS_TOKENS.RedisClientManager)
         private readonly client: RedisClientManager,
-        @inject(REDIS_TOKENS.Logger) factory: LoggerFactory,
+        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
     ) {
         this.logger = factory.forModule('RedisModule');
     }

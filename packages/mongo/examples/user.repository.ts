@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { BaseRepository } from '../src/repository/base.repository';
+import { BaseRepository } from './repository/base.repository';
 import { UserModel, UserDocument } from './user.schema';
 
 @injectable()

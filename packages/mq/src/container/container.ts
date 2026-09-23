@@ -21,8 +21,6 @@ export function registerMq(
     targetContainer.registerInstance<RabbitmqConfig>(MQ_TOKENS.MqConfig, cfg);
     targetContainer.registerInstance(MQ_TOKENS.ConnectionOptions, cfgOptions);
 
-    /** Custom Logger registration */
-    registerLogger();  
 
     targetContainer.registerInstance(MQ_TOKENS.QueueConfig, queueConfig)
 
@@ -32,6 +30,6 @@ export function registerMq(
 
     targetContainer.registerInstance(MQ_TOKENS.RabbitMqConnection, RabbitMqConnection);
 
-    targetContainer.registerInstance(MQ_TOKENS.Logger, LoggerFactory);
+
 
 }
