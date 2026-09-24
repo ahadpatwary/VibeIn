@@ -3,7 +3,6 @@ import { getHashPositions } from '../hash';
 // import fs from 'fs';
 // import path from 'path';
 
-
 // const testPath = path.resolve(
 //   __dirname,
 //   'lua_script',
@@ -11,7 +10,6 @@ import { getHashPositions } from '../hash';
 
 // console.log('FINAL PATH:', testPath);
 // console.log('EXISTS:', fs.existsSync(testPath));
-
 
 // // const content = fs.readFileSync(testPath, 'utf8');
 // // console.log('LUA SIZE:', content.length);
@@ -100,9 +98,8 @@ end
 return 1
 `;
 
-
 function optimalBitSize(n: number, p: number): number {
-  return Math.ceil(-n * Math.log(p) / Math.LN2 ** 2);
+  return Math.ceil((-n * Math.log(p)) / Math.LN2 ** 2);
 }
 
 function optimalHashCount(m: number, n: number): number {
@@ -110,7 +107,7 @@ function optimalHashCount(m: number, n: number): number {
 }
 
 function estimateFPR(k: number, n: number, m: number): number {
-  return (1 - Math.exp(-k * n / m)) ** k;
+  return (1 - Math.exp((-k * n) / m)) ** k;
 }
 
 export interface BloomFilterOptions {
@@ -166,7 +163,9 @@ export class BloomFilter {
     this._ttl = options.ttl ?? null;
 
     if (this._errorRate <= 0 || this._errorRate >= 1) {
-      throw new Error('BloomFilter: errorRate must be between 0 and 1 (exclusive)');
+      throw new Error(
+        'BloomFilter: errorRate must be between 0 and 1 (exclusive)',
+      );
     }
     if (this._capacity < 1) {
       throw new Error('BloomFilter: capacity must be >= 1');
@@ -191,12 +190,18 @@ export class BloomFilter {
     if (!exists) {
       await this._redis.hset(
         this._metaKey,
-        'capacity', this._capacity,
-        'errorRate', this._errorRate,
-        'bitSize', this._m,
-        'hashCount', this._k,
-        'counting', this._counting ? '1' : '0',
-        'createdAt', Date.now(),
+        'capacity',
+        this._capacity,
+        'errorRate',
+        this._errorRate,
+        'bitSize',
+        this._m,
+        'hashCount',
+        this._k,
+        'counting',
+        this._counting ? '1' : '0',
+        'createdAt',
+        Date.now(),
       );
 
       if (this._ttl) {
@@ -205,12 +210,12 @@ export class BloomFilter {
     }
 
     // scripts still load (but ideally cache later)
-    const [add, has, cAdd, cRemove] = await Promise.all([
+    const [add, has, cAdd, cRemove] = (await Promise.all([
       this._redis.script('LOAD', LUA_ADD),
       this._redis.script('LOAD', LUA_HAS),
       this._redis.script('LOAD', LUA_COUNT_ADD),
       this._redis.script('LOAD', LUA_COUNT_REMOVE),
-    ]) as [string, string, string, string];
+    ])) as [string, string, string, string];
 
     this._shaAdd = add;
     this._shaHas = has;
@@ -261,13 +266,18 @@ export class BloomFilter {
       const posArgs = this._getPositions(item).map(String);
       pipeline.evalsha(this._shaAdd as string, 1, this._bitKey, ...posArgs);
       if (this._counting) {
-        pipeline.evalsha(this._shaCountAdd as string, 1, this._countKey, ...posArgs);
+        pipeline.evalsha(
+          this._shaCountAdd as string,
+          1,
+          this._countKey,
+          ...posArgs,
+        );
       }
     }
 
     const responses = await pipeline.exec();
     const step = this._counting ? 2 : 1;
-    if(!responses) return [];
+    if (!responses) return [];
 
     for (let i = 0; i < responses.length; i += step) {
       const [err, alreadySet] = responses?.[i] as [Error | null, number];
@@ -300,7 +310,7 @@ export class BloomFilter {
     }
 
     const responses = await pipeline.exec();
-    if(!responses) return [];
+    if (!responses) return [];
 
     return responses.map(([err, val]) => {
       if (err) throw err;
@@ -312,7 +322,7 @@ export class BloomFilter {
     if (!this._counting) {
       throw new Error(
         'BloomFilter: remove() requires counting mode. ' +
-        'Initialize with { counting: true }',
+          'Initialize with { counting: true }',
       );
     }
 
@@ -350,7 +360,9 @@ export class BloomFilter {
       fillRatioPct: +(fillRatio * 100).toFixed(2) + '%',
       counting: this._counting,
       healthy: currentFPR <= this._errorRate * 1.5,
-      createdAt: meta?.createdAt ? new Date(parseInt(meta.createdAt, 10)).toISOString() : null,
+      createdAt: meta?.createdAt
+        ? new Date(parseInt(meta.createdAt, 10)).toISOString()
+        : null,
     };
   }
 
@@ -386,10 +398,20 @@ export class BloomFilter {
     args: string[],
   ): Promise<number> {
     try {
-      return await this._redis.evalsha(sha as string, keys.length, ...keys, ...args) as number;
+      return (await this._redis.evalsha(
+        sha as string,
+        keys.length,
+        ...keys,
+        ...args,
+      )) as number;
     } catch (err: any) {
       if (err?.message?.includes('NOSCRIPT')) {
-        const result = await this._redis.eval(script, keys.length, ...keys, ...args) as number;
+        const result = (await this._redis.eval(
+          script,
+          keys.length,
+          ...keys,
+          ...args,
+        )) as number;
         await this._redis.script('LOAD', script);
         return result;
       }
@@ -397,7 +419,6 @@ export class BloomFilter {
     }
   }
 }
-
 
 //This class given methods
 //____  1: add(item: string): Promise<boolean>

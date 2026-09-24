@@ -1,6 +1,6 @@
-import { AsyncLocalStorage } from "node:async_hooks";
-import { randomUUID } from "node:crypto";
-import { RequestContext } from "./types/types";
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { randomUUID } from 'node:crypto';
+import { RequestContext } from './types/types';
 
 /**
  * context.ts
@@ -14,16 +14,16 @@ import { RequestContext } from "./types/types";
 const storage = new AsyncLocalStorage<RequestContext>();
 
 export function runWithRequestContext<T>(context: RequestContext, fn: () => T): T {
-  return storage.run(context, fn);
+   return storage.run(context, fn);
 }
 
 export function getRequestContext(): RequestContext {
-  return storage.getStore() ?? {};
+   return storage.getStore() ?? {};
 }
 
 export function updateRequestContext(patch: Partial<RequestContext>): void {
-  const current = storage.getStore();
-  if (current) Object.assign(current, patch);
+   const current = storage.getStore();
+   if (current) Object.assign(current, patch);
 }
 
 /**
@@ -31,15 +31,16 @@ export function updateRequestContext(patch: Partial<RequestContext>): void {
  * AsyncLocalStorage scope with a correlation id (reused from an
  * inbound header if present, so it survives across service hops).
  */
-export function correlationIdMiddleware(headerName = "x-correlation-id") {
-  return (req: any, res: any, next: () => void) => {
-    const incoming = req.headers?.[headerName];
-    const correlationId = typeof incoming === "string" && incoming.length > 0 ? incoming : randomUUID();
+export function correlationIdMiddleware(headerName = 'x-correlation-id') {
+   return (req: any, res: any, next: () => void) => {
+      const incoming = req.headers?.[headerName];
+      const correlationId =
+         typeof incoming === 'string' && incoming.length > 0 ? incoming : randomUUID();
 
-    res.setHeader?.(headerName, correlationId);
+      res.setHeader?.(headerName, correlationId);
 
-    runWithRequestContext({ correlationId, requestId: randomUUID() }, () => {
-      next();
-    });
-  };
+      runWithRequestContext({ correlationId, requestId: randomUUID() }, () => {
+         next();
+      });
+   };
 }

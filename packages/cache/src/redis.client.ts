@@ -6,133 +6,123 @@ import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 import { REDIS_TOKENS } from './tokens/redis.token.js';
 import { RedisConfig } from './types/redis.types.js';
 
-
-
 @injectable()
 export class RedisClientManager {
-    private redis: Redis;
-    private isRedisConnected: boolean = false;
-    private readonly logger: ILogger;
+   private redis: Redis;
+   private isRedisConnected: boolean = false;
+   private readonly logger: ILogger;
 
-    constructor(
-        @inject(REDIS_TOKENS.RedisConfig) 
-        private readonly config: RedisConfig, 
-        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
-    ) {
+   constructor(
+      @inject(REDIS_TOKENS.RedisConfig)
+      private readonly config: RedisConfig,
+      @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
+   ) {
+      this.logger = factory.forModule('RedisModule');
 
-        this.logger = factory.forModule('RedisModule');
+      const options: RedisConfig = {
+         ...config,
+         retryStrategy: config.retryStrategy ?? this.#defaultRetryStrategy.bind(this),
+      };
 
-        const options: RedisConfig = {
-            ...config,
-            retryStrategy: config.retryStrategy ?? this.#defaultRetryStrategy.bind(this),
-        };
+      this.redis = new Redis(options);
 
-        this.redis = new Redis(options);
+      this.#registerEventHandlers(this.redis);
+      this.#registerShutdownHooks();
+   }
 
-        this.#registerEventHandlers(this.redis);
-        this.#registerShutdownHooks();
-    }
+   async getClient(): Promise<Redis> {
+      if (this.isRedisConnected) return this.redis;
 
-    async getClient(): Promise<Redis> {
+      try {
+         await this.redis.connect();
+         this.isRedisConnected = true;
 
-        if(this.isRedisConnected) return this.redis;
-        
+         this.logger.info('Redis connected successfully', {
+            host: this.config.host,
+            port: this.config.port,
+            db: this.config.db,
+         });
+      } catch (err) {
+         throw new RedisConnectionException(err as Error, {
+            host: this.config.host,
+            port: this.config.port,
+         });
+      } finally {
+         // this.isReidsConnecting = false;
+      }
 
-        try {
+      return this.redis;
+   }
 
-            await this.redis.connect();
-            this.isRedisConnected = true;
+   async disconnect(): Promise<void> {
+      try {
+         await this.redis.quit();
 
-        
-            this.logger.info('Redis connected successfully', {
-                host: this.config.host,
-                port: this.config.port,
-                db: this.config.db,
-            });
+         this.logger.info('Redis disconnected gracefully');
+      } catch {
+         this.redis.disconnect();
+         this.logger.warn('Redis disconnected forcefully');
+      } finally {
+         // this.client = null;
+      }
+   }
 
-        } catch (err) {
-            throw new RedisConnectionException(err as Error, {
-                host: this.config.host,
-                port: this.config.port,
-            });
-        } finally {
-            // this.isReidsConnecting = false;
-        }
+   #defaultRetryStrategy(times: number): number | null {
+      if (times > 10) {
+         this.logger.error('Redis max reconnection attempts reached. Giving up.');
+         return null;
+      }
 
-        return this.redis;
-    }
+      const delay = Math.min(times * 100, 3000);
 
-    async disconnect(): Promise<void> {
-        try {
-            await this.redis.quit();
+      this.logger.warn(`Redis reconnecting in ${delay}ms...`, {
+         attempt: times,
+      });
 
-            this.logger.info('Redis disconnected gracefully');
-        } catch {
-            this.redis.disconnect();
-            this.logger.warn('Redis disconnected forcefully');
-        } finally {
-            // this.client = null;
-        }
-    }
+      return delay;
+   }
 
-    #defaultRetryStrategy(times: number): number | null {
-        if (times > 10) {
-            this.logger.error(
-                'Redis max reconnection attempts reached. Giving up.',
-            );
-            return null;
-        }
+   #registerEventHandlers(client: Redis): void {
+      client.on(REDIS_EVENTS.CONNECTING, () => {
+         this.logger.info('Redis connecting...');
+      });
 
-        const delay = Math.min(times * 100, 3000);
+      client.on(REDIS_EVENTS.WAIT, () => {
+         this.logger.info('Redis wait');
+      });
 
-        this.logger.warn(`Redis reconnecting in ${delay}ms...`, {
-            attempt: times,
-        });
+      client.on(REDIS_EVENTS.CONNECT, () => {
+         this.logger.info('Redis connection established');
+      });
 
-        return delay;
-    }
+      client.on(REDIS_EVENTS.READY, () => {
+         this.logger.info('Redis client is ready');
+      });
 
-    #registerEventHandlers(client: Redis): void {
-        client.on(REDIS_EVENTS.CONNECTING, () => {
-            this.logger.info('Redis connecting...');
-        });
+      client.on(REDIS_EVENTS.ERROR, (err: Error) => {
+         this.logger.error('Redis error', { error: err.message });
+      });
 
-        client.on(REDIS_EVENTS.WAIT, () => {
-            this.logger.info('Redis wait');
-        });
+      client.on(REDIS_EVENTS.CLOSE, () => {
+         this.logger.warn('Redis connection closed');
+      });
 
-        client.on(REDIS_EVENTS.CONNECT, () => {
-            this.logger.info('Redis connection established');
-        });
+      client.on(REDIS_EVENTS.RECONNECTING, () => {
+         this.logger.info('Redis reconnecting...');
+      });
 
-        client.on(REDIS_EVENTS.READY, () => {
-            this.logger.info('Redis client is ready');
-        });
+      client.on(REDIS_EVENTS.END, () => {
+         this.logger.warn('Redis connection ended');
+      });
+   }
 
-        client.on(REDIS_EVENTS.ERROR, (err: Error) => {
-            this.logger.error('Redis error', { error: err.message });
-        });
+   async #registerShutdownHooks(): Promise<void> {
+      const shutdown = async (signal: string) => {
+         this.logger.info(`Received ${signal}, initiating Kafka graceful shutdown`);
+         await this.disconnect();
+      };
 
-        client.on(REDIS_EVENTS.CLOSE, () => {
-            this.logger.warn('Redis connection closed');
-        });
-
-        client.on(REDIS_EVENTS.RECONNECTING, () => {
-            this.logger.info('Redis reconnecting...');
-        });
-
-        client.on(REDIS_EVENTS.END, () => {
-            this.logger.warn('Redis connection ended');
-        });
-    }
-
-    async #registerShutdownHooks(): Promise<void> {
-        const shutdown = async (signal: string) => {
-            this.logger.info(`Received ${signal}, initiating Kafka graceful shutdown`);
-            await this.disconnect();
-        };
-    
-        process.once('SIGTERM', () => void shutdown('SIGTERM'));
-        process.once('SIGINT', () => void shutdown('SIGINT'));
-    }
+      process.once('SIGTERM', () => void shutdown('SIGTERM'));
+      process.once('SIGINT', () => void shutdown('SIGINT'));
+   }
 }

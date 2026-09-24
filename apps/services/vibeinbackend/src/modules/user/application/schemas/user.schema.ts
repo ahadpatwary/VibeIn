@@ -1,13 +1,11 @@
 import { z } from 'zod';
-import { 
-    MAX_EDUCATION_ENTRIES, 
-    MAX_SKILL_ENTRIES, 
-    MAX_SOCIAL_LINKS, 
-    UserRole, 
-    UserStatus 
+import {
+  MAX_EDUCATION_ENTRIES,
+  MAX_SKILL_ENTRIES,
+  MAX_SOCIAL_LINKS,
+  UserRole,
+  UserStatus,
 } from '@app/db-schemas';
-
-
 
 export const avatarSchema = z
   .object({
@@ -172,9 +170,7 @@ export const skillsSchema = z
     `You can add a maximum of ${MAX_SKILL_ENTRIES} skills`,
   )
   .superRefine((skills, ctx) => {
-    const normalizedSkills = skills.map((skill) =>
-      skill.trim().toLowerCase(),
-    );
+    const normalizedSkills = skills.map((skill) => skill.trim().toLowerCase());
 
     const uniqueSkills = new Set(normalizedSkills);
 
@@ -207,9 +203,7 @@ export const socialLinksSchema = z
     `You can add a maximum of ${MAX_SOCIAL_LINKS} social links`,
   )
   .superRefine((links, ctx) => {
-    const platforms = links.map((link) =>
-      link.platform.trim().toLowerCase(),
-    );
+    const platforms = links.map((link) => link.platform.trim().toLowerCase());
 
     const uniquePlatforms = new Set(platforms);
 
@@ -227,10 +221,7 @@ export const socialLinksSchema = z
 |--------------------------------------------------------------------------
 */
 
-const userRoleValues = Object.values(UserRole) as [
-  UserRole,
-  ...UserRole[],
-];
+const userRoleValues = Object.values(UserRole) as [UserRole, ...UserRole[]];
 
 export const userRolesSchema = z
   .array(
@@ -377,9 +368,6 @@ export const createUserSchema = z
 */
 
 export const updateUserSchema = createUserSchema.partial();
-
-
-
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 

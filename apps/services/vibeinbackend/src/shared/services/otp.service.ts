@@ -43,8 +43,6 @@ export interface RedisClient {
   pipeline(commands: RedisPipelineCommand[]): Promise<void>;
 }
 
-
-
 export type RedisPipelineCommand =
   | ['set', string, unknown, 'EX', number]
   | ['del', string]
@@ -68,7 +66,7 @@ export interface Logger {
 interface OtpData {
   hashedOtp: string;
   expiresAt: number; // Unix ms
-  attempts:  number;
+  attempts: number;
 }
 
 interface CooldownData {
@@ -81,7 +79,7 @@ interface CooldownData {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type OtpVerifyResult =
-  | { ok: true;  verifyToken: string }
+  | { ok: true; verifyToken: string }
   | { ok: false; reason: 'NOT_FOUND' | 'EXPIRED' | 'MAX_ATTEMPTS' | 'INVALID' };
 
 export interface OtpSendResult {
@@ -121,12 +119,12 @@ export class ValidationError extends Error {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface OtpServiceConfig {
-  otpLength?:       number; // default 6
-  otpTtlMs?:        number; // default 5 min
-  maxAttempts?:     number; // default 5
-  bcryptRounds?:    number; // default from env BCRYPT_ROUNDS or 10
-  lockTtlSeconds?:  number; // distributed lock TTL, default 10
-  verifyTokenTtl?:  number; // seconds downstream has to consume token, default 60
+  otpLength?: number; // default 6
+  otpTtlMs?: number; // default 5 min
+  maxAttempts?: number; // default 5
+  bcryptRounds?: number; // default from env BCRYPT_ROUNDS or 10
+  lockTtlSeconds?: number; // distributed lock TTL, default 10
+  verifyTokenTtl?: number; // seconds downstream has to consume token, default 60
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -134,12 +132,14 @@ export interface OtpServiceConfig {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const KEYS = {
-  otp:         (email: string)                    => `otp:data:${email}`,
-  cooldown:    (deviceId: string, email: string)  => `otp:cooldown:${deviceId}:${email}`,
-  sendCount:   (deviceId: string, email: string)  => `otp:sendCount:${deviceId}:${email}`,
-  lock:        (deviceId: string, email: string)  => `otp:lock:${deviceId}:${email}`,
+  otp: (email: string) => `otp:data:${email}`,
+  cooldown: (deviceId: string, email: string) =>
+    `otp:cooldown:${deviceId}:${email}`,
+  sendCount: (deviceId: string, email: string) =>
+    `otp:sendCount:${deviceId}:${email}`,
+  lock: (deviceId: string, email: string) => `otp:lock:${deviceId}:${email}`,
   // lock:        (email: string)                    => `otp:lock:${email}`,
-  verifyToken: (email: string)                    => `otp:verified:${email}`,
+  verifyToken: (email: string) => `otp:verified:${email}`,
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -147,14 +147,14 @@ const KEYS = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface BackoffEntry {
-  upTo:       number; // inclusive send-count threshold
+  upTo: number; // inclusive send-count threshold
   cooldownMs: number;
 }
 
 const DEFAULT_BACKOFF: BackoffEntry[] = [
-  { upTo: 2,        cooldownMs:  1 * 60 * 1000 },        // ≤2  sends → 1 min
-  { upTo: 5,        cooldownMs:  3 * 60 * 1000 },        // ≤5  sends → 3 min
-  { upTo: Infinity, cooldownMs: 24 * 60 * 60 * 1000 },   //  >5 sends → 24 h
+  { upTo: 2, cooldownMs: 1 * 60 * 1000 }, // ≤2  sends → 1 min
+  { upTo: 5, cooldownMs: 3 * 60 * 1000 }, // ≤5  sends → 3 min
+  { upTo: Infinity, cooldownMs: 24 * 60 * 60 * 1000 }, //  >5 sends → 24 h
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -176,15 +176,18 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // ─────────────────────────────────────────────────────────────────────────────
 
 export class OtpService {
-  private readonly otpLength:      number;
-  private readonly otpTtlMs:       number;
-  private readonly maxAttempts:    number;
-  private readonly bcryptRounds:   number;
+  private readonly otpLength: number;
+  private readonly otpTtlMs: number;
+  private readonly maxAttempts: number;
+  private readonly bcryptRounds: number;
   private readonly lockTtlSeconds: number;
   private readonly verifyTokenTtl: number;
-  private readonly backoff:        BackoffEntry[];
-  private otpSha:                  string | null;
-  private readonly DUMMY_HASH = bcrypt.hashSync('dummy-password-for-timing-safety', 10);
+  private readonly backoff: BackoffEntry[];
+  private otpSha: string | null;
+  private readonly DUMMY_HASH = bcrypt.hashSync(
+    'dummy-password-for-timing-safety',
+    10,
+  );
   private readonly LOCK_TTL_SECONDS = 5;
 
   // Compare-and-delete so a request can only release a lock it actually owns.
@@ -195,7 +198,6 @@ export class OtpService {
       return 0
     end
   `;
-
 
   private readonly TOKEN_VERIFY_SCRIPT = `
     local key = KEYS[1]
@@ -211,28 +213,29 @@ export class OtpService {
 
     return true
     
-  `
-  
+  `;
 
   constructor(
-    private readonly redis:  RedisClient,
+    private readonly redis: RedisClient,
     private readonly mailer: MailerService,
     private readonly logger: Logger,
     private readonly client: RedisService,
     config: OtpServiceConfig = {},
     backoff: BackoffEntry[] = DEFAULT_BACKOFF,
   ) {
-    this.otpLength      = config.otpLength      ?? 6;
-    this.otpTtlMs       = config.otpTtlMs       ?? 5 * 60 * 1000;
-    this.maxAttempts    = config.maxAttempts     ?? 5;
-    this.bcryptRounds   = config.bcryptRounds    ?? parseInt(process.env['BCRYPT_ROUNDS'] ?? '10', 10);
-    this.lockTtlSeconds = config.lockTtlSeconds  ?? 10;
-    this.verifyTokenTtl = config.verifyTokenTtl  ?? 60;
-    this.backoff        = backoff;
+    this.otpLength = config.otpLength ?? 6;
+    this.otpTtlMs = config.otpTtlMs ?? 5 * 60 * 1000;
+    this.maxAttempts = config.maxAttempts ?? 5;
+    this.bcryptRounds =
+      config.bcryptRounds ?? parseInt(process.env['BCRYPT_ROUNDS'] ?? '10', 10);
+    this.lockTtlSeconds = config.lockTtlSeconds ?? 10;
+    this.verifyTokenTtl = config.verifyTokenTtl ?? 60;
+    this.backoff = backoff;
   }
 
   async init(): void {
-    this.otpSha = await this.client.getClient()?.script('LOAD', "") as string || null;
+    this.otpSha =
+      ((await this.client.getClient()?.script('LOAD', '')) as string) || null;
   }
 
   // ── Public API ─────────────────────────────────────────────────────────────
@@ -242,7 +245,9 @@ export class OtpService {
    */
   async isSendable(deviceId: string, email: string): Promise<boolean> {
     this.validateInputs(email, deviceId);
-    const data = await this.redis.get<CooldownData>(KEYS.cooldown(deviceId, email));
+    const data = await this.redis.get<CooldownData>(
+      KEYS.cooldown(deviceId, email),
+    );
     if (!data) return true;
     return Date.now() >= data.sendableAt;
   }
@@ -252,7 +257,9 @@ export class OtpService {
    */
   async cooldownSeconds(deviceId: string, email: string): Promise<number> {
     this.validateInputs(email, deviceId);
-    const data = await this.redis.get<CooldownData>(KEYS.cooldown(deviceId, email));
+    const data = await this.redis.get<CooldownData>(
+      KEYS.cooldown(deviceId, email),
+    );
     if (!data) return 0;
     const ms = data.sendableAt - Date.now();
     return ms > 0 ? Math.ceil(ms / 1000) : 0;
@@ -264,10 +271,10 @@ export class OtpService {
     this.validateInputs(email, deviceId);
 
     // ──  Generate OTP ───────────────────────────────────────────────────
-    const otp       = this.generateOtp(this.otpLength);
+    const otp = this.generateOtp(this.otpLength);
     const hashedOtp = await bcrypt.hash(otp, this.bcryptRounds);
 
-    const otpTtlSecs  = Math.ceil(this.otpTtlMs / 1000);
+    const otpTtlSecs = Math.ceil(this.otpTtlMs / 1000);
 
     const numOfKeys = 3;
 
@@ -275,65 +282,69 @@ export class OtpService {
     let sendCount: number;
 
     try {
-      [cooldownSecs, sendCount] = await this.client.getClient()?.evalsha(
+      [cooldownSecs, sendCount] = (await this.client.getClient()?.evalsha(
         this.otpSha!,
 
         numOfKeys,
 
         KEYS.otp(email),
-        KEYS.cooldown(deviceId, email), 
-        KEYS.sendCount(deviceId, email), 
+        KEYS.cooldown(deviceId, email),
+        KEYS.sendCount(deviceId, email),
         // KEYS.lock(deviceId, email),
 
-
         hashedOtp,
-        otpTtlSecs 
-      ) as [number, number];
-
+        otpTtlSecs,
+      )) as [number, number];
     } catch (err: any) {
       if (err.message?.includes('NOSCRIPT')) {
-        this.otpSha = await this.client.getClient()?.script('LOAD', "") as string || null;
+        this.otpSha =
+          ((await this.client.getClient()?.script('LOAD', '')) as string) ||
+          null;
 
-        [cooldownSecs, sendCount] = await this.client.getClient()?.evalsha(
+        [cooldownSecs, sendCount] = (await this.client.getClient()?.evalsha(
           this.otpSha!,
 
           numOfKeys,
 
           KEYS.otp(email),
-          KEYS.cooldown(deviceId, email), 
-          KEYS.sendCount(deviceId, email), 
+          KEYS.cooldown(deviceId, email),
+          KEYS.sendCount(deviceId, email),
           KEYS.lock(deviceId, email),
 
-
           hashedOtp,
-          otpTtlSecs 
-        ) as [number, number];
-
+          otpTtlSecs,
+        )) as [number, number];
       } else {
         throw err;
       }
     }
 
-
-
     // ── 6. Deliver ────────────────────────────────────────────────────────
     // Done after Redis write so a slow mailer doesn't block state update.
-    await this.mailer.sendOtpEmail(email, otp, Math.ceil(this.otpTtlMs / 60_000));
+    await this.mailer.sendOtpEmail(
+      email,
+      otp,
+      Math.ceil(this.otpTtlMs / 60_000),
+    );
 
     this.logger.info('otp.send.success', {
       deviceId,
-      email:       maskEmail(email),
+      email: maskEmail(email),
       sendAttempt: sendCount,
-      cooldownSeconds: cooldownSecs * 1000
+      cooldownSeconds: cooldownSecs * 1000,
     });
 
     return { cooldownSeconds: cooldownSecs };
-
   }
 
-  async verifyOtp(deviceId: string, email: string, input: string): Promise<OtpVerifyResult> {
+  async verifyOtp(
+    deviceId: string,
+    email: string,
+    input: string,
+  ): Promise<OtpVerifyResult> {
     this.validateEmail(email);
-    if (!input?.trim()) throw new ValidationError('OTP input must not be empty.');
+    if (!input?.trim())
+      throw new ValidationError('OTP input must not be empty.');
 
     const key = KEYS.otp(email);
     const lockKey = KEYS.lock(deviceId, email);
@@ -367,7 +378,9 @@ export class OtpService {
         try {
           data = JSON.parse(raw as string);
         } catch {
-          this.logger.error('otp.verify.corrupt_record', { email: maskEmail(email) });
+          this.logger.error('otp.verify.corrupt_record', {
+            email: maskEmail(email),
+          });
           await client.del(key);
         }
       }
@@ -381,7 +394,9 @@ export class OtpService {
 
         if (data.attempts >= this.maxAttempts) {
           await client.del(key);
-          this.logger.warn('otp.verify.max_attempts', { email: maskEmail(email) });
+          this.logger.warn('otp.verify.max_attempts', {
+            email: maskEmail(email),
+          });
           return { ok: false, reason: 'MAX_ATTEMPTS' };
         }
       }
@@ -398,7 +413,10 @@ export class OtpService {
 
         if (!data) return { ok: false, reason: 'INVALID' };
 
-        const remainingTtlSeconds = Math.max(1, Math.ceil((data.expiresAt - Date.now()) / 1000));
+        const remainingTtlSeconds = Math.max(
+          1,
+          Math.ceil((data.expiresAt - Date.now()) / 1000),
+        );
         await client.set(
           key,
           JSON.stringify({ ...data, attempts: data.attempts + 1 }),
@@ -425,7 +443,10 @@ export class OtpService {
         try {
           await client.eval(this.RELEASE_LOCK_SCRIPT, 1, lockKey, lockToken);
         } catch (err) {
-          this.logger.error('otp.verify.lock_release_failed', { email: maskEmail(email), err });
+          this.logger.error('otp.verify.lock_release_failed', {
+            email: maskEmail(email),
+            err,
+          });
         }
       }
     }
@@ -437,17 +458,19 @@ export class OtpService {
    */
   async consumeVerifyToken(email: string, token: string): Promise<boolean> {
     this.validateEmail(email);
-    const key   = KEYS.verifyToken(email);
+    const key = KEYS.verifyToken(email);
 
-    const result: boolean = await this.client.getClient()?.eval(this.TOKEN_VERIFY_SCRIPT, 1, key, token) as boolean
+    const result: boolean = (await this.client
+      .getClient()
+      ?.eval(this.TOKEN_VERIFY_SCRIPT, 1, key, token)) as boolean;
 
-    if(!result) {
+    if (!result) {
       this.logger.warn('otp.consumeToken.invalid', { email: maskEmail(email) });
       return result;
-    } 
+    }
 
     this.logger.info('otp.consumeToken.success', { email: maskEmail(email) });
-    return result ;
+    return result;
   }
 
   // ── Private helpers ────────────────────────────────────────────────────────

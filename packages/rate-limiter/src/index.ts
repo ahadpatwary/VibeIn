@@ -21,19 +21,19 @@ export { TokenBucket } from '../../../outside/algorithms/token-bucket';
 export { LeakyBucket } from '../../../outside/algorithms/leaky-bucket';
 
 export type {
-  RateLimitAlgorithm,
-  RateLimitDecision,
-  RateLimitResult,
-  RouteConfig,
-  RouteConfigWithKeyspace,
-  ViolationStatus,
-  BanStatus,
-  RateLimiterOptions,
-  IAlgorithmEngine,
-  FixedWindowConfig,
-  SlidingWindowConfig,
-  TokenBucketConfig,
-  LeakyBucketConfig,
+   RateLimitAlgorithm,
+   RateLimitDecision,
+   RateLimitResult,
+   RouteConfig,
+   RouteConfigWithKeyspace,
+   ViolationStatus,
+   BanStatus,
+   RateLimiterOptions,
+   IAlgorithmEngine,
+   FixedWindowConfig,
+   SlidingWindowConfig,
+   TokenBucketConfig,
+   LeakyBucketConfig,
 } from './types';
 
 export { default as RateLimiterDefault } from './rete-limiter';

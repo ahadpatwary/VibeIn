@@ -1,47 +1,28 @@
-import {
-  Connection,
-  Document,
-  HydratedDocument,
-  Model,
-  Schema,
-  Types,
-  model,
-} from 'mongoose';
+import { Connection, Document, HydratedDocument, Model, Schema, Types, model } from 'mongoose';
 
-import type { 
-  IAvatar, 
-  IEducation, 
-  ISocialLink, 
-  IUser, 
-  UserDocument
-} from '../types/user.types';
+import type { IAvatar, IEducation, ISocialLink, IUser, UserDocument } from '../types/user.types';
 
 import {
-  MAX_EDUCATION_ENTRIES, 
-  MAX_SKILL_ENTRIES, 
-  MAX_SOCIAL_LINKS, 
-  UserRole, 
-  UserStatus 
+   MAX_EDUCATION_ENTRIES,
+   MAX_SKILL_ENTRIES,
+   MAX_SOCIAL_LINKS,
+   UserRole,
+   UserStatus,
 } from '../constants/user.constant';
 
-
-
-export const AvaterSchema = new Schema<IAvatar>(
-  {
-    url: {
+export const AvaterSchema = new Schema<IAvatar>({
+   url: {
       type: String,
       required: true,
       trim: true,
-    },
+   },
 
-    public_id: {
+   public_id: {
       type: String,
       required: true,
       trim: true,
-    }
-  }
-)
-
+   },
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -50,25 +31,25 @@ export const AvaterSchema = new Schema<IAvatar>(
 */
 
 export const EducationSchema = new Schema<IEducation>(
-  {
-    college: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 150,
-    },
+   {
+      college: {
+         type: String,
+         required: true,
+         trim: true,
+         maxlength: 150,
+      },
 
-    degree: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 100,
-    },
-  },
-  {
-    _id: false,
-    versionKey: false,
-  },
+      degree: {
+         type: String,
+         required: true,
+         trim: true,
+         maxlength: 100,
+      },
+   },
+   {
+      _id: false,
+      versionKey: false,
+   },
 );
 
 /*
@@ -78,26 +59,26 @@ export const EducationSchema = new Schema<IEducation>(
 */
 
 export const SocialLinkSchema = new Schema<ISocialLink>(
-  {
-    platform: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-      maxlength: 30,
-    },
+   {
+      platform: {
+         type: String,
+         required: true,
+         trim: true,
+         lowercase: true,
+         maxlength: 30,
+      },
 
-    url: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 500,
-    },
-  },
-  {
-    _id: false,
-    versionKey: false,
-  },
+      url: {
+         type: String,
+         required: true,
+         trim: true,
+         maxlength: 500,
+      },
+   },
+   {
+      _id: false,
+      versionKey: false,
+   },
 );
 
 /*
@@ -107,219 +88,194 @@ export const SocialLinkSchema = new Schema<ISocialLink>(
 */
 
 export const UserSchema = new Schema<IUser>(
-  {
+   {
+      fullName: {
+         type: String,
+         trim: true,
 
-    fullName: {
-      type: String,
-      trim: true,
+         minlength: 1,
+         maxlength: 60,
 
-      minlength: 1,
-      maxlength: 60,
+         default: '< USER >',
+      },
 
-      default: '< USER >',
-    },
+      email: {
+         type: String,
+         required: true,
+         unique: true,
 
-    email: {
-      type: String,
-      required: true,
-      unique: true, 
+         trim: true,
+         lowercase: true,
 
-      trim: true,
-      lowercase: true,
+         maxlength: 254,
+      },
 
-      maxlength: 254,
-    },
+      phoneNumber: {
+         type: String,
+         required: true,
 
+         trim: true,
 
-    phoneNumber: {
-      type: String,
-      required: true,
+         minlength: 8,
+         maxlength: 20,
 
-      trim: true,
+         /*
+          * Hidden from normal queries.
+          * Explicitly include:
+          * User.findById(id).select('+phoneNumber')
+          */
+         select: false,
+      },
 
-      minlength: 8,
-      maxlength: 20,
+      bio: {
+         type: String,
+         trim: true,
+         maxlength: 500,
+      },
+
+      avatar: {
+         type: AvaterSchema,
+         default: null,
+      },
 
       /*
-       * Hidden from normal queries.
-       * Explicitly include:
-       * User.findById(id).select('+phoneNumber')
-       */
-      select: false,
-    },
-
-
-    bio: {
-      type: String,
-      trim: true,
-      maxlength: 500,
-    },
-
-    avatar: {
-      type: AvaterSchema,
-      default: null,
-    },
-
-    /*
     |--------------------------------------------------------------------------
     | Education
     |--------------------------------------------------------------------------
     */
 
-    education: {
-      type: [EducationSchema],
-      default: [],
+      education: {
+         type: [EducationSchema],
+         default: [],
 
-      validate: {
-        validator: function (
-          value: IEducation[],
-        ): boolean {
-          return value.length <= MAX_EDUCATION_ENTRIES;
-        },
+         validate: {
+            validator: function (value: IEducation[]): boolean {
+               return value.length <= MAX_EDUCATION_ENTRIES;
+            },
 
-        message: `Maximum ${MAX_EDUCATION_ENTRIES} education entries allowed`,
+            message: `Maximum ${MAX_EDUCATION_ENTRIES} education entries allowed`,
+         },
       },
-    },
 
-    /*
+      /*
     |--------------------------------------------------------------------------
     | Skills
     |--------------------------------------------------------------------------
     */
 
-    skills: {
-      type: [String],
-      default: [],
+      skills: {
+         type: [String],
+         default: [],
 
-      validate: {
-        validator: function (
-          value: string[],
-        ): boolean {
-          if (value.length > MAX_SKILL_ENTRIES) {
-            return false;
-          }
+         validate: {
+            validator: function (value: string[]): boolean {
+               if (value.length > MAX_SKILL_ENTRIES) {
+                  return false;
+               }
 
-          /*
-           * Prevent duplicate skills.
-           */
-          const normalized = value.map(
-            (skill) => skill.trim().toLowerCase(),
-          );
+               /*
+                * Prevent duplicate skills.
+                */
+               const normalized = value.map((skill) => skill.trim().toLowerCase());
 
-          return new Set(normalized).size === normalized.length;
-        },
+               return new Set(normalized).size === normalized.length;
+            },
 
-        message:
-          'Skills must be unique and contain at most 10 entries',
+            message: 'Skills must be unique and contain at most 10 entries',
+         },
       },
-    },
 
-    /*
+      /*
     |--------------------------------------------------------------------------
     | Social Links
     |--------------------------------------------------------------------------
     */
 
-    socialLinks: {
-      type: [SocialLinkSchema],
-      default: [],
+      socialLinks: {
+         type: [SocialLinkSchema],
+         default: [],
 
-      validate: {
-        validator: function (
-          value: ISocialLink[],
-        ): boolean {
-          if (value.length > MAX_SOCIAL_LINKS) {
-            return false;
-          }
+         validate: {
+            validator: function (value: ISocialLink[]): boolean {
+               if (value.length > MAX_SOCIAL_LINKS) {
+                  return false;
+               }
 
-          /*
-           * One account per platform.
-           *
-           * Example:
-           * github -> one
-           * linkedin -> one
-           */
-          const platforms = value.map(
-            (item) => item.platform.toLowerCase(),
-          );
+               /*
+                * One account per platform.
+                *
+                * Example:
+                * github -> one
+                * linkedin -> one
+                */
+               const platforms = value.map((item) => item.platform.toLowerCase());
 
-          return (
-            new Set(platforms).size === platforms.length
-          );
-        },
+               return new Set(platforms).size === platforms.length;
+            },
 
-        message:
-          'Social platforms must be unique and contain at most 7 entries',
+            message: 'Social platforms must be unique and contain at most 7 entries',
+         },
       },
-    },
 
-    /*
+      /*
     |--------------------------------------------------------------------------
     | Roles
     |--------------------------------------------------------------------------
     */
 
-    roles: {
-      type: [String],
-      enum: Object.values(UserRole),
+      roles: {
+         type: [String],
+         enum: Object.values(UserRole),
 
-      default: [UserRole.USER],
+         default: [UserRole.USER],
 
-      validate: {
-        validator: function (
-          value: UserRole[],
-        ): boolean {
-          return (
-            value.length > 0 &&
-            new Set(value).size === value.length
-          );
-        },
+         validate: {
+            validator: function (value: UserRole[]): boolean {
+               return value.length > 0 && new Set(value).size === value.length;
+            },
 
-        message:
-          'User must have at least one unique role',
+            message: 'User must have at least one unique role',
+         },
       },
-    },
 
-    /*
+      /*
     |--------------------------------------------------------------------------
     | Status
     |--------------------------------------------------------------------------
     */
 
-    status: {
-      type: String,
-      enum: Object.values(UserStatus),
+      status: {
+         type: String,
+         enum: Object.values(UserStatus),
 
-      default: UserStatus.ACTIVE,
+         default: UserStatus.ACTIVE,
 
-      index: true,
-    },
+         index: true,
+      },
+   },
 
-  },
-
-  /*
+   /*
   |--------------------------------------------------------------------------
   | Schema Options
   |--------------------------------------------------------------------------
   */
 
-  {
-    collection: 'users',
+   {
+      collection: 'users',
 
-    timestamps: true,
+      timestamps: true,
 
-    strict: true,
+      strict: true,
 
-    toJSON: {
-      transform: (_doc, ret: Record<string, unknown>) => {
-        delete ret.__v;
-        delete ret.phoneNumber;
+      toJSON: {
+         transform: (_doc, ret: Record<string, unknown>) => {
+            delete ret.__v;
+            delete ret.phoneNumber;
 
-        return ret;
+            return ret;
+         },
       },
-    },
-
-  },
+   },
 );
 
 /*
@@ -334,33 +290,32 @@ export const UserSchema = new Schema<IUser>(
  * `unique` is an index constraint, not a validator.
  */
 UserSchema.index(
-  { email: 1 },
-  {
-    unique: true,
-    name: 'users_email_unique',
-  },
+   { email: 1 },
+   {
+      unique: true,
+      name: 'users_email_unique',
+   },
 );
 
 /*
  * Status filtering.
  */
 UserSchema.index(
-  { status: 1 },
-  {
-    name: 'users_status_idx',
-  },
+   { status: 1 },
+   {
+      name: 'users_status_idx',
+   },
 );
 
 /*
  * Newest users.
  */
 UserSchema.index(
-  { createdAt: -1 },
-  {
-    name: 'users_created_at_idx',
-  },
+   { createdAt: -1 },
+   {
+      name: 'users_created_at_idx',
+   },
 );
-
 
 /*
 |--------------------------------------------------------------------------

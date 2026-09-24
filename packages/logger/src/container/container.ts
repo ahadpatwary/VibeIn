@@ -1,9 +1,9 @@
-import { container, type DependencyContainer } from "tsyringe";
-import { LOGGER_TOKENS } from "../tokens/tokens";
-import { loadLoggerConfig } from "../config/config";
-import { PinoLoggerAdapter } from "../adapters/PinoLoggerAdapter";
-import { LoggerFactory } from "../LoggerFactory";
-import type { ILogger, PinoConfig } from "../types/types";
+import { container, type DependencyContainer } from 'tsyringe';
+import { LOGGER_TOKENS } from '../tokens/tokens';
+import { loadLoggerConfig } from '../config/config';
+import { PinoLoggerAdapter } from '../adapters/PinoLoggerAdapter';
+import { LoggerFactory } from '../LoggerFactory';
+import type { ILogger, PinoConfig } from '../types/types';
 
 /**
  * container.ts
@@ -17,20 +17,19 @@ import type { ILogger, PinoConfig } from "../types/types";
  * ILogger via LOGGER_TOKENS.Logger.
  */
 export function registerLogger(
-  targetContainer: DependencyContainer = container,
-  pinoConfig: PinoConfig,
+   targetContainer: DependencyContainer = container,
+   pinoConfig: PinoConfig,
 ): void {
-  const cfg = loadLoggerConfig(pinoConfig);
+   const cfg = loadLoggerConfig(pinoConfig);
 
+   targetContainer.registerInstance<PinoConfig>(LOGGER_TOKENS.LoggerConfig, pinoConfig);
 
-  targetContainer.registerInstance<PinoConfig>(LOGGER_TOKENS.LoggerConfig, pinoConfig);
+   // Root logger is a true singleton: one Pino instance, one set of
+   // open file/stdout handles, for the lifetime of the process.
+   const rootLogger: ILogger = new PinoLoggerAdapter(cfg);
+   targetContainer.registerInstance<ILogger>(LOGGER_TOKENS.Logger, rootLogger);
 
-  // Root logger is a true singleton: one Pino instance, one set of
-  // open file/stdout handles, for the lifetime of the process.
-  const rootLogger: ILogger = new PinoLoggerAdapter(cfg);
-  targetContainer.registerInstance<ILogger>(LOGGER_TOKENS.Logger, rootLogger);
-
-  targetContainer.registerSingleton(LOGGER_TOKENS.LoggerFactory, LoggerFactory);
+   targetContainer.registerSingleton(LOGGER_TOKENS.LoggerFactory, LoggerFactory);
 }
 
 /**
@@ -38,7 +37,9 @@ export function registerLogger(
  * work but before process.exit — makes sure buffered log lines
  * (file transport, async stdout) actually get written.
  */
-export async function shutdownLogger(targetContainer: DependencyContainer = container): Promise<void> {
-  const logger = targetContainer.resolve<ILogger>(LOGGER_TOKENS.Logger);
-  await logger.flush();
+export async function shutdownLogger(
+   targetContainer: DependencyContainer = container,
+): Promise<void> {
+   const logger = targetContainer.resolve<ILogger>(LOGGER_TOKENS.Logger);
+   await logger.flush();
 }

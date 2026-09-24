@@ -1,4 +1,3 @@
-
 // export abstract class Emitter<Events extends Record<string, unknown>> {
 //   private readonly listeners: {
 //     [K in keyof Events]?: Set<(payload: Events[K]) => void>;
@@ -30,10 +29,9 @@
 //   }
 // }
 
-
 // export class Emitter<Events extends Record<string, unknown>>{
 //   private readonly listeners = new Set<(
-//     event: keyof Events, 
+//     event: keyof Events,
 //     payload: Events[keyof Events]
 //   ) => void>();
 
@@ -49,7 +47,7 @@
 //   protected emit<K extends Events>(event: K, payload: Events[K]): void {
 //     this.listeners.forEach((listener) => listener(event, payload));
 //   }
-  
+
 //   /** Drops every listener. Call when the owning component unmounts. */
 //   public dispose(): void {
 //     this.listeners.clear();
@@ -62,69 +60,53 @@ type EventMap = Record<string, unknown>;
 type Listener<T> = (data: T) => void;
 
 export class TypedEventEmitter<Events extends EventMap> {
-    private readonly listeners = new Map<
-        keyof Events,
-        Set<Listener<Events[keyof Events]>>
-    >();
+   private readonly listeners = new Map<keyof Events, Set<Listener<Events[keyof Events]>>>();
 
-    on<K extends keyof Events>(
-        eventName: K,
-        listener: Listener<Events[K]>
-    ): this {
-        let eventListeners = this.listeners.get(eventName);
+   on<K extends keyof Events>(eventName: K, listener: Listener<Events[K]>): this {
+      let eventListeners = this.listeners.get(eventName);
 
-        if (!eventListeners) {
-            eventListeners = new Set();
-            this.listeners.set(eventName, eventListeners);
-        }
+      if (!eventListeners) {
+         eventListeners = new Set();
+         this.listeners.set(eventName, eventListeners);
+      }
 
-        eventListeners.add(
-            listener as Listener<Events[keyof Events]>
-        );
+      eventListeners.add(listener as Listener<Events[keyof Events]>);
 
-        return this;
-    }
+      return this;
+   }
 
-    off<K extends keyof Events>(
-        eventName: K,
-        listener: Listener<Events[K]>
-    ): this {
-        const eventListeners = this.listeners.get(eventName);
+   off<K extends keyof Events>(eventName: K, listener: Listener<Events[K]>): this {
+      const eventListeners = this.listeners.get(eventName);
 
-        if (!eventListeners) {
-            return this;
-        }
+      if (!eventListeners) {
+         return this;
+      }
 
-        eventListeners.delete(
-            listener as Listener<Events[keyof Events]>
-        );
+      eventListeners.delete(listener as Listener<Events[keyof Events]>);
 
-        if (eventListeners.size === 0) {
-            this.listeners.delete(eventName);
-        }
+      if (eventListeners.size === 0) {
+         this.listeners.delete(eventName);
+      }
 
-        return this;
-    }
+      return this;
+   }
 
-    emit<K extends keyof Events>(
-        eventName: K,
-        data: Events[K]
-    ): boolean {
-        const eventListeners = this.listeners.get(eventName);
+   emit<K extends keyof Events>(eventName: K, data: Events[K]): boolean {
+      const eventListeners = this.listeners.get(eventName);
 
-        if (!eventListeners || eventListeners.size === 0) {
-            return false;
-        }
+      if (!eventListeners || eventListeners.size === 0) {
+         return false;
+      }
 
-        for (const listener of eventListeners) {
-            listener(data);
-        }
+      for (const listener of eventListeners) {
+         listener(data);
+      }
 
-        return true;
-    }
+      return true;
+   }
 
-    removeAllListeners(): this {
-        this.listeners.clear();
-        return this;
-    }
+   removeAllListeners(): this {
+      this.listeners.clear();
+      return this;
+   }
 }

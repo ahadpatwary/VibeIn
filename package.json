@@ -1,35 +1,52 @@
 {
-  "name": "soundfear",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Monorepo for VibeIn (workspaces)",
-  "homepage": "https://github.com/ahadpatwary/VibeIn#readme",
-  "bugs": {
-    "url": "https://github.com/ahadpatwary/VibeIn/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ahadpatwary/VibeIn.git"
-  },
-  "license": "ISC",
-  "author": "Abdul Ahad Patwary",
-  "packageManager": "npm@9",
-  "workspaces": [
-    "apps/*",
-    "apps/services/*",
-    "apps/web/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "bootstrap": "npm install",
-    "build": "npm run build --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "prune:deps": "node ./scripts/prune-deps.js",
-    "dev": "tsx watch packages/rate-limiter/src/container/container.ts"
-  },
-  "devDependencies": {
-    "depcheck": "^1.4.2",
-    "tsx": "^4.23.13"
-  }
+   "name": "soundfear",
+   "version": "1.0.0",
+   "private": true,
+   "description": "Monorepo for VibeIn (workspaces)",
+   "homepage": "https://github.com/ahadpatwary/VibeIn#readme",
+   "bugs": {
+      "url": "https://github.com/ahadpatwary/VibeIn/issues"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ahadpatwary/VibeIn.git"
+   },
+   "license": "ISC",
+   "author": "Abdul Ahad Patwary",
+   "packageManager": "npm@9",
+   "workspaces": [
+      "apps/*",
+      "apps/services/*",
+      "apps/web/*",
+      "packages/*"
+   ],
+   "scripts": {
+      "bootstrap": "npm install",
+      "build": "turbo run build",
+      "lint": "turbo run lint",
+      "test": "turbo run test",
+      "typecheck": "turbo run typecheck",
+      "format": "prettier --write .",
+      "format:check": "prettier --check .",
+      "validate": "turbo run lint typecheck test build",
+      "deps:check": "node ./scripts/check-deps.js",
+      "prepare": "husky"
+   },
+   "devDependencies": {
+      "depcheck": "^1.4.2",
+      "husky": "^9.1.7",
+      "lint-staged": "^16.4.0",
+      "prettier": "^3.9.9",
+      "tsx": "^4.23.13",
+      "turbo": "^2.3.3"
+   },
+   "lint-staged": {
+      "*.{ts,tsx,js,jsx}": [
+         "eslint --fix",
+         "prettier --write"
+      ],
+      "*.{json,md,yml,yaml}": [
+         "prettier --write"
+      ]
+   }
 }

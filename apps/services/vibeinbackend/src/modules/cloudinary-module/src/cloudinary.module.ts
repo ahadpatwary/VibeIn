@@ -1,6 +1,9 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { v2 as CloudinaryClient } from 'cloudinary';
-import { CLOUDINARY_CLIENT, CLOUDINARY_MODULE_OPTIONS } from './constants/cloudinary.constants';
+import {
+  CLOUDINARY_CLIENT,
+  CLOUDINARY_MODULE_OPTIONS,
+} from './constants/cloudinary.constants';
 import {
   CloudinaryModuleAsyncOptions,
   CloudinaryModuleOptions,
@@ -52,7 +55,9 @@ export class CloudinaryModule {
   }
 
   /** Async registration — resolve options from ConfigService, etc. */
-  static forRootAsync(asyncOptions: CloudinaryModuleAsyncOptions): DynamicModule {
+  static forRootAsync(
+    asyncOptions: CloudinaryModuleAsyncOptions,
+  ): DynamicModule {
     return {
       module: CloudinaryModule,
       imports: asyncOptions.imports ?? [],
@@ -68,7 +73,9 @@ export class CloudinaryModule {
     };
   }
 
-  private static createAsyncProviders(options: CloudinaryModuleAsyncOptions): Provider[] {
+  private static createAsyncProviders(
+    options: CloudinaryModuleAsyncOptions,
+  ): Provider[] {
     if (options.useFactory) {
       return [
         {

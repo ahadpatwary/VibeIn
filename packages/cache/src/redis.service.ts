@@ -8,61 +8,56 @@ import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 @injectable()
 export class RedisService {
-    private readonly logger: ILogger;
+   private readonly logger: ILogger;
 
-    constructor(
-        @inject(REDIS_TOKENS.RedisClientManager)
-        private readonly client: RedisClientManager,
-        @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
-    ) {
-        this.logger = factory.forModule('RedisModule');
-    }
+   constructor(
+      @inject(REDIS_TOKENS.RedisClientManager)
+      private readonly client: RedisClientManager,
+      @inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory,
+   ) {
+      this.logger = factory.forModule('RedisModule');
+   }
 
-    async commandWraper<T>( 
-        command: string,
-        fn: (client: Redis) => Promise<T>,
-    ): Promise<T> {
-        const client = await this.client.getClient();
+   async commandWraper<T>(command: string, fn: (client: Redis) => Promise<T>): Promise<T> {
+      const client = await this.client.getClient();
 
-        try {
-            return await fn(client);
-        } catch (err) {
-            this.logger.error(`Redis command error`, err, {
-                command: command,
-            } )
-            
-            if (err instanceof RedisCommandException) throw err;
-            throw new RedisCommandException(command, err as Error);
-        }
+      try {
+         return await fn(client);
+      } catch (err) {
+         this.logger.error(`Redis command error`, err, {
+            command: command,
+         });
 
-    }
+         if (err instanceof RedisCommandException) throw err;
+         throw new RedisCommandException(command, err as Error);
+      }
+   }
 
+   async pipeline(
+      fn: (pipe: ChainableCommander) => void | Promise<void>,
+   ): Promise<RedisPipelineResult> {
+      return this.commandWraper('PIPELINE', async (client: Redis) => {
+         const pipe = client.pipeline();
+         await fn(pipe);
+         const results = await pipe.exec();
+         const errors = (results ?? [])
+            .filter(([err]) => err !== null)
+            .map(([err]) => err as Error);
+         return { results: results ?? [], errors };
+      });
+   }
 
-    async pipeline(
-        fn: (pipe: ChainableCommander) => void | Promise<void>,
-    ): Promise<RedisPipelineResult> {
-        return this.commandWraper('PIPELINE', async (client: Redis) => {
-            const pipe = client.pipeline();
-            await fn(pipe);
-            const results = await pipe.exec();
-            const errors = (results ?? [])
-                .filter(([err]) => err !== null)
-                .map(([err]) => err as Error);
-            return { results: results ?? [], errors };
-        });
-    }
-
-    async transaction(
-        fn: (pipe: ChainableCommander) => void | Promise<void>,
-    ): Promise<RedisPipelineResult> {
-        return this.commandWraper('MULTI/EXEC', async (client: Redis) => {
-            const multi = client.multi();
-            await fn(multi);
-            const results = await multi.exec();
-            const errors = (results ?? [])
-                .filter(([err]) => err !== null)
-                .map(([err]) => err as Error);
-            return { results: results ?? [], errors };
-        });
-    }
+   async transaction(
+      fn: (pipe: ChainableCommander) => void | Promise<void>,
+   ): Promise<RedisPipelineResult> {
+      return this.commandWraper('MULTI/EXEC', async (client: Redis) => {
+         const multi = client.multi();
+         await fn(multi);
+         const results = await multi.exec();
+         const errors = (results ?? [])
+            .filter(([err]) => err !== null)
+            .map(([err]) => err as Error);
+         return { results: results ?? [], errors };
+      });
+   }
 }

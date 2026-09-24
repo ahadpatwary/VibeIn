@@ -1,22 +1,21 @@
 export enum UserRole {
-    USER = 'user',
-    MODERATOR = 'moderator',
-    ADMIN = 'admin',
-    SUPER_ADMIN = 'super_admin',
+   USER = 'user',
+   MODERATOR = 'moderator',
+   ADMIN = 'admin',
+   SUPER_ADMIN = 'super_admin',
 }
 
 export enum UserStatus {
-    ACTIVE = 'active',
+   ACTIVE = 'active',
 
-    PENDING_VERIFICATION = 'pending_verification',
+   PENDING_VERIFICATION = 'pending_verification',
 
-    SUSPENDED = 'suspended',
+   SUSPENDED = 'suspended',
 
-    BANNED = 'banned',
+   BANNED = 'banned',
 
-    DEACTIVATED = 'deactivated',
+   DEACTIVATED = 'deactivated',
 }
-
 
 export const MAX_EDUCATION_ENTRIES = 7;
 export const MAX_SKILL_ENTRIES = 10;

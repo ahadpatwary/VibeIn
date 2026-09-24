@@ -69,16 +69,16 @@ and persisted to `localStorage` with no flash-of-wrong-theme on load
 
 ## Design tokens quick reference
 
-| Token       | Role                                   |
-|-------------|-----------------------------------------|
-| `background`| Page background                         |
-| `surface`   | Card / panel background                 |
-| `surface-2` | Nested / hovered surface                |
-| `foreground`| Primary text                            |
-| `muted`     | Secondary text                          |
-| `border`    | Hairlines, card borders                 |
-| `accent`    | Primary brand color (amber "signal")    |
-| `mint`      | Secondary color (progress, success)     |
+| Token        | Role                                 |
+| ------------ | ------------------------------------ |
+| `background` | Page background                      |
+| `surface`    | Card / panel background              |
+| `surface-2`  | Nested / hovered surface             |
+| `foreground` | Primary text                         |
+| `muted`      | Secondary text                       |
+| `border`     | Hairlines, card borders              |
+| `accent`     | Primary brand color (amber "signal") |
+| `mint`       | Secondary color (progress, success)  |
 
 Fonts: `font-display` (Space Grotesk, headings), `font-sans` (Inter, body),
 `font-mono` (IBM Plex Mono, labels/stats/eyebrows).

@@ -1,6 +1,6 @@
-import { inject, injectable, singleton } from "tsyringe";
-import type { ILogger } from "./types/types";
-import { LOGGER_TOKENS } from "./tokens/tokens";
+import { inject, injectable, singleton } from 'tsyringe';
+import type { ILogger } from './types/types';
+import { LOGGER_TOKENS } from './tokens/tokens';
 
 /**
  * LoggerFactory.ts
@@ -24,17 +24,17 @@ import { LOGGER_TOKENS } from "./tokens/tokens";
 @injectable()
 @singleton()
 export class LoggerFactory {
-  private readonly cache = new Map<string, ILogger>();
+   private readonly cache = new Map<string, ILogger>();
 
-  constructor(@inject(LOGGER_TOKENS.Logger) private readonly rootLogger: ILogger) {}
+   constructor(@inject(LOGGER_TOKENS.Logger) private readonly rootLogger: ILogger) {}
 
-  forModule(moduleName: string, extraBindings: Record<string, unknown> = {}): ILogger {
-    const cacheKey = moduleName + JSON.stringify(extraBindings);
-    const cached = this.cache.get(cacheKey);
-    if (cached) return cached;
+   forModule(moduleName: string, extraBindings: Record<string, unknown> = {}): ILogger {
+      const cacheKey = moduleName + JSON.stringify(extraBindings);
+      const cached = this.cache.get(cacheKey);
+      if (cached) return cached;
 
-    const scoped = this.rootLogger.child({ module: moduleName, ...extraBindings });
-    this.cache.set(cacheKey, scoped);
-    return scoped;
-  }
+      const scoped = this.rootLogger.child({ module: moduleName, ...extraBindings });
+      this.cache.set(cacheKey, scoped);
+      return scoped;
+   }
 }

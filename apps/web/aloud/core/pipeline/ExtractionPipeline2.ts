@@ -27,7 +27,7 @@
 //   public async run(file: File): Promise<PipelineResult> {
 //     try {
 //       const demuxer = new AudioTrackDemuxer(file);
-    
+
 //       demuxer.on("progress", (progress) => {
 //         this.setStage(progress.stage);
 //         this.emit("demux-progress", progress);

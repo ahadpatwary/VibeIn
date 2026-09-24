@@ -56,7 +56,8 @@ export type SessionData = z.infer<typeof sessionDataSchema>;
 /* ------------------------------------------------------------------ */
 
 const KEYS = {
-  session: (userId: string, sessionId: string) => `session:{${userId}}:${sessionId}`,
+  session: (userId: string, sessionId: string) =>
+    `session:{${userId}}:${sessionId}`,
   userSessions: (userId: string) => `user-sessions:{${userId}}`,
 };
 
@@ -91,7 +92,10 @@ return #sessionIds
 /* ------------------------------------------------------------------ */
 
 export class SessionServiceError extends Error {
-  constructor(message: string, public readonly cause?: unknown) {
+  constructor(
+    message: string,
+    public readonly cause?: unknown,
+  ) {
     super(message);
     this.name = 'SessionServiceError';
   }
@@ -133,7 +137,10 @@ export class SessionService {
 
       return data.sessionId;
     } catch (error) {
-      this.logger.error(`Failed to create session for user ${data.userId}`, error as Error);
+      this.logger.error(
+        `Failed to create session for user ${data.userId}`,
+        error as Error,
+      );
       throw new SessionServiceError('Failed to create session', error);
     }
   }
@@ -143,7 +150,11 @@ export class SessionService {
    * USER_LOGOUT only revokes the single session; every other reason
    * revokes ALL sessions belonging to the user.
    */
-  async revokeSession(sessionId: string, userId: string, reason: RevokeReason): Promise<void> {
+  async revokeSession(
+    sessionId: string,
+    userId: string,
+    reason: RevokeReason,
+  ): Promise<void> {
     revokeReasonSchema.parse(reason);
 
     if (reason === 'USER_LOGOUT') {
@@ -178,7 +189,9 @@ export class SessionService {
         const sessionId = sessionIds[index];
 
         if (err) {
-          this.logger.warn(`Failed to read session ${sessionId}: ${err.message}`);
+          this.logger.warn(
+            `Failed to read session ${sessionId}: ${err.message}`,
+          );
           return;
         }
 
@@ -191,7 +204,9 @@ export class SessionService {
 
         const parsed = sessionDataSchema.safeParse(record);
         if (!parsed.success) {
-          this.logger.warn(`Corrupt session data for ${sessionId}: ${parsed.error.message}`);
+          this.logger.warn(
+            `Corrupt session data for ${sessionId}: ${parsed.error.message}`,
+          );
           return;
         }
 
@@ -200,13 +215,18 @@ export class SessionService {
 
       if (staleSessionIds.length > 0) {
         this.client.srem(setKey, ...staleSessionIds).catch((err: Error) => {
-          this.logger.warn(`Failed to clean up stale session ids: ${err.message}`);
+          this.logger.warn(
+            `Failed to clean up stale session ids: ${err.message}`,
+          );
         });
       }
 
       return sessions;
     } catch (error) {
-      this.logger.error(`Failed to list devices for user ${userId}`, error as Error);
+      this.logger.error(
+        `Failed to list devices for user ${userId}`,
+        error as Error,
+      );
       throw new SessionServiceError('Failed to retrieve device list', error);
     }
   }
@@ -232,12 +252,18 @@ export class SessionService {
 
       this.assertNoPipelineErrors(results, 'revokeSingleSession');
     } catch (error) {
-      this.logger.error(`Failed to revoke session ${sessionId}`, error as Error);
+      this.logger.error(
+        `Failed to revoke session ${sessionId}`,
+        error as Error,
+      );
       throw new SessionServiceError('Failed to revoke session', error);
     }
   }
 
-  private async revokeAllSessions(userId: string, reason: RevokeReason): Promise<number> {
+  private async revokeAllSessions(
+    userId: string,
+    reason: RevokeReason,
+  ): Promise<number> {
     const setKey = KEYS.userSessions(userId);
 
     try {
@@ -251,7 +277,10 @@ export class SessionService {
 
       return revokedCount;
     } catch (error) {
-      this.logger.error(`Failed to revoke all sessions for user ${userId}`, error as Error);
+      this.logger.error(
+        `Failed to revoke all sessions for user ${userId}`,
+        error as Error,
+      );
       throw new SessionServiceError('Failed to revoke all sessions', error);
     }
   }
@@ -259,7 +288,9 @@ export class SessionService {
   private parseOrThrow(data: unknown): SessionData {
     const result = sessionDataSchema.safeParse(data);
     if (!result.success) {
-      throw new SessionServiceError(`Invalid session data: ${result.error.message}`);
+      throw new SessionServiceError(
+        `Invalid session data: ${result.error.message}`,
+      );
     }
     return result.data;
   }
@@ -269,7 +300,7 @@ export class SessionService {
     return Object.fromEntries(
       Object.entries(data)
         .filter(([, v]) => v !== undefined)
-        .map(([k, v]) => [k, String(v)]), 
+        .map(([k, v]) => [k, String(v)]),
     );
   }
 
@@ -282,7 +313,9 @@ export class SessionService {
     }
     results.forEach(([err], index) => {
       if (err) {
-        throw new SessionServiceError(`${context}: command ${index} failed - ${err.message}`);
+        throw new SessionServiceError(
+          `${context}: command ${index} failed - ${err.message}`,
+        );
       }
     });
   }

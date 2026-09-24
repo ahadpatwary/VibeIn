@@ -14,14 +14,25 @@ export const cloudinaryEnvSchema = z.object({
     .enum(['true', 'false'])
     .default('true')
     .transform((v) => v === 'true'),
-  CLOUDINARY_MAX_RETRY_ATTEMPTS: z.coerce.number().int().min(0).max(10).default(3),
+  CLOUDINARY_MAX_RETRY_ATTEMPTS: z.coerce
+    .number()
+    .int()
+    .min(0)
+    .max(10)
+    .default(3),
   CLOUDINARY_RETRY_BASE_DELAY_MS: z.coerce.number().int().min(50).default(300),
-  CLOUDINARY_SIGNED_URL_TTL_SECONDS: z.coerce.number().int().min(30).default(300),
+  CLOUDINARY_SIGNED_URL_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(30)
+    .default(300),
 });
 
 export type CloudinaryEnv = z.infer<typeof cloudinaryEnvSchema>;
 
-export function validateCloudinaryEnv(raw: Record<string, unknown>): CloudinaryEnv {
+export function validateCloudinaryEnv(
+  raw: Record<string, unknown>,
+): CloudinaryEnv {
   const result = cloudinaryEnvSchema.safeParse(raw);
   if (!result.success) {
     const formatted = result.error.issues

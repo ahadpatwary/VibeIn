@@ -1,4 +1,10 @@
-import { ArrayMaxSize, IsArray, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class UpdateAssetDto {
   @IsOptional()

@@ -1,7 +1,6 @@
-import pino from "pino";
+import pino from 'pino';
 
-export type PinoConfig = pino.DestinationStream | pino.LoggerOptions<never, boolean> | undefined
-
+export type PinoConfig = pino.DestinationStream | pino.LoggerOptions<never, boolean> | undefined;
 
 /**
  * types.ts
@@ -11,14 +10,14 @@ export type PinoConfig = pino.DestinationStream | pino.LoggerOptions<never, bool
  * Pino type. Swapping Pino for Winston/Bunyan/anything else later means
  * writing a new class that implements ILogger and rebinding the DI
  * token in container.ts. No call-site in any service changes.
-*/
+ */
 export enum LogLevel {
-  FATAL = "fatal",
-  ERROR = "error",
-  WARN = "warn",
-  INFO = "info",
-  DEBUG = "debug",
-  TRACE = "trace",
+   FATAL = 'fatal',
+   ERROR = 'error',
+   WARN = 'warn',
+   INFO = 'info',
+   DEBUG = 'debug',
+   TRACE = 'trace',
 }
 
 /**
@@ -31,11 +30,11 @@ export type LogMeta = Record<string, unknown>;
  * Every log line's fixed context (added automatically, never passed by callers).
  */
 export interface LoggerBaseContext {
-  service: string;
-  env: string;
-  version?: string;
-  hostname?: string;
-  pid?: number;
+   service: string;
+   env: string;
+   version?: string;
+   hostname?: string;
+   pid?: number;
 }
 
 /**
@@ -43,42 +42,42 @@ export interface LoggerBaseContext {
  * Populated via AsyncLocalStorage — see context.ts.
  */
 export interface RequestContext {
-  correlationId?: string;
-  requestId?: string;
-  userId?: string;
-  [key: string]: unknown;
+   correlationId?: string;
+   requestId?: string;
+   userId?: string;
+   [key: string]: unknown;
 }
 
 export interface ILogger {
-  fatal(message: string, meta?: LogMeta): void;
-  error(message: string, error?: unknown, meta?: LogMeta): void;
-  warn(message: string, meta?: LogMeta): void;
-  info(message: string, meta?: LogMeta): void;
-  debug(message: string, meta?: LogMeta): void;
-  trace(message: string, meta?: LogMeta): void;
+   fatal(message: string, meta?: LogMeta): void;
+   error(message: string, error?: unknown, meta?: LogMeta): void;
+   warn(message: string, meta?: LogMeta): void;
+   info(message: string, meta?: LogMeta): void;
+   debug(message: string, meta?: LogMeta): void;
+   trace(message: string, meta?: LogMeta): void;
 
-  /**
-   * Returns a new logger with `bindings` merged into every subsequent
-   * log line. Used to scope a logger to a module/service/request
-   * without re-passing context on every call.
-   * 
-   * EXAMPLE: 
-   *  1:  const logger = factory.forModule("OrderService");
-   *      logger.info("Order created");
-   *            OUTPUT: { module: "PaymentService" } Payment processed
-   * 
-   *  2:  const logger = factory.forModule("PaymentService");
-   *      logger.info("Payment processed");
-   *            OUTPUT: { module: "PaymentService" } Payment processed
-   * 
-   * DON'T NEED to use it: =>
-   *         rootLogger.info( { module: "OrderService" },"Order created");
-   */
-  child(bindings: LogMeta): ILogger; 
+   /**
+    * Returns a new logger with `bindings` merged into every subsequent
+    * log line. Used to scope a logger to a module/service/request
+    * without re-passing context on every call.
+    *
+    * EXAMPLE:
+    *  1:  const logger = factory.forModule("OrderService");
+    *      logger.info("Order created");
+    *            OUTPUT: { module: "PaymentService" } Payment processed
+    *
+    *  2:  const logger = factory.forModule("PaymentService");
+    *      logger.info("Payment processed");
+    *            OUTPUT: { module: "PaymentService" } Payment processed
+    *
+    * DON'T NEED to use it: =>
+    *         rootLogger.info( { module: "OrderService" },"Order created");
+    */
+   child(bindings: LogMeta): ILogger;
 
-  /**
-   * Flush any buffered/async transports before process exit.
-   * Must be awaited during graceful shutdown (SIGTERM/SIGINT).
-   */
-  flush(): Promise<void>;
+   /**
+    * Flush any buffered/async transports before process exit.
+    * Must be awaited during graceful shutdown (SIGTERM/SIGINT).
+    */
+   flush(): Promise<void>;
 }

@@ -1,9 +1,9 @@
-import { FileReadError } from "../errors/ExtractionError";
+import { FileReadError } from '../errors/ExtractionError';
 
 export interface FileChunk {
-  arrayBuffer: ArrayBuffer;
-  /** Byte offset of this chunk within the original file. */
-  fileStart: number;
+   arrayBuffer: ArrayBuffer;
+   /** Byte offset of this chunk within the original file. */
+   fileStart: number;
 }
 
 /**
@@ -16,44 +16,44 @@ export interface FileChunk {
  * demuxing library expects.
  */
 export class ChunkedFileReader {
-  public static readonly DEFAULT_CHUNK_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
+   public static readonly DEFAULT_CHUNK_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
 
-  private readonly file: File;
-  private readonly chunkSizeBytes: number;
-  private offset = 0;
+   private readonly file: File;
+   private readonly chunkSizeBytes: number;
+   private offset = 0;
 
-  constructor(file: File, chunkSizeBytes: number = ChunkedFileReader.DEFAULT_CHUNK_SIZE_BYTES) {
-    this.file = file;
-    this.chunkSizeBytes = chunkSizeBytes;
-  }
+   constructor(file: File, chunkSizeBytes: number = ChunkedFileReader.DEFAULT_CHUNK_SIZE_BYTES) {
+      this.file = file;
+      this.chunkSizeBytes = chunkSizeBytes;
+   }
 
-  public get totalBytes(): number {
-    return this.file.size;
-  }
+   public get totalBytes(): number {
+      return this.file.size;
+   }
 
-  public get bytesRead(): number {
-    return this.offset;
-  }
+   public get bytesRead(): number {
+      return this.offset;
+   }
 
-  public get isDone(): boolean {
-    return this.offset >= this.file.size;
-  }
+   public get isDone(): boolean {
+      return this.offset >= this.file.size;
+   }
 
-  /** Reads and returns the next chunk, or `null` once the file is exhausted. */
-  public async readNext(): Promise<FileChunk | null> {
-    if (this.isDone) return null;
+   /** Reads and returns the next chunk, or `null` once the file is exhausted. */
+   public async readNext(): Promise<FileChunk | null> {
+      if (this.isDone) return null;
 
-    const start = this.offset;
-    const end = Math.min(start + this.chunkSizeBytes, this.file.size);
+      const start = this.offset;
+      const end = Math.min(start + this.chunkSizeBytes, this.file.size);
 
-    let arrayBuffer: ArrayBuffer;
-    try {
-      arrayBuffer = await this.file.slice(start, end).arrayBuffer();
-    } catch (cause) {
-      throw new FileReadError(cause);
-    }
+      let arrayBuffer: ArrayBuffer;
+      try {
+         arrayBuffer = await this.file.slice(start, end).arrayBuffer();
+      } catch (cause) {
+         throw new FileReadError(cause);
+      }
 
-    this.offset = end;
-    return { arrayBuffer, fileStart: start };
-  }
+      this.offset = end;
+      return { arrayBuffer, fileStart: start };
+   }
 }

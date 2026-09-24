@@ -1,4 +1,10 @@
-import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+} from 'class-validator';
 import { MediaKind } from '../enums/resource-type.enum';
 
 export class GeneratePresignedUrlDto {

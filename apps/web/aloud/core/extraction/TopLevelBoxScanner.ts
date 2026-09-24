@@ -18,7 +18,6 @@
 // export const MAX_TOP_LEVEL_BOXES_TO_SCAN = 100_000; // guard against corrupt/malicious loops
 // export const BOX_HEADER_PROBE_SIZE = 16; // covers 32-bit + optional 64-bit largesize
 
-
 // async function readSlice(file: File, start: number, end: number): Promise<ArrayBuffer> {
 //     return file.slice(start, end).arrayBuffer();
 // }
@@ -36,7 +35,6 @@
 //         let moov: ScanResult['moov'] | null = null;
 //         const boxesSeen: BoxHeader[] = [];
 //         const fileSize = this.file.size;
-
 
 //         for(let i = 0; i < MAX_TOP_LEVEL_BOXES_TO_SCAN && offset < fileSize; i++) {
 //             const probeEnd = Math.min(offset + BOX_HEADER_PROBE_SIZE, fileSize);
@@ -62,12 +60,12 @@
 //             if (header.type === "ftyp") {
 //                 ftyp = {
 //                     buffer: await readSlice(this.file, header.start, header.start + effectiveSize),
-//                     start: header.start 
+//                     start: header.start
 //                 };
 //             } else if (header.type === "moov") {
 //                 moov = {
-//                     buffer: await readSlice(this.file, header.start, header.start + effectiveSize), 
-//                     start: header.start 
+//                     buffer: await readSlice(this.file, header.start, header.start + effectiveSize),
+//                     start: header.start
 //                 };
 //                 break; // this is all Phase 1 needs — stop scanning immediately
 //             }

@@ -5,26 +5,26 @@ import { container } from 'tsyringe';
 import { UserRepository } from './user.repository';
 
 async function bootstrap() {
-  registerDatabaseModule({
-    config: {
-      uri: process.env.MONGO_URI,
-      dbName: 'orderbari',
-      maxPoolSize: 20,
-    },
-  });
+   registerDatabaseModule({
+      config: {
+         uri: process.env.MONGO_URI,
+         dbName: 'orderbari',
+         maxPoolSize: 20,
+      },
+   });
 
-  const client = container.resolve(MongooseClient);
-  await client.connect();
+   const client = container.resolve(MongooseClient);
+   await client.connect();
 
-  const userRepository = container.resolve(UserRepository);
-  const user = await userRepository.create({ email: 'test@example.com', name: 'Abdul' });
-  console.log(user);
+   const userRepository = container.resolve(UserRepository);
+   const user = await userRepository.create({ email: 'test@example.com', name: 'Abdul' });
+   console.log(user);
 
-  // Transaction example
-  await client.withTransaction(async (session) => {
-    await userRepository.create({ email: 'a@x.com', name: 'A' }, session);
-    await userRepository.create({ email: 'b@x.com', name: 'B' }, session);
-  });
+   // Transaction example
+   await client.withTransaction(async (session) => {
+      await userRepository.create({ email: 'a@x.com', name: 'A' }, session);
+      await userRepository.create({ email: 'b@x.com', name: 'B' }, session);
+   });
 }
 
 bootstrap();

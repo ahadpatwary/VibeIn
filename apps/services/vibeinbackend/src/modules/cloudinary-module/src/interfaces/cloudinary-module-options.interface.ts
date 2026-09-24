@@ -12,11 +12,14 @@ export interface CloudinaryModuleOptions {
 }
 
 export interface CloudinaryOptionsFactory {
-  createCloudinaryOptions(): Promise<CloudinaryModuleOptions> | CloudinaryModuleOptions;
+  createCloudinaryOptions():
+    Promise<CloudinaryModuleOptions> | CloudinaryModuleOptions;
 }
 
-export interface CloudinaryModuleAsyncOptions
-  extends Pick<ModuleMetadata, 'imports'> {
+export interface CloudinaryModuleAsyncOptions extends Pick<
+  ModuleMetadata,
+  'imports'
+> {
   useExisting?: Type<CloudinaryOptionsFactory>;
   useClass?: Type<CloudinaryOptionsFactory>;
   useFactory?: (

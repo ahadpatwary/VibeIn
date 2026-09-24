@@ -50,7 +50,10 @@ export class CloudinaryController {
     @Body('publicId') publicId?: string,
   ) {
     const validated = this.fileValidationPipe.validate(file, kind);
-    return this.cloudinaryService.uploadFile(validated.buffer, kind, { folder, publicId });
+    return this.cloudinaryService.uploadFile(validated.buffer, kind, {
+      folder,
+      publicId,
+    });
   }
 
   /**
@@ -98,7 +101,10 @@ export class CloudinaryController {
 
   @Delete(':publicId')
   @Roles(Role.ADMIN, Role.MERCHANT)
-  deleteAsset(@Param('publicId') publicId: string, @Body() dto: DeleteAssetDto) {
+  deleteAsset(
+    @Param('publicId') publicId: string,
+    @Body() dto: DeleteAssetDto,
+  ) {
     return this.cloudinaryService.deleteAsset(publicId, dto.kind);
   }
 }

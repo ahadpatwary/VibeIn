@@ -58,8 +58,6 @@
 //     return { message: 'Login successful', data };
 //   }
 
-  
-
 //   // ── POST /api/auth/register ───────────────────────────
 //   @Public()
 //   @Post('register')
@@ -84,8 +82,6 @@
 //       data,
 //     };
 //   }
-
-
 
 //   // ── POST /api/auth/resend-otp ─────────────────────────
 //   @Public()

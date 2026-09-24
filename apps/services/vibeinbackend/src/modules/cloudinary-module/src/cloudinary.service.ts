@@ -1,13 +1,19 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { v2 as CloudinaryClient, UploadApiResponse } from 'cloudinary';
-import { CLOUDINARY_CLIENT, CLOUDINARY_MODULE_OPTIONS } from './constants/cloudinary.constants';
+import {
+  CLOUDINARY_CLIENT,
+  CLOUDINARY_MODULE_OPTIONS,
+} from './constants/cloudinary.constants';
 import { type CloudinaryModuleOptions } from './interfaces/cloudinary-module-options.interface';
 import {
   CloudinaryAssetResult,
   PresignedUploadParams,
   SignedDeliveryUrlResult,
 } from './interfaces/cloudinary-upload-result.interface';
-import { MediaKind, mediaKindToCloudinaryResourceType } from './enums/resource-type.enum';
+import {
+  MediaKind,
+  mediaKindToCloudinaryResourceType,
+} from './enums/resource-type.enum';
 import { withRetry } from './utils/retry.util';
 import { mapCloudinaryError } from './utils/map-cloudinary-error.util';
 import { CloudinarySignatureException } from './exceptions/cloudinary.exception';
@@ -18,7 +24,8 @@ export class CloudinaryService {
 
   constructor(
     @Inject(CLOUDINARY_CLIENT) private readonly client: typeof CloudinaryClient,
-    @Inject(CLOUDINARY_MODULE_OPTIONS) private readonly options: CloudinaryModuleOptions,
+    @Inject(CLOUDINARY_MODULE_OPTIONS)
+    private readonly options: CloudinaryModuleOptions,
   ) {}
 
   /**
@@ -48,7 +55,8 @@ export class CloudinaryService {
                 unique_filename: true,
               },
               (err, result) => {
-                if (err || !result) return reject(err ?? new Error('Empty upload response'));
+                if (err || !result)
+                  return reject(err ?? new Error('Empty upload response'));
                 resolve(result);
               },
             );
@@ -63,7 +71,10 @@ export class CloudinaryService {
 
       return this.toAssetResult(result, kind);
     } catch (err) {
-      this.logger.error(`Upload failed for kind=${kind} folder=${folder}`, err as Error);
+      this.logger.error(
+        `Upload failed for kind=${kind} folder=${folder}`,
+        err as Error,
+      );
       throw mapCloudinaryError(err, 'upload');
     }
   }
@@ -105,7 +116,10 @@ export class CloudinaryService {
         extraParams: paramsToSign,
       };
     } catch (err) {
-      this.logger.error('Failed to generate presigned upload params', err as Error);
+      this.logger.error(
+        'Failed to generate presigned upload params',
+        err as Error,
+      );
       throw new CloudinarySignatureException(
         'Could not generate a signed upload signature.',
         { cause: err },
@@ -133,11 +147,17 @@ export class CloudinaryService {
 
       return { url, expiresAt: new Date(expiresAtEpoch * 1000).toISOString() };
     } catch (err) {
-      this.logger.error(`Failed to sign delivery URL for ${publicId}`, err as Error);
-      throw new CloudinarySignatureException('Could not generate a signed delivery URL.', {
-        publicId,
-        cause: err,
-      });
+      this.logger.error(
+        `Failed to sign delivery URL for ${publicId}`,
+        err as Error,
+      );
+      throw new CloudinarySignatureException(
+        'Could not generate a signed delivery URL.',
+        {
+          publicId,
+          cause: err,
+        },
+      );
     }
   }
 
@@ -152,9 +172,13 @@ export class CloudinaryService {
       const result = await withRetry(
         async () => {
           if (changes.moveToFolder) {
-            await this.client.uploader.rename(publicId, `${changes.moveToFolder}/${this.basename(publicId)}`, {
-              resource_type: resourceType,
-            });
+            await this.client.uploader.rename(
+              publicId,
+              `${changes.moveToFolder}/${this.basename(publicId)}`,
+              {
+                resource_type: resourceType,
+              },
+            );
           }
           return this.client.uploader.explicit(publicId, {
             resource_type: resourceType,
@@ -177,7 +201,10 @@ export class CloudinaryService {
     }
   }
 
-  async deleteAsset(publicId: string, kind: MediaKind): Promise<{ publicId: string; deleted: true }> {
+  async deleteAsset(
+    publicId: string,
+    kind: MediaKind,
+  ): Promise<{ publicId: string; deleted: true }> {
     const resourceType = mediaKindToCloudinaryResourceType(kind);
 
     try {
@@ -210,7 +237,10 @@ export class CloudinaryService {
     return parts[parts.length - 1];
   }
 
-  private toAssetResult(result: UploadApiResponse, kind: MediaKind): CloudinaryAssetResult {
+  private toAssetResult(
+    result: UploadApiResponse,
+    kind: MediaKind,
+  ): CloudinaryAssetResult {
     return {
       publicId: result.public_id,
       url: result.url,

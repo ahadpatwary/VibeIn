@@ -52,10 +52,10 @@ registerLogger(); // once, at bootstrap
 
 @injectable()
 class OrderService {
-  private readonly logger: ILogger;
-  constructor(@inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory) {
-    this.logger = factory.forModule("OrderService");
-  }
+   private readonly logger: ILogger;
+   constructor(@inject(LOGGER_TOKENS.LoggerFactory) factory: LoggerFactory) {
+      this.logger = factory.forModule('OrderService');
+   }
 }
 ```
 

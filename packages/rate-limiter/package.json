@@ -1,54 +1,44 @@
 {
-  "name": "@app/rate-limiter",
-  "version": "0.1.0",
-  "description": "Type-safe ioredis wrapper with custom domain methods",
-  "private": true,
-  "type": "module",
-
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
-
-  "files": [
-    "dist"
-  ],
-
-  "sideEffects": false,
-
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "prepublishOnly": "npm run build"
-  },
-
-  "peerDependencies": {},
-
-  "dependencies": {
-    "@app/logger": "^1.0.0",
-    "@app/redis-client": "^0.1.0",
-    "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.10.0",
-    "zod": "^4.4.3"
-  },
-
-  "devDependencies": {
-    "@types/node": "^24.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.9.0"
-  },
-
-  "keywords": [
-    "rate-limiter",
-    "typescript"
-  ],
-  
-  "license": "MIT"
+   "name": "@app/rate-limiter",
+   "version": "0.1.0",
+   "description": "Type-safe ioredis wrapper with custom domain methods",
+   "private": true,
+   "type": "module",
+   "main": "./dist/index.js",
+   "module": "./dist/index.mjs",
+   "types": "./dist/index.d.ts",
+   "exports": {
+      ".": {
+         "types": "./dist/index.d.ts",
+         "import": "./dist/index.mjs",
+         "require": "./dist/index.js"
+      }
+   },
+   "files": [
+      "dist"
+   ],
+   "sideEffects": false,
+   "scripts": {
+      "build": "tsup",
+      "dev": "tsup --watch",
+      "prepublishOnly": "npm run build"
+   },
+   "peerDependencies": {},
+   "dependencies": {
+      "@app/logger": "^1.0.0",
+      "@app/redis-client": "^0.1.0",
+      "reflect-metadata": "^0.2.2",
+      "tsyringe": "^4.10.0",
+      "zod": "^4.4.3"
+   },
+   "devDependencies": {
+      "@types/node": "^24.0.0",
+      "tsup": "^8.0.0",
+      "typescript": "^5.9.0"
+   },
+   "keywords": [
+      "rate-limiter",
+      "typescript"
+   ],
+   "license": "MIT"
 }

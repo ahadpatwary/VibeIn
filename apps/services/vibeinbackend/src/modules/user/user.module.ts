@@ -5,7 +5,6 @@ import { USER_TOKENS } from './application/tokens/user.token';
 import { MongoUserRepository } from './infrastructure/persistence/mongo-user.repository';
 import { RedisUserRepository } from './infrastructure/cache/redis-user.repository';
 
-
 @Module({
   controllers: [UserController],
 
@@ -21,7 +20,6 @@ import { RedisUserRepository } from './infrastructure/cache/redis-user.repositor
       provide: USER_TOKENS.CacheUserRepository,
       useClass: RedisUserRepository,
     },
-
   ],
 
   exports: [UserService],

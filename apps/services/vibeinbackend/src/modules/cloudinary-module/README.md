@@ -29,7 +29,10 @@ CLOUDINARY_SIGNED_URL_TTL_SECONDS=300
 
 ```ts
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CloudinaryModule, validateCloudinaryEnv } from './cloudinary-module/src';
+import {
+  CloudinaryModule,
+  validateCloudinaryEnv,
+} from './cloudinary-module/src';
 
 @Module({
   imports: [
@@ -74,13 +77,13 @@ export class AppModule {}
 
 ## Endpoints
 
-| Method | Path | Purpose |
-|---|---|---|
-| POST | `/cloudinary/upload` | Server-mediated upload (multipart: `file`, `kind`, `folder?`, `publicId?`) |
-| POST | `/cloudinary/presigned-url` | Get a signature for the client to upload directly to Cloudinary |
-| POST | `/cloudinary/:publicId/signed-delivery-url` | Signed, time-limited URL for a private asset |
-| PATCH | `/cloudinary/:publicId` | Update tags/context, optionally move folder |
-| DELETE | `/cloudinary/:publicId` | Delete an asset |
+| Method | Path                                        | Purpose                                                                    |
+| ------ | ------------------------------------------- | -------------------------------------------------------------------------- |
+| POST   | `/cloudinary/upload`                        | Server-mediated upload (multipart: `file`, `kind`, `folder?`, `publicId?`) |
+| POST   | `/cloudinary/presigned-url`                 | Get a signature for the client to upload directly to Cloudinary            |
+| POST   | `/cloudinary/:publicId/signed-delivery-url` | Signed, time-limited URL for a private asset                               |
+| PATCH  | `/cloudinary/:publicId`                     | Update tags/context, optionally move folder                                |
+| DELETE | `/cloudinary/:publicId`                     | Delete an asset                                                            |
 
 ## Design notes
 

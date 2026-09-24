@@ -1,23 +1,27 @@
-import jwt, { JwtPayload, SignOptions, VerifyOptions, JsonWebTokenError } from "jsonwebtoken";
-import { randomUUID } from "crypto";
-import { z } from "zod";
+import jwt, {
+  JwtPayload,
+  SignOptions,
+  VerifyOptions,
+  JsonWebTokenError,
+} from 'jsonwebtoken';
+import { randomUUID } from 'crypto';
+import { z } from 'zod';
 import type { Redis, Cluster } from 'ioredis';
 // import { readFileSync } from "fs";
 // import path from "path";
 // import redis from 'ioredis';
-import { RedisService } from "../modules/cache/redis.service";
-
+import { RedisService } from '../modules/cache/redis.service';
 
 // ─── Register the Lua script as a custom command ──────────────────────────────
 // ioredis caches the script (SCRIPT LOAD / EVALSHA) automatically after the
 // first call, so this is efficient — no need to re-send the script every time.
- 
+
 // const rotateScript = readFileSync(
 //   path.join(__dirname, "rotate_session.lua"),
 //   "utf-8"
 // );
- 
-// redis.defineCommand("rotateSessions", { 
+
+// redis.defineCommand("rotateSessions", {
 //   numberOfKeys: 2,
 //   lua: rotateScript,
 // });
@@ -62,48 +66,46 @@ redis.call('EXPIRE', sessionKey, ttl)
 redis.call('EXPIRE', userAllSession, ttl)
 
 return {'ACTIVE', 'null'}
-`
- 
+`;
+
 // Tell TypeScript about the new command ioredis just gained
-declare module "ioredis" {
+declare module 'ioredis' {
   interface RedisCommander<Context> {
     rotateSession(
       sessionKey: string,
       familySetKey: string,
       oldJti: string,
       newJti: string,
-      ttlSeconds: number
+      ttlSeconds: number,
     ): Promise<[string, string]>; // ["ok"|"err", "ROTATED"|"SESSION_NOT_FOUND"|...]
   }
 }
 
 // ─── Custom error types for the rotation outcomes ──────────────────────────────
- 
+
 export class SessionNotFoundError extends Error {}
 export class SessionInactiveError extends Error {}
 export class TokenReuseDetectedError extends Error {}
-
 
 // function sessionKeyOf(family: string, sid: string) {
 //   // {family} হলো Redis Cluster hash-tag — session key আর family-set key
 //   // যেন একই hash slot-এ পড়ে, নাহলে cluster mode-এ multi-key Lua script ফেইল করবে
 //   return `session:{${family}}:${sid}`;
 // }
- 
+
 // function familySetKeyOf(family: string) {
 //   return `family:{${family}}:sessions`;
 // }
 
-
 const KEYS = {
-  session: (userId: string, sessionId: string) => `session:{${userId}}:${sessionId}`,
+  session: (userId: string, sessionId: string) =>
+    `session:{${userId}}:${sessionId}`,
   userSessions: (userId: string) => `user-sessions:{${userId}}`,
 };
 
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type Role = "user" | "admin" | "moderator";
+export type Role = 'user' | 'admin' | 'moderator';
 
 const accessTokenPayloadSchema = z.object({
   sub: z.string().trim().min(4),
@@ -113,7 +115,7 @@ const accessTokenPayloadSchema = z.object({
   accountId: z.string().trim().min(4),
   deviceId: z.string().trim().min(4),
 
-  role: z.enum(["user", "moderator", "admin"]),
+  role: z.enum(['user', 'moderator', 'admin']),
 
   name: z.string().trim().min(3),
   email: z.string().trim().email(),
@@ -130,7 +132,7 @@ const refreshTokenPayloadSchema = z.object({
   accountId: z.string().trim().min(4),
   deviceId: z.string().trim().min(4),
 
-  role: z.enum(["user", "moderator", "admin"]),
+  role: z.enum(['user', 'moderator', 'admin']),
 });
 
 export type RefreshTokenPayload = z.infer<typeof refreshTokenPayloadSchema>;
@@ -147,29 +149,28 @@ export interface DecodedToken extends JwtPayload {
   role: Role;
 }
 
-
 export interface TokenServiceConfig {
   secret: string;
   refreshSecret: string;
   issuer?: string;
   audience?: string;
-  accessTokenTTL?: SignOptions["expiresIn"]; // default: "15m"
-  refreshTokenTTL?: SignOptions["expiresIn"]; // default: "7d"
+  accessTokenTTL?: SignOptions['expiresIn']; // default: "15m"
+  refreshTokenTTL?: SignOptions['expiresIn']; // default: "7d"
 }
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
 
 export class TokenExpiredError extends Error {
   constructor(public expiredAt: Date) {
-    super("Token has expired");
-    this.name = "TokenExpiredError";
+    super('Token has expired');
+    this.name = 'TokenExpiredError';
   }
 }
 
 export class TokenInvalidError extends Error {
-  constructor(message = "Token is invalid") {
+  constructor(message = 'Token is invalid') {
     super(message);
-    this.name = "TokenInvalidError";
+    this.name = 'TokenInvalidError';
   }
 }
 
@@ -182,26 +183,23 @@ export class TokenService {
   private readonly refreshSecret: string;
   private readonly issuer: string;
   private readonly audience: string;
-  private readonly accessTokenTTL: SignOptions["expiresIn"];
-  private readonly refreshTokenTTL: SignOptions["expiresIn"];
-
-
+  private readonly accessTokenTTL: SignOptions['expiresIn'];
+  private readonly refreshTokenTTL: SignOptions['expiresIn'];
 
   constructor(
-    config: TokenServiceConfig, 
+    config: TokenServiceConfig,
     private readonly redisService: RedisService,
   ) {
     if (!config.secret || !config.refreshSecret) {
-      throw new Error("TokenService: secrets must be non-empty strings");
+      throw new Error('TokenService: secrets must be non-empty strings');
     }
 
     this.secret = config.secret;
     this.refreshSecret = config.refreshSecret;
-    this.issuer = config.issuer ?? "smreaz.com";
-    this.audience = config.audience ?? "VibeIn_client";
-    this.accessTokenTTL = config.accessTokenTTL ?? "15m";
-    this.refreshTokenTTL = config.refreshTokenTTL ?? "7d";
-
+    this.issuer = config.issuer ?? 'smreaz.com';
+    this.audience = config.audience ?? 'VibeIn_client';
+    this.accessTokenTTL = config.accessTokenTTL ?? '15m';
+    this.refreshTokenTTL = config.refreshTokenTTL ?? '7d';
   }
 
   private get client(): Redis | Cluster {
@@ -220,40 +218,48 @@ export class TokenService {
     return this.sign(validated, this.refreshSecret, this.refreshTokenTTL);
   }
 
-
   // ── Verify ──────────────────────────────────────────────────────────────────
 
   verifyAccessToken(token: string): AccessTokenPayload & JwtPayload {
     const decoded = this.verify(token, this.secret);
-    return this.validation(accessTokenPayloadSchema, decoded) as AccessTokenPayload &
-      JwtPayload;
+    return this.validation(
+      accessTokenPayloadSchema,
+      decoded,
+    ) as AccessTokenPayload & JwtPayload;
   }
 
   verifyRefreshToken(token: string): RefreshTokenPayload & JwtPayload {
     const decoded = this.verify(token, this.refreshSecret);
-    return this.validation(refreshTokenPayloadSchema, decoded) as RefreshTokenPayload &
-      JwtPayload;
+    return this.validation(
+      refreshTokenPayloadSchema,
+      decoded,
+    ) as RefreshTokenPayload & JwtPayload;
   }
 
   // ── Rotate ──────────────────────────────────────────────────────────────────
-  
-  async rotateTokens(refreshTokenPayload: RefreshTokenPayload):
-    Promise<string | { status: string; reason: string }> 
-  {
-    const validated = this.validation(refreshTokenPayloadSchema, refreshTokenPayload);
+
+  async rotateTokens(
+    refreshTokenPayload: RefreshTokenPayload,
+  ): Promise<string | { status: string; reason: string }> {
+    const validated = this.validation(
+      refreshTokenPayloadSchema,
+      refreshTokenPayload,
+    );
     const newJti = randomUUID();
 
-    const [status, reason] = await this.rotateSession({ ...refreshTokenPayload, newJti })
+    const [status, reason] = await this.rotateSession({
+      ...refreshTokenPayload,
+      newJti,
+    });
 
-    if(status !== 'ACTIVE') return { status, reason };
+    if (status !== 'ACTIVE') return { status, reason };
 
     const newRefreshToken = this.generateRefreshToken({
       ...refreshTokenPayload,
-      jti: newJti
-    })
+      jti: newJti,
+    });
 
     return newRefreshToken;
-    
   }
 
   // ── Decode (no verify) ──────────────────────────────────────────────────────
@@ -271,12 +277,12 @@ export class TokenService {
   private sign(
     payload: Record<string, unknown>,
     secret: string,
-    expiresIn: SignOptions["expiresIn"]
+    expiresIn: SignOptions['expiresIn'],
   ): string {
     const options: SignOptions = {
-      algorithm: "HS256",
+      algorithm: 'HS256',
       expiresIn,
-      notBefore: "0s",
+      notBefore: '0s',
       issuer: this.issuer,
       audience: this.audience,
     };
@@ -285,14 +291,14 @@ export class TokenService {
       return jwt.sign(payload, secret, options);
     } catch (err) {
       throw new Error(
-        `TokenService: failed to sign token — ${(err as Error).message}`
+        `TokenService: failed to sign token — ${(err as Error).message}`,
       );
     }
   }
 
   private verify(token: string, secret: string): JwtPayload {
     const options: VerifyOptions = {
-      algorithms: ["HS256"],
+      algorithms: ['HS256'],
       issuer: this.issuer,
       audience: this.audience,
     };
@@ -308,9 +314,10 @@ export class TokenService {
     }
   }
 
-  private async rotateSession(payload: RefreshTokenPayload & JwtPayload & { newJti: string }): Promise<[string, string]> {
+  private async rotateSession(
+    payload: RefreshTokenPayload & JwtPayload & { newJti: string },
+  ): Promise<[string, string]> {
     try {
-
       const { sid, newJti, sub: userId } = payload;
 
       const HASH_KEY = KEYS.session(userId, sid);
@@ -325,22 +332,33 @@ export class TokenService {
       //   newJti,
       //   ttlSeconds: REFRESH_TTL_SECONDS,
       // });
-      const [status, reason] = await this.client?.eval(luaRoateSession, 2, HASH_KEY, SET_KEY, sid, payload.jti!, newJti, REFRESH_TTL_SECONDS) as [string, string];
+      const [status, reason] = (await this.client?.eval(
+        luaRoateSession,
+        2,
+        HASH_KEY,
+        SET_KEY,
+        sid,
+        payload.jti!,
+        newJti,
+        REFRESH_TTL_SECONDS,
+      )) as [string, string];
       return [status, reason];
-     
     } catch (err) {
-
       if (err instanceof TokenReuseDetectedError) {
         // পুরো family revoke হয়ে গেছে — user-কে আবার login করতে হবে
         throw new TokenInvalidError(
-          "Suspicious activity detected. Please log in again."
+          'Suspicious activity detected. Please log in again.',
         );
       }
-      if (err instanceof SessionNotFoundError || err instanceof SessionInactiveError) {
-        throw new TokenInvalidError("Session no longer valid. Please log in again.");
+      if (
+        err instanceof SessionNotFoundError ||
+        err instanceof SessionInactiveError
+      ) {
+        throw new TokenInvalidError(
+          'Session no longer valid. Please log in again.',
+        );
       }
       throw err;
-
     }
   }
 
@@ -348,7 +366,7 @@ export class TokenService {
     const result = schema.safeParse(payload);
 
     if (!result.success) {
-      throw new TokenInvalidError("Invalid token payload");
+      throw new TokenInvalidError('Invalid token payload');
     }
 
     return result.data;

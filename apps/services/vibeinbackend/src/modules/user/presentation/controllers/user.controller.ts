@@ -1,22 +1,22 @@
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Body, 
-  Param, 
-  HttpCode, 
-  HttpStatus, 
-  Put, 
-  UsePipes, 
-  Delete, 
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  HttpCode,
+  HttpStatus,
+  Put,
+  UsePipes,
+  Delete,
   Query,
   Inject,
 } from '@nestjs/common';
 import { ZodValidationPipe } from '../../application/pipes/zodValidation.pipe';
 import { UserService } from '../../application/services/user.service';
 import {
-  type CreateUserInput,  // interface always mark as type 
-  createUserSchema 
+  type CreateUserInput, // interface always mark as type
+  createUserSchema,
 } from '../../application/schemas/user.schema';
 
 @Controller()
@@ -26,14 +26,12 @@ export class UserController {
     private readonly userService: UserService,
   ) {}
 
- 
   // @Get('user:id')
   // @UseGuards(RolesGuard)
   // @Roles('admin')
   // getUser(@Param('id') id: string) {
   //   return this.userService.getUser(id);
   // }
-
 
   @Post('user')
   @HttpCode(HttpStatus.CREATED)

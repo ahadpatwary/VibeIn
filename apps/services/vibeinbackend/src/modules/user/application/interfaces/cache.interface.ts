@@ -1,5 +1,3 @@
-
-
 export interface CacheRepository {
-    set(): Promise<unknown>,
+  set(): Promise<unknown>;
 }

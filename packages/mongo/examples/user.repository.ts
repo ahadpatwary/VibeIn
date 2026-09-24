@@ -4,11 +4,11 @@ import { UserModel, UserDocument } from './user.schema';
 
 @injectable()
 export class UserRepository extends BaseRepository<UserDocument> {
-  constructor() {
-    super(UserModel);
-  }
+   constructor() {
+      super(UserModel);
+   }
 
-  async findByEmail(email: string) {
-    return this.findOne({ email: email.toLowerCase() });
-  }
+   async findByEmail(email: string) {
+      return this.findOne({ email: email.toLowerCase() });
+   }
 }

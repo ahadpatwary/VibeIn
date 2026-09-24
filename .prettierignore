@@ -1,4 +1,10 @@
+# pitter ignore those files
+
 node_modules
 dist
-coverage
 .next
+.turbo
+coverage
+build
+*.min.js
+pnpm-lock.yaml

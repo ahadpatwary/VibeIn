@@ -1,4 +1,4 @@
 export enum AuthProvider {
-    GITHUB = 'github',
-    GOOGLE = 'google',
+   GITHUB = 'github',
+   GOOGLE = 'google',
 }

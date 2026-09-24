@@ -19,10 +19,16 @@ function defaultIsRetryable(err: unknown): boolean {
   if (code !== undefined) return RETRYABLE_HTTP_CODES.has(code);
   // Network-level errors (no http_code) — treat as transient.
   const name = (err as { code?: string })?.code;
-  return name === 'ECONNRESET' || name === 'ETIMEDOUT' || name === 'ECONNREFUSED';
+  return (
+    name === 'ECONNRESET' || name === 'ETIMEDOUT' || name === 'ECONNREFUSED'
+  );
 }
 
-function delayWithJitter(attempt: number, baseDelayMs: number, maxDelayMs: number): number {
+function delayWithJitter(
+  attempt: number,
+  baseDelayMs: number,
+  maxDelayMs: number,
+): number {
   const exponential = baseDelayMs * 2 ** (attempt - 1);
   const capped = Math.min(exponential, maxDelayMs);
   // Full jitter: random value in [0, capped] avoids thundering-herd retries.

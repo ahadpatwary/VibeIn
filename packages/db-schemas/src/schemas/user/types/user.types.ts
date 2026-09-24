@@ -1,19 +1,9 @@
 import { SoftDeletable } from '../../../plugins/base.plugin';
 import { UserRole, UserStatus } from '../constants/user.constant';
 // import type { SoftDeletable } from '../plugins/base.plugin';
-import {
-  Document,
-  HydratedDocument,
-  Model,
-  Schema,
-  Types,
-  model,
-} from 'mongoose';
-
-
+import { Document, HydratedDocument, Model, Schema, Types, model } from 'mongoose';
 
 export type UserDocument = HydratedDocument<IUser>;
-
 
 // export interface UserDocument extends Document, SoftDeletable {
 //   email: string;
@@ -24,39 +14,37 @@ export type UserDocument = HydratedDocument<IUser>;
 //   updatedAt: Date;
 // }
 
-
 export interface IEducation {
-  college: string;
-  degree: string;
+   college: string;
+   degree: string;
 }
 
 export interface ISocialLink {
-  platform: string;
-  url: string;
+   platform: string;
+   url: string;
 }
 
 export interface IAvatar {
-  url: string;
-  public_id: string;
+   url: string;
+   public_id: string;
 }
 
 export interface IUser {
-  fullName: string;
-  email: string;
-  phoneNumber: string;
+   fullName: string;
+   email: string;
+   phoneNumber: string;
 
-  bio?: string;
+   bio?: string;
 
-  avatar: IAvatar | null;
+   avatar: IAvatar | null;
 
-  education: IEducation[];
-  skills: string[];
-  socialLinks: ISocialLink[];
+   education: IEducation[];
+   skills: string[];
+   socialLinks: ISocialLink[];
 
-  roles: UserRole[];
-  status: UserStatus;
+   roles: UserRole[];
+   status: UserStatus;
 
-
-  createdAt: Date;
-  updatedAt: Date;
+   createdAt: Date;
+   updatedAt: Date;
 }

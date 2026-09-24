@@ -1,37 +1,31 @@
 {
-  "name": "@app/logger",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Production-ready, Pino-backed, swappable structured logger",
-  
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-
-  "exports": {
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.js"
-  },
-
-  "scripts": {
-    "build": "tsup",
-    "buildtsc": "tsc -p tsconfig.json"
-  },
-
-  "peerDependencies": {},
-
-  "dependencies": {
-    "pino": "^9.4.0",
-    "pino-roll": "^2.2.0",
-    "reflect-metadata": "^0.2.2",
-    "tsyringe": "^4.8.0",
-    "zod": "^4.4.3"
-  },
-  
-  "devDependencies": {
-    "pino-pretty": "^11.2.2",
-    "typescript": "^5.7.3",
-    "@types/node": "^22.10.7"
-  }
+   "name": "@app/logger",
+   "version": "1.0.0",
+   "private": true,
+   "description": "Production-ready, Pino-backed, swappable structured logger",
+   "main": "./dist/index.js",
+   "module": "./dist/index.mjs",
+   "types": "./dist/index.d.ts",
+   "exports": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+   },
+   "scripts": {
+      "build": "tsup",
+      "buildtsc": "tsc -p tsconfig.json"
+   },
+   "peerDependencies": {},
+   "dependencies": {
+      "pino": "^9.4.0",
+      "pino-roll": "^2.2.0",
+      "reflect-metadata": "^0.2.2",
+      "tsyringe": "^4.8.0",
+      "zod": "^4.4.3"
+   },
+   "devDependencies": {
+      "pino-pretty": "^11.2.2",
+      "typescript": "^5.7.3",
+      "@types/node": "^22.10.7"
+   }
 }

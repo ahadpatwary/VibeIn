@@ -4,8 +4,6 @@ import { MongooseClient } from '../client/mongoose.client';
 import { parseDatabaseConfig } from '../config/database.config';
 import type { DatabaseConfig, DatabaseConnOpt } from '../types/db.types';
 
-
-
 /**
  * Registers the database module (config, logger, MongooseClient) into a
  * tsyringe container. Call this once at application bootstrap, before
@@ -16,36 +14,24 @@ import type { DatabaseConfig, DatabaseConnOpt } from '../types/db.types';
  *   await client.connect();
  */
 export function registerDatabaseModule(
-  targetContainer: DependencyContainer = container,
-  config: DatabaseConfig,
+   targetContainer: DependencyContainer = container,
+   config: DatabaseConfig,
 ): DependencyContainer {
+   const parsedConfig = parseDatabaseConfig(config);
 
-  const parsedConfig = parseDatabaseConfig(config);
+   console.log('parsedConfig', parsedConfig);
 
-  console.log("parsedConfig", parsedConfig);
+   console.log('REGISTER TOKEN:', DB_TOKENS.DatabaseConnOpt);
 
-  console.log(
-    'REGISTER TOKEN:',
-    DB_TOKENS.DatabaseConnOpt,
-  );
-
-  targetContainer.register<DatabaseConnOpt>(
-    DB_TOKENS.DatabaseConnOpt,
-    {
+   targetContainer.register<DatabaseConnOpt>(DB_TOKENS.DatabaseConnOpt, {
       useValue: parsedConfig.connOption,
-    },
-  );
+   });
 
-  console.log(
-    'REGISTERED:',
-    targetContainer.isRegistered(
-      DB_TOKENS.DatabaseConnOpt,
-    ),
-  );
+   console.log('REGISTERED:', targetContainer.isRegistered(DB_TOKENS.DatabaseConnOpt));
 
-  targetContainer.registerSingleton(MongooseClient);
+   targetContainer.registerSingleton(MongooseClient);
 
-  return targetContainer;
+   return targetContainer;
 }
 
 export { container as rootContainer };

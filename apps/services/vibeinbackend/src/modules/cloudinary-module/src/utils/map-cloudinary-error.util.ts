@@ -69,7 +69,10 @@ function normalizeSdkError(err: unknown): CloudinarySdkError {
   if (err && typeof err === 'object') {
     const e = err as CloudinarySdkError;
     if (e.error) {
-      return { http_code: e.error.http_code ?? e.http_code, message: e.error.message ?? e.message };
+      return {
+        http_code: e.error.http_code ?? e.http_code,
+        message: e.error.message ?? e.message,
+      };
     }
     return { http_code: e.http_code, message: e.message };
   }

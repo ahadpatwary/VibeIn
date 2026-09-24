@@ -10,14 +10,21 @@ import { MediaKind } from '../enums/resource-type.enum';
  */
 @Injectable()
 export class FileValidationPipe implements PipeTransform {
-  validate(file: Express.Multer.File | undefined, kind: MediaKind): Express.Multer.File {
+  validate(
+    file: Express.Multer.File | undefined,
+    kind: MediaKind,
+  ): Express.Multer.File {
     if (!file) {
-      throw new CloudinaryValidationException('No file was provided in the request.');
+      throw new CloudinaryValidationException(
+        'No file was provided in the request.',
+      );
     }
 
     const limits = CLOUDINARY_FILE_LIMITS[kind];
     if (!limits) {
-      throw new CloudinaryValidationException(`Unsupported media kind: ${kind}`);
+      throw new CloudinaryValidationException(
+        `Unsupported media kind: ${kind}`,
+      );
     }
 
     if (!limits.allowedMimeTypes.includes(file.mimetype)) {

@@ -43,9 +43,9 @@ await client.connect();
 ```ts
 @injectable()
 export class UserRepository extends BaseRepository<UserDocument> {
-  constructor() {
-    super(UserModel);
-  }
+   constructor() {
+      super(UserModel);
+   }
 }
 ```
 
