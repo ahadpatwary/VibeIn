@@ -1,6 +1,7 @@
 // Main service
 export { RedisService } from './redis.service';
 export { LuaHandler } from './luaHandler'
+export { RedisClientManager } from './redis.client'
 
 // Config
 // export { RedisConfigBuilder, createRedisConfig } from './config/redis.config.js';
@@ -39,6 +40,8 @@ export {
 
 // Utils
 export { RedisSerializer } from './utils/redis.serializer';
+
+export * from './tokens/redis.token'
 
 
 // Constants

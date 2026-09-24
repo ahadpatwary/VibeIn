@@ -17,18 +17,33 @@ import type { DatabaseConfig, DatabaseConnOpt } from '../types/db.types';
  */
 export function registerDatabaseModule(
   targetContainer: DependencyContainer = container,
-  config: DatabaseConfig, 
+  config: DatabaseConfig,
 ): DependencyContainer {
 
-  const parsedConfig: DatabaseConfig = parseDatabaseConfig(config);
+  const parsedConfig = parseDatabaseConfig(config);
+
+  console.log("parsedConfig", parsedConfig);
+
+  console.log(
+    'REGISTER TOKEN:',
+    DB_TOKENS.DatabaseConnOpt,
+  );
 
   targetContainer.register<DatabaseConnOpt>(
     DB_TOKENS.DatabaseConnOpt,
-    { useValue: parsedConfig.connOption })
-  ;
+    {
+      useValue: parsedConfig.connOption,
+    },
+  );
+
+  console.log(
+    'REGISTERED:',
+    targetContainer.isRegistered(
+      DB_TOKENS.DatabaseConnOpt,
+    ),
+  );
 
   targetContainer.registerSingleton(MongooseClient);
-
 
   return targetContainer;
 }

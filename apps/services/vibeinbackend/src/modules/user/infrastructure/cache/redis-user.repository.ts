@@ -1,18 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { User } from '../../domain/entities/user.entity';
-import {type RedisService } from 'src/shared/modules/cache/redis.service';
-import { UserCacheRepository } from '../../domain/repositories/user.cache.repository.interface';
+import { Inject, Injectable } from '@nestjs/common';
+import { CacheRepository } from '../../application/interfaces/cache.interface';
+import { RedisService } from '@app/redis-client';
+import { USER_TOKENS } from '../../application/tokens/user.token';
+
 
 @Injectable()
-export class RedisUserRepository implements UserCacheRepository {
-  constructor(private readonly redisClient: RedisService) { }
+export class RedisUserRepository implements CacheRepository {
+  constructor(
+    @Inject(USER_TOKENS.RedisService)
+    private readonly redisService: RedisService,
+  ) {}
 
-  async getUser(id: string): Promise<User | null> {
-    const data = await this.redisClient.getClient()!.get(`user:${id}`);
-    return data ? JSON.parse(data) : null;
+  async set(): Promise<void> {
+    this.redisService.commandWraper('SET', async (client) => {
+      await client.set('name', "abdule ahad patwary")
+    })
   }
 
-  async setUser(user: User): Promise<void> {
-    await this.redisClient.getClient()!.set(`user:${user.id}`, JSON.stringify(user));
-  }
 }
