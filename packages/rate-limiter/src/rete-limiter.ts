@@ -1,32 +1,81 @@
-import {
-   RateLimiterOptions,
-   RateLimitDecision,
-   RouteConfigWithKeyspace,
-   RateLimitAlgorithm,
-   RouteConfig,
-   RateLimitResult,
-} from './types/types';
+import path from 'node:path';
+
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import { REDIS_TOKENS } from '@app/redis-client';
 import { inject, injectable } from 'tsyringe';
-import { RATE_LIMIT_TOKENS } from './token/token';
-import { StoreService } from './redis/redisService';
-import { ILogger, LoggerFactory } from '@app/logger';
+
 import { DEFAULT_ALGORITHM } from './constants/constant';
+import { StoreService } from './redis/redisService';
+import { RATE_LIMIT_TOKENS } from './token/token';
+import {
+   RateLimitDecision,
+   RateLimiterOptions,
+   RateLimitResult,
+   // RateLimitAlgorithm,
+   RouteConfig,
+   RouteConfigWithKeyspace,
+} from './types/types';
+
+/**
+ * RouteConfig is a discriminated union (fixed-window/sliding-window carry
+ * `limit`, leaky-bucket/token-bucket carry `capacity`). This helper narrows
+ * it safely instead of casting to `any`.
+ */
+function getConfiguredLimit(config: RouteConfig): number {
+   switch (config.algorithm) {
+      case 'fixed-window':
+      case 'sliding-window':
+         return config.limit;
+      case 'leaky-bucket':
+      case 'token-bucket':
+         return config.capacity;
+      default:
+         return 0;
+   }
+}
+
+function getErrorMessage(err: unknown): string {
+   return err instanceof Error ? err.message : String(err);
+}
 
 @injectable()
 export class RateLimiter {
-   private _initialized: boolean = false;
+   private _initialized = false;
    private readonly logger: ILogger;
 
    constructor(
-      @inject(RATE_LIMIT_TOKENS.RedisService)
+      @inject(REDIS_TOKENS.RedisService)
       private readonly redisService: StoreService,
 
       @inject(RATE_LIMIT_TOKENS.GlobalOptions)
       private readonly globalOptions: Required<RateLimiterOptions>,
 
-      @inject(RATE_LIMIT_TOKENS.Logger) factory: LoggerFactory,
+      @inject(LOGGER_TOKENS.Logger) factory: LoggerFactory,
    ) {
       this.logger = factory.forModule('RATE_LIMITER_MODULE');
+
+      void this.redisService.init([
+         {
+            name: 'leaky-bucket',
+            path: path.join(__dirname, 'lua', 'leaky-bucket.lua'),
+         },
+         {
+            name: 'fiexed-window',
+            path: path.join(__dirname, 'lua', 'fixed-window.lua'),
+         },
+         {
+            name: 'sliding-window',
+            path: path.join(__dirname, 'lua', 'slading-window.lua'),
+         },
+         {
+            name: 'token-bucket',
+            path: path.join(__dirname, 'lua', 'token-bucket.lua'),
+         },
+         {
+            name: 'panaly-check',
+            path: path.join(__dirname, 'lua', 'penalty.lua'),
+         },
+      ]);
    }
 
    /**
@@ -37,10 +86,6 @@ export class RateLimiter {
       routeConfig: RouteConfigWithKeyspace,
    ): Promise<RateLimitDecision> {
       if (!this._initialized) throw new Error('RateLimiter: call init() first');
-
-      const algorithm = (routeConfig.algorithm ?? DEFAULT_ALGORITHM) as RateLimitAlgorithm;
-      // const engine = this._engines.get(algorithm);
-      // if (!engine) throw new Error(`RateLimiter: unknown algorithm "${algorithm}"`);
 
       /**
        * Namespace the identifier per route
@@ -104,13 +149,13 @@ export class RateLimiter {
           */
          if (this.globalOptions.enablePenalty) {
             const ban = await this.redisService.checkBan(namespacedId);
-            if (ban.banned) {
+            if (ban.banned && ban.ttl) {
                return this._makeDecision(
                   false,
                   identifier,
                   {
                      allowed: false,
-                     limit: (routeConfig as any).limit ?? 0,
+                     limit: getConfiguredLimit(routeConfig),
                      remaining: 0,
                      resetAt: new Date(Date.now() + ban.ttl * 1000),
                      retryAfter: ban.ttl,
@@ -133,14 +178,14 @@ export class RateLimiter {
          }
 
          return this._makeDecision(result.allowed, identifier, result, routeConfig);
-      } catch (err: any) {
+      } catch (err: unknown) {
          /**
           * ── Fail-open / fail-closed ───────────────────────────────
           * -> If query fail and failOpen = true => access resourch
           * -> If query fail and failOpen = false => access denay
           */
          if (this.globalOptions.failOpen) {
-            console.error('[RateLimiter] Redis error (fail-open):', err.message);
+            this.logger.error('[RateLimiter] Redis error (fail-open):', getErrorMessage(err));
             return this._makeDecision(
                true,
                identifier,
@@ -162,7 +207,7 @@ export class RateLimiter {
    }
 
    async #executeAlgorithm(identifier: string, routeConfig: RouteConfig): Promise<RateLimitResult> {
-      switch (routeConfig.algorithm) {
+      switch (routeConfig.algorithm ?? DEFAULT_ALGORITHM) {
          case 'fixed-window':
             return this.#fixedWindow(identifier, routeConfig);
 
@@ -176,7 +221,7 @@ export class RateLimiter {
             return this.#tokenBucket(identifier, routeConfig);
 
          default:
-            throw new Error(`Algorithm "${(routeConfig as any).algorithm}" is not supported`);
+            throw new Error(`Algorithm "${routeConfig.algorithm}" is not supported`);
       }
    }
 
@@ -259,7 +304,7 @@ export class RateLimiter {
       const currKey = `rl:sw:${identifier}:${windowId}`;
       const prevKey = `rl:sw:${identifier}:${prevWindowId}`;
 
-      const [prevCount, currCount, prevTTL] = await this.redisService.luaExecute<
+      const [prevCount, currCount] = await this.redisService.luaExecute<
          [prevCound: number, currCount: number, prevTTL: number]
       >('sliding-window', [currKey, prevKey], [String(windowSecs)]);
 
@@ -328,7 +373,7 @@ export class RateLimiter {
    private _makeDecision(
       allowed: boolean,
       identifier: string,
-      result: any,
+      result: RateLimitResult,
       routeConfig: RouteConfigWithKeyspace,
       reason?: 'OK' | 'RATE_LIMITED' | 'BLACKLISTED' | 'PENALTY_BAN' | 'FAIL_OPEN',
    ): RateLimitDecision {

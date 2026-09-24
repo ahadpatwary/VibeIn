@@ -1,18 +1,19 @@
-import { ILogger, LoggerFactory } from '@app/logger';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 import {
    LuaHandler,
+   REDIS_TOKENS,
    RedisCommandException,
    RedisService,
    ScriptLoaderConfig,
 } from '@app/redis-client';
+import { inject, injectable } from 'tsyringe';
+
 import {
    BLACKLIST_KEY,
    PENALTY_KEY_PREFIX,
    PENALTY_TIERS,
    WHITELIST_KEY,
 } from '../constants/constant';
-import { inject, injectable } from 'tsyringe';
-import { RATE_LIMIT_TOKENS } from '../token/token';
 import { BanStatus, ViolationStatus } from '../types/types';
 
 @injectable()
@@ -20,13 +21,13 @@ export class StoreService {
    private readonly logger: ILogger;
 
    constructor(
-      @inject(RATE_LIMIT_TOKENS.RedisService)
+      @inject(REDIS_TOKENS.RedisService)
       private readonly redisService: RedisService,
 
-      @inject(RATE_LIMIT_TOKENS.LuaHandler)
+      @inject(REDIS_TOKENS.LuaHandler)
       private readonly luaHandler: LuaHandler,
 
-      @inject(RATE_LIMIT_TOKENS.Logger) factory: LoggerFactory,
+      @inject(LOGGER_TOKENS.Logger) factory: LoggerFactory,
    ) {
       this.logger = factory.forModule('RATE_LIMIT_MODULE');
    }
@@ -46,7 +47,7 @@ export class StoreService {
     * @returns
     */
    async luaExecute<T>(name: string, keys?: string[], args?: string[]): Promise<T> {
-      return this.luaHandler.execute<T>(name, keys, args);
+      return await this.luaHandler.execute<T>(name, keys, args);
    }
 
    /**
@@ -54,12 +55,12 @@ export class StoreService {
     */
    async whitelist(identifier: string, ttlSecs: number | null = null): Promise<void> {
       if (ttlSecs) {
-         this.redisService.commandWraper('SET', async (client) => {
-            client.set(`${WHITELIST_KEY}:${identifier}`, '1', 'EX', ttlSecs);
+         await this.redisService.commandWraper('SET', async (client) => {
+            await client.set(`${WHITELIST_KEY}:${identifier}`, '1', 'EX', ttlSecs);
          });
       } else {
-         this.redisService.commandWraper('SADD', async (client) => {
-            client.sadd(WHITELIST_KEY, identifier);
+         await this.redisService.commandWraper('SADD', async (client) => {
+            await client.sadd(WHITELIST_KEY, identifier);
          });
       }
    }
@@ -70,8 +71,8 @@ export class StoreService {
    async unwhitelist(identifier: string): Promise<void> {
       await Promise.all([
          this.redisService.commandWraper('CUSTOM', async (client) => {
-            client.srem(WHITELIST_KEY, identifier);
-            client.del(`${WHITELIST_KEY}:${identifier}`);
+            await client.srem(WHITELIST_KEY, identifier);
+            await client.del(`${WHITELIST_KEY}:${identifier}`);
          }),
       ]);
    }
@@ -81,12 +82,12 @@ export class StoreService {
     */
    async blacklist(identifier: string, ttlSecs: number | null = null): Promise<void> {
       if (ttlSecs) {
-         this.redisService.commandWraper('SET', async (client) => {
-            client.set(`${BLACKLIST_KEY}:${identifier}`, '1', 'EX', ttlSecs);
+         await this.redisService.commandWraper('SET', async (client) => {
+            await client.set(`${BLACKLIST_KEY}:${identifier}`, '1', 'EX', ttlSecs);
          });
       } else {
-         this.redisService.commandWraper('SADD', async (client) => {
-            client.sadd(BLACKLIST_KEY, identifier);
+         await this.redisService.commandWraper('SADD', async (client) => {
+            await client.sadd(BLACKLIST_KEY, identifier);
          });
       }
    }
@@ -95,11 +96,10 @@ export class StoreService {
     * Remove identifier from blacklist
     */
    async unblacklist(identifier: string): Promise<void> {
-      await Promise.all([
-         this.redisService.commandWraper('CUSTOM', async (client) => {
-            (client.srem(BLACKLIST_KEY, identifier), client.del(`${BLACKLIST_KEY}:${identifier}`));
-         }),
-      ]);
+      await this.redisService.commandWraper('CUSTOM', async (client) => {
+         await client.srem(BLACKLIST_KEY, identifier);
+         // await client.del(`${BLACKLIST_KEY}:${identifier}`)
+      });
    }
 
    /**
@@ -123,7 +123,7 @@ export class StoreService {
         `;
 
       await this.redisService.commandWraper('EVAL', async (client) => {
-         client.eval(
+         await client.eval(
             LUA_RESET_BLOCK,
             2,
             `${PENALTY_KEY_PREFIX}:violations:${identifier}`,
@@ -177,7 +177,7 @@ export class StoreService {
       const violKey = `${PENALTY_KEY_PREFIX}:violations:${namespacedId}`;
       const banKey = `${PENALTY_KEY_PREFIX}:ban:${namespacedId}`;
 
-      this.luaExecute(
+      await this.luaExecute(
          'panaly-check',
          [violKey, banKey],
          [String(penaltyThreshold), String(86400 * 7), ...PENALTY_TIERS.map(String)],

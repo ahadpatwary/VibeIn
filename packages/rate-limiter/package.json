@@ -19,7 +19,7 @@
    ],
    "sideEffects": false,
    "scripts": {
-      "build": "tsup",
+      "build": "tsup && node ./scripts/copy-lua.js",
       "dev": "tsup --watch",
       "prepublishOnly": "npm run build"
    },
