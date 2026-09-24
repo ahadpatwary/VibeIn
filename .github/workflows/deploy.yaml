@@ -52,3 +52,35 @@ jobs:
            run: |
               echo "Deploying application..."
               # Example: SSH deploy / Docker push / Vercel deploy
+
+# name: CI
+
+# on:
+#    pull_request:
+#    push:
+#       branches: [main]
+
+# jobs:
+#    validate:
+#       runs-on: ubuntu-latest
+#       steps:
+#          - uses: actions/checkout@v4
+#            with:
+#               fetch-depth: 0 # full history — needed for turbo git-range filtering
+
+#          - uses: actions/setup-node@v4
+#            with:
+#               node-version: 20
+#               cache: npm
+
+#          - run: npm ci
+
+#          - name: Cache turbo
+#            uses: actions/cache@v4
+#            with:
+#               path: .turbo
+#               key: turbo-${{ github.job }}-${{ github.sha }}
+#               restore-keys: turbo-${{ github.job }}-
+
+#          - name: Validate (authoritative — full graph)
+#            run: npx turbo run lint typecheck test build --output-logs=new-only
