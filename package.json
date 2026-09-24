@@ -13,6 +13,7 @@
    },
    "license": "ISC",
    "author": "Abdul Ahad Patwary",
+   "packageManager": "npm@9",
    "workspaces": [
       "apps/*",
       "apps/services/*",
