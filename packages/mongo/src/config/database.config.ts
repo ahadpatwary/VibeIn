@@ -1,6 +1,7 @@
 import { z } from 'zod';
+
 import { DB_CONSTANTS } from '../constants/db.constants';
-import type { DatabaseConfig, DatabaseConnOpt } from '../types/db.types';
+import type { DatabaseConfig } from '../types/db.types';
 
 export const connectionOptionSchema = z
    .object({

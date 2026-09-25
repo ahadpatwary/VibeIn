@@ -1,8 +1,9 @@
-import Redis, { RedisOptions } from 'ioredis';
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import Redis from 'ioredis';
+import { inject, injectable } from 'tsyringe';
+
 import { REDIS_EVENTS } from './constants/redis.constants.js';
 import { RedisConnectionException } from './exceptions/redis.exception.js';
-import { inject, injectable } from 'tsyringe';
-import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 import { REDIS_TOKENS } from './tokens/redis.token.js';
 import { RedisConfig } from './types/redis.types.js';
 

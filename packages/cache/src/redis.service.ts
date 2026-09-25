@@ -1,10 +1,11 @@
-import Redis, { ChainableCommander } from 'ioredis';
-import { RedisPipelineResult } from './types/redis.types.js';
-import { type RedisClientManager } from './redis.client.js';
-import { RedisCommandException } from './exceptions/redis.exception.js';
-import { inject, injectable } from 'tsyringe';
-import { REDIS_TOKENS } from './tokens/redis.token.js';
 import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import Redis, { ChainableCommander } from 'ioredis';
+import { inject, injectable } from 'tsyringe';
+
+import { RedisCommandException } from './exceptions/redis.exception.js';
+import { type RedisClientManager } from './redis.client.js';
+import { REDIS_TOKENS } from './tokens/redis.token.js';
+import { RedisPipelineResult } from './types/redis.types.js';
 
 @injectable()
 export class RedisService {

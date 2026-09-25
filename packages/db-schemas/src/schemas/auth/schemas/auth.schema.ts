@@ -1,7 +1,7 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 import { AuthProvider } from '../constants/auth-provider';
-import { IAuthIdentity } from '../types/auth-identity.types';
+import type { IAuthIdentity } from '../types/auth-identity.types';
 
 export const AuthIdentitySchema = new Schema<IAuthIdentity>(
    {

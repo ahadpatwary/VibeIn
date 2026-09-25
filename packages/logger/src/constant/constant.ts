@@ -1,4 +1,4 @@
-import { PinoConfig } from '../types/types';
+import type { PinoConfig } from '../types/types';
 
 export const pinoConstConfig: PinoConfig = {
    // level: LOG_LEVEL,

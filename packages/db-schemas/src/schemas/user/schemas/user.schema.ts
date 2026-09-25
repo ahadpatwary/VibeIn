@@ -1,6 +1,4 @@
-import { Connection, Document, HydratedDocument, Model, Schema, Types, model } from 'mongoose';
-
-import type { IAvatar, IEducation, ISocialLink, IUser, UserDocument } from '../types/user.types';
+import { Schema } from 'mongoose';
 
 import {
    MAX_EDUCATION_ENTRIES,
@@ -9,6 +7,7 @@ import {
    UserRole,
    UserStatus,
 } from '../constants/user.constant';
+import type { IAvatar, IEducation, ISocialLink, IUser } from '../types/user.types';
 
 export const AvaterSchema = new Schema<IAvatar>({
    url: {

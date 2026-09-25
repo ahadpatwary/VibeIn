@@ -1,12 +1,12 @@
 {
-  "extends": "./tsconfig.json",
-  "exclude": [
-    "node_modules",
-    "src/modules/auth",
-    "src/modules/cloudinary-module",
-    "test",
-    "dist",
-    "**/*spec.ts",
-    "src/shared/services"
-  ]
+   "extends": "./tsconfig.json",
+   "exclude": [
+      "node_modules",
+      "src/modules/auth",
+      "src/modules/cloudinary-module",
+      "test",
+      "dist",
+      "**/*spec.ts",
+      "src/shared/services"
+   ]
 }

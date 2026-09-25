@@ -2,6 +2,7 @@
    "name": "@app/logger",
    "version": "1.0.0",
    "private": true,
+   "type": "module",
    "description": "Production-ready, Pino-backed, swappable structured logger",
    "main": "./dist/index.js",
    "module": "./dist/index.mjs",
@@ -13,10 +14,16 @@
    },
    "scripts": {
       "build": "tsup",
-      "buildtsc": "tsc -p tsconfig.json"
+      "dev": "tsup --watch",
+      "lint": "eslint .",
+      "lint:fix": "eslint . --fix",
+      "typecheck": "tsc --noEmit",
+      "clean": "rimraf dist",
+      "prepublishOnly": "npm run clean && npm run build"
    },
    "peerDependencies": {},
    "dependencies": {
+      "@app/eslint-config": "*",
       "pino": "^9.4.0",
       "pino-roll": "^2.2.0",
       "reflect-metadata": "^0.2.2",

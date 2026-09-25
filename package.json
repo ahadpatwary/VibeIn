@@ -21,26 +21,21 @@
       "packages/*"
    ],
    "scripts": {
-      "bootstrap": "npm install",
       "build": "turbo run build",
       "lint": "turbo run lint",
       "test": "turbo run test",
       "typecheck": "turbo run typecheck",
+      "pre:commit": "turbo run lint typecheck",
+      "validate": "turbo run lint typecheck build",
       "format": "prettier --write .",
       "format:check": "prettier --check .",
-      "validate": "turbo run lint typecheck test build",
       "deps:check": "node ./scripts/check-deps.js",
       "prepare": "husky"
    },
    "devDependencies": {
-      "@next/eslint-plugin-next": "^16.3.6",
       "depcheck": "^1.4.2",
-      "eslint-plugin-n": "^18.3.0",
-      "eslint-plugin-react": "^7.37.5",
-      "eslint-plugin-react-hooks": "^7.1.1",
-      "eslint-plugin-simple-import-sort": "^14.0.0",
-      "eslint-plugin-unused-imports": "^4.4.1",
       "husky": "^9.1.7",
+      "jiti": "^2.7.0",
       "lint-staged": "^16.4.0",
       "prettier": "^3.9.9",
       "tsx": "^4.23.13",
@@ -48,7 +43,6 @@
    },
    "lint-staged": {
       "*.{ts,tsx,js,jsx}": [
-         "eslint --fix",
          "prettier --write"
       ],
       "*.{json,md,yml,yaml}": [

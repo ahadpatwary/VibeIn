@@ -1,5 +1,6 @@
-import { Types } from 'mongoose';
-import { AuthProvider } from '../constants/auth-provider';
+import type { Types } from 'mongoose';
+
+import type { AuthProvider } from '../constants/auth-provider';
 
 export interface IAuthIdentity {
    userId: Types.ObjectId;

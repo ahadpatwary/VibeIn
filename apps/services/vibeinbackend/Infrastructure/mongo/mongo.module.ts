@@ -7,46 +7,46 @@ const MONGO_INITIALIZED = Symbol('MONGO_INITIALIZED');
 
 @Module({})
 export class MongoModule {
-  static forRootAsync(): DynamicModule {
-    return {
-      module: MongoModule,
+   static forRootAsync(): DynamicModule {
+      return {
+         module: MongoModule,
 
-      imports: [ConfigModule],
+         imports: [ConfigModule],
 
-      providers: [
-        {
-          provide: 'MongoRegister',
-          inject: [ConfigService],
+         providers: [
+            {
+               provide: 'MongoRegister',
+               inject: [ConfigService],
 
-          useFactory: (config: ConfigService) => {
-            registerDatabaseModule(undefined, {
-              uri: config.get<string>('database.uri')!,
-              connOption: {
-                dbName: config.get<string>('database.uri') ?? 'SoundFear',
-                maxPoolSize: 10,
-                minPoolSize: 3,
-              },
-            });
+               useFactory: (config: ConfigService) => {
+                  registerDatabaseModule(undefined, {
+                     uri: config.get<string>('database.uri')!,
+                     connOption: {
+                        dbName: config.get<string>('database.uri') ?? 'SoundFear',
+                        maxPoolSize: 10,
+                        minPoolSize: 3,
+                     },
+                  });
 
-            return true;
-          },
-        },
+                  return true;
+               },
+            },
 
-        {
-          provide: DB_TOKENS.MongooseClient,
-          /** mongo client depend on registerMongo */
-          inject: [ConfigService, MONGO_INITIALIZED],
-          useFactory: async (config: ConfigService) => {
-            const mongooseClient = container.resolve(MongooseClient);
-            await mongooseClient.connect(config.get<string>('database.uri')!);
-            return mongooseClient;
-          },
-        },
-      ],
+            {
+               provide: DB_TOKENS.MongooseClient,
+               /** mongo client depend on registerMongo */
+               inject: [ConfigService, MONGO_INITIALIZED],
+               useFactory: async (config: ConfigService) => {
+                  const mongooseClient = container.resolve(MongooseClient);
+                  await mongooseClient.connect(config.get<string>('database.uri')!);
+                  return mongooseClient;
+               },
+            },
+         ],
 
-      global: true,
+         global: true,
 
-      exports: [DB_TOKENS.MongooseClient],
-    };
-  }
+         exports: [DB_TOKENS.MongooseClient],
+      };
+   }
 }

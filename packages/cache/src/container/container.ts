@@ -1,9 +1,10 @@
 import { container, type DependencyContainer } from 'tsyringe';
-import { REDIS_TOKENS } from '../tokens/redis.token';
+
+import { loadRedisConfig } from '../config/config';
 import { LuaHandler } from '../luaHandler';
 import { RedisClientManager } from '../redis.client';
-import { loadRedisConfig } from '../config/config';
-import { RedisConfig } from '../types/redis.types';
+import { REDIS_TOKENS } from '../tokens/redis.token';
+import type { RedisConfig } from '../types/redis.types';
 
 export function registerRedis(
    targetContainer: DependencyContainer = container,

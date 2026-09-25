@@ -1,12 +1,14 @@
 import 'reflect-metadata';
+
 import { container, inject, injectable } from 'tsyringe';
-import { registerLogger, shutdownLogger, LOGGER_TOKENS, LoggerFactory } from '../src';
+
 import type { ILogger } from '../src';
+import { LOGGER_TOKENS, LoggerFactory, registerLogger, shutdownLogger } from '../src';
 
 /**
  *  Bootstrap (once, at app startup)
  */
-registerLogger();
+registerLogger(container, {});
 
 @injectable()
 class OrderService {

@@ -1,4 +1,4 @@
-import { RedisConfig } from '../types/redis.types';
+import type { RedisConfig } from '../types/redis.types';
 
 export const REDIS_CONFIG: Partial<RedisConfig> = {
    db: 0,

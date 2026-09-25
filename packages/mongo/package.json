@@ -2,6 +2,7 @@
    "name": "@app/mongo",
    "version": "1.0.0",
    "private": true,
+   "type": "module",
    "description": "Production-grade, class-based MongoDB (Mongoose) data-access core with tsyringe DI",
    "main": "./dist/index.js",
    "module": "./dist/index.mjs",
@@ -15,10 +16,16 @@
    },
    "scripts": {
       "build": "tsup",
-      "buildtsc": "tsc -p tsconfig.json"
+      "dev": "tsup --watch",
+      "lint": "eslint .",
+      "lint:fix": "eslint . --fix",
+      "typecheck": "tsc --noEmit",
+      "clean": "rimraf dist",
+      "prepublishOnly": "npm run clean && npm run build"
    },
    "dependencies": {
       "@app/logger": "^1.0.0",
+      "@app/eslint-config": "*",
       "mongoose": "^8.6.0",
       "reflect-metadata": "^0.2.2",
       "tsyringe": "^4.8.0",

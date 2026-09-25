@@ -1,16 +1,18 @@
 import 'reflect-metadata';
+
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import mongoose, { ClientSession, Connection } from 'mongoose';
 import { inject, injectable, singleton } from 'tsyringe';
-import mongoose, { Connection, ClientSession } from 'mongoose';
-import { DB_TOKENS } from '../tokens/db.tokens';
-import type { DatabaseConnOpt } from '../types/db.types';
+
+import { MONGOOSE_CONNECTION_EVENTS } from '../constants/db.constants';
 import {
    DatabaseConnectionException,
    DatabaseConnectionTimeoutException,
    TransactionException,
 } from '../exception/database.exception';
+import { DB_TOKENS } from '../tokens/db.tokens';
+import type { DatabaseConnOpt } from '../types/db.types';
 import { withRetry } from '../util/retry.util';
-import { MONGOOSE_CONNECTION_EVENTS } from '../constants/db.constants';
-import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
 
 @singleton()
 @injectable()

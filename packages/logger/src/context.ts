@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
-import { RequestContext } from './types/types';
+
+import type { RequestContext } from './types/types';
 
 /**
  * context.ts

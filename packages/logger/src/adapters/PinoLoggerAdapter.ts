@@ -1,7 +1,8 @@
 import pino, { type Logger as PinoInstance } from 'pino';
 import { injectable } from 'tsyringe';
-import type { ILogger, LogMeta, PinoConfig } from '../types/types';
+
 import { getRequestContext } from '../context';
+import type { ILogger, LogMeta, PinoConfig } from '../types/types';
 
 /**
  * PinoLoggerAdapter.ts

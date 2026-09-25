@@ -1,4 +1,4 @@
-import { ConnectOptions } from 'mongoose';
+import type { ConnectOptions } from 'mongoose';
 
 // export interface DatabaseConfig {
 //   uri: string;

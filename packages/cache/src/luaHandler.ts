@@ -1,10 +1,11 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { RedisClientManager } from './redis.client';
+
+import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import { inject, injectable } from 'tsyringe';
 
 import { RedisCommandException, RedisConnectionException } from './exceptions/redis.exception';
-import { inject, injectable } from 'tsyringe';
-import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
+import { RedisClientManager } from './redis.client';
 import { REDIS_TOKENS } from './tokens/redis.token';
 import { LoadedLuaScript, ScriptLoaderConfig } from './types/redis.types';
 
@@ -212,8 +213,6 @@ export class LuaHandler {
    async #performLoad(config: ScriptLoaderConfig): Promise<LoadedLuaScript> {
       try {
          const source = await this.#readScript(config.path);
-
-         console.log('source', source);
 
          const redis = await this.redisClient.getClient();
 

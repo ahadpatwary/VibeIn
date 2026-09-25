@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import type { Schema } from 'mongoose';
 
 /**
  * Shared production plugin applied to every schema in this package:

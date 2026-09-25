@@ -1,8 +1,9 @@
 import { container, type DependencyContainer } from 'tsyringe';
-import { LOGGER_TOKENS } from '../tokens/tokens';
-import { loadLoggerConfig } from '../config/config';
+
 import { PinoLoggerAdapter } from '../adapters/PinoLoggerAdapter';
+import { loadLoggerConfig } from '../config/config';
 import { LoggerFactory } from '../LoggerFactory';
+import { LOGGER_TOKENS } from '../tokens/tokens';
 import type { ILogger, PinoConfig } from '../types/types';
 
 /**

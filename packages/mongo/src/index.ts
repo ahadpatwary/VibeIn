@@ -1,3 +1,4 @@
+export * from './client/mongoose.client';
 export * from './config/database.config';
 export * from './constants/db.constants';
 export * from './container/container';
@@ -6,5 +7,4 @@ export * from './exception/mongoose-error.mapper';
 export * from './tokens/db.tokens';
 export * from './types/db.types';
 export * from './util/retry.util';
-export * from './client/mongoose.client';
 // export * from './repository/base.repository';

@@ -1,6 +1,6 @@
 // import { z } from "zod";
-import { PinoConfig } from '../types/types';
 import { pinoConstConfig } from '../constant/constant';
+import type { PinoConfig } from '../types/types';
 
 let cachedConfig: PinoConfig | null = null;
 
@@ -9,7 +9,7 @@ export function loadLoggerConfig(cfg: PinoConfig): PinoConfig {
 
    cachedConfig = {
       ...pinoConstConfig, // constent value
-      // parsed required data
+      ...cfg,
    };
 
    return cachedConfig;

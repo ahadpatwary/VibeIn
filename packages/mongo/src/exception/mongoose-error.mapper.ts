@@ -1,10 +1,11 @@
 import { Error as MongooseError } from 'mongoose';
+
 import {
+   CastException,
    DatabaseException,
    DatabaseValidationException,
-   DuplicateKeyException,
    DocumentNotFoundException,
-   CastException,
+   DuplicateKeyException,
    UnknownDatabaseException,
 } from './database.exception';
 

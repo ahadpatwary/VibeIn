@@ -7,37 +7,37 @@ const LOGGER_INITIALIZED = Symbol('LOGGER_INITIALIZED');
 
 @Module({})
 export class LoggerModule {
-  static forRootAsync(): DynamicModule {
-    return {
-      module: LoggerModule,
+   static forRootAsync(): DynamicModule {
+      return {
+         module: LoggerModule,
 
-      imports: [ConfigModule],
+         imports: [ConfigModule],
 
-      providers: [
-        {
-          provide: LOGGER_INITIALIZED,
-          inject: [ConfigService],
+         providers: [
+            {
+               provide: LOGGER_INITIALIZED,
+               inject: [ConfigService],
 
-          useFactory: (config: ConfigService) => {
-            registerLogger(container, {
-              // I have config access hear
-            });
+               useFactory: (config: ConfigService) => {
+                  registerLogger(container, {
+                     // I have config access hear
+                  });
 
-            return true;
-          },
-        },
+                  return true;
+               },
+            },
 
-        {
-          provide: LOGGER_TOKENS.LoggerFactory,
-          /** logger factory depend on logger initialize */
-          inject: [LOGGER_INITIALIZED],
-          useFactory: () => container.resolve(LoggerFactory),
-        },
-      ],
+            {
+               provide: LOGGER_TOKENS.LoggerFactory,
+               /** logger factory depend on logger initialize */
+               inject: [LOGGER_INITIALIZED],
+               useFactory: () => container.resolve(LoggerFactory),
+            },
+         ],
 
-      global: true,
+         global: true,
 
-      exports: [LOGGER_TOKENS.LoggerFactory],
-    };
-  }
+         exports: [LOGGER_TOKENS.LoggerFactory],
+      };
+   }
 }
