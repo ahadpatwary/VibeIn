@@ -1,6 +1,6 @@
 {
-   "$schema": "https://turbo.build/schema.json",
-   "globalDependencies": ["tsconfig.base.json", ".eslintrc.js", ".prettierrc", "package-lock.json"],
+   "$schema": "https://v2-11-5.turborepo.dev/schema.json",
+   "globalDependencies": ["tsconfig.base.json", ".eslintrc.js", ".prettierrc", ".prettierignore"],
    "tasks": {
       "build": {
          "dependsOn": ["^build"],
