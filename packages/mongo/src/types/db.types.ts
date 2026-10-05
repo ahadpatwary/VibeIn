@@ -1,4 +1,4 @@
-import type { ConnectOptions } from 'mongoose';
+import type { ClientSession, ConnectOptions } from 'mongoose';
 
 // export interface DatabaseConfig {
 //   uri: string;
@@ -47,3 +47,5 @@ export interface PaginatedResult<T> {
    limit: number;
    totalPages: number;
 }
+
+export type TransactionCallback<T> = (session: ClientSession) => Promise<T>;

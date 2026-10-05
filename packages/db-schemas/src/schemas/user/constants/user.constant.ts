@@ -7,16 +7,14 @@ export enum UserRole {
 
 export enum UserStatus {
    ACTIVE = 'active',
-
-   PENDING_VERIFICATION = 'pending_verification',
-
+   INACTIVE = 'inactive',
    SUSPENDED = 'suspended',
-
-   BANNED = 'banned',
-
-   DEACTIVATED = 'deactivated',
+   BLOCKED = 'blocked',
+   DELETED = 'deleted',
 }
 
-export const MAX_EDUCATION_ENTRIES = 7;
+export const DEFAULT_USER_NAME = '< User >';
+
+export const MAX_EDUCATION_ENTRIES = 5;
 export const MAX_SKILL_ENTRIES = 10;
-export const MAX_SOCIAL_LINKS = 7;
+export const MAX_SOCIAL_LINKS = 5;

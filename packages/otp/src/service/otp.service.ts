@@ -27,9 +27,9 @@ export class OtpService {
    }
 
    /** -> Returns remaining cooldown in seconds (0 when not in cooldown) */
-   async cooldownSeconds(deviceId: string, email: string): Promise<number> {
+   async cooldownSeconds(prefix: string, deviceId: string, email: string): Promise<number> {
       this.validateInputs(email, deviceId);
-      const data = await this.storeService.cooldownData(KEYS.cooldown(deviceId, email));
+      const data = await this.storeService.cooldownData(KEYS.cooldown(prefix, deviceId, email));
       if (!data) return 0;
       const ms = data.sendableAt - Date.now();
       return ms > 0 ? Math.ceil(ms / 1000) : 0;
@@ -37,7 +37,7 @@ export class OtpService {
 
    // ── SEND OTP ─────────────────────────────────────────────────────────
 
-   async sendOtp(deviceId: string, email: string): Promise<OtpSendResult> {
+   async sendOtp(prefix: string, deviceId: string, email: string): Promise<OtpSendResult> {
       this.validateInputs(email, deviceId);
 
       const otp = this.generateOtp(this.optConfig.otpLength);
@@ -47,7 +47,11 @@ export class OtpService {
 
       const [cooldownSecs, sendCount] = await this.storeService.luaExecute<[number, number]>(
          'sendotp',
-         [KEYS.otp(email), KEYS.cooldown(deviceId, email), KEYS.sendCount(deviceId, email)],
+         [
+            KEYS.otp(prefix, email),
+            KEYS.cooldown(prefix, deviceId, email),
+            KEYS.sendCount(prefix, deviceId, email),
+         ],
          [hashedOtp, otpTtlSecs],
       );
 
@@ -67,12 +71,18 @@ export class OtpService {
       return { cooldownSeconds: cooldownSecs };
    }
 
-   async verifyOtp(deviceId: string, email: string, input: string): Promise<OtpVerifyResult> {
+   async verifyOtp(
+      prefix: string,
+      deviceId: string,
+      email: string,
+      input: string,
+      tokenSetAble: boolean = false,
+   ): Promise<OtpVerifyResult> {
       this.validateEmail(email);
       if (!input?.trim()) throw new ValidationError('OTP input must not be empty.');
 
-      const otpKey = KEYS.otp(email);
-      const lockKey = KEYS.lock(deviceId, email);
+      const otpKey = KEYS.otp(prefix, email);
+      const lockKey = KEYS.lock(prefix, deviceId, email);
       const lockToken = crypto.randomUUID();
       let lockAcquired = false;
 
@@ -120,19 +130,16 @@ export class OtpService {
             return { ok: false, reason: 'INVALID' };
          }
 
-         // ── Success ──────────────────────────────────────────────────────────
-         const verifyToken = crypto.randomUUID();
+         if (tokenSetAble) {
+            const verifyToken = await this.#setToken(prefix, email, otpKey);
+            this.logger.info('otp.verify.success', { email: maskEmail(email) });
+            return { ok: true, verifyToken };
+         }
 
-         const verifyKey = KEYS.verifyToken(email);
-         await this.storeService.deleteOtpAndSetVerifyToken(
-            otpKey,
-            verifyKey,
-            verifyToken,
-            this.optConfig.verifyTokenTtl,
-         );
-
-         this.logger.info('otp.verify.success', { email: maskEmail(email) });
-         return { ok: true, verifyToken };
+         return {
+            ok: true,
+            verifyToken: 'DEFAULT',
+         };
       } finally {
          if (lockAcquired) {
             try {
@@ -147,11 +154,33 @@ export class OtpService {
       }
    }
 
-   async consumeVerifyToken(email: string, token: string): Promise<boolean> {
-      this.validateEmail(email);
-      const key = KEYS.verifyToken(email);
+   async #setToken(prefix: string, email: string, otpKey: string): Promise<string> {
+      const verifyToken = crypto.randomUUID();
 
-      const result: boolean = await this.storeService.deviceVerified(key, token);
+      const verifyKey = KEYS.verifyToken(prefix, email);
+
+      const tokenValue = {
+         token: verifyToken,
+         email: email,
+      };
+
+      const strTokenValue = JSON.stringify(tokenValue);
+
+      await this.storeService.deleteOtpAndSetVerifyToken(
+         otpKey,
+         verifyKey,
+         strTokenValue,
+         this.optConfig.verifyTokenTtl,
+      );
+
+      return verifyToken;
+   }
+
+   async consumeVerifyToken(prefix: string, email: string, token: string): Promise<boolean> {
+      this.validateEmail(email);
+      const key = KEYS.verifyToken(prefix, email);
+
+      const result: boolean = await this.storeService.deviceVerified(key, token, email);
 
       return result;
    }

@@ -12,7 +12,7 @@ import { JWT_TOKENS } from './tokens/token';
 @injectable()
 export class TokenService {
    constructor(
-      @inject(JWT_TOKENS.tokenConfig)
+      @inject(JWT_TOKENS.TokenConfig)
       private readonly config: Required<TokenServiceConfig>,
    ) {}
 

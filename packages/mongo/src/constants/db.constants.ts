@@ -1,3 +1,5 @@
+import type { mongo } from 'mongoose';
+
 export const DB_CONSTANTS = {
    DEFAULT_MAX_POOL_SIZE: 10,
    DEFAULT_MIN_POOL_SIZE: 2,
@@ -15,3 +17,9 @@ export const MONGOOSE_CONNECTION_EVENTS = {
    RECONNECTED: 'reconnected',
    ERROR: 'error',
 } as const;
+
+export const DEFAULT_TRANSACTION_OPTIONS: mongo.TransactionOptions = {
+   readConcern: { level: 'snapshot' },
+   writeConcern: { w: 'majority' },
+   readPreference: 'primary',
+};

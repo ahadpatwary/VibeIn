@@ -10,7 +10,7 @@ export function registerToken(
 ) {
    const cfg = loadTokenConfig(config);
 
-   targetContainer.registerInstance(JWT_TOKENS.tokenConfig, cfg);
+   targetContainer.registerInstance(JWT_TOKENS.TokenConfig, cfg);
 
-   targetContainer.registerInstance(JWT_TOKENS.tokenService, TokenService);
+   targetContainer.registerInstance(JWT_TOKENS.TokenService, TokenService);
 }

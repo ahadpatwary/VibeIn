@@ -17,12 +17,15 @@ export const otpConfig: OtpConfig = {
 };
 
 export const KEYS = {
-   otp: (email: string) => `otp:data:${email}`,
-   cooldown: (deviceId: string, email: string) => `otp:cooldown:${deviceId}:${email}`,
-   sendCount: (deviceId: string, email: string) => `otp:sendCount:${deviceId}:${email}`,
-   lock: (deviceId: string, email: string) => `otp:lock:${deviceId}:${email}`,
+   otp: (prefix: string, email: string) => `${prefix}:otp:data:${email}`,
+   cooldown: (prefix: string, deviceId: string, email: string) =>
+      `${prefix}:otp:cooldown:${deviceId}:${email}`,
+   sendCount: (prefix: string, deviceId: string, email: string) =>
+      `${prefix}:otp:sendCount:${deviceId}:${email}`,
+   lock: (prefix: string, deviceId: string, email: string) =>
+      `${prefix}:otp:lock:${deviceId}:${email}`,
    // lock:        (email: string)                    => `otp:lock:${email}`,
-   verifyToken: (email: string) => `otp:verified:${email}`,
+   verifyToken: (prefix: string, email: string) => `${prefix}:otp:verified:${email}`,
 } as const;
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

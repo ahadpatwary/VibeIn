@@ -316,7 +316,8 @@ export const createUserSchema = z
          })
          .trim()
          .min(8, 'Phone number must contain at least 8 characters')
-         .max(20, 'Phone number cannot exceed 20 characters'),
+         .max(20, 'Phone number cannot exceed 20 characters')
+         .optional(),
 
       bio: z
          .string({

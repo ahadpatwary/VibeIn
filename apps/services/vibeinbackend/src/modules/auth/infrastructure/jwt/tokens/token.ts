@@ -1,4 +1,4 @@
 export const JWT_TOKENS = {
-   tokenConfig: Symbol.for('TokenConfig'),
-   tokenService: Symbol.for('TokenService'),
+   TokenConfig: Symbol.for('TokenConfig'),
+   TokenService: Symbol.for('TokenService'),
 };

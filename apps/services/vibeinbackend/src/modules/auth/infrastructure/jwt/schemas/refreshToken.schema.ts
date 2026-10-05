@@ -1,3 +1,4 @@
+import { UserRole } from '@app/db-schemas';
 import { z } from 'zod';
 
 export const refreshTokenPayloadSchema = z.object({
@@ -6,10 +7,9 @@ export const refreshTokenPayloadSchema = z.object({
    sid: z.string().trim().min(5),
    jti: z.string().trim().min(5),
 
-   accountId: z.string().trim().min(4),
    deviceId: z.string().trim().min(4),
 
-   role: z.enum(['user', 'moderator', 'admin']),
+   role: z.enum(Object.values(UserRole)),
 });
 
 export type RefreshTokenPayload = z.infer<typeof refreshTokenPayloadSchema>;

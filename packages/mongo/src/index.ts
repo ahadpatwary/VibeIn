@@ -4,7 +4,7 @@ export * from './constants/db.constants';
 export * from './container/container';
 export * from './exception/database.exception';
 export * from './exception/mongoose-error.mapper';
+export * from './service/mongo.service';
 export * from './tokens/db.tokens';
 export * from './types/db.types';
 export * from './util/retry.util';
-// export * from './repository/base.repository';

@@ -90,12 +90,12 @@ export class StoreService {
    async deleteOtpAndSetVerifyToken(
       otpKey: string,
       verifyKey: string,
-      verifyToken: string,
+      tokenValue: string,
       verifyTokenTtl: number,
    ): Promise<void> {
       await this.redisService.transaction((pipe) => {
          pipe.del(otpKey);
-         pipe.set(verifyKey, verifyToken, 'EX', verifyTokenTtl);
+         pipe.set(verifyKey, tokenValue, 'EX', verifyTokenTtl);
       });
    }
 
@@ -113,24 +113,38 @@ export class StoreService {
       });
    }
 
-   async deviceVerified(key: string, token: string): Promise<boolean> {
+   async deviceVerified(key: string, token: string, email: string): Promise<boolean> {
       const TOKEN_VERIFY_SCRIPT = `
          local key = KEYS[1]
          local token = ARGV[1]
+         local email = ARGV[2]
 
          local stored = redis.call('GET', key)
 
-         if not stored or stored ~= token then
-            return false
+         if not stored then
+            return 0
+         end
+
+         local data = cjson.decode(stored)
+
+         local storedToken = data.storedToken
+         local storedEmail = data.storedEmail
+
+         if not storedToken or storedToken ~= token then
+            return 0
+         end
+
+         if not storedEmail or storedEmail ~= email then
+            return 0
          end
 
          redis.call('DEL', key)
 
-         return true
+         return 1
       `;
 
       return await this.redisService.commandWraper('EVAL', async (client): Promise<boolean> => {
-         return client.eval(TOKEN_VERIFY_SCRIPT, 1, key, token) as Promise<boolean>;
+         return client.eval(TOKEN_VERIFY_SCRIPT, 1, key, token, email) as Promise<boolean>;
       });
    }
 }

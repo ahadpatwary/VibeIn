@@ -1,18 +1,4 @@
-// import type { SoftDeletable } from '../plugins/base.plugin';
-import type { HydratedDocument } from 'mongoose';
-
 import type { UserRole, UserStatus } from '../constants/user.constant';
-
-export type UserDocument = HydratedDocument<IUser>;
-
-// export interface UserDocument extends Document, SoftDeletable {
-//   email: string;
-//   name: string;
-//   role: UserRole;
-//   isActive: boolean;
-//   createdAt: Date;
-//   updatedAt: Date;
-// }
 
 export interface IEducation {
    college: string;
@@ -32,17 +18,17 @@ export interface IAvatar {
 export interface IUser {
    fullName: string;
    email: string;
-   phoneNumber: string;
+   phoneNumber?: string;
 
    bio?: string;
 
-   avatar: IAvatar | null;
+   avatar?: IAvatar;
 
-   education: IEducation[];
-   skills: string[];
-   socialLinks: ISocialLink[];
+   education?: IEducation[];
+   skills?: string[];
+   socialLinks?: ISocialLink[];
 
-   roles: UserRole[];
+   roles: UserRole;
    status: UserStatus;
 
    createdAt: Date;

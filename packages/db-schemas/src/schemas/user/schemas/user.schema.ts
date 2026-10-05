@@ -1,6 +1,7 @@
 import { Schema } from 'mongoose';
 
 import {
+   DEFAULT_USER_NAME,
    MAX_EDUCATION_ENTRIES,
    MAX_SKILL_ENTRIES,
    MAX_SOCIAL_LINKS,
@@ -95,7 +96,7 @@ export const UserSchema = new Schema<IUser>(
          minlength: 1,
          maxlength: 60,
 
-         default: '< USER >',
+         default: DEFAULT_USER_NAME,
       },
 
       email: {
@@ -111,8 +112,6 @@ export const UserSchema = new Schema<IUser>(
 
       phoneNumber: {
          type: String,
-         required: true,
-
          trim: true,
 
          minlength: 8,
@@ -134,7 +133,6 @@ export const UserSchema = new Schema<IUser>(
 
       avatar: {
          type: AvaterSchema,
-         default: null,
       },
 
       /*
@@ -145,7 +143,6 @@ export const UserSchema = new Schema<IUser>(
 
       education: {
          type: [EducationSchema],
-         default: [],
 
          validate: {
             validator: function (value: IEducation[]): boolean {
@@ -164,7 +161,6 @@ export const UserSchema = new Schema<IUser>(
 
       skills: {
          type: [String],
-         default: [],
 
          validate: {
             validator: function (value: string[]): boolean {
@@ -192,7 +188,6 @@ export const UserSchema = new Schema<IUser>(
 
       socialLinks: {
          type: [SocialLinkSchema],
-         default: [],
 
          validate: {
             validator: function (value: ISocialLink[]): boolean {
@@ -223,18 +218,9 @@ export const UserSchema = new Schema<IUser>(
     */
 
       roles: {
-         type: [String],
+         type: String,
+         default: UserRole.USER,
          enum: Object.values(UserRole),
-
-         default: [UserRole.USER],
-
-         validate: {
-            validator: function (value: UserRole[]): boolean {
-               return value.length > 0 && new Set(value).size === value.length;
-            },
-
-            message: 'User must have at least one unique role',
-         },
       },
 
       /*

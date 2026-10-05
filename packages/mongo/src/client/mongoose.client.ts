@@ -1,14 +1,13 @@
 import 'reflect-metadata';
 
 import { ILogger, LOGGER_TOKENS, LoggerFactory } from '@app/logger';
-import mongoose, { ClientSession, Connection } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import { inject, injectable, singleton } from 'tsyringe';
 
 import { MONGOOSE_CONNECTION_EVENTS } from '../constants/db.constants';
 import {
    DatabaseConnectionException,
    DatabaseConnectionTimeoutException,
-   TransactionException,
 } from '../exception/database.exception';
 import { DB_TOKENS } from '../tokens/db.tokens';
 import type { DatabaseConnOpt } from '../types/db.types';
@@ -102,22 +101,6 @@ export class MongooseClient {
          await this.connection.close();
          this.connection = null;
          this.logger.info('MongoDB connection closed');
-      }
-   }
-
-   async withTransaction<T>(fn: (session: ClientSession) => Promise<T>): Promise<T> {
-      const conn = this.getConnection();
-      const session = await conn.startSession();
-      try {
-         let result: T | undefined;
-         await session.withTransaction(async () => {
-            result = await fn(session);
-         });
-         return result as T;
-      } catch (error) {
-         throw new TransactionException('Transaction failed and was rolled back', error);
-      } finally {
-         await session.endSession();
       }
    }
 }
