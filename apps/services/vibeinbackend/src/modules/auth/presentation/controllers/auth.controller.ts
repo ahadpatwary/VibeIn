@@ -1,23 +1,24 @@
-import { OtpSendResult, OtpService, OtpVerifyResult } from '@app/otp';
+import { OTP_TOKENTS, OtpSendResult, OtpService } from '@app/otp';
 import {
    BadRequestException,
    Body,
    Controller,
    Get,
-   HttpCode,
-   HttpStatus,
    Inject,
+   Param,
    Post,
    Query,
+   Res,
 } from '@nestjs/common';
+import { z } from 'zod';
+
+import type { Response } from 'express';
 
 import {
    type CooldownQuery,
    cooldownQuerySchema,
-   type PasswordResetInput,
-   passwordResetSchema,
-   type RegisterCompleteInput,
-   registerCompleteSchema,
+   // type PasswordResetInput,
+   // passwordResetSchema,
    type SendOtpInput,
    sendOtpSchema,
    type VerifyOtpInput,
@@ -25,42 +26,78 @@ import {
 } from '../schema';
 import { OtpPurpose } from '../constants/constant';
 import { ZodValidationPipe } from '../../../user/application/pipes/zodValidation.pipe';
+import { COOKIE_TOKEN } from '../../infrastructure/cookie/tokens/token';
+import { type CookieService } from '../../infrastructure/cookie/services/cookie.service';
+import { AUTH_TOKENS } from '../../application/tokens/token';
+import { AuthService } from '../../application/services/auth.service';
+import { ResponseSchema } from '../../../../shared/decorators/response-schema.decorator';
+import {
+   registerWithCredentialSchema,
+   sendOtpReturnSchema,
+   verifyOtpReturnSchema,
+   VerifyOtpReturnType,
+   type RegsiterWithCredentialType,
+} from '@app/contracts';
 
 @Controller('auth')
 export class AuthController {
    constructor(
-      @Inject('OTP_SERVICE')
+      @Inject(AUTH_TOKENS.AuthService)
+      private readonly authService: AuthService,
+
+      @Inject(OTP_TOKENTS.OtpService)
       private readonly otpService: OtpService,
+
+      @Inject(COOKIE_TOKEN.CookieService)
+      private readonly cookieService: CookieService,
    ) {}
 
-   @Post('register/otp/send')
-   @HttpCode(HttpStatus.OK)
-   sendRegisterOtp(
+   @Post('otp/send')
+   @ResponseSchema(sendOtpReturnSchema)
+   async sendOtp(
       @Body(new ZodValidationPipe(sendOtpSchema)) dto: SendOtpInput,
    ): Promise<OtpSendResult> {
-      return this.otpService.sendOtp(OtpPurpose.REGISTER, dto.deviceId, dto.email);
+      return await this.otpService.sendOtp(OtpPurpose.REGISTER, dto.deviceId, dto.email);
    }
 
-   @Post('register/otp/verify')
-   @HttpCode(HttpStatus.OK)
-   verifyRegisterOtp(
+   @Post('otp/verify')
+   @ResponseSchema(verifyOtpReturnSchema)
+   async verifyOtp(
       @Body(new ZodValidationPipe(verifyOtpSchema)) dto: VerifyOtpInput,
-   ): Promise<OtpVerifyResult> {
-      return this.otpService.verifyOtp(OtpPurpose.REGISTER, dto.deviceId, dto.email, dto.otp);
+   ): Promise<VerifyOtpReturnType> {
+      return await this.otpService.verifyOtp(OtpPurpose.REGISTER, dto.deviceId, dto.email, dto.otp);
    }
 
-   @Post('register/complete')
-   @HttpCode(HttpStatus.CREATED)
-   async completeRegister(
-      @Body(new ZodValidationPipe(registerCompleteSchema)) dto: RegisterCompleteInput,
+   @Post('register/complete/:verifyToken')
+   @ResponseSchema(z.object({ email: z.string().email().describe('email of the user') }))
+   async registerWithCredentials(
+      @Body(new ZodValidationPipe(registerWithCredentialSchema)) dto: RegsiterWithCredentialType,
+      @Param('verifyToken') verifyToken: string,
+      @Res({ passthrough: true }) response: Response,
    ): Promise<void> {
       const valid = await this.otpService.consumeVerifyToken(
          OtpPurpose.REGISTER,
          dto.email,
-         dto.token,
+         verifyToken,
       );
       if (!valid) throw new BadRequestException('Invalid or expired token');
-      // await this.authService.createAccount(dto.email, dto.password);
+
+      // await this.authService.registerWithCredentials({
+      //    email: dto.email,
+      //    password: dto.password,
+      //    verifyToken: dto.token,
+      //    user: {
+      //       fullName: '< user >',
+      //       email: dto.email,
+      //       roles: UserRole.USER,
+      //       status: UserStatus.ACTIVE,
+      //       createdAt: new Date(),
+      //       updatedAt: new Date(),
+      //    }
+      // });
+      const refresthToken = 'ahad refresh';
+
+      this.cookieService.setRefreshToken(response, refresthToken);
    }
 
    // ---------- Login ----------
@@ -73,53 +110,25 @@ export class AuthController {
    //    // 3. noile access/refresh token issue
    // }
 
-   @Post('login/otp/verify')
-   @HttpCode(HttpStatus.OK)
-   async verifyLoginOtp(
-      @Body(new ZodValidationPipe(verifyOtpSchema)) dto: VerifyOtpInput,
-   ): Promise<OtpVerifyResult> {
-      // challenge token verify na korle login bypass hobe
-      return this.otpService.verifyOtp(OtpPurpose.LOGIN, dto.deviceId, dto.email, dto.otp);
-   }
-
-   // ---------- Password reset ----------
-
-   @Post('password/forgot')
-   @HttpCode(HttpStatus.OK)
-   async forgotPassword(
-      @Body(new ZodValidationPipe(sendOtpSchema)) dto: SendOtpInput,
-   ): Promise<OtpSendResult> {
-      // email exist na korleo same response dao
-      return this.otpService.sendOtp(OtpPurpose.PASSWORD, dto.deviceId, dto.email);
-   }
-
-   @Post('password/otp/verify')
-   @HttpCode(HttpStatus.OK)
-   verifyPasswordOtp(
-      @Body(new ZodValidationPipe(verifyOtpSchema)) dto: VerifyOtpInput,
-   ): Promise<OtpVerifyResult> {
-      return this.otpService.verifyOtp(OtpPurpose.PASSWORD, dto.deviceId, dto.email, dto.otp);
-   }
-
-   @Post('password/reset')
-   @HttpCode(HttpStatus.OK)
-   async resetPassword(
-      @Body(new ZodValidationPipe(passwordResetSchema)) dto: PasswordResetInput,
-   ): Promise<void> {
-      const valid = await this.otpService.consumeVerifyToken(
-         OtpPurpose.PASSWORD,
-         dto.email,
-         dto.token,
-      );
-      if (!valid) throw new BadRequestException('Invalid or expired token');
-      // await this.authService.resetPassword(dto.email, dto.password);
-      // sob active session/refresh token revoke koro
-   }
+   // @Post('password/reset')
+   // @HttpCode(HttpStatus.OK)
+   // async resetPassword(
+   //    @Body(new ZodValidationPipe(passwordResetSchema)) dto: PasswordResetInput,
+   // ): Promise<void> {
+   //    const valid = await this.otpService.consumeVerifyToken(
+   //       OtpPurpose.PASSWORD,
+   //       dto.email,
+   //       dto.token,
+   //    );
+   //    if (!valid) throw new BadRequestException('Invalid or expired token');
+   //    // await this.authService.resetPassword(dto.email, dto.password);
+   //    // sob active session/refresh token revoke koro
+   // }
 
    // ---------- Utils ----------
 
    @Get('otp/cooldown')
-   async cooldown(
+   async getcCooldownTime(
       @Query(new ZodValidationPipe(cooldownQuerySchema)) query: CooldownQuery,
    ): Promise<{ seconds: number }> {
       const seconds = await this.otpService.cooldownSeconds(

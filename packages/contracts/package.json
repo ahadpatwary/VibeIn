@@ -1,9 +1,9 @@
 {
-   "name": "@app/db-schemas",
-   "version": "1.0.0",
+   "name": "@app/contracts",
+   "version": "0.0.1",
+   "description": "Type-safe router wrapper with common data",
    "private": true,
    "type": "module",
-   "description": "Shared, connection-agnostic Mongoose schemas + repositories for Orderbari/TrustLoop, built on @app/mongo",
    "main": "./dist/index.js",
    "module": "./dist/index.mjs",
    "types": "./dist/index.d.ts",
@@ -14,6 +14,10 @@
          "require": "./dist/index.js"
       }
    },
+   "files": [
+      "dist"
+   ],
+   "sideEffects": false,
    "scripts": {
       "build": "tsup",
       "dev": "tsup --watch",
@@ -23,19 +27,21 @@
       "clean": "rimraf dist",
       "prepublishOnly": "npm run clean && npm run build"
    },
+   "peerDependencies": {},
    "dependencies": {
-      "@app/contracts": "^0.0.1",
       "@app/logger": "^1.0.0",
-      "mongoose": "^8.6.0",
       "reflect-metadata": "^0.2.2",
-      "tsyringe": "^4.8.0",
-      "uuid": "^14.0.2",
+      "tsyringe": "^4.10.0",
       "zod": "^4.4.3"
    },
-   "peerDependencies": {},
    "devDependencies": {
       "@app/eslint-config": "*",
-      "@types/node": "^22.10.7",
-      "typescript": "^5.7.3"
-   }
+      "@types/node": "^24.0.0",
+      "tsup": "^8.0.0",
+      "typescript": "^5.9.0"
+   },
+   "keywords": [
+      "typescript"
+   ],
+   "license": "MIT"
 }

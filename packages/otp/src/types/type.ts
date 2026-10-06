@@ -13,9 +13,9 @@ export interface OtpConfig {
    backoff?: BackoffEntry[];
 }
 
-export type OtpVerifyResult =
-   | { ok: true; verifyToken: string }
-   | { ok: false; reason: 'NOT_FOUND' | 'EXPIRED' | 'MAX_ATTEMPTS' | 'INVALID' };
+export type OtpVerifyResult = {
+   verifyToken: string;
+};
 
 export interface OtpSendResult {
    cooldownSeconds: number; // how long until next send is allowed

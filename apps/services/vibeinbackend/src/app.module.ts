@@ -9,6 +9,8 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import configuration from './shared/config/configuration';
 import { validate } from './shared/config/env.validation';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseValidationInterceptor } from './shared/interceptors/response-validation.interceptor';
 
 @Global()
 @Module({
@@ -31,6 +33,12 @@ import { validate } from './shared/config/env.validation';
 
    controllers: [AppController],
 
-   providers: [AppService],
+   providers: [
+      AppService,
+      {
+         provide: APP_INTERCEPTOR,
+         useClass: ResponseValidationInterceptor,
+      },
+   ],
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
 import type { ClientSession } from 'mongoose';
 
 import type { CreateUserInput } from '../schemas/user.schema';
-import { IUser } from '@app/db-schemas';
+import { IUser } from '@app/contracts';
 
 export interface UserRepository {
    createUser(data: CreateUserInput, session?: ClientSession): Promise<IUser>;

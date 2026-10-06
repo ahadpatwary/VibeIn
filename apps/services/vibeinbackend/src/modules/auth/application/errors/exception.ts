@@ -1,14 +1,8 @@
-export abstract class AuthError extends Error {
-   public readonly code: string;
+import { AppError, AppErrorOptions } from '../../../../shared/errors/app-error';
 
-   protected constructor(code: string, message: string) {
-      super(message);
-
-      this.name = new.target.name;
-      this.code = code;
-
-      // Ensure correct prototype chain when targeting older JS runtimes.
-      Object.setPrototypeOf(this, new.target.prototype);
+export abstract class AuthError extends AppError {
+   protected constructor(options: AppErrorOptions) {
+      super(options);
    }
 }
 
@@ -16,10 +10,15 @@ export abstract class AuthError extends Error {
  * Creates a concrete AuthError class with a fixed
  * error code and message.
  */
-const defineAuthError = (code: string, message: string): new () => AuthError => {
+const defineAuthError = (
+   code: string,
+   message: string,
+   details?: unknown,
+   statusCode?: number,
+): new () => AuthError => {
    return class extends AuthError {
       constructor() {
-         super(code, message);
+         super({ code, message, details, statusCode });
       }
    };
 };

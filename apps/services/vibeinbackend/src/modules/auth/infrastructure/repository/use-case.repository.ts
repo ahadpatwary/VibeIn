@@ -1,15 +1,16 @@
 import { DB_TOKENS, MongoService } from '@app/mongo';
 import { AUTH_TOKENS } from '../../application/tokens/token';
 import { AuthIdentityRepository } from './auth.repository';
-import { AuthProvider, IUser } from '@app/db-schemas';
+import { AuthProvider } from '@app/db-schemas';
 import { ProviderAuthInput } from '../../application/types/type';
 import { Inject, Injectable } from '@nestjs/common';
 import { UserRepository } from '../../../user/infrastructure/persistence/user.repository';
-import { NewUser, UserRecord } from '../../../user/application/types/user.type';
 import {
    AccountNotFoundError,
    EmailAlreadyRegisteredError,
 } from '../../application/errors/exception';
+import { CreateUserType, UserResponseType } from '@app/contracts';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UseCaseRepository {
@@ -24,8 +25,11 @@ export class UseCaseRepository {
       private readonly userRepo: UserRepository,
    ) {}
 
-   async registerWithCredentials(userData: NewUser, passwordHash: string): Promise<IUser> {
-      return await this.mongoService.withTransaction<IUser>(async (session) => {
+   async registerWithCredentials(
+      userData: CreateUserType,
+      passwordHash: string,
+   ): Promise<UserResponseType> {
+      return await this.mongoService.withTransaction<UserResponseType>(async (session) => {
          /**
           * we have to check first that user account exist or not.
           * if exist then return user already exist or not then procide.
@@ -49,7 +53,7 @@ export class UseCaseRepository {
             {
                userId: created._id,
                provider: AuthProvider.Credentials,
-               providerId: created._id.toString(),
+               providerId: (created._id as Types.ObjectId).toString(),
                providerEmail: created.email,
                passwordHash,
             },
@@ -59,8 +63,8 @@ export class UseCaseRepository {
       });
    }
 
-   async registerWithProvider(input: ProviderAuthInput): Promise<UserRecord> {
-      return await this.mongoService.withTransaction<UserRecord>(async (session) => {
+   async registerWithProvider(input: ProviderAuthInput): Promise<UserResponseType> {
+      return await this.mongoService.withTransaction<UserResponseType>(async (session) => {
          const identities = await this.authRepo.findByProvider(
             input.provider,
             input.providerId,
@@ -82,9 +86,9 @@ export class UseCaseRepository {
             await this.authRepo.create(
                {
                   userId: created._id,
-                  provider: AuthProvider.Credentials,
-                  providerId: created._id.toString(),
-                  providerEmail: created.email,
+                  providerId: input.providerId,
+                  provider: input.provider,
+                  providerEmail: input.email,
                },
                session,
             );
@@ -108,8 +112,8 @@ export class UseCaseRepository {
       });
    }
 
-   async loginWithProvider(input: ProviderAuthInput): Promise<UserRecord> {
-      return await this.mongoService.withTransaction<UserRecord>(async (session) => {
+   async loginWithProvider(input: ProviderAuthInput): Promise<UserResponseType> {
+      return await this.mongoService.withTransaction<UserResponseType>(async (session) => {
          const identities = await this.authRepo.findByProvider(
             input.provider,
             input.providerId,
@@ -151,7 +155,7 @@ export class UseCaseRepository {
       });
    }
 
-   async findUserByEmail(email: string): Promise<UserRecord> {
+   async findUserByEmail(email: string): Promise<UserResponseType> {
       const user = await this.userRepo.findByEmail(email);
       if (!user) throw new AccountNotFoundError();
       return user;

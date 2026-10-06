@@ -1,4 +1,5 @@
-import type { AuthProvider, IAuthIdentity, IUser, UserRole } from '@app/db-schemas';
+import { IUser } from '@app/contracts';
+import type { AuthProvider, IAuthIdentity, UserRole } from '@app/db-schemas';
 import type { OtpSendResult, OtpService } from '@app/otp';
 import type { Types } from 'mongoose';
 
@@ -52,7 +53,7 @@ export interface VerifyLoginOtpInput {
 }
 
 export interface ProviderAuthInput {
-   provider: AuthProvider;
+   provider: AuthProvider.Github | AuthProvider.Google;
    providerId: string;
    email: string;
    user: IUser;

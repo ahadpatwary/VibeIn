@@ -94,14 +94,14 @@ export class OtpService {
             otpKey,
          );
 
-         if (!otpData) return { ok: false, reason: 'INVALID' };
+         if (!otpData) throw new Error('invalid otp');
 
          lockAcquired = true;
 
          if (Date.now() > otpData.expiresAt) {
             await this.storeService.deleteKey(otpKey);
             this.logger.info('otp.verify.expired', { email: maskEmail(email) });
-            return { ok: false, reason: 'EXPIRED' };
+            throw new Error('expire otp');
          }
 
          if (otpData.attempts >= this.optConfig.maxAttempts) {
@@ -109,7 +109,7 @@ export class OtpService {
             this.logger.warn('otp.verify.max_attempts', {
                email: maskEmail(email),
             });
-            return { ok: false, reason: 'MAX_ATTEMPTS' };
+            throw new Error('max attempt');
          }
 
          const hashToCompare = otpData.hashedOtp;
@@ -127,19 +127,16 @@ export class OtpService {
             const jsonStirng = JSON.stringify({ ...otpData, attempts: otpData.attempts + 1 });
             await this.storeService.attemptIncress(otpKey, jsonStirng, remainingTtlSeconds);
 
-            return { ok: false, reason: 'INVALID' };
+            throw new Error('invalid otp');
          }
 
          if (tokenSetAble) {
             const verifyToken = await this.#setToken(prefix, email, otpKey);
             this.logger.info('otp.verify.success', { email: maskEmail(email) });
-            return { ok: true, verifyToken };
+            return { verifyToken };
          }
 
-         return {
-            ok: true,
-            verifyToken: 'DEFAULT',
-         };
+         return { verifyToken: '' };
       } finally {
          if (lockAcquired) {
             try {

@@ -1,3 +1,4 @@
+import type { IUser } from '@app/contracts';
 import { Schema } from 'mongoose';
 
 import {
@@ -8,9 +9,8 @@ import {
    UserRole,
    UserStatus,
 } from '../constants/user.constant';
-import type { IAvatar, IEducation, ISocialLink, IUser } from '../types/user.types';
 
-export const AvaterSchema = new Schema<IAvatar>({
+export const AvaterSchema = new Schema<IUser['avatar']>({
    url: {
       type: String,
       required: true,
@@ -30,7 +30,7 @@ export const AvaterSchema = new Schema<IAvatar>({
 |--------------------------------------------------------------------------
 */
 
-export const EducationSchema = new Schema<IEducation>(
+export const EducationSchema = new Schema<IUser['education']>(
    {
       college: {
          type: String,
@@ -58,7 +58,7 @@ export const EducationSchema = new Schema<IEducation>(
 |--------------------------------------------------------------------------
 */
 
-export const SocialLinkSchema = new Schema<ISocialLink>(
+export const SocialLinkSchema = new Schema<IUser['socialLinks']>(
    {
       platform: {
          type: String,
@@ -145,8 +145,8 @@ export const UserSchema = new Schema<IUser>(
          type: [EducationSchema],
 
          validate: {
-            validator: function (value: IEducation[]): boolean {
-               return value.length <= MAX_EDUCATION_ENTRIES;
+            validator: function (value: IUser['education']): boolean {
+               return !value || value.length <= MAX_EDUCATION_ENTRIES;
             },
 
             message: `Maximum ${MAX_EDUCATION_ENTRIES} education entries allowed`,
@@ -163,7 +163,9 @@ export const UserSchema = new Schema<IUser>(
          type: [String],
 
          validate: {
-            validator: function (value: string[]): boolean {
+            validator: function (value: IUser['skills']): boolean {
+               if (!value) return true;
+
                if (value.length > MAX_SKILL_ENTRIES) {
                   return false;
                }
@@ -190,7 +192,9 @@ export const UserSchema = new Schema<IUser>(
          type: [SocialLinkSchema],
 
          validate: {
-            validator: function (value: ISocialLink[]): boolean {
+            validator: function (value: IUser['socialLinks']): boolean {
+               if (!value) return true;
+
                if (value.length > MAX_SOCIAL_LINKS) {
                   return false;
                }

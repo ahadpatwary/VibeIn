@@ -5,4 +5,5 @@ export const AUTH_TOKENS = {
    IdentityModel: Symbol.for('IdentityModel'),
    UserModel: Symbol.for('UserModel'),
    UseCaseModel: Symbol.for('UseCaseModel'),
+   AuthService: Symbol.for('AuthService'),
 };

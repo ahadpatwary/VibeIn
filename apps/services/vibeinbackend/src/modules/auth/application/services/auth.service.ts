@@ -29,8 +29,9 @@ import { SESSION_TOKEN } from '../../infrastructure/session/tokens/token';
 import { SessionService } from '../../infrastructure/session/services/session.service';
 import { JWT_TOKENS } from '../../infrastructure/jwt/tokens/token';
 import { TokenService } from '../../infrastructure/jwt/jwt.auth';
-import { UserRecord } from '../../../user/application/types/user.type';
 import { RevokeReason, SessionStatus } from '../../infrastructure/session/constants/constant';
+import { Types } from 'mongoose';
+import { UserResponseType } from '@app/contracts';
 
 @Injectable()
 export class AuthService {
@@ -94,7 +95,7 @@ export class AuthService {
       const user = await this.useCaseRepo.findUserByEmail(email);
 
       const identity = await this.authrepo.findByUserAndProvider(
-         user._id,
+         user._id as Types.ObjectId,
          AuthProvider.Credentials,
       );
 
@@ -136,8 +137,8 @@ export class AuthService {
       if (status !== UserStatus.ACTIVE) throw new AccountBlockedError();
    }
 
-   private async issueSession(user: UserRecord, meta: SessionMeta): Promise<AuthResult> {
-      const userId = user._id.toString();
+   private async issueSession(user: UserResponseType, meta: SessionMeta): Promise<AuthResult> {
+      const userId = (user._id as Types.ObjectId).toString();
 
       const sessionId = uuidv4();
 

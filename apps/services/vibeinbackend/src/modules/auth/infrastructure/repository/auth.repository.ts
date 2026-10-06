@@ -2,8 +2,9 @@ import type { AuthProvider, IAuthIdentity } from '@app/db-schemas';
 import { AuthProvider as Provider } from '@app/db-schemas';
 import type { ClientSession, Model, Types } from 'mongoose';
 import { inject, injectable } from 'tsyringe';
-import type { CreateAuthType, IdentityRecord } from '../../application/types/type';
+import type { IdentityRecord } from '../../application/types/type';
 import { AUTH_TOKENS } from '../../application/tokens/token';
+import { CreateAuthIdentity } from '@app/contracts';
 
 @injectable()
 export class AuthIdentityRepository {
@@ -24,19 +25,19 @@ export class AuthIdentityRepository {
          .exec();
    }
 
-   findByUserAndProvider(
+   async findByUserAndProvider(
       userId: Types.ObjectId,
       provider: AuthProvider,
       session?: ClientSession,
-   ): Promise<IdentityRecord | null> {
-      return this.model
+   ): Promise<CreateAuthIdentity | null> {
+      return await this.model
          .findOne({ userId, provider })
          .session(session ?? null)
-         .lean<IdentityRecord>()
+         .lean<CreateAuthIdentity>()
          .exec();
    }
 
-   async create(data: CreateAuthType, session?: ClientSession): Promise<void> {
+   async create(data: CreateAuthIdentity, session?: ClientSession): Promise<void> {
       await this.model.create([data], { session });
    }
 

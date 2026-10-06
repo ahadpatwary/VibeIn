@@ -22,6 +22,7 @@
       "test:e2e": "jest --config ./test/jest-e2e.json"
    },
    "dependencies": {
+      "@app/contracts": "^0.0.1",
       "@app/db-schemas": "^1.0.0",
       "@app/logger": "^1.0.0",
       "@app/mongo": "^1.0.0",
