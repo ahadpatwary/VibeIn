@@ -32,6 +32,7 @@ ENV PORT=3000
 
 # 5. Copy package files and node_modules for production runtime
 COPY package*.json ./
+COPY packages/ ./packages/
 COPY apps/services/vibeinbackend/package*.json ./apps/services/vibeinbackend/
 COPY --from=deps /app/node_modules ./node_modules
 
