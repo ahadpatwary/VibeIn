@@ -1,46 +1,47 @@
 # syntax=docker/dockerfile:1.7
 
+# ---------- deps ----------
 FROM node:22-alpine AS deps
 WORKDIR /app
 
-# 1. Copy root and service level package files for workspace dependency resolution
 COPY package*.json ./
 COPY apps/services/vibeinbackend/package*.json ./apps/services/vibeinbackend/
-# Copy shared packages package.json files if they have individual package.json files
-# COPY packages/*/package.json ./packages/ 
+# workspace symlink (node_modules/@app/*) toiri korar jonno packages lagbe
+COPY packages/ ./packages/
 
-# 2. Install all dependencies across the monorepo
 RUN npm ci
 
+# ---------- builder ----------
 FROM node:22-alpine AS builder
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
 
-# 3. Copy only the packages folder and the vibeinbackend source code
+COPY package.json tsconfig.base.json turbo.json ./
 COPY packages/ ./packages/
 COPY apps/services/vibeinbackend/ ./apps/services/vibeinbackend/
-COPY tsconfig.base.json ./
-COPY package.json ./
 
-# 4. Build the vibeinbackend service using npm workspace
-RUN npm run build -w apps/services/vibeinbackend
+ENV TURBO_TELEMETRY_DISABLED=1
 
+# vibeinbackend + tar shob @app/* dependency, dependency order e build hobe
+RUN npx turbo run build --filter=vibeinbackend...
+
+# ---------- runner ----------
 FROM node:22-alpine AS runner
 WORKDIR /app
+
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# 5. Copy package files and node_modules for production runtime
 COPY package*.json ./
-COPY packages/ ./packages/
 COPY apps/services/vibeinbackend/package*.json ./apps/services/vibeinbackend/
-COPY --from=deps /app/node_modules ./node_modules
 
-# 6. Copy compiled dist folder from builder stage
+# built packages (dist soho) ar workspace symlink shoho node_modules
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/node_modules ./node_modules
+
+# compiled service
 COPY --from=builder /app/apps/services/vibeinbackend/dist ./dist
-
-# 7. Prune development dependencies to optimize image size
-RUN npm prune --omit=dev
 
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
