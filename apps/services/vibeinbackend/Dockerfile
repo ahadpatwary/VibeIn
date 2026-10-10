@@ -19,7 +19,7 @@ COPY --from=deps /app/node_modules ./node_modules
 # 3. Copy only the packages folder and the vibeinbackend source code
 COPY packages/ ./packages/
 COPY apps/services/vibeinbackend/ ./apps/services/vibeinbackend/
-COPY tsconfig.json ./
+COPY tsconfig.base.json ./
 COPY package.json ./
 
 # 4. Build the vibeinbackend service using npm workspace

@@ -1,21 +1,56 @@
 {
    "$schema": "https://v2-11-5.turborepo.dev/schema.json",
-   "globalDependencies": ["tsconfig.base.json", ".eslintrc.js", ".prettierrc", ".prettierignore"],
+   "globalDependencies": [
+      "tsconfig.base.json",
+      ".eslintrc.js",
+      ".prettierrc",
+      ".prettierignore"
+   ],
    "tasks": {
       "build": {
          "dependsOn": ["^build"],
-         "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+         "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+         "inputs": [
+            "$TURBO_DEFAULT$",
+            "!**/Dockerfile*",
+            "!**/.dockerignore",
+            "!.github/**",
+            "!.husky/**",
+            "!README.md",
+            "!.env.example"
+         ]
       },
       "typecheck": {
          "dependsOn": ["^build"],
-         "outputs": []
+         "outputs": [],
+         "inputs": [
+            "$TURBO_DEFAULT$",
+            "!**/Dockerfile*",
+            "!.github/**",
+            "!.husky/**",
+            "!README.md"
+         ]
       },
       "test": {
          "dependsOn": ["^build"],
-         "outputs": ["coverage/**"]
+         "outputs": ["coverage/**"],
+         "inputs": [
+            "$TURBO_DEFAULT$",
+            "!**/Dockerfile*",
+            "!.github/**",
+            "!.husky/**",
+            "!README.md"
+         ]
       },
       "lint": {
-         "outputs": []
+         "outputs": [],
+         "inputs": [
+            "$TURBO_DEFAULT$",
+            "!**/Dockerfile*",
+            "!.github/**",
+            "!.husky/**",
+            "!README.md"
+         ]
       }
    }
 }
