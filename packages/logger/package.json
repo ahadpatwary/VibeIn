@@ -1,17 +1,31 @@
 {
    "name": "@app/logger",
-   "version": "1.0.0",
-   "private": true,
-   "type": "module",
    "description": "Production-ready, Pino-backed, swappable structured logger",
-   "main": "./dist/index.js",
-   "module": "./dist/index.mjs",
-   "types": "./dist/index.d.ts",
-   "exports": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+   "version": "1.0.0",
+   "dependencies": {
+      "@app/eslint-config": "1.0.0",
+      "pino": "^9.4.0",
+      "pino-roll": "^2.2.0",
+      "reflect-metadata": "^0.2.2",
+      "tsyringe": "^4.10.0",
+      "zod": "^4.6.4"
    },
+   "devDependencies": {
+      "@types/node": "^24.0.0",
+      "pino-pretty": "^11.2.2",
+      "typescript": "^5.9.0"
+   },
+   "exports": {
+      ".": {
+         "types": "./dist/index.d.ts",
+         "import": "./dist/index.js",
+         "require": "./dist/index.cjs"
+      }
+   },
+   "main": "./dist/index.cjs",
+   "module": "./dist/index.js",
+   "peerDependencies": {},
+   "private": true,
    "scripts": {
       "build": "tsup",
       "dev": "tsup --watch",
@@ -21,18 +35,6 @@
       "clean": "rimraf dist",
       "prepublishOnly": "npm run clean && npm run build"
    },
-   "peerDependencies": {},
-   "dependencies": {
-      "@app/eslint-config": "*",
-      "pino": "^9.4.0",
-      "pino-roll": "^2.2.0",
-      "reflect-metadata": "^0.2.2",
-      "tsyringe": "^4.8.0",
-      "zod": "^4.4.3"
-   },
-   "devDependencies": {
-      "pino-pretty": "^11.2.2",
-      "typescript": "^5.7.3",
-      "@types/node": "^22.10.7"
-   }
+   "type": "module",
+   "types": "./dist/index.d.ts"
 }

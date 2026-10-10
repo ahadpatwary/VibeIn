@@ -7,7 +7,7 @@ import { EMAIL_REGEX, KEYS } from '../constants/constant';
 import { ValidationError } from '../errors/exception';
 import { StoreService } from '../infrastructure/cache/redis';
 import { OTP_TOKENTS, OtpData } from '../tokens/token';
-import { OtpConfig, OtpSendResult, OtpVerifyResult } from '../types/type';
+import type { OtpConfig, OtpSendResult, OtpVerifyResult } from '../types/type';
 import { maskEmail } from '../utils/emailMask';
 
 @injectable()

@@ -37,6 +37,8 @@ export class UserRepository {
    async create(data: CreateUserType, session?: ClientSession): Promise<UserResponseType> {
       const [doc] = await this.userModel.create([data], { session });
 
+      if (!doc) throw new Error(`user can't created successfully`);
+
       const userObject = doc.toObject();
 
       /** _removed is not assignable error asche lint korle how to fix if */

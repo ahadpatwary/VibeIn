@@ -1,0 +1,12 @@
+{
+   "name": "analysis",
+   "description": "Ai service",
+   "version": "1.0.0",
+   "author": "Abdul Ahad Patwary",
+   "license": "ISC",
+   "main": "main.ts",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "type": "module"
+}

@@ -1,3 +1,3 @@
-export interface CacheRepository {
-   set(): Promise<string>;
-}
+// export interface CacheRepository {
+//    set(): Promise<string>;
+// }

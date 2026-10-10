@@ -1,19 +1,31 @@
 {
    "name": "@app/mongo",
-   "version": "1.0.0",
-   "private": true,
-   "type": "module",
    "description": "Production-grade, class-based MongoDB (Mongoose) data-access core with tsyringe DI",
-   "main": "./dist/index.js",
-   "module": "./dist/index.mjs",
-   "types": "./dist/index.d.ts",
+   "version": "1.0.0",
+   "dependencies": {
+      "@app/eslint-config": "1.0.0",
+      "@app/logger": "1.0.0",
+      "mongoose": "^8.6.0",
+      "reflect-metadata": "^0.2.2",
+      "tsyringe": "^4.10.0",
+      "uuid": "^14.0.2",
+      "zod": "^4.6.4"
+   },
+   "devDependencies": {
+      "@types/node": "^24.0.0",
+      "typescript": "^5.9.0"
+   },
    "exports": {
       ".": {
          "types": "./dist/index.d.ts",
-         "import": "./dist/index.mjs",
-         "require": "./dist/index.js"
+         "import": "./dist/index.js",
+         "require": "./dist/index.cjs"
       }
    },
+   "main": "./dist/index.cjs",
+   "module": "./dist/index.js",
+   "peerDependencies": {},
+   "private": true,
    "scripts": {
       "build": "tsup",
       "dev": "tsup --watch",
@@ -23,18 +35,6 @@
       "clean": "rimraf dist",
       "prepublishOnly": "npm run clean && npm run build"
    },
-   "dependencies": {
-      "@app/logger": "^1.0.0",
-      "@app/eslint-config": "*",
-      "mongoose": "^8.6.0",
-      "reflect-metadata": "^0.2.2",
-      "tsyringe": "^4.8.0",
-      "uuid": "^14.0.2",
-      "zod": "^4.4.3"
-   },
-   "peerDependencies": {},
-   "devDependencies": {
-      "@types/node": "^22.10.7",
-      "typescript": "^5.7.3"
-   }
+   "type": "module",
+   "types": "./dist/index.d.ts"
 }

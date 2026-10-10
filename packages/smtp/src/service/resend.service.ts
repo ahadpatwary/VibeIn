@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 import { inject, injectable } from 'tsyringe';
 
 import { RESEND_TOKEN } from '../tokens/token.js';
-import { ResendConfig } from '../types/resend.type.js';
+import { type ResendConfig } from '../types/resend.type.js';
 
 @injectable()
 export class ResendService {

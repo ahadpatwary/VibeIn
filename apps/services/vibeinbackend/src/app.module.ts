@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { LoggerModule } from '../Infrastructure/logger/logger.module';
-import { MongoModule } from '../Infrastructure/mongo/mongo.module';
-import { RedisModule } from '../Infrastructure/redis/redis.module';
+import { LoggerModule } from './Infrastructure/logger/logger.module';
+import { MongoModule } from './Infrastructure/mongo/mongo.module';
+import { RedisModule } from './Infrastructure/redis/redis.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';

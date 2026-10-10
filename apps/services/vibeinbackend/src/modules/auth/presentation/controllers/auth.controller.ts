@@ -10,7 +10,6 @@ import {
    Query,
    Res,
 } from '@nestjs/common';
-import { z } from 'zod';
 
 import type { Response } from 'express';
 
@@ -26,18 +25,23 @@ import {
 } from '../schema';
 import { OtpPurpose } from '../constants/constant';
 import { ZodValidationPipe } from '../../../user/application/pipes/zodValidation.pipe';
-import { COOKIE_TOKEN } from '../../infrastructure/cookie/tokens/token';
-import { type CookieService } from '../../infrastructure/cookie/services/cookie.service';
-import { AUTH_TOKENS } from '../../application/tokens/token';
-import { AuthService } from '../../application/services/auth.service';
+import { COOKIE_TOKEN } from '../../application/services/cookie/tokens/token';
+import { type CookieService } from '../../application/services/cookie/services/cookie.service';
+import { AUTH_TOKENS } from '../../application/services/auth/tokens/token';
 import { ResponseSchema } from '../../../../shared/decorators/response-schema.decorator';
 import {
+   loginWithCredentialReturnSchema,
+   LoginWithCredentialReturnType,
+   loginWithCredentialSchema,
+   type LoginWithCredentialType,
+   RegisterWithCredentialReturnType,
    registerWithCredentialSchema,
    sendOtpReturnSchema,
    verifyOtpReturnSchema,
    VerifyOtpReturnType,
    type RegsiterWithCredentialType,
 } from '@app/contracts';
+import { AuthService } from '../../application/services/auth/service/auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -69,12 +73,12 @@ export class AuthController {
    }
 
    @Post('register/complete/:verifyToken')
-   @ResponseSchema(z.object({ email: z.string().email().describe('email of the user') }))
+   @ResponseSchema(registerWithCredentialSchema)
    async registerWithCredentials(
       @Body(new ZodValidationPipe(registerWithCredentialSchema)) dto: RegsiterWithCredentialType,
       @Param('verifyToken') verifyToken: string,
       @Res({ passthrough: true }) response: Response,
-   ): Promise<void> {
+   ): Promise<RegisterWithCredentialReturnType> {
       const valid = await this.otpService.consumeVerifyToken(
          OtpPurpose.REGISTER,
          dto.email,
@@ -82,22 +86,39 @@ export class AuthController {
       );
       if (!valid) throw new BadRequestException('Invalid or expired token');
 
-      // await this.authService.registerWithCredentials({
-      //    email: dto.email,
-      //    password: dto.password,
-      //    verifyToken: dto.token,
-      //    user: {
-      //       fullName: '< user >',
-      //       email: dto.email,
-      //       roles: UserRole.USER,
-      //       status: UserStatus.ACTIVE,
-      //       createdAt: new Date(),
-      //       updatedAt: new Date(),
-      //    }
-      // });
-      const refresthToken = 'ahad refresh';
+      const result = await this.authService.registerWithCredentials({
+         email: dto.email,
+         password: dto.password,
+         verifyToken: verifyToken,
+      });
 
-      this.cookieService.setRefreshToken(response, refresthToken);
+      this.cookieService.setRefreshToken(response, result.tokens.refreshToken);
+      return {
+         user: result.user,
+         accessToken: result.tokens.accessToken,
+      };
+   }
+
+   @Post('login')
+   @ResponseSchema(loginWithCredentialReturnSchema)
+   async loginWithCredentials(
+      @Body(new ZodValidationPipe(loginWithCredentialSchema)) dto: LoginWithCredentialType,
+      @Res({ passthrough: true }) response: Response,
+   ): Promise<LoginWithCredentialReturnType> {
+      const result = await this.authService.loginWithCredentials({
+         email: dto.email,
+         password: dto.password,
+      });
+
+      if (result.status !== 'authenticated') {
+         throw new BadRequestException('Invalid credentials');
+      }
+
+      this.cookieService.setRefreshToken(response, result.tokens.refreshToken);
+      return {
+         user: result.user,
+         accessToken: result.tokens.accessToken,
+      };
    }
 
    // ---------- Login ----------

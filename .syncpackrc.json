@@ -1,0 +1,6 @@
+{
+   "$schema": "./node_modules/syncpack/schema.json",
+   "indent": "   ",
+   "sortAz": ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"],
+   "sourceMode": "extend"
+}

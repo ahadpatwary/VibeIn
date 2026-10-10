@@ -1,12 +1,9 @@
 {
    "extends": "./tsconfig.json",
-   "exclude": [
-      "node_modules",
-      "src/modules/auth",
-      "src/modules/cloudinary-module",
-      "test",
-      "dist",
-      "**/*spec.ts",
-      "src/shared/services"
-   ]
+   "compilerOptions": {
+      "rootDir": "src",
+      "outDir": "dist"
+   },
+   "include": ["typings/global.d.ts", "src/**/*"],
+   "exclude": ["node_modules", "dist", "**/*.spec.ts", "test/**/*", "bin/**/*"]
 }

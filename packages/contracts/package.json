@@ -1,23 +1,37 @@
 {
    "name": "@app/contracts",
-   "version": "0.0.1",
    "description": "Type-safe router wrapper with common data",
-   "private": true,
-   "type": "module",
-   "main": "./dist/index.js",
-   "module": "./dist/index.mjs",
-   "types": "./dist/index.d.ts",
+   "version": "0.0.1",
+   "dependencies": {
+      "@app/logger": "1.0.0",
+      "reflect-metadata": "^0.2.2",
+      "tsyringe": "^4.10.0",
+      "zod": "^4.6.4"
+   },
+   "devDependencies": {
+      "@app/eslint-config": "1.0.0",
+      "@types/node": "^24.0.0",
+      "tsup": "^8.0.0",
+      "typescript": "^5.9.0"
+   },
    "exports": {
       ".": {
          "types": "./dist/index.d.ts",
-         "import": "./dist/index.mjs",
-         "require": "./dist/index.js"
+         "import": "./dist/index.js",
+         "require": "./dist/index.cjs"
       }
    },
    "files": [
       "dist"
    ],
-   "sideEffects": false,
+   "keywords": [
+      "typescript"
+   ],
+   "license": "MIT",
+   "main": "./dist/index.cjs",
+   "module": "./dist/index.js",
+   "peerDependencies": {},
+   "private": true,
    "scripts": {
       "build": "tsup",
       "dev": "tsup --watch",
@@ -27,21 +41,7 @@
       "clean": "rimraf dist",
       "prepublishOnly": "npm run clean && npm run build"
    },
-   "peerDependencies": {},
-   "dependencies": {
-      "@app/logger": "^1.0.0",
-      "reflect-metadata": "^0.2.2",
-      "tsyringe": "^4.10.0",
-      "zod": "^4.4.3"
-   },
-   "devDependencies": {
-      "@app/eslint-config": "*",
-      "@types/node": "^24.0.0",
-      "tsup": "^8.0.0",
-      "typescript": "^5.9.0"
-   },
-   "keywords": [
-      "typescript"
-   ],
-   "license": "MIT"
+   "sideEffects": false,
+   "type": "module",
+   "types": "./dist/index.d.ts"
 }

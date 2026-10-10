@@ -3,6 +3,7 @@ export default () => ({
 
    database: {
       uri: process.env.DATABASE_URI,
+      dbName: process.env.DATABASE_NAME,
    },
 
    cache: {
@@ -10,6 +11,11 @@ export default () => ({
       port: process.env.REDIS_PORT,
       username: process.env.REDIS_USERNAME,
       password: process.env.REDIS_PASSWORD,
+   },
+
+   token: {
+      secret: process.env.ACCESS_TOKEN,
+      refreshToken: process.env.REFRESH_TOKEN,
    },
 
    // cloudinary: {

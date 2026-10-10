@@ -1,33 +1,15 @@
 {
    "name": "vibeinbackend",
-   "version": "0.0.1",
    "description": "",
+   "version": "0.0.1",
    "author": "",
-   "type": "module",
-   "private": true,
-   "license": "UNLICENSED",
-   "scripts": {
-      "build": "nest build && copyfiles -u 1 \"src/**/*.lua\" dist",
-      "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-      "start": "nest start",
-      "start:dev": "nest start --watch",
-      "start:debug": "nest start --debug --watch",
-      "start:prod": "node dist/main",
-      "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-      "typecheck": "tsc --noEmit",
-      "test": "jest",
-      "test:watch": "jest --watch",
-      "test:cov": "jest --coverage",
-      "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-      "test:e2e": "jest --config ./test/jest-e2e.json"
-   },
    "dependencies": {
-      "@app/contracts": "^0.0.1",
-      "@app/db-schemas": "^1.0.0",
-      "@app/logger": "^1.0.0",
-      "@app/mongo": "^1.0.0",
-      "@app/otp": "^1.0.0",
-      "@app/redis-client": "^0.1.0",
+      "@app/contracts": "0.0.1",
+      "@app/db-schemas": "1.0.0",
+      "@app/logger": "1.0.0",
+      "@app/mongo": "1.0.0",
+      "@app/otp": "1.0.0",
+      "@app/redis-client": "0.1.0",
       "@nestjs/common": "^11.0.1",
       "@nestjs/config": "^4.0.4",
       "@nestjs/core": "^11.0.1",
@@ -38,7 +20,7 @@
       "reflect-metadata": "^0.2.2",
       "rxjs": "^7.8.1",
       "tsyringe": "^4.10.0",
-      "zod": "^4.4.3"
+      "zod": "^4.6.4"
    },
    "devDependencies": {
       "@eslint/js": "^9.18.0",
@@ -46,7 +28,7 @@
       "@nestjs/testing": "^11.0.1",
       "@types/express": "^5.0.0",
       "@types/jsonwebtoken": "^9.0.10",
-      "@types/node": "^22.10.7",
+      "@types/node": "^24.0.0",
       "@types/supertest": "^6.0.2",
       "copyfiles": "^2.4.1",
       "eslint": "^9.18.0",
@@ -54,11 +36,13 @@
       "eslint-plugin-prettier": "^5.2.2",
       "globals": "^16.0.0",
       "jest": "^29.7.0",
-      "prettier": "^3.4.2",
+      "prettier": "^3.9.9",
       "supertest": "^7.0.0",
       "ts-jest": "^29.2.5",
-      "ts-node": "^10.9.2",
-      "typescript": "^5.7.3",
+      "tsc-alias": "^1.9.7",
+      "tsc-watch": "^7.2.1",
+      "tsx": "^4.23.15",
+      "typescript": "^5.9.0",
       "typescript-eslint": "^8.20.0"
    },
    "jest": {
@@ -70,12 +54,37 @@
       "rootDir": "src",
       "testRegex": ".*\\.spec\\.ts$",
       "transform": {
-         "^.+\\.(t|j)s$": "ts-jest"
+         "^.+\\.(t|j)s$": [
+            "ts-jest",
+            {
+               "tsconfig": {
+                  "module": "CommonJS",
+                  "moduleResolution": "node10",
+                  "experimentalDecorators": true,
+                  "emitDecoratorMetadata": true,
+                  "esModuleInterop": true
+               }
+            }
+         ]
       },
       "collectCoverageFrom": [
          "**/*.(t|j)s"
       ],
       "coverageDirectory": "../coverage",
       "testEnvironment": "node"
-   }
+   },
+   "license": "UNLICENSED",
+   "private": true,
+   "scripts": {
+      "build": "nest build && tsc-alias -p tsconfig.build.json && copyfiles -u 1 \"src/**/*.lua\" dist",
+      "start": "node dist/main.js",
+      "start:dev": "tsx watch src/main.ts",
+      "start:prod": "node dist/main.js",
+      "typecheck": "tsc --noEmit",
+      "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+      "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+      "test": "jest",
+      "test:cov": "jest --coverage"
+   },
+   "type": "module"
 }

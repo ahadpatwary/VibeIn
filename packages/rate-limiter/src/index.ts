@@ -3,7 +3,7 @@ export * from './container/container';
 export { RateLimiter } from './rete-limiter';
 export { default as RateLimiterDefault } from './rete-limiter';
 export * from './token/token';
-export {
+export type {
    BanStatus,
    FixedWindowConfig,
    IAlgorithmEngine,

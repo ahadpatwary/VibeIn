@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe';
 import { REDIS_EVENTS } from './constants/redis.constants.js';
 import { RedisConnectionException } from './exceptions/redis.exception.js';
 import { REDIS_TOKENS } from './tokens/redis.token.js';
-import { RedisConfig } from './types/redis.types.js';
+import { type RedisConfig } from './types/redis.types.js';
 
 @injectable()
 export class RedisClientManager {

@@ -1,25 +1,44 @@
 {
    "name": "soundfear",
-   "version": "1.0.0",
-   "private": true,
    "description": "Monorepo for VibeIn (workspaces)",
-   "homepage": "https://github.com/ahadpatwary/VibeIn#readme",
+   "version": "1.0.0",
+   "author": "Abdul Ahad Patwary",
    "bugs": {
       "url": "https://github.com/ahadpatwary/VibeIn/issues"
    },
+   "devDependencies": {
+      "depcheck": "^1.4.2",
+      "husky": "^9.1.7",
+      "jiti": "^2.7.0",
+      "lint-staged": "^16.4.0",
+      "prettier": "^3.9.9",
+      "syncpack": "^15.3.3",
+      "turbo": "^2.11.5"
+   },
+   "homepage": "https://github.com/ahadpatwary/VibeIn#readme",
+   "license": "ISC",
+   "lint-staged": {
+      "*.{ts,tsx,js,jsx}": [
+         "prettier --write"
+      ],
+      "*.{json,md,yml,yaml}": [
+         "prettier --write"
+      ]
+   },
+   "overrides": {
+      "@types/node": "^24.0.0",
+      "typescript": "^5.9.0",
+      "reflect-metadata": "^0.2.2",
+      "tsyringe": "^4.10.0",
+      "uuid": "^14.0.2",
+      "zod": "^4.6.4"
+   },
+   "packageManager": "npm@11.6.2",
+   "private": true,
    "repository": {
       "type": "git",
       "url": "git+https://github.com/ahadpatwary/VibeIn.git"
    },
-   "license": "ISC",
-   "author": "Abdul Ahad Patwary",
-   "packageManager": "npm@11.6.2",
-   "workspaces": [
-      "apps/*",
-      "apps/services/*",
-      "apps/web/*",
-      "packages/*"
-   ],
    "scripts": {
       "build": "turbo run build",
       "lint": "turbo run lint",
@@ -30,23 +49,17 @@
       "format": "prettier --write .",
       "format:check": "prettier --check .",
       "deps:check": "node ./scripts/check-deps.js",
-      "prepare": "husky"
+      "prepare": "husky",
+      "syncpack:lint": "syncpack lint",
+      "syncpack:fix": "syncpack fix",
+      "syncpack:format:check": "syncpack format --check",
+      "syncpack:format": "syncpack format",
+      "syncpack:list": "syncpack list --show instances",
+      "check:dependencies": "npm run syncpack:lint && npm run syncpack:format:check"
    },
-   "devDependencies": {
-      "depcheck": "^1.4.2",
-      "husky": "^9.1.7",
-      "jiti": "^2.7.0",
-      "lint-staged": "^16.4.0",
-      "prettier": "^3.9.9",
-      "tsx": "^4.23.13",
-      "turbo": "^2.11.5"
-   },
-   "lint-staged": {
-      "*.{ts,tsx,js,jsx}": [
-         "prettier --write"
-      ],
-      "*.{json,md,yml,yaml}": [
-         "prettier --write"
-      ]
-   }
+   "workspaces": [
+      "apps/services/*",
+      "apps/web/*",
+      "packages/*"
+   ]
 }
