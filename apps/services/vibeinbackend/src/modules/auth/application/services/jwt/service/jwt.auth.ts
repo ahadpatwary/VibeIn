@@ -1,4 +1,4 @@
-import { JwtPayload, SignOptions, TokenExpiredError } from 'jsonwebtoken';
+import { JwtPayload, SignOptions } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { AccessTokenPayload, accessTokenPayloadSchema } from '../schemas/accessToken.schema';
@@ -7,12 +7,12 @@ import { DecodedToken, type TokenServiceConfig } from '../types/jwt.type';
 import { TokenInvalidError } from '../errors/exception';
 import { verifyOpt } from '../constants/constant';
 import { JWT_TOKENS } from '../tokens/token';
-import { Inject, Injectable } from '@nestjs/common';
+import { inject, injectable } from 'tsyringe';
 
-@Injectable()
+@injectable()
 export class TokenService {
    constructor(
-      @Inject(JWT_TOKENS.TokenConfig)
+      @inject(JWT_TOKENS.TokenConfig)
       private readonly config: Required<TokenServiceConfig>,
    ) {}
 
@@ -71,7 +71,7 @@ export class TokenService {
          return jwt.verify(token, secret, verifyOpt) as JwtPayload;
       } catch (err) {
          if (err instanceof jwt.TokenExpiredError) {
-            throw new TokenExpiredError(err.message, err.expiredAt);
+            throw new jwt.TokenExpiredError(err.message, err.expiredAt);
          }
 
          /** -> Covers JsonWebTokenError (bad signature, malformed) & NotBeforeError */

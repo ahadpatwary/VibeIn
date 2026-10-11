@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './presentation/controllers/auth.controller';
 import { AuthService } from './application/services/auth/service/auth.service';
 import { AUTH_TOKENS } from './application/services/auth/tokens/token';
-import { OTP_TOKENTS, OtpService } from '@app/otp';
+import { OTP_TOKENTS, OtpService, registerOtp } from '@app/otp';
 import { COOKIE_TOKEN, CookieService } from './application/services/cookie';
 import { AuthIdentityRepository } from './application/services/auth/infrastructure/auth.repository';
 import { UseCaseRepository } from './application/services/auth/infrastructure/use-case.repository';
@@ -13,29 +13,28 @@ import { JWT_TOKENS, TokenService } from './application/services/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { registerToken } from './application/services/jwt/container/container';
 import { container } from 'tsyringe';
+import { UserModule } from '../user/user.module';
+import { RequestContextModule } from '../../shared/request-context/request-context.module';
 
 @Module({
    controllers: [AuthController],
-   imports: [ConfigModule],
+   imports: [ConfigModule, UserModule, RequestContextModule],
    providers: [
-      /** Auth service has been resolved */
-      {
-         provide: AUTH_TOKENS.AuthService,
-         useClass: AuthService,
-      },
-      {
-         provide: AUTH_TOKENS.AuthRepository,
-         useClass: AuthIdentityRepository,
-      },
-      {
-         provide: AUTH_TOKENS.UseCaseRepository,
-         useClass: UseCaseRepository,
-      },
-
       /** Otp service has been resolved */
       {
+         provide: 'OTP',
+         inject: [ConfigService],
+
+         useFactory: () => {
+            registerOtp(container, {});
+
+            return true;
+         },
+      },
+      {
          provide: OTP_TOKENTS.OtpService,
-         useClass: OtpService,
+         inject: ['OTP'],
+         useFactory: () => container.resolve(OtpService),
       },
 
       /** Cookie service has been resolved */
@@ -80,6 +79,20 @@ import { container } from 'tsyringe';
       {
          provide: SESSION_TOKEN.StoreService,
          useClass: StoreService,
+      },
+
+      /** Auth service has been resolved */
+      {
+         provide: AUTH_TOKENS.AuthRepository,
+         useClass: AuthIdentityRepository,
+      },
+      {
+         provide: AUTH_TOKENS.UseCaseRepository,
+         useClass: UseCaseRepository,
+      },
+      {
+         provide: AUTH_TOKENS.AuthService,
+         useClass: AuthService,
       },
    ],
    exports: [],

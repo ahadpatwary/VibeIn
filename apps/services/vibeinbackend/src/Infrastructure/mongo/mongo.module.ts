@@ -1,4 +1,4 @@
-import { DB_TOKENS, MongooseClient, registerDatabaseModule } from '@app/mongo';
+import { DB_TOKENS, MongooseClient, MongoService, registerDatabaseModule } from '@app/mongo';
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { container } from 'tsyringe';
@@ -38,16 +38,20 @@ export class MongoModule {
                inject: [ConfigService, MONGO_INITIALIZED],
                useFactory: async (config: ConfigService) => {
                   const mongooseClient = container.resolve(MongooseClient);
-                  console.log('database: ', config.get<string>('database.uri'));
                   await mongooseClient.connect(config.get<string>('database.uri')!);
                   return mongooseClient;
                },
+            },
+            {
+               provide: DB_TOKENS.MongoService,
+               inject: [MONGO_INITIALIZED],
+               useFactory: () => container.resolve(MongoService),
             },
          ],
 
          global: true,
 
-         exports: [DB_TOKENS.MongooseClient],
+         exports: [DB_TOKENS.MongooseClient, DB_TOKENS.MongoService],
       };
    }
 }

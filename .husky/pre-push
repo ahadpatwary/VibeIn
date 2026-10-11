@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 
-# cd "$(git rev-parse --show-toplevel)" || exit 1
+cd "$(git rev-parse --show-toplevel)" || exit 1
 
-# npm run validate
+npm run validate

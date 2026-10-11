@@ -61,6 +61,7 @@ export class AuthController {
    async sendOtp(
       @Body(new ZodValidationPipe(sendOtpSchema)) dto: SendOtpInput,
    ): Promise<OtpSendResult> {
+      console.log('come');
       return await this.otpService.sendOtp(OtpPurpose.REGISTER, dto.deviceId, dto.email);
    }
 
