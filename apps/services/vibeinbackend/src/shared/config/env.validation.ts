@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const validate = (config: Record<string, unknown>) => {
    const filteredConfig = {
-      port: config.PORT ?? '5000',
+      port: config.PORT,
       database: {
          uri: config.DATABASE_URI,
          dbName: config.DATABASE_NAME,
@@ -27,7 +27,7 @@ export const validate = (config: Record<string, unknown>) => {
       }),
       cache: z.object({
          host: z.string().trim().min(1, 'redis host must be required'),
-         port: z.string().trim().min(1, 'port must be required'),
+         port: z.string().trim().min(1, 'redis port must be required'),
          username: z.string().trim().min(1, 'username must be required'),
          password: z.string().trim().min(1, 'password must be required'),
       }),

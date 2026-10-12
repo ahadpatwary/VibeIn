@@ -1,16 +1,22 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'node:crypto';
 import { RequestContextType, clientMetaDataSchema } from './request-context.types';
 import { HeaderOptions } from './request-context.constant';
 import { RequestContextService } from './request-context.service';
+import { REQUEST_CONTEXT } from './request-context.token';
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
-   constructor(private readonly requestContext: RequestContextService) {}
+   constructor(
+      @Inject(REQUEST_CONTEXT)
+      private readonly requestContext: RequestContextService,
+   ) {}
 
    use(req: Request, res: Response, next: NextFunction): void {
       const requestId = this.getRequestId(req);
+
+      console.log('requestId', requestId);
 
       const client = {
          deviceId: this.getHeader(req, HeaderOptions.DEVICE_ID),

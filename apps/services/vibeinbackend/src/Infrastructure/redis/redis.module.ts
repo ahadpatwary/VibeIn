@@ -25,9 +25,11 @@ export class RedisModule {
                inject: [ConfigService],
 
                useFactory: (config: ConfigService) => {
+                  console.log('env', config);
+
                   registerRedis(container, {
                      host: config.get<string>('cache.host')!,
-                     port: Number(config.get<number>('cache.port')),
+                     port: Number(config.get<string>('cache.port')),
                      username: config.get<string>('cache.username')!,
                      password: config.get<string>('cache.password')!,
                      tls: {
